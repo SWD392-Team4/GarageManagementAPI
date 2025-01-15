@@ -7,7 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\GarageManagementAPI.Entities\GarageManagementAPI.Entities.csproj" />
     <ProjectReference Include="..\GarageManagementAPI.Shared\GarageManagementAPI.Shared.csproj" />
   </ItemGroup>
 
