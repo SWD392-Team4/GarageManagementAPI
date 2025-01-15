@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using GarageManagementAPI.Entities.Models;
-using GarageManagementAPI.Shared.DataTransferObjects;
+using GarageManagementAPI.Shared.DataTransferObjects.Employee;
+using GarageManagementAPI.Shared.DataTransferObjects.Garage;
 
 namespace GarageManagementAPI.Application
 {
@@ -8,8 +9,11 @@ namespace GarageManagementAPI.Application
     {
         public MappingProfile()
         {
-            CreateMap<Garage, GarageDto>()
-                .ForCtorParam("FullAddress", opt => opt.MapFrom(x => string.Join(' ', x.Address, x.City)));
+            CreateMap<Garage, GarageDto>();
+            CreateMap<GarageForCreationDto, Garage>();
+
+            CreateMap<Employee, EmployeeDto>();
+            CreateMap<EmployeeForCreationDto, Employee>();
         }
     }
 }

@@ -2,7 +2,9 @@
 using GarageManagementAPI.Repository.Contracts;
 using GarageManagementAPI.Service;
 using GarageManagementAPI.Service.Contracts;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Text.Json.Serialization;
 
 namespace GarageManagementAPI.Application.Extensions
 {
@@ -32,8 +34,26 @@ namespace GarageManagementAPI.Application.Extensions
         public static void ConfigureSqlContext(this IServiceCollection services, IConfiguration configuration) =>
             services.AddDbContext<RepositoryContext>(opts => opts.UseSqlServer(configuration.GetConnectionString("sqlConnection")));
 
+        public static void ConfigureApiBehavior(this IServiceCollection services) =>
+            services.Configure<ApiBehaviorOptions>(options =>
+            {
+                options.SuppressModelStateInvalidFilter = true;
+            });
+
         public static void ConfigureController(this IServiceCollection services) =>
-            services.AddControllers()
+            services.AddControllers(config =>
+            {
+                config.RespectBrowserAcceptHeader = true;
+                config.ReturnHttpNotAcceptable = true;
+            })
+            .AddJsonOptions(options =>
+            {
+                options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+            })
             .AddApplicationPart(typeof(GarageManagementAPI.Presentation.AssemblyReference).Assembly);
+
+
+
+
     }
 }

@@ -1,9 +1,14 @@
-﻿using GarageManagementAPI.Shared.DataTransferObjects;
+﻿using GarageManagementAPI.Shared.DataTransferObjects.Garage;
+using GarageManagementAPI.Shared.Responses;
 
 namespace GarageManagementAPI.Service.Contracts
 {
     public interface IGarageService
     {
-        IEnumerable<GarageDto> GetAllGarages(bool trackChanges);
+        ApiBaseResponse GetAllGarages(bool trackChanges);
+
+        ApiBaseResponse GetGarage(Guid id, bool trackChanges);
+
+        ApiBaseResponse CreateGarage(GarageForCreationDto garageForCreationDto);
     }
 }

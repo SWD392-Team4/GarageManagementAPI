@@ -22,7 +22,7 @@ namespace GarageManagementAPI.Entities.Models
 
         public required SystemRole Role { get; set; }
 
-        public Guid CompanyId { get; set; }
+        public Guid GarageId { get; set; }
 
         public Garage? Garage { get; set; }
 

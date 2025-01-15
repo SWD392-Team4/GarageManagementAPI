@@ -1,6 +1,7 @@
 ﻿using GarageManagementAPI.Entities.Models;
 using GarageManagementAPI.Repository.Contracts;
 using Microsoft.EntityFrameworkCore;
+using System.Linq;
 using System.Linq.Expressions;
 
 namespace GarageManagementAPI.Repository
@@ -14,17 +15,17 @@ namespace GarageManagementAPI.Repository
             this.RepositoryContext = repositoryContext;
         }
 
-        public T? FindById(string id, bool trackChanges)
+        public T? FindById(Guid id, bool trackChanges)
         => !trackChanges ?
             RepositoryContext
             .Set<T>()
             .Where(t => t.Id.Equals(id))
             .AsNoTracking()
-            .FirstOrDefault() :
+            .SingleOrDefault() :
             RepositoryContext
             .Set<T>()
             .Where(t => t.Id.Equals(id))
-            .FirstOrDefault();
+            .SingleOrDefault();
 
         public IQueryable<T> FindAll(bool trackChanges) =>
             !trackChanges ?
