@@ -3,7 +3,9 @@ using GarageManagementAPI.Repository.Contracts;
 using GarageManagementAPI.Service;
 using GarageManagementAPI.Service.Contracts;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using System.Text.Json.Serialization;
 
 namespace GarageManagementAPI.Application.Extensions
@@ -45,6 +47,14 @@ namespace GarageManagementAPI.Application.Extensions
             {
                 config.RespectBrowserAcceptHeader = true;
                 config.ReturnHttpNotAcceptable = true;
+                config.InputFormatters.Insert(0, new ServiceCollection()
+                    .AddLogging()
+                    .AddMvc()
+                    .AddNewtonsoftJson()
+                    .Services
+                    .BuildServiceProvider()
+                    .GetRequiredService<IOptions<MvcOptions>>().Value.InputFormatters
+                    .OfType<NewtonsoftJsonPatchInputFormatter>().First());
             })
             .AddJsonOptions(options =>
             {

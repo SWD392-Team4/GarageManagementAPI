@@ -8,4 +8,6 @@ namespace GarageManagementAPI.Shared.Responses
 
         public ApiBaseResponse(bool success) => Success = success;
     }
+
+
 }

@@ -13,8 +13,8 @@ namespace GarageManagementAPI.Repository
             => FindByCondition(e => e.GarageId.Equals(garageId), trackChanges)
             .OrderBy(e => e.Name).ToList();
 
-        public Employee? GetEmployee(Guid garageId, Guid id, bool trackChanges)
-            => FindByCondition(e => e.GarageId.Equals(garageId) && e.Id.Equals(id), trackChanges)
+        public Employee? FindById(Guid garageId, Guid employeeId, bool trackChanges)
+            => FindByCondition(e => e.GarageId.Equals(garageId) && e.Id.Equals(employeeId), trackChanges)
             .SingleOrDefault();
 
         public void Create(Guid garageId, Employee employee)

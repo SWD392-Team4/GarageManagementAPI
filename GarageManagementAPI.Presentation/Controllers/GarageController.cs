@@ -49,5 +49,17 @@ namespace GarageManagementAPI.Presentation.Controllers
 
             return CreatedAtRoute("GarageById", new { id = createdGarage.Id }, createdGarage);
         }
+
+        [HttpPut("{id:guid}")]
+        public IActionResult UpdateGarage(Guid id, [FromBody] GarageForUpdateDto garageForUpdateDto)
+        {
+            var baseResult = _service.GarageService.UpdateGarage(id, garageForUpdateDto, true);
+
+            if (!baseResult.Success)
+                return ProcessError(baseResult);
+
+            return NoContent();
+
+        }
     }
 }

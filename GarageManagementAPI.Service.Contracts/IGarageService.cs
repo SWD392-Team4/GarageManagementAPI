@@ -10,5 +10,7 @@ namespace GarageManagementAPI.Service.Contracts
         ApiBaseResponse GetGarage(Guid id, bool trackChanges);
 
         ApiBaseResponse CreateGarage(GarageForCreationDto garageForCreationDto);
+
+        ApiBaseResponse UpdateGarage(Guid garageId, GarageForUpdateDto garageForUpdateDto, bool trackChanges);
     }
 }

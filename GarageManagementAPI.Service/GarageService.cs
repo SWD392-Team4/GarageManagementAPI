@@ -51,5 +51,17 @@ namespace GarageManagementAPI.Service
 
             return new ApiOkResponse<GarageDto>(garageDto);
         }
+
+        public ApiBaseResponse UpdateGarage(Guid garageId, GarageForUpdateDto garageForUpdateDto, bool trackChanges)
+        {
+            var garageEntity = _repository.Garage.FindById(garageId, trackChanges);
+            if (garageEntity is null)
+                return new GarageNotFoundResponse(garageId);
+
+            _mapper.Map(garageForUpdateDto, garageEntity);
+            _repository.Save();
+
+            return new ApiNoContentResponse();
+        }
     }
 }

@@ -6,7 +6,7 @@ namespace GarageManagementAPI.Repository.Contracts
     {
         IEnumerable<Employee> GetEmployees(Guid garageId, bool trackChanges);
 
-        Employee? GetEmployee(Guid garageId, Guid id, bool trackChanges);
+        Employee? FindById(Guid garageId, Guid employeeId, bool trackChanges);
 
         void Create(Guid garageId, Employee employee);
     }
