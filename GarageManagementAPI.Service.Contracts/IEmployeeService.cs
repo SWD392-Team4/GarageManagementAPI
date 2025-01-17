@@ -1,38 +1,37 @@
 ﻿using GarageManagementAPI.Shared.DataTransferObjects.Employee;
+using GarageManagementAPI.Shared.RequestFeatures;
 using GarageManagementAPI.Shared.Responses;
-using Microsoft.AspNetCore.JsonPatch;
 
 namespace GarageManagementAPI.Service.Contracts
 {
     public interface IEmployeeService
     {
-        ApiBaseResponse GetEmployees(
+        Task<ApiBaseResponse> GetEmployeesAsync(
             Guid garageId,
+            EmployeeParameters employeeParameters,
             bool trackChanges);
 
-        ApiBaseResponse GetEmployee(
+        Task<ApiBaseResponse> GetEmployeeAsync(
             Guid garageId,
             Guid employeeId,
             bool trackChanges);
 
-        ApiBaseResponse CreateEmployeeForGarage(
+        Task<ApiBaseResponse> CreateEmployeeForGarageAsync(
             Guid garageId,
             EmployeeForCreationDto employeeForCreationDto,
             bool trackChanges);
 
-        ApiBaseResponse UpdateEmployeeForGarage(
+        Task<ApiBaseResponse> UpdateEmployeeForGarageAsync(
             Guid garageId,
             Guid employeeId,
             EmployeeForUpdateDto employeeForUpdateDto,
             bool garageTrackChanges,
             bool employeeTrackChanges);
 
-        ApiBaseResponse UpdateEmployeeForGarage(
+        Task<ApiBaseResponse> GetEmployeeForPatchAsync(
             Guid garageId,
             Guid employeeId,
-            JsonPatchDocument<EmployeeForUpdateDto> employeePatchDoc,
-            bool garageTrackChanges,
-            bool employeeTrackChanges);
+            bool trackChanges);
 
     }
 }

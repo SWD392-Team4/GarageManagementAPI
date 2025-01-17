@@ -1,7 +1,9 @@
-﻿using GarageManagementAPI.Repository;
+﻿using GarageManagementAPI.Presentation.ActionFilters;
+using GarageManagementAPI.Repository;
 using GarageManagementAPI.Repository.Contracts;
 using GarageManagementAPI.Service;
 using GarageManagementAPI.Service.Contracts;
+using GarageManagementAPI.Shared.ErrorModel;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.EntityFrameworkCore;
@@ -24,7 +26,8 @@ namespace GarageManagementAPI.Application.Extensions
                 options.AddPolicy("CorPolicy", builder =>
                 builder.AllowAnyOrigin()
                 .AllowAnyMethod()
-                .AllowAnyHeader());
+                .AllowAnyHeader()
+                .WithExposedHeaders("X-Pagination"));
             });
 
         public static void ConfigureRepositoryManager(this IServiceCollection services) =>
@@ -55,6 +58,7 @@ namespace GarageManagementAPI.Application.Extensions
                     .BuildServiceProvider()
                     .GetRequiredService<IOptions<MvcOptions>>().Value.InputFormatters
                     .OfType<NewtonsoftJsonPatchInputFormatter>().First());
+                config.Filters.Add(new ValidationFilterAttribute());
             })
             .AddJsonOptions(options =>
             {
@@ -63,7 +67,10 @@ namespace GarageManagementAPI.Application.Extensions
             .AddApplicationPart(typeof(GarageManagementAPI.Presentation.AssemblyReference).Assembly);
 
 
-
+        public static void ConfigureActionFilter(this IServiceCollection services)
+        {
+            //services.AddScoped<ValidationFilterAttribute>();
+        }
 
     }
 }

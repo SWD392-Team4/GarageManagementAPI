@@ -1,13 +1,13 @@
 ﻿using AutoMapper;
-using GarageManagementAPI.Entities.Exceptions.NotFound;
 using GarageManagementAPI.Entities.Models;
 using GarageManagementAPI.Repository.Contracts;
 using GarageManagementAPI.Service.Contracts;
+using GarageManagementAPI.Service.Extension;
 using GarageManagementAPI.Shared.DataTransferObjects.Employee;
+using GarageManagementAPI.Shared.RequestFeatures;
 using GarageManagementAPI.Shared.Responses;
 using GarageManagementAPI.Shared.Responses.EmployeeErrorResponse;
 using GarageManagementAPI.Shared.Responses.GarageErrorResponse;
-using Microsoft.AspNetCore.JsonPatch;
 
 namespace GarageManagementAPI.Service
 {
@@ -22,102 +22,123 @@ namespace GarageManagementAPI.Service
             _mapper = mapper;
         }
 
-        public ApiBaseResponse CreateEmployeeForGarage(
+        private async Task<ApiBaseResponse> CheckIfGarageExist(Guid garageId, bool trackChanges)
+        {
+            var garage = await _repository.Garage.FindByIdAsync(garageId, trackChanges);
+            if (garage is null)
+                return new GarageNotFoundResponse(garageId);
+
+            return new ApiNoContentResponse();
+        }
+
+        private async Task<ApiBaseResponse> GetEmployeeForGarageAndCheckIfExists(Guid garageId, Guid employeeId, bool trackChanges)
+        {
+            var employeeEntity = await _repository.Employee.FindByIdAsync(garageId, employeeId, trackChanges);
+            if (employeeEntity is null)
+                return new EmployeeNotFoundResponse(employeeId);
+
+            return new ApiOkResponse<Employee>(employeeEntity);
+        }
+
+        public async Task<ApiBaseResponse> CreateEmployeeForGarageAsync(
             Guid garageId,
             EmployeeForCreationDto employeeForCreationDto,
             bool trackChanges)
         {
-            var garage = _repository.Garage.FindById(garageId, trackChanges);
-            if (garage is null)
-                return new GarageNotFoundResponse(garageId);
+            var result = await CheckIfGarageExist(garageId, trackChanges);
+
+            if (!result.Success) return result;
 
             var employeeEntity = _mapper.Map<Employee>(employeeForCreationDto);
 
             _repository.Employee.Create(garageId, employeeEntity);
-            _repository.Save();
+            await _repository.SaveAsync();
 
             var employeeToReturn = _mapper.Map<EmployeeDto>(employeeEntity);
 
             return new ApiOkResponse<EmployeeDto>(employeeToReturn);
         }
 
-        public ApiBaseResponse GetEmployee(
+        public async Task<ApiBaseResponse> GetEmployeeAsync(
             Guid garageId,
             Guid employeeId,
             bool trackChanges)
         {
-            var garage = _repository.Garage.FindById(garageId, trackChanges);
-            if (garage is null)
-                return new GarageNotFoundResponse(garageId);
+            var result = await CheckIfGarageExist(garageId, trackChanges);
 
-            var employeeDb = _repository.Employee.FindById(garageId, employeeId, trackChanges);
-            if (employeeDb is null)
-                return new EmployeeNotFoundResponse(employeeId);
+            if (!result.Success) return result;
 
-            var employee = _mapper.Map<EmployeeDto>(employeeDb);
+            result = await GetEmployeeForGarageAndCheckIfExists(garageId, employeeId, trackChanges);
+
+            if (!result.Success) return result;
+
+            var employeeEntity = result.GetResult<Employee>();
+
+            var employee = _mapper.Map<EmployeeDto>(employeeEntity);
 
             return new ApiOkResponse<EmployeeDto>(employee);
         }
 
-        public ApiBaseResponse GetEmployees(
+        public async Task<ApiBaseResponse> GetEmployeesAsync(
             Guid garageId,
+            EmployeeParameters employeeParameters,
             bool trackChanges)
         {
-            var garage = _repository.Garage.FindById(garageId, trackChanges);
-            if (garage is null)
-                return new GarageNotFoundResponse(garageId);
+            var result = await CheckIfGarageExist(garageId, trackChanges);
 
-            var employeesFromDb = _repository.Employee.GetEmployees(garageId, trackChanges);
+            if (!result.Success) return result;
 
-            var employeesDto = _mapper.Map<IEnumerable<EmployeeDto>>(employeesFromDb);
+            var employeesWithMetaData = await _repository.Employee
+                .GetEmployeesAsync(
+                garageId: garageId,
+                employeeParameters: employeeParameters,
+                trackChanges: trackChanges);
 
-            return new ApiOkResponse<IEnumerable<EmployeeDto>>(employeesDto);
+            var employeesDto = _mapper.Map<IEnumerable<EmployeeDto>>(employeesWithMetaData);
+
+            var pageInfo = new PageInfo(employeesDto, employeesWithMetaData.MetaData);
+
+            return new ApiOkResponse<PageInfo>(pageInfo);
         }
 
-        public ApiBaseResponse UpdateEmployeeForGarage(
+        public async Task<ApiBaseResponse> UpdateEmployeeForGarageAsync(
             Guid garageId,
             Guid employeeId,
             EmployeeForUpdateDto employeeForUpdate,
             bool garageTrackChanges,
             bool employeeTrackChanges)
         {
-            var garage = _repository.Garage.FindById(garageId, garageTrackChanges);
-            if (garage is null)
-                return new GarageNotFoundResponse(garageId);
+            var result = await CheckIfGarageExist(garageId, garageTrackChanges);
 
-            var employeeEntity = _repository.Employee.FindById(garageId, employeeId, employeeTrackChanges);
-            if (employeeEntity is null)
-                return new EmployeeNotFoundResponse(employeeId);
+            if (!result.Success) return result;
+
+            result = await GetEmployeeForGarageAndCheckIfExists(garageId, employeeId, employeeTrackChanges);
+
+            if (!result.Success) return result;
+
+            var employeeEntity = result.GetResult<Employee>();
 
             _mapper.Map(employeeForUpdate, employeeEntity);
-            _repository.Save();
+            await _repository.SaveAsync();
 
             return new ApiNoContentResponse();
         }
 
-        public ApiBaseResponse UpdateEmployeeForGarage(
-            Guid garageId,
-            Guid employeeId,
-            JsonPatchDocument<EmployeeForUpdateDto> employeePatchDoc,
-            bool garageTrackChanges,
-            bool employeeTrackChanges)
+        public async Task<ApiBaseResponse> GetEmployeeForPatchAsync(Guid garageId, Guid employeeId, bool trackChanges)
         {
-            var garage = _repository.Garage.FindById(garageId, garageTrackChanges);
-            if (garage is null)
-                return new GarageNotFoundResponse(garageId);
+            var result = await CheckIfGarageExist(garageId, trackChanges);
 
-            var employeeEntity = _repository.Employee.FindById(garageId, employeeId, employeeTrackChanges);
-            if (employeeEntity is null)
-                return new EmployeeNotFoundResponse(employeeId);
+            if (!result.Success) return result;
 
-            var employeeToPatch = _mapper.Map<EmployeeForUpdateDto>(employeeEntity);
+            result = await GetEmployeeForGarageAndCheckIfExists(garageId, employeeId, trackChanges);
 
-            employeePatchDoc.ApplyTo(employeeToPatch);
+            if (!result.Success) return result;
 
-            _mapper.Map(employeeToPatch, employeeEntity);
-            _repository.Save();
+            var employeeEntity = result.GetResult<Employee>();
 
-            return new ApiNoContentResponse();
+            var employeeForPatch = _mapper.Map<EmployeeForUpdateDto>(employeeEntity);
+
+            return new ApiOkResponse<EmployeeForUpdateDto>(employeeForPatch);
         }
     }
 }

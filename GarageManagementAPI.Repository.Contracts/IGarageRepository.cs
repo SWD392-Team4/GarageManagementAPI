@@ -4,6 +4,6 @@ namespace GarageManagementAPI.Repository.Contracts
 {
     public interface IGarageRepository : IRepositoryBase<Garage>
     {
-        IEnumerable<Garage> GetAllGarages(bool trackChanges);
+        Task<IEnumerable<Garage>> GetAllGaragesAsync(bool trackChanges);
     }
 }

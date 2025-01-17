@@ -6,6 +6,6 @@
 
         IEmployeeRepository Employee { get; }
 
-        void Save();
+        Task SaveAsync();
     }
 }

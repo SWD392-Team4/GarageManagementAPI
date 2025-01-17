@@ -5,12 +5,19 @@ namespace GarageManagementAPI.Service.Contracts
 {
     public interface IGarageService
     {
-        ApiBaseResponse GetAllGarages(bool trackChanges);
+        Task<ApiBaseResponse> GetAllGaragesAsync(bool trackChanges);
 
-        ApiBaseResponse GetGarage(Guid id, bool trackChanges);
+        Task<ApiBaseResponse> GetGarageAsync(Guid garageId, bool trackChanges);
 
-        ApiBaseResponse CreateGarage(GarageForCreationDto garageForCreationDto);
+        Task<ApiBaseResponse> CreateGarageAsync(GarageForCreationDto garageForCreationDto);
 
-        ApiBaseResponse UpdateGarage(Guid garageId, GarageForUpdateDto garageForUpdateDto, bool trackChanges);
+        Task<ApiBaseResponse> UpdateGarageAsync(
+            Guid garageId,
+            GarageForUpdateDto garageForUpdateDto,
+            bool trackChanges);
+
+        Task<ApiBaseResponse> GetGarageForPatchAsync(
+            Guid garageId,
+            bool trackChanges);
     }
 }

@@ -2,6 +2,7 @@
 using GarageManagementAPI.Entities.Models;
 using GarageManagementAPI.Repository.Contracts;
 using GarageManagementAPI.Service.Contracts;
+using GarageManagementAPI.Service.Extension;
 using GarageManagementAPI.Shared.DataTransferObjects.Garage;
 using GarageManagementAPI.Shared.Responses;
 using GarageManagementAPI.Shared.Responses.GarageErrorResponse;
@@ -18,22 +19,29 @@ namespace GarageManagementAPI.Service
             _repository = repository;
             _mapper = mapper;
         }
+        private async Task<ApiBaseResponse> GetGarageAndCheckIfItExists(Guid garageId, bool trackChanges)
+        {
+            var garage = await _repository.Garage.FindByIdAsync(garageId, trackChanges);
+            if (garage is null)
+                return new GarageNotFoundResponse(garageId);
 
-        public ApiBaseResponse CreateGarage(GarageForCreationDto garageForCreationDto)
+            return new ApiOkResponse<Garage>(garage);
+        }
+        public async Task<ApiBaseResponse> CreateGarageAsync(GarageForCreationDto garageForCreationDto)
         {
             var garageEntity = _mapper.Map<Garage>(garageForCreationDto);
 
             _repository.Garage.Create(garageEntity);
-            _repository.Save();
+            await _repository.SaveAsync();
 
             var garageToReturn = _mapper.Map<GarageDto>(garageEntity);
 
             return new ApiOkResponse<GarageDto>(garageToReturn); ;
         }
 
-        public ApiBaseResponse GetAllGarages(bool trackChanges)
+        public async Task<ApiBaseResponse> GetAllGaragesAsync(bool trackChanges)
         {
-            var garages = _repository.Garage.GetAllGarages(trackChanges);
+            var garages = await _repository.Garage.GetAllGaragesAsync(trackChanges);
 
             var garagesDto = _mapper.Map<IEnumerable<GarageDto>>(garages);
 
@@ -41,27 +49,47 @@ namespace GarageManagementAPI.Service
 
         }
 
-        public ApiBaseResponse GetGarage(Guid id, bool trackChanges)
+        public async Task<ApiBaseResponse> GetGarageAsync(Guid garageId, bool trackChanges)
         {
-            var garage = _repository.Garage.FindById(id, trackChanges);
-            if (garage is null)
-                return new GarageNotFoundResponse(id);
+            var result = await GetGarageAndCheckIfItExists(garageId, trackChanges);
+
+            if (!result.Success) return result;
+
+            var garage = result.GetResult<Garage>();
 
             var garageDto = _mapper.Map<GarageDto>(garage);
 
             return new ApiOkResponse<GarageDto>(garageDto);
         }
 
-        public ApiBaseResponse UpdateGarage(Guid garageId, GarageForUpdateDto garageForUpdateDto, bool trackChanges)
+        public async Task<ApiBaseResponse> UpdateGarageAsync(
+            Guid garageId,
+            GarageForUpdateDto garageForUpdateDto,
+            bool trackChanges)
         {
-            var garageEntity = _repository.Garage.FindById(garageId, trackChanges);
-            if (garageEntity is null)
-                return new GarageNotFoundResponse(garageId);
+            var result = await GetGarageAndCheckIfItExists(garageId, trackChanges);
+
+            if (!result.Success) return result;
+
+            var garageEntity = result.GetResult<Garage>();
 
             _mapper.Map(garageForUpdateDto, garageEntity);
-            _repository.Save();
+            await _repository.SaveAsync();
 
             return new ApiNoContentResponse();
+        }
+
+        public async Task<ApiBaseResponse> GetGarageForPatchAsync(Guid garageId, bool trackChanges)
+        {
+            var result = await GetGarageAndCheckIfItExists(garageId, trackChanges);
+
+            if (!result.Success) return result;
+
+            var garageEntity = result.GetResult<Garage>();
+
+            var garageForPatch = _mapper.Map<GarageForUpdateDto>(garageEntity);
+
+            return new ApiOkResponse<GarageForUpdateDto>(garageForPatch);
         }
     }
 }

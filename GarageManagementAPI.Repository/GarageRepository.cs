@@ -1,5 +1,6 @@
 ﻿using GarageManagementAPI.Entities.Models;
 using GarageManagementAPI.Repository.Contracts;
+using Microsoft.EntityFrameworkCore;
 
 namespace GarageManagementAPI.Repository
 {
@@ -9,9 +10,9 @@ namespace GarageManagementAPI.Repository
         {
         }
 
-        public IEnumerable<Garage> GetAllGarages(bool trackChanges) =>
-            FindAll(trackChanges)
+        public async Task<IEnumerable<Garage>> GetAllGaragesAsync(bool trackChanges) =>
+           await FindAll(trackChanges)
             .OrderBy(g => g.Name)
-            .ToList();
+            .ToListAsync();
     }
 }

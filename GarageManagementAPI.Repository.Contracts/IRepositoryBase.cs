@@ -4,7 +4,7 @@ namespace GarageManagementAPI.Repository.Contracts
 {
     public interface IRepositoryBase<T>
     {
-        T? FindById(Guid id, bool trackChanges);
+        Task<T?> FindByIdAsync(Guid id, bool trackChanges);
 
         IQueryable<T> FindAll(bool trackChanges);
 

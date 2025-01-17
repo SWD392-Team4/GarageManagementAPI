@@ -1,5 +1,8 @@
 ﻿using GarageManagementAPI.Entities.Models;
 using GarageManagementAPI.Repository.Contracts;
+using GarageManagementAPI.Shared.RequestFeatures;
+using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.Design;
 
 namespace GarageManagementAPI.Repository
 {
@@ -9,13 +12,34 @@ namespace GarageManagementAPI.Repository
         {
         }
 
-        public IEnumerable<Employee> GetEmployees(Guid garageId, bool trackChanges)
-            => FindByCondition(e => e.GarageId.Equals(garageId), trackChanges)
-            .OrderBy(e => e.Name).ToList();
+        public async Task<PagedList<Employee>> GetEmployeesAsync(
+            Guid garageId,
+            EmployeeParameters employeeParameters,
+            bool trackChanges)
+        {
+            var employees = await FindByCondition(e =>
+            e.GarageId.Equals(garageId),
+                trackChanges)
+            .OrderBy(e => e.Name)
+            .Skip((employeeParameters.PageNumber - 1) * employeeParameters.PageSize)
+            .Take(employeeParameters.PageSize)
+            .ToListAsync();
 
-        public Employee? FindById(Guid garageId, Guid employeeId, bool trackChanges)
-            => FindByCondition(e => e.GarageId.Equals(garageId) && e.Id.Equals(employeeId), trackChanges)
-            .SingleOrDefault();
+            var count = await FindByCondition(e => e.GarageId.Equals(garageId), trackChanges).CountAsync();
+
+
+            return new PagedList<Employee>(
+                employees,
+                count,
+                employeeParameters.PageNumber,
+                employeeParameters.PageSize);
+        }
+
+        public async Task<Employee?> FindByIdAsync(Guid garageId, Guid employeeId, bool trackChanges)
+            => await FindByCondition(e =>
+            e.GarageId.Equals(garageId) && e.Id.Equals(employeeId),
+                trackChanges)
+            .SingleOrDefaultAsync();
 
         public void Create(Guid garageId, Employee employee)
         {
