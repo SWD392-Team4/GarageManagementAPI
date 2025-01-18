@@ -9,6 +9,7 @@ builder.Services.ConfigureCors();
 builder.Services.ConfigureIISIntegration();
 builder.Services.ConfigureRepositoryManager();
 builder.Services.ConfigureServiceManager();
+builder.Services.ConfigureDataShaperManager();
 builder.Services.ConfigureSqlContext(builder.Configuration);
 builder.Services.ConfigureApiBehavior();
 builder.Services.ConfigureController();

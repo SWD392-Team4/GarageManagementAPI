@@ -1,4 +1,5 @@
-﻿using GarageManagementAPI.Entities.Models;
+﻿using Bogus;
+using GarageManagementAPI.Entities.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -9,6 +10,7 @@ namespace GarageManagementAPI.Repository.Configuration
 
         protected override void SeedData(EntityTypeBuilder<Garage> builder)
         {
+            
             builder.HasData
             (
                 new Garage

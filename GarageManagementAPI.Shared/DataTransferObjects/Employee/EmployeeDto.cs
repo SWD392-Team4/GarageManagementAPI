@@ -1,8 +1,9 @@
 ﻿using GarageManagementAPI.Shared.Enum;
+using System.Reflection;
 
 namespace GarageManagementAPI.Shared.DataTransferObjects.Employee
 {
-    public record EmployeeDto
+    public record EmployeeDto : BaseDto<EmployeeDtoWithRelation>
     {
         public Guid Id { get; init; }
 
@@ -24,7 +25,7 @@ namespace GarageManagementAPI.Shared.DataTransferObjects.Employee
 
         public SystemRole Role { get; init; }
 
-        public Guid GarageId { get; init; }
     }
+
 
 }

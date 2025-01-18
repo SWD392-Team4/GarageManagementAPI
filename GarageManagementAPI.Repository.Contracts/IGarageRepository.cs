@@ -1,9 +1,12 @@
 ﻿using GarageManagementAPI.Entities.Models;
+using GarageManagementAPI.Shared.RequestFeatures;
 
 namespace GarageManagementAPI.Repository.Contracts
 {
     public interface IGarageRepository : IRepositoryBase<Garage>
     {
-        Task<IEnumerable<Garage>> GetAllGaragesAsync(bool trackChanges);
+        Task<PagedList<Garage>> GetAllGaragesAsync(
+            GarageParameters garageParameters,
+            bool trackChanges);
     }
 }

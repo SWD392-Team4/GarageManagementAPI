@@ -69,7 +69,7 @@ namespace GarageManagementAPI.Application.Migrations
 
                     b.HasIndex("GarageId");
 
-                    b.ToTable("Employees");
+                    b.ToTable("Employees", (string)null);
 
                     b.HasData(
                         new
@@ -154,7 +154,7 @@ namespace GarageManagementAPI.Application.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Garages");
+                    b.ToTable("Garages", (string)null);
 
                     b.HasData(
                         new

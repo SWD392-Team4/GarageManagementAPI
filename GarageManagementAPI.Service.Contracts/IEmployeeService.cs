@@ -14,6 +14,7 @@ namespace GarageManagementAPI.Service.Contracts
         Task<ApiBaseResponse> GetEmployeeAsync(
             Guid garageId,
             Guid employeeId,
+            EmployeeParameters employeeParameters,
             bool trackChanges);
 
         Task<ApiBaseResponse> CreateEmployeeForGarageAsync(

@@ -1,9 +1,12 @@
-﻿using GarageManagementAPI.Presentation.ActionFilters;
-using GarageManagementAPI.Presentation.Extensions;
+﻿using GarageManagementAPI.Presentation.Extensions;
 using GarageManagementAPI.Service.Contracts;
 using GarageManagementAPI.Shared.DataTransferObjects.Garage;
+using GarageManagementAPI.Shared.RequestFeatures;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
+using System.Dynamic;
+using System.Text.Json;
 
 namespace GarageManagementAPI.Presentation.Controllers
 {
@@ -19,24 +22,33 @@ namespace GarageManagementAPI.Presentation.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetGarages()
+        public async Task<IActionResult> GetGarages([FromQuery] GarageParameters garageParameters)
         {
-            var baseResult = await _service.GarageService.GetAllGaragesAsync(false);
+            var baseResult = await _service.GarageService.GetAllGaragesAsync(
+                garageParameters: garageParameters,
+                trackChanges: false);
 
-            var garages = baseResult.GetResult<IEnumerable<GarageDto>>();
+            var pagedResult = baseResult.GetResult<PageInfo>();
 
-            return Ok(garages);
+            Response.Headers.Append("X-Pagination", JsonSerializer.Serialize(pagedResult.MetaData));
+
+            return Ok(pagedResult.items);
         }
 
         [HttpGet("{garageId:guid}", Name = "GarageById")]
-        public async Task<IActionResult> GetGarage(Guid garageId)
+        public async Task<IActionResult> GetGarage(
+            Guid garageId,
+            [FromQuery] GarageParameters garageParameters)
         {
-            var baseResult = await _service.GarageService.GetGarageAsync(garageId, false);
+            var baseResult = await _service.GarageService.GetGarageAsync(
+                garageId,
+                garageParameters,
+                false);
 
             if (!baseResult.Success)
                 return await ProcessError(baseResult);
 
-            var garage = baseResult.GetResult<GarageDto>();
+            var garage = baseResult.GetResult<ExpandoObject>();
 
             return Ok(garage);
         }
@@ -48,7 +60,7 @@ namespace GarageManagementAPI.Presentation.Controllers
 
             var baseResult = await _service.GarageService.CreateGarageAsync(garageForCreationDto);
 
-            var createdGarage = baseResult.GetResult<GarageDto>();
+            var createdGarage = baseResult.GetResult<GarageDtoWithRelation>();
 
             return CreatedAtRoute("GarageById", new { garageId = createdGarage.Id }, createdGarage);
         }

@@ -5,7 +5,7 @@ using System.Linq.Expressions;
 
 namespace GarageManagementAPI.Repository
 {
-    public abstract class RepositoryBase<T> : IRepositoryBase<T> where T : BaseEntity
+    public abstract class RepositoryBase<T> : IRepositoryBase<T> where T : BaseEntity<T>
     {
         protected RepositoryContext RepositoryContext;
 

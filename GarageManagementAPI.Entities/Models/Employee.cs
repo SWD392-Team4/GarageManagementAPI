@@ -2,7 +2,7 @@
 
 namespace GarageManagementAPI.Entities.Models
 {
-    public class Employee : BaseEntity
+    public class Employee : BaseEntity<Employee>
     {
         public required string Name { get; set; }
 

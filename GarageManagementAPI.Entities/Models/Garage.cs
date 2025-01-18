@@ -1,6 +1,9 @@
-﻿namespace GarageManagementAPI.Entities.Models
+﻿using GarageManagementAPI.Shared.CustomAttribute;
+using System.Text.Json.Serialization;
+
+namespace GarageManagementAPI.Entities.Models
 {
-    public class Garage : BaseEntity
+    public class Garage : BaseEntity<Garage>
     {
         public required string Name { get; set; }
 
