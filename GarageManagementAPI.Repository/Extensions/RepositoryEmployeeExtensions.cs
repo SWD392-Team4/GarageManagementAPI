@@ -2,6 +2,7 @@
 using GarageManagementAPI.Repository.Extensions.Utility;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Dynamic.Core;
+using System.Reflection;
 
 namespace GarageManagementAPI.Repository.Extensions
 {
@@ -29,7 +30,8 @@ namespace GarageManagementAPI.Repository.Extensions
             if (string.IsNullOrWhiteSpace(orderQuery))
                 return employees.OrderBy(e => e.Name);
 
-            return employees.OrderBy(orderQuery);
+            return employees.OrderBy(orderQuery);
+
         }
 
         public static IQueryable<Employee> Includes(this IQueryable<Employee> employees, string? fieldsString)
@@ -39,19 +41,31 @@ namespace GarageManagementAPI.Repository.Extensions
                 return employees;
             }
 
+            // Tách các trường từ fieldsString
             var fields = fieldsString.Split(',', StringSplitOptions.RemoveEmptyEntries);
 
+            // Duyệt qua các trường và thêm Include nếu là quan hệ điều hướng hợp lệ
             foreach (var field in fields)
             {
-                if (Employee.PropertyInfos.Any(pi =>
-                pi.Name
-                .Equals(
-                    field.Trim(),
-                    StringComparison.InvariantCultureIgnoreCase)))
-                    employees = employees.Include(field);
+                var property = Employee.PropertyInfos
+                    .FirstOrDefault(pi => pi.Name.Equals(field.Trim(), StringComparison.InvariantCultureIgnoreCase));
+
+                if (property != null && IsNavigationProperty(property))
+                {
+                    employees = employees.Include(field.Trim());
+                }
             }
 
-            return employees.AsNoTracking();
+            // Projection kết quả
+            return employees;
+        }
+
+
+        // Kiểm tra xem một property có phải là quan hệ điều hướng hay không
+        private static bool IsNavigationProperty(PropertyInfo property)
+        {
+            return typeof(IEnumerable<>).IsAssignableFrom(property.PropertyType)
+                   || (property.PropertyType.IsClass && property.PropertyType != typeof(string));
         }
     }
 }

@@ -72,7 +72,7 @@ namespace GarageManagementAPI.Presentation.Controllers
                 employeeForCreationDto: employeeForCreationDto,
                 trackChanges: false);
 
-            var createdEmployee = baseResult.GetResult<EmployeeDto>();
+            var createdEmployee = baseResult.GetResult<EmployeeDtoWithRelation>();
 
             return CreatedAtRoute("GetEmployeeForGarage", new
             {

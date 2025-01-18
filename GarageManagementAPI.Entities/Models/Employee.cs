@@ -1,7 +1,4 @@
-﻿using GarageManagementAPI.Shared.CustomAttribute;
-using GarageManagementAPI.Shared.Enum;
-using System.Reflection;
-using System.Text.Json.Serialization;
+﻿using GarageManagementAPI.Shared.Enum;
 
 namespace GarageManagementAPI.Entities.Models
 {
@@ -27,7 +24,6 @@ namespace GarageManagementAPI.Entities.Models
 
         public Guid GarageId { get; set; }
 
-        [ExcludeFromProjection]
         public Garage? Garage { get; set; }
 
     }

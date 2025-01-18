@@ -1,4 +1,5 @@
 ﻿using GarageManagementAPI.Shared.CustomAttribute;
+using System.Text.Json.Serialization;
 
 namespace GarageManagementAPI.Entities.Models
 {
@@ -12,8 +13,6 @@ namespace GarageManagementAPI.Entities.Models
 
         public required string PhoneNumber { get; set; }
 
-        [ExcludeFromProjection]
-        [ChildObject]
         public ICollection<Employee>? Employees { get; set; }
     }
 }

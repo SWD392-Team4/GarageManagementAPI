@@ -60,7 +60,7 @@ namespace GarageManagementAPI.Presentation.Controllers
 
             var baseResult = await _service.GarageService.CreateGarageAsync(garageForCreationDto);
 
-            var createdGarage = baseResult.GetResult<GarageDto>();
+            var createdGarage = baseResult.GetResult<GarageDtoWithRelation>();
 
             return CreatedAtRoute("GarageById", new { garageId = createdGarage.Id }, createdGarage);
         }

@@ -52,12 +52,11 @@ namespace GarageManagementAPI.Service
         {
             var garagesWithMetaData = await _repository.Garage.GetAllGaragesAsync(garageParameters, trackChanges);
 
-            var garagesDto = _mapper.Map<IEnumerable<GarageDto>>(garagesWithMetaData);
+            var garagesDto = _mapper.Map<IEnumerable<GarageDtoWithRelation>>(garagesWithMetaData);
 
             var shapedDto = _dataShaper.GarageShaper.ShapeData(garagesDto, garageParameters.Fields);
 
             var pageInfo = new PageInfo(shapedDto, garagesWithMetaData.MetaData);
-
             return new ApiOkResponse<PageInfo>(pageInfo);
 
         }
@@ -73,7 +72,7 @@ namespace GarageManagementAPI.Service
 
             var garage = result.GetResult<Garage>();
 
-            var garageDto = _mapper.Map<GarageDto>(garage);
+            var garageDto =  _mapper.Map<GarageDtoWithRelation>(garage) ;
 
             var shapedDto = _dataShaper.GarageShaper.ShapeData(garageDto, garageParameters.Fields);
 

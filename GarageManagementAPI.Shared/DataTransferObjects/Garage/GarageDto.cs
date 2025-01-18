@@ -1,8 +1,6 @@
-﻿using GarageManagementAPI.Shared.DataTransferObjects.Employee;
-
-namespace GarageManagementAPI.Shared.DataTransferObjects.Garage
+﻿namespace GarageManagementAPI.Shared.DataTransferObjects.Garage
 {
-    public record GarageDto : BaseDto<GarageDto>
+    public record GarageDto : BaseDto<GarageDtoWithRelation>
     {
         public required Guid Id { get; init; }
         public required string Name { get; init; }
@@ -13,6 +11,5 @@ namespace GarageManagementAPI.Shared.DataTransferObjects.Garage
 
         public required string PhoneNumber { get; init; }
 
-        public IEnumerable<EmployeeDto>? Employees { get; init; }
     }
 }

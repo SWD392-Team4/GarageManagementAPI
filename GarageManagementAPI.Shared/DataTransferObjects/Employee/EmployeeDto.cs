@@ -1,10 +1,9 @@
-﻿using GarageManagementAPI.Shared.DataTransferObjects.Garage;
-using GarageManagementAPI.Shared.Enum;
-using System.Text.Json.Serialization;
+﻿using GarageManagementAPI.Shared.Enum;
+using System.Reflection;
 
 namespace GarageManagementAPI.Shared.DataTransferObjects.Employee
 {
-    public record EmployeeDto : BaseDto<EmployeeDto>
+    public record EmployeeDto : BaseDto<EmployeeDtoWithRelation>
     {
         public Guid Id { get; init; }
 
@@ -26,9 +25,7 @@ namespace GarageManagementAPI.Shared.DataTransferObjects.Employee
 
         public SystemRole Role { get; init; }
 
-        public Guid GarageId { get; init; }
-
-        public GarageDto? Garage { get; init; }
     }
+
 
 }

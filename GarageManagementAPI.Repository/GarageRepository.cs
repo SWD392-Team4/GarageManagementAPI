@@ -1,4 +1,5 @@
-﻿using GarageManagementAPI.Entities.Models;
+﻿using Bogus;
+using GarageManagementAPI.Entities.Models;
 using GarageManagementAPI.Repository.Contracts;
 using GarageManagementAPI.Repository.Extensions;
 using GarageManagementAPI.Shared.RequestFeatures;

@@ -81,7 +81,7 @@ namespace GarageManagementAPI.Service
 
             var employeeEntity = result.GetResult<Employee>();
 
-            var employee = _mapper.Map<EmployeeDto>(employeeEntity);
+            var employee = _mapper.Map<EmployeeDtoWithRelation>(employeeEntity);
 
             var shapedDto = _dataShaper
                 .EmployeeShaper.ShapeData(employee, employeeParameters.Fields);
@@ -104,7 +104,7 @@ namespace GarageManagementAPI.Service
                 employeeParameters: employeeParameters,
                 trackChanges: trackChanges);
 
-            var employeesDto = _mapper.Map<IEnumerable<EmployeeDto>>(employeesWithMetaData);
+            var employeesDto = _mapper.Map<IEnumerable<EmployeeDtoWithRelation>>(employeesWithMetaData);
 
             var shapedDto = _dataShaper
                 .EmployeeShaper.ShapeData(employeesDto, employeeParameters.Fields);

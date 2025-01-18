@@ -68,8 +68,6 @@ namespace GarageManagementAPI.Application.Extensions
             {
                 options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
                 options.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
-                options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
-
             })
             .AddApplicationPart(typeof(GarageManagementAPI.Presentation.AssemblyReference).Assembly);
 
