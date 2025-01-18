@@ -1,8 +1,11 @@
-﻿using GarageManagementAPI.Shared.Enum;
+﻿using GarageManagementAPI.Shared.CustomAttribute;
+using GarageManagementAPI.Shared.Enum;
+using System.Reflection;
+using System.Text.Json.Serialization;
 
 namespace GarageManagementAPI.Entities.Models
 {
-    public class Employee : BaseEntity
+    public class Employee : BaseEntity<Employee>
     {
         public required string Name { get; set; }
 
@@ -24,6 +27,7 @@ namespace GarageManagementAPI.Entities.Models
 
         public Guid GarageId { get; set; }
 
+        [ExcludeFromProjection]
         public Garage? Garage { get; set; }
 
     }

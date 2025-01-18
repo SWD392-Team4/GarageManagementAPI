@@ -9,7 +9,12 @@ namespace GarageManagementAPI.Application
     {
         public MappingProfile()
         {
-            CreateMap<Garage, GarageDto>();
+            CreateMap<Garage, GarageDto>()
+                .ForMember(garageDto =>
+                garageDto.Employees, opts =>
+                    opts.Condition(
+                        (src, dest, srcMember) =>
+                        srcMember != null && srcMember.Any()));
             CreateMap<GarageForCreationDto, Garage>();
             CreateMap<GarageForUpdateDto, Garage>().ReverseMap();
 

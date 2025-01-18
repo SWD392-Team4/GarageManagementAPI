@@ -3,6 +3,7 @@ using GarageManagementAPI.Repository;
 using GarageManagementAPI.Repository.Contracts;
 using GarageManagementAPI.Service;
 using GarageManagementAPI.Service.Contracts;
+using GarageManagementAPI.Service.DataShaping;
 using GarageManagementAPI.Shared.ErrorModel;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Formatters;
@@ -23,7 +24,7 @@ namespace GarageManagementAPI.Application.Extensions
         public static void ConfigureCors(this IServiceCollection services) =>
             services.AddCors(options =>
             {
-                options.AddPolicy("CorPolicy", builder =>
+                options.AddPolicy("CorsPolicy", builder =>
                 builder.AllowAnyOrigin()
                 .AllowAnyMethod()
                 .AllowAnyHeader()
@@ -35,6 +36,9 @@ namespace GarageManagementAPI.Application.Extensions
 
         public static void ConfigureServiceManager(this IServiceCollection services) =>
             services.AddScoped<IServiceManager, ServiceManager>();
+
+        public static void ConfigureDataShaperManager(this IServiceCollection services) =>
+            services.AddScoped<IDataShaperManager, DataShaperManager>();
 
         public static void ConfigureSqlContext(this IServiceCollection services, IConfiguration configuration) =>
             services.AddDbContext<RepositoryContext>(opts => opts.UseSqlServer(configuration.GetConnectionString("sqlConnection")));
@@ -63,6 +67,9 @@ namespace GarageManagementAPI.Application.Extensions
             .AddJsonOptions(options =>
             {
                 options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+                options.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
+                options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+
             })
             .AddApplicationPart(typeof(GarageManagementAPI.Presentation.AssemblyReference).Assembly);
 

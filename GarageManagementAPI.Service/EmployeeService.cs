@@ -8,6 +8,7 @@ using GarageManagementAPI.Shared.RequestFeatures;
 using GarageManagementAPI.Shared.Responses;
 using GarageManagementAPI.Shared.Responses.EmployeeErrorResponse;
 using GarageManagementAPI.Shared.Responses.GarageErrorResponse;
+using System.Dynamic;
 
 namespace GarageManagementAPI.Service
 {
@@ -15,11 +16,16 @@ namespace GarageManagementAPI.Service
     {
         private readonly IRepositoryManager _repository;
         private readonly IMapper _mapper;
+        private readonly IDataShaperManager _dataShaper;
 
-        public EmployeeService(IRepositoryManager repository, IMapper mapper)
+        public EmployeeService(
+            IRepositoryManager repository,
+            IMapper mapper,
+            IDataShaperManager dataShaperManager)
         {
             _repository = repository;
             _mapper = mapper;
+            _dataShaper = dataShaperManager;
         }
 
         private async Task<ApiBaseResponse> CheckIfGarageExist(Guid garageId, bool trackChanges)
@@ -62,6 +68,7 @@ namespace GarageManagementAPI.Service
         public async Task<ApiBaseResponse> GetEmployeeAsync(
             Guid garageId,
             Guid employeeId,
+            EmployeeParameters employeeParameters,
             bool trackChanges)
         {
             var result = await CheckIfGarageExist(garageId, trackChanges);
@@ -76,7 +83,10 @@ namespace GarageManagementAPI.Service
 
             var employee = _mapper.Map<EmployeeDto>(employeeEntity);
 
-            return new ApiOkResponse<EmployeeDto>(employee);
+            var shapedDto = _dataShaper
+                .EmployeeShaper.ShapeData(employee, employeeParameters.Fields);
+
+            return new ApiOkResponse<ExpandoObject>(shapedDto);
         }
 
         public async Task<ApiBaseResponse> GetEmployeesAsync(
@@ -96,7 +106,10 @@ namespace GarageManagementAPI.Service
 
             var employeesDto = _mapper.Map<IEnumerable<EmployeeDto>>(employeesWithMetaData);
 
-            var pageInfo = new PageInfo(employeesDto, employeesWithMetaData.MetaData);
+            var shapedDto = _dataShaper
+                .EmployeeShaper.ShapeData(employeesDto, employeeParameters.Fields);
+
+            var pageInfo = new PageInfo(shapedDto, employeesWithMetaData.MetaData);
 
             return new ApiOkResponse<PageInfo>(pageInfo);
         }

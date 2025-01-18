@@ -4,8 +4,10 @@ using GarageManagementAPI.Repository.Contracts;
 using GarageManagementAPI.Service.Contracts;
 using GarageManagementAPI.Service.Extension;
 using GarageManagementAPI.Shared.DataTransferObjects.Garage;
+using GarageManagementAPI.Shared.RequestFeatures;
 using GarageManagementAPI.Shared.Responses;
 using GarageManagementAPI.Shared.Responses.GarageErrorResponse;
+using System.Dynamic;
 
 namespace GarageManagementAPI.Service
 {
@@ -13,11 +15,16 @@ namespace GarageManagementAPI.Service
     {
         private readonly IRepositoryManager _repository;
         private readonly IMapper _mapper;
+        private readonly IDataShaperManager _dataShaper;
 
-        public GarageService(IRepositoryManager repository, IMapper mapper)
+        public GarageService(
+            IRepositoryManager repository,
+            IMapper mapper,
+            IDataShaperManager dataShaperManager)
         {
             _repository = repository;
             _mapper = mapper;
+            _dataShaper = dataShaperManager;
         }
         private async Task<ApiBaseResponse> GetGarageAndCheckIfItExists(Guid garageId, bool trackChanges)
         {
@@ -39,17 +46,26 @@ namespace GarageManagementAPI.Service
             return new ApiOkResponse<GarageDto>(garageToReturn); ;
         }
 
-        public async Task<ApiBaseResponse> GetAllGaragesAsync(bool trackChanges)
+        public async Task<ApiBaseResponse> GetAllGaragesAsync(
+            GarageParameters garageParameters,
+            bool trackChanges)
         {
-            var garages = await _repository.Garage.GetAllGaragesAsync(trackChanges);
+            var garagesWithMetaData = await _repository.Garage.GetAllGaragesAsync(garageParameters, trackChanges);
 
-            var garagesDto = _mapper.Map<IEnumerable<GarageDto>>(garages);
+            var garagesDto = _mapper.Map<IEnumerable<GarageDto>>(garagesWithMetaData);
 
-            return new ApiOkResponse<IEnumerable<GarageDto>>(garagesDto);
+            var shapedDto = _dataShaper.GarageShaper.ShapeData(garagesDto, garageParameters.Fields);
+
+            var pageInfo = new PageInfo(shapedDto, garagesWithMetaData.MetaData);
+
+            return new ApiOkResponse<PageInfo>(pageInfo);
 
         }
 
-        public async Task<ApiBaseResponse> GetGarageAsync(Guid garageId, bool trackChanges)
+        public async Task<ApiBaseResponse> GetGarageAsync(
+            Guid garageId,
+            GarageParameters garageParameters,
+            bool trackChanges)
         {
             var result = await GetGarageAndCheckIfItExists(garageId, trackChanges);
 
@@ -59,7 +75,9 @@ namespace GarageManagementAPI.Service
 
             var garageDto = _mapper.Map<GarageDto>(garage);
 
-            return new ApiOkResponse<GarageDto>(garageDto);
+            var shapedDto = _dataShaper.GarageShaper.ShapeData(garageDto, garageParameters.Fields);
+
+            return new ApiOkResponse<ExpandoObject>(shapedDto);
         }
 
         public async Task<ApiBaseResponse> UpdateGarageAsync(

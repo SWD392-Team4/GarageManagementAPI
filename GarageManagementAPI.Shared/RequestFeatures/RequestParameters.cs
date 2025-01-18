@@ -4,7 +4,7 @@
     {
         const int maxPageSize = 50;
 
-        private int _pageNumber;
+        private int _pageNumber = 1;
         public int PageNumber
         {
             get
@@ -13,7 +13,9 @@
             }
             set
             {
-                _pageNumber = value > 0 ? value : 1;
+                if (value == 0 || value < 0)
+                    _pageNumber = 1;
+                else _pageNumber = value;
             }
         }
 
@@ -31,6 +33,10 @@
         }
 
         public string? OrderBy { get; set; }
+
+        public string? Fields { get; set; }
+
+        public string? Include { get; set; }
 
     }
 }

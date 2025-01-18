@@ -9,10 +9,16 @@ namespace GarageManagementAPI.Service
         private readonly Lazy<IGarageService> _garageService;
         private readonly Lazy<IEmployeeService> _employeeService;
 
-        public ServiceManager(IRepositoryManager repositoryManager, IMapper mapper)
+        public ServiceManager(
+            IRepositoryManager repositoryManager,
+            IMapper mapper,
+            IDataShaperManager dataShaper)
         {
-            _garageService = new Lazy<IGarageService>(() => new GarageService(repositoryManager, mapper));
-            _employeeService = new Lazy<IEmployeeService>(() => new EmployeeService(repositoryManager, mapper));
+            _garageService = new Lazy<IGarageService>(
+                () => new GarageService(repositoryManager, mapper, dataShaper));
+
+            _employeeService = new Lazy<IEmployeeService>(
+                () => new EmployeeService(repositoryManager, mapper, dataShaper));
         }
         public IGarageService GarageService => _garageService.Value;
 

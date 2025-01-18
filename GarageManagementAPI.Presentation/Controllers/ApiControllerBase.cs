@@ -7,6 +7,7 @@ namespace GarageManagementAPI.Presentation.Controllers
 {
     public class ApiControllerBase : ControllerBase
     {
+        [ApiExplorerSettings(IgnoreApi = true)]
         public Task<IActionResult> ProcessError(ApiBaseResponse baseResponse)
         {
             return baseResponse switch

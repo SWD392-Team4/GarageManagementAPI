@@ -5,6 +5,7 @@ using GarageManagementAPI.Shared.RequestFeatures;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
+using System.Dynamic;
 using System.Text.Json;
 
 namespace GarageManagementAPI.Presentation.Controllers
@@ -40,18 +41,22 @@ namespace GarageManagementAPI.Presentation.Controllers
 
         [HttpGet("{employeeId:guid}", Name = "GetEmployeeForGarage")]
 
-        public async Task<IActionResult> GetEmployeeForGarage(Guid garageId, Guid employeeId)
+        public async Task<IActionResult> GetEmployeeForGarage(
+            Guid garageId,
+            Guid employeeId,
+            [FromQuery] EmployeeParameters employeeParameters)
         {
             var baseResult = await _service.EmployeeService
                 .GetEmployeeAsync(
                 garageId: garageId,
                 employeeId: employeeId,
+                employeeParameters: employeeParameters,
                 trackChanges: false);
 
             if (!baseResult.Success)
                 return await ProcessError(baseResult);
 
-            var employee = baseResult.GetResult<EmployeeDto>();
+            var employee = baseResult.GetResult<ExpandoObject>();
 
             return Ok(employee);
         }

@@ -1,5 +1,6 @@
 ﻿using GarageManagementAPI.Entities.Models;
 using GarageManagementAPI.Repository.Contracts;
+using GarageManagementAPI.Repository.Extensions;
 using GarageManagementAPI.Shared.RequestFeatures;
 using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.Design;
@@ -20,9 +21,11 @@ namespace GarageManagementAPI.Repository
             var employees = await FindByCondition(e =>
             e.GarageId.Equals(garageId),
                 trackChanges)
-            .OrderBy(e => e.Name)
+            .Search(employeeParameters.SearchTerm)
+            .Sort(employeeParameters.OrderBy)
             .Skip((employeeParameters.PageNumber - 1) * employeeParameters.PageSize)
             .Take(employeeParameters.PageSize)
+            .Includes(employeeParameters.Include)
             .ToListAsync();
 
             var count = await FindByCondition(e => e.GarageId.Equals(garageId), trackChanges).CountAsync();
