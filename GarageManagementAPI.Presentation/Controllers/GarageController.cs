@@ -82,7 +82,7 @@ namespace GarageManagementAPI.Presentation.Controllers
         }
 
         [HttpPatch("{garageId:guid}")]
-        public async Task<IActionResult> PartiallyUpdateGarage(Guid garageId, [FromBody] JsonPatchDocument<GarageForUpdateDto> garagePatchDoc)
+        public async Task<IActionResult> PartiallyUpdateGarage(Guid garageId, [FromBody] JsonPatchDocument<GarageForUpdateDto> garageDtoPatchDoc)
         {
             var baseResult = await _service.GarageService
                 .GetGarageForPatchAsync(
@@ -94,7 +94,7 @@ namespace GarageManagementAPI.Presentation.Controllers
 
             var garageToPatch = baseResult.GetResult<GarageForUpdateDto>();
 
-            garagePatchDoc.ApplyTo(garageToPatch, ModelState);
+            garageDtoPatchDoc.ApplyTo(garageToPatch, ModelState);
 
             TryValidateModel(garageToPatch);
             if (!ModelState.IsValid)

@@ -5,6 +5,7 @@ using GarageManagementAPI.Shared.RequestFeatures;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 using System.Dynamic;
 using System.Text.Json;
 
@@ -40,7 +41,6 @@ namespace GarageManagementAPI.Presentation.Controllers
         }
 
         [HttpGet("{employeeId:guid}", Name = "GetEmployeeForGarage")]
-
         public async Task<IActionResult> GetEmployeeForGarage(
             Guid garageId,
             Guid employeeId,
@@ -107,7 +107,7 @@ namespace GarageManagementAPI.Presentation.Controllers
         public async Task<IActionResult> PartiallyUpdateEmployeeForGarage(
             Guid garageId,
             Guid employeeId,
-            [FromBody] JsonPatchDocument<EmployeeForUpdateDto> employeePatchDoc)
+            [FromBody] JsonPatchDocument<EmployeeForUpdateDto> employeeDtoPatchDoc)
         {
             var baseResult = await _service.EmployeeService
                 .GetEmployeeForPatchAsync(
@@ -120,7 +120,7 @@ namespace GarageManagementAPI.Presentation.Controllers
 
             var employeeToPatch = baseResult.GetResult<EmployeeForUpdateDto>();
 
-            employeePatchDoc.ApplyTo(employeeToPatch, ModelState);
+            employeeDtoPatchDoc.ApplyTo(employeeToPatch, ModelState);
 
             TryValidateModel(employeeToPatch);
             if (!ModelState.IsValid)

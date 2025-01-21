@@ -18,7 +18,7 @@ namespace GarageManagementAPI.Presentation.ActionFilters
         public void OnActionExecuting(ActionExecutingContext context)
         {
             var method = context.HttpContext.Request.Method;
-            if (method.Equals("POST") || method.Equals("PUT"))
+            if (method.Equals("POST") || method.Equals("PUT") || method.Equals("PATCH"))
             {
 
                 var param = context.ActionArguments

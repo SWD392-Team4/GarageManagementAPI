@@ -11,7 +11,7 @@ namespace GarageManagementAPI.Repository
 
         public RepositoryBase(RepositoryContext repositoryContext)
         {
-            this.RepositoryContext = repositoryContext;
+            RepositoryContext = repositoryContext;
         }
 
         public async Task<T?> FindByIdAsync(Guid id, bool trackChanges)

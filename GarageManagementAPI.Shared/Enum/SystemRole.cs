@@ -2,7 +2,11 @@
 {
     public enum SystemRole
     {
-        Mechanic,
-        Cashier,
+        Admin = 0,
+        Mechanic = 1,
+        Cashier = 2,
+        Customer = 3,
+        WarehouseManager = 4
+
     }
 }
