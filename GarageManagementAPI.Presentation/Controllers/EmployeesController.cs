@@ -5,7 +5,6 @@ using GarageManagementAPI.Shared.RequestFeatures;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.RateLimiting;
 using System.Dynamic;
 using System.Text.Json;
 
@@ -15,12 +14,8 @@ namespace GarageManagementAPI.Presentation.Controllers
     [ApiController]
     public class EmployeesController : ApiControllerBase
     {
-        private readonly IServiceManager _service;
 
-        public EmployeesController(IServiceManager service)
-        {
-            _service = service;
-        }
+        public EmployeesController(IServiceManager service) : base(service) { }
 
         [HttpGet]
         public async Task<IActionResult> GetEmployeesForGarage(

@@ -14,12 +14,9 @@ namespace GarageManagementAPI.Presentation.Controllers
     [ApiController]
     public class GarageController : ApiControllerBase
     {
-        private readonly IServiceManager _service;
 
-        public GarageController(IServiceManager service)
-        {
-            _service = service;
-        }
+        public GarageController(IServiceManager service) : base(service) { }
+        
 
         [HttpGet]
         public async Task<IActionResult> GetGarages([FromQuery] GarageParameters garageParameters)
