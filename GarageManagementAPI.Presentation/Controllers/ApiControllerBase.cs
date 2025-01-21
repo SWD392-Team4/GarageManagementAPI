@@ -1,4 +1,5 @@
-﻿using GarageManagementAPI.Shared.ErrorModel;
+﻿using GarageManagementAPI.Service.Contracts;
+using GarageManagementAPI.Shared.ErrorModel;
 using GarageManagementAPI.Shared.Responses;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -7,9 +8,18 @@ namespace GarageManagementAPI.Presentation.Controllers
 {
     public class ApiControllerBase : ControllerBase
     {
+        protected IServiceManager _service;
+
+        public ApiControllerBase(IServiceManager service)
+        {
+            _service = service;
+        }
+
         [ApiExplorerSettings(IgnoreApi = true)]
         public Task<IActionResult> ProcessError(ApiBaseResponse baseResponse)
         {
+
+
             return baseResponse switch
             {
                 ApiNotFoundResponse notFoundResponse => Task.FromResult<IActionResult>(
