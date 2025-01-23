@@ -1,41 +1,27 @@
 ﻿using GarageManagementAPI.Service.Contracts;
-using GarageManagementAPI.Shared.ErrorModel;
-using GarageManagementAPI.Shared.Responses;
-using Microsoft.AspNetCore.Http;
+using GarageManagementAPI.Shared.ResultModel;
 using Microsoft.AspNetCore.Mvc;
+using System.Net;
 
 namespace GarageManagementAPI.Presentation.Controllers
 {
     public class ApiControllerBase : ControllerBase
     {
-        protected IServiceManager _service;
-
+        protected readonly IServiceManager _service;
         public ApiControllerBase(IServiceManager service)
         {
             _service = service;
         }
 
         [ApiExplorerSettings(IgnoreApi = true)]
-        public Task<IActionResult> ProcessError(ApiBaseResponse baseResponse)
+        public IActionResult ProcessError(Result result)
         {
 
-
-            return baseResponse switch
+            return result.StatusCode switch
             {
-                ApiNotFoundResponse notFoundResponse => Task.FromResult<IActionResult>(
-                    NotFound(new ErrorDetails
-                    {
-                        Message = notFoundResponse.Message,
-                        StatusCode = StatusCodes.Status404NotFound
-                    })
-                ),
-                ApiBadRequestResponse badRequestResponse => Task.FromResult<IActionResult>(
-                    BadRequest(new ErrorDetails
-                    {
-                        Message = badRequestResponse.Message,
-                        StatusCode = StatusCodes.Status400BadRequest
-                    })
-                ),
+                HttpStatusCode.NotFound => NotFound(result),
+                HttpStatusCode.BadRequest => BadRequest(result)
+                ,
                 _ => throw new NotImplementedException()
             };
         }

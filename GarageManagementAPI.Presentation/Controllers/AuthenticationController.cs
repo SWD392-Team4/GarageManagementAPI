@@ -1,8 +1,7 @@
-﻿using GarageManagementAPI.Presentation.Extensions;
+﻿using FluentValidation;
+using GarageManagementAPI.Presentation.Extensions;
 using GarageManagementAPI.Service.Contracts;
 using GarageManagementAPI.Shared.DataTransferObjects.User;
-using GarageManagementAPI.Shared.ErrorModel;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace GarageManagementAPI.Presentation.Controllers
@@ -13,26 +12,35 @@ namespace GarageManagementAPI.Presentation.Controllers
     {
         public AuthenticationController(IServiceManager service) : base(service) { }
 
-        [HttpPost]
-        public async Task<IActionResult> RegisterUser([FromBody] UserForRegistrationDto userForRegistrationDto)
+        [HttpPost("register")]
+        public async Task<IActionResult> RegisterUser([FromBody] UserForRegistrationDto userForRegistrationDto, IValidator<UserForRegistrationDto> validator)
         {
+            var validationResult = validator.Validate(userForRegistrationDto);
+            if (!validationResult.IsValid)
+                return await validationResult.InvalidResult();
+
             var result = await _service.AuthenticationService.RegisterUser(userForRegistrationDto);
 
-            if (!result.Succeeded) 
+            if (!result.Succeeded)
             {
-                var errors = result.Errors
-                    .Select(ms =>
-                        ms.Description
-                    ).ToList();
-
-                return BadRequest(new ErrorDetails
-                {
-                    StatusCode = StatusCodes.Status400BadRequest,
-                    Message = string.Join(Environment.NewLine, errors)
-                });
+                return await result.InvalidResult();
             }
 
             return Created();
+        }
+
+        [HttpPost("login")]
+        public async Task<IActionResult> LoginUser([FromBody] UserForAuthenticationDto userForAuthenticationDto)
+        {
+            if (!await _service.AuthenticationService.ValidateUser(userForAuthenticationDto))
+                return Unauthorized();
+
+            var tokenDto = await _service.AuthenticationService
+                .CreateToken(populateExp: true);
+
+            return tokenDto.Map(
+                onSuccess: result => Ok(result),
+                onFailure: result => ProcessError(result));
         }
 
     }

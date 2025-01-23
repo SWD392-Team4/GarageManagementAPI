@@ -2,11 +2,8 @@
 using GarageManagementAPI.Service.Contracts;
 using GarageManagementAPI.Shared.DataTransferObjects.Garage;
 using GarageManagementAPI.Shared.RequestFeatures;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
-using System.Dynamic;
-using System.Text.Json;
 
 namespace GarageManagementAPI.Presentation.Controllers
 {
@@ -14,9 +11,7 @@ namespace GarageManagementAPI.Presentation.Controllers
     [ApiController]
     public class GarageController : ApiControllerBase
     {
-
         public GarageController(IServiceManager service) : base(service) { }
-        
 
         [HttpGet]
         public async Task<IActionResult> GetGarages([FromQuery] GarageParameters garageParameters)
@@ -25,11 +20,9 @@ namespace GarageManagementAPI.Presentation.Controllers
                 garageParameters: garageParameters,
                 trackChanges: false);
 
-            var pagedResult = baseResult.GetResult<PageInfo>();
-
-            Response.Headers.Append("X-Pagination", JsonSerializer.Serialize(pagedResult.MetaData));
-
-            return Ok(pagedResult.items);
+            return baseResult.Map(
+                onSuccess: result => Ok(result),
+                onFailure: result => ProcessError(result));
         }
 
         [HttpGet("{garageId:guid}", Name = "GarageById")]
@@ -42,24 +35,24 @@ namespace GarageManagementAPI.Presentation.Controllers
                 garageParameters,
                 false);
 
-            if (!baseResult.Success)
-                return await ProcessError(baseResult);
-
-            var garage = baseResult.GetResult<ExpandoObject>();
-
-            return Ok(garage);
+            return baseResult.Map(
+                onSuccess: result => Ok(result),
+                onFailure: result => ProcessError(result));
         }
 
-        [HttpPost]
+        [HttpPost(Name = "CreateGarage")]
         public async Task<IActionResult> CreateGarage([FromBody] GarageForCreationDto garageForCreationDto)
         {
-            if (garageForCreationDto == null) return BadRequest("GarageForCreationDto is null");
-
             var baseResult = await _service.GarageService.CreateGarageAsync(garageForCreationDto);
 
-            var createdGarage = baseResult.GetResult<GarageDtoWithRelation>();
+            return baseResult.Map(
+                onSuccess: result =>
+                {
+                    var createdGarage = baseResult.GetValue<GarageDtoWithRelation>();
 
-            return CreatedAtRoute("GarageById", new { garageId = createdGarage.Id }, createdGarage);
+                    return CreatedAtRoute("GarageById", new { garageId = createdGarage.Id }, baseResult);
+                },
+                onFailure: result => ProcessError(result));
         }
 
         [HttpPut("{garageId:guid}")]
@@ -71,10 +64,9 @@ namespace GarageManagementAPI.Presentation.Controllers
                 garageForUpdateDto: garageForUpdateDto,
                 trackChanges: true);
 
-            if (!baseResult.Success)
-                return await ProcessError(baseResult);
-
-            return NoContent();
+            return baseResult.Map(
+                onSuccess: result => NoContent(),
+                onFailure: result => ProcessError(result));
 
         }
 
@@ -86,16 +78,16 @@ namespace GarageManagementAPI.Presentation.Controllers
                 garageId: garageId,
                 trackChanges: false);
 
-            if (!baseResult.Success)
-                return await ProcessError(baseResult);
+            if (!baseResult.IsSuccess)
+                return ProcessError(baseResult);
 
-            var garageToPatch = baseResult.GetResult<GarageForUpdateDto>();
+            var garageToPatch = baseResult.GetValue<GarageForUpdateDto>();
 
             garageDtoPatchDoc.ApplyTo(garageToPatch, ModelState);
 
             TryValidateModel(garageToPatch);
             if (!ModelState.IsValid)
-                return UnprocessableEntity(ModelState);
+                return await ModelState.InvalidModelSate();
 
             baseResult = await _service.GarageService
                .UpdateGarageAsync(
@@ -103,10 +95,26 @@ namespace GarageManagementAPI.Presentation.Controllers
                garageForUpdateDto: garageToPatch,
                trackChanges: true);
 
-            if (!baseResult.Success)
-                return await ProcessError(baseResult);
-
-            return NoContent();
+            return baseResult.Map(
+                onSuccess: result => NoContent(),
+                onFailure: result => ProcessError(result));
         }
+
+        [HttpGet("{garageId:guid}/employees")]
+        public async Task<IActionResult> GetEmployees(
+            Guid garageId,
+            [FromQuery] EmployeeParameters employeeParameters)
+        {
+            employeeParameters.GarageId = garageId;
+            var baseResult = await _service.EmployeeService
+                .GetEmployeesAsync(
+                employeeParameters: employeeParameters,
+                trackChanges: false);
+
+            return baseResult.Map(
+                onSuccess: result => Ok(result),
+                onFailure: result => ProcessError(result));
+        }
+
     }
 }

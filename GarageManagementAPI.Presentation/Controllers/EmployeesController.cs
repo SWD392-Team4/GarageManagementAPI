@@ -2,137 +2,117 @@
 using GarageManagementAPI.Service.Contracts;
 using GarageManagementAPI.Shared.DataTransferObjects.Employee;
 using GarageManagementAPI.Shared.RequestFeatures;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
-using System.Dynamic;
-using System.Text.Json;
 
 namespace GarageManagementAPI.Presentation.Controllers
 {
-    [Route("api/garages/{garageId}/employees")]
+    [Route("api/employees")]
     [ApiController]
     public class EmployeesController : ApiControllerBase
     {
-
         public EmployeesController(IServiceManager service) : base(service) { }
 
-        [HttpGet]
-        public async Task<IActionResult> GetEmployeesForGarage(
-            Guid garageId,
-            [FromQuery] EmployeeParameters employeeParameters)
-        {
-            var baseResult = await _service.EmployeeService
-                .GetEmployeesAsync(
-                garageId: garageId,
-                employeeParameters: employeeParameters,
-                trackChanges: false);
-
-            var pagedResult = baseResult.GetResult<PageInfo>();
-
-            Response.Headers.Append("X-Pagination", JsonSerializer.Serialize(pagedResult.MetaData));
-
-            return Ok(pagedResult.items);
-        }
-
-        [HttpGet("{employeeId:guid}", Name = "GetEmployeeForGarage")]
-        public async Task<IActionResult> GetEmployeeForGarage(
-            Guid garageId,
+        [HttpGet("{employeeId:guid}", Name = "GetEmployeeById")]
+        public async Task<IActionResult> GetEmployee(
             Guid employeeId,
             [FromQuery] EmployeeParameters employeeParameters)
         {
             var baseResult = await _service.EmployeeService
                 .GetEmployeeAsync(
-                garageId: garageId,
                 employeeId: employeeId,
                 employeeParameters: employeeParameters,
                 trackChanges: false);
 
-            if (!baseResult.Success)
-                return await ProcessError(baseResult);
+            return baseResult.Map(
+                onSuccess: result => Ok(result),
+                onFailure: result => ProcessError(result));
+        }
 
-            var employee = baseResult.GetResult<ExpandoObject>();
+        [HttpGet]
+        public async Task<IActionResult> GetEmployees(
+            [FromQuery] EmployeeParameters employeeParameters)
+        {
+            var baseResult = await _service.EmployeeService
+                .GetEmployeesAsync(
+                employeeParameters: employeeParameters,
+                trackChanges: false);
 
-            return Ok(employee);
+            return baseResult.Map(
+                onSuccess: result => Ok(result),
+                onFailure: result => ProcessError(result));
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateEmployeeForGarage(
-            Guid garageId,
+        public async Task<IActionResult> CreateEmployee(
             [FromBody] EmployeeForCreationDto employeeForCreationDto)
         {
             var baseResult = await _service.EmployeeService
-                .CreateEmployeeForGarageAsync(
-                garageId: garageId,
+                .CreateEmployeeAsync(
                 employeeForCreationDto: employeeForCreationDto,
                 trackChanges: false);
 
-            var createdEmployee = baseResult.GetResult<EmployeeDtoWithRelation>();
+            return baseResult.Map(
+                onSuccess: result =>
+                {
+                    var createdEmployee = baseResult.GetValue<EmployeeDto>();
 
-            return CreatedAtRoute("GetEmployeeForGarage", new
-            {
-                garageId,
-                employeeId = createdEmployee.Id
-            }, createdEmployee);
-
+                    return CreatedAtRoute("GetEmployeeById", new
+                    {
+                        employeeId = createdEmployee.Id
+                    }, baseResult);
+                },
+                onFailure: result => ProcessError(baseResult));
         }
 
         [HttpPut("{employeeId:guid}")]
-        public async Task<IActionResult> UpdateEmployeeForGarage(
-            Guid garageId,
+        public async Task<IActionResult> UpdateEmployee(
             Guid employeeId,
             [FromBody] EmployeeForUpdateDto employeeForUpdateDto)
         {
             var baseResult = await _service.EmployeeService
-                .UpdateEmployeeForGarageAsync(
-                garageId: garageId,
+                .UpdateEmployeeAsync(
                 employeeId: employeeId,
                 employeeForUpdateDto: employeeForUpdateDto,
-                garageTrackChanges: false,
                 employeeTrackChanges: true);
 
-            if (!baseResult.Success)
-                return await ProcessError(baseResult);
-
-            return NoContent();
+            return baseResult.Map(
+                onSuccess: result => NoContent(),
+                onFailure: result => ProcessError(result));
 
         }
 
         [HttpPatch("{employeeId:guid}")]
         public async Task<IActionResult> PartiallyUpdateEmployeeForGarage(
-            Guid garageId,
             Guid employeeId,
             [FromBody] JsonPatchDocument<EmployeeForUpdateDto> employeeDtoPatchDoc)
         {
             var baseResult = await _service.EmployeeService
                 .GetEmployeeForPatchAsync(
-                garageId: garageId,
                 employeeId: employeeId,
                 false);
 
-            if (!baseResult.Success)
-                return await ProcessError(baseResult);
+            if (!baseResult.IsSuccess)
+                return ProcessError(baseResult);
 
-            var employeeToPatch = baseResult.GetResult<EmployeeForUpdateDto>();
+            var employeeToPatch = baseResult.GetValue<EmployeeForUpdateDto>();
 
             employeeDtoPatchDoc.ApplyTo(employeeToPatch, ModelState);
 
             TryValidateModel(employeeToPatch);
             if (!ModelState.IsValid)
-                return ModelState.InvalidModelSate();
+                return await ModelState.InvalidModelSate();
 
             baseResult = await _service.EmployeeService
-               .UpdateEmployeeForGarageAsync(
-               garageId: garageId,
+               .UpdateEmployeeAsync(
                employeeId: employeeId,
                employeeForUpdateDto: employeeToPatch,
-               garageTrackChanges: false,
                employeeTrackChanges: true);
 
-            if (!baseResult.Success)
-                return await ProcessError(baseResult);
-
-            return NoContent();
+            return baseResult.Map(
+                onSuccess: result => NoContent(),
+                onFailure: result => ProcessError(result)
+                );
         }
 
 

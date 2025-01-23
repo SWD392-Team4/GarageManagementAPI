@@ -1,5 +1,5 @@
 ﻿using GarageManagementAPI.Entities.Models;
-using GarageManagementAPI.Shared.Enum;
+using GarageManagementAPI.Shared.Constant;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace GarageManagementAPI.Repository.Configuration
@@ -8,11 +8,7 @@ namespace GarageManagementAPI.Repository.Configuration
     {
         protected override void ModelCreating(EntityTypeBuilder<Employee> builder)
         {
-            builder.Property(e => e.Status)
-               .HasConversion<string>();
 
-            builder.Property(e => e.Role)
-               .HasConversion<string>();
         }
 
         protected override void SeedData(EntityTypeBuilder<Employee> builder)
@@ -31,7 +27,7 @@ namespace GarageManagementAPI.Repository.Configuration
                     Email = "nightfury455@gmail.com",
                     Gender = true,
                     Role = SystemRole.Mechanic,
-                    Status = EmployeeStatus.Active
+                    Status = SystemStatus.Active
                 },
                 new Employee
                 {
@@ -45,7 +41,7 @@ namespace GarageManagementAPI.Repository.Configuration
                     Email = "huyhanhoppo@gmail.com",
                     Gender = true,
                     Role = SystemRole.Cashier,
-                    Status = EmployeeStatus.Active
+                    Status = SystemStatus.Active
                 }, new Employee
                 {
                     Id = new Guid("021ca3c1-0deb-4afd-ae94-2159a8479811"),
@@ -58,7 +54,7 @@ namespace GarageManagementAPI.Repository.Configuration
                     Email = "nhntan124@gmail.com",
                     Gender = true,
                     Role = SystemRole.Cashier,
-                    Status = EmployeeStatus.Active
+                    Status = SystemStatus.Active
                 }, new Employee
                 {
                     Id = new Guid("58a4c24b-7a4d-48f4-b793-a35a1d88c4d5"),
@@ -71,7 +67,7 @@ namespace GarageManagementAPI.Repository.Configuration
                     Email = "nhnkhanh@gmail.com",
                     Gender = true,
                     Role = SystemRole.Mechanic,
-                    Status = EmployeeStatus.Active
+                    Status = SystemStatus.Active
                 }
             );
         }

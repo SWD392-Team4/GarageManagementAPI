@@ -1,9 +1,11 @@
 ﻿using AutoMapper;
+using GarageManagementAPI.Entities.ConfigurationModels;
 using GarageManagementAPI.Entities.Models;
 using GarageManagementAPI.Repository.Contracts;
 using GarageManagementAPI.Service.Contracts;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Options;
 
 namespace GarageManagementAPI.Service
 {
@@ -18,25 +20,25 @@ namespace GarageManagementAPI.Service
             IMapper mapper,
             IDataShaperManager dataShaper,
             UserManager<User> userManager,
-            IConfiguration configuration)
+            IOptionsSnapshot<JwtConfiguration> jwtConfiguration)
         {
             _garageService = new Lazy<IGarageService>(
                 () => new GarageService(
-                    repositoryManager, 
-                    mapper, 
+                    repositoryManager,
+                    mapper,
                     dataShaper));
 
             _employeeService = new Lazy<IEmployeeService>(
                 () => new EmployeeService(
-                    repositoryManager, 
-                    mapper, 
+                    repositoryManager,
+                    mapper,
                     dataShaper));
 
             _authenticationService = new Lazy<IAuthenticationService>(
                 () => new AuthenticationService(
                     mapper,
                     userManager,
-                    configuration));
+                    jwtConfiguration));
         }
         public IGarageService GarageService => _garageService.Value;
 

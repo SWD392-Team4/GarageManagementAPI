@@ -1,11 +1,14 @@
-﻿using GarageManagementAPI.Entities.Models;
+﻿using FluentValidation;
+using GarageManagementAPI.Entities.ConfigurationModels;
+using GarageManagementAPI.Entities.Models;
 using GarageManagementAPI.Presentation.ActionFilters;
 using GarageManagementAPI.Repository;
 using GarageManagementAPI.Repository.Contracts;
 using GarageManagementAPI.Service;
 using GarageManagementAPI.Service.Contracts;
 using GarageManagementAPI.Service.DataShaping;
-using GarageManagementAPI.Shared.ErrorModel;
+using GarageManagementAPI.Shared.Constant.Request;
+using GarageManagementAPI.Shared.ResultModel;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -13,6 +16,8 @@ using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
+using System.Net;
 using System.Text;
 using System.Text.Json.Serialization;
 using System.Threading.RateLimiting;
@@ -76,7 +81,6 @@ namespace GarageManagementAPI.Application.Extensions
             })
             .AddJsonOptions(options =>
             {
-                options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
                 options.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
             })
             .AddApplicationPart(typeof(GarageManagementAPI.Presentation.AssemblyReference).Assembly);
@@ -110,20 +114,20 @@ namespace GarageManagementAPI.Application.Extensions
                     context.HttpContext.Response.StatusCode = StatusCodes.Status429TooManyRequests;
 
                     if (context.Lease.TryGetMetadata(MetadataName.RetryAfter, out var retryAfter))
-                        await context.HttpContext.Response.WriteAsync(new ErrorDetails()
-                        {
-                            StatusCode = StatusCodes.Status429TooManyRequests,
-                            Message = $"Too many requests. Please try again after {retryAfter.TotalSeconds} second(s)."
-                        }.ToString(),
-                        token);
-                    else
-                        await context.HttpContext.Response.WriteAsync(new ErrorDetails()
-                        {
-                            StatusCode = StatusCodes.Status429TooManyRequests,
-                            Message = $"Too many requests. Please try again later."
-                        }.ToString(),
-                        token);
+                    {
+                        var response = Result.Failure(HttpStatusCode.TooManyRequests,
+                            [RequestErrors.GetTooManyRequestsWithRetryAfterError(retryAfter.TotalSeconds)]).ToString();
 
+                        await context.HttpContext.Response.WriteAsync(response, token);
+                    }
+
+                    else
+                    {
+                        var response = Result.Failure(HttpStatusCode.TooManyRequests,
+                            [RequestErrors.GetTooManyRequestsError()]).ToString();
+
+                        await context.HttpContext.Response.WriteAsync(response, token);
+                    }
                 };
             });
         }
@@ -145,7 +149,9 @@ namespace GarageManagementAPI.Application.Extensions
 
         public static void ConfigureJWT(this IServiceCollection services, IConfiguration configuration)
         {
-            var jwtSettings = configuration.GetSection("JwtSettings");
+            var jwtConfiguration = new JwtConfiguration();
+            configuration.Bind(jwtConfiguration.Section, jwtConfiguration);
+
             var secretKey = Environment.GetEnvironmentVariable("SECRET");
 
             services.AddAuthentication(opt =>
@@ -158,14 +164,52 @@ namespace GarageManagementAPI.Application.Extensions
                 {
                     ValidateIssuer = true,
                     ValidateAudience = true,
-                    ValidateLifetime = true,
                     ValidateIssuerSigningKey = true,
-
-                    ValidIssuer = jwtSettings["validIssuer"],
-                    ValidAudience = jwtSettings["validAudience"],
+                    ValidIssuer = jwtConfiguration.ValidIssuer,
+                    ValidAudience = jwtConfiguration.ValidAudience,
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey!))
                 };
             });
         }
+
+        public static void AddJwtConfiguration(this IServiceCollection services, IConfiguration configuration) =>
+            services.Configure<JwtConfiguration>(configuration.GetSection("JwtSettings"));
+
+
+        public static void ConfigureSwagger(this IServiceCollection services)
+        {
+            services.AddSwaggerGen(s =>
+            {
+                s.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+                {
+                    In = ParameterLocation.Header,
+                    Description = "Place to add JWT with Bearer",
+                    Name = "Authorization",
+                    Type = SecuritySchemeType.ApiKey,
+                    Scheme = "Bearer"
+                });
+                var xmlFile = $"{typeof(Presentation.AssemblyReference).Assembly.GetName().Name}.xml";
+                var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+                s.IncludeXmlComments(xmlPath);
+                s.AddSecurityRequirement(new OpenApiSecurityRequirement()
+                {
+                    {
+                        new OpenApiSecurityScheme
+                        {
+                            Reference = new OpenApiReference
+                            {
+                                Type = ReferenceType.SecurityScheme,
+                                Id = "Bearer"
+                            },
+                            Name = "Bearer"
+                        },
+                        new List<string>()
+                    }
+                });
+            });
+        }
+
+        public static void ConfigureValidator(this IServiceCollection services)
+            => services.AddValidatorsFromAssembly(typeof(GarageManagementAPI.Shared.AssmblyReference).Assembly, includeInternalTypes: true);
     }
 }

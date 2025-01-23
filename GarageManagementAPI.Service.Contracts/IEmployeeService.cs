@@ -1,36 +1,30 @@
 ﻿using GarageManagementAPI.Shared.DataTransferObjects.Employee;
 using GarageManagementAPI.Shared.RequestFeatures;
-using GarageManagementAPI.Shared.Responses;
+using GarageManagementAPI.Shared.ResultModel;
 
 namespace GarageManagementAPI.Service.Contracts
 {
     public interface IEmployeeService
     {
-        Task<ApiBaseResponse> GetEmployeesAsync(
-            Guid garageId,
-            EmployeeParameters employeeParameters,
-            bool trackChanges);
-
-        Task<ApiBaseResponse> GetEmployeeAsync(
-            Guid garageId,
+        Task<Result> GetEmployeeAsync(
             Guid employeeId,
             EmployeeParameters employeeParameters,
             bool trackChanges);
 
-        Task<ApiBaseResponse> CreateEmployeeForGarageAsync(
-            Guid garageId,
+        Task<Result> GetEmployeesAsync(
+            EmployeeParameters employeeParameters,
+            bool trackChanges);
+
+        Task<Result> CreateEmployeeAsync(
             EmployeeForCreationDto employeeForCreationDto,
             bool trackChanges);
 
-        Task<ApiBaseResponse> UpdateEmployeeForGarageAsync(
-            Guid garageId,
+        Task<Result> UpdateEmployeeAsync(
             Guid employeeId,
             EmployeeForUpdateDto employeeForUpdateDto,
-            bool garageTrackChanges,
             bool employeeTrackChanges);
 
-        Task<ApiBaseResponse> GetEmployeeForPatchAsync(
-            Guid garageId,
+        Task<Result> GetEmployeeForPatchAsync(
             Guid employeeId,
             bool trackChanges);
 

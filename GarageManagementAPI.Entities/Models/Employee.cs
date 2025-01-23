@@ -1,5 +1,4 @@
-﻿using GarageManagementAPI.Shared.Enum;
-
+﻿
 namespace GarageManagementAPI.Entities.Models
 {
     public class Employee : BaseEntity<Employee>
@@ -18,9 +17,9 @@ namespace GarageManagementAPI.Entities.Models
 
         public required string Email { get; set; }
 
-        public required EmployeeStatus Status { get; set; }
+        public required string Status { get; set; }
 
-        public required SystemRole Role { get; set; }
+        public required string Role { get; set; }
 
         public Guid GarageId { get; set; }
 

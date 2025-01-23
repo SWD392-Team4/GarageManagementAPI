@@ -2,13 +2,13 @@
 
 namespace GarageManagementAPI.Shared.DataTransferObjects.User
 {
-    public record UserForManipulationDto 
+    public record UserForManipulationDto
     {
-        [Required(ErrorMessage ="Username is required")]
-        public string UserName { get; init; }
+        [Required(ErrorMessage = "Username is required")]
+        public required string UserName { get; init; }
 
 
         [Required(ErrorMessage = "Password is required")]
-        public string Password { get; init; }
+        public required string Password { get; init; }
     }
 }

@@ -1,8 +1,8 @@
 ﻿using GarageManagementAPI.Presentation.Extensions;
-using GarageManagementAPI.Shared.ErrorModel;
-using Microsoft.AspNetCore.Http;
+using GarageManagementAPI.Shared.Constant.Request;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
+using GarageManagementAPI.Shared.ResultModel;
 
 namespace GarageManagementAPI.Presentation.ActionFilters
 {
@@ -15,7 +15,7 @@ namespace GarageManagementAPI.Presentation.ActionFilters
         {
         }
 
-        public void OnActionExecuting(ActionExecutingContext context)
+        public async void OnActionExecuting(ActionExecutingContext context)
         {
             var method = context.HttpContext.Request.Method;
             if (method.Equals("POST") || method.Equals("PUT") || method.Equals("PATCH"))
@@ -23,20 +23,17 @@ namespace GarageManagementAPI.Presentation.ActionFilters
 
                 var param = context.ActionArguments
                     .SingleOrDefault(x =>
-                    x!.Value!.ToString()!.Contains("Dto")).Value;
+                    x!.Key!.ToString()!.Contains("Dto")).Value;
 
                 if (param is null)
                 {
-                    context.Result = new BadRequestObjectResult(new ErrorDetails()
-                    {
-                        StatusCode = StatusCodes.Status400BadRequest,
-                        Message = "Invalid request, object is null."
-                    });
+
+                    context.Result = new BadRequestObjectResult(Result.BadRequest([RequestErrors.GetInvalidInputError(nameof(param))]));
                     return;
                 }
 
                 if (!context.ModelState.IsValid)
-                    context.Result = context.ModelState.InvalidModelSate();
+                    context.Result = await context.ModelState.InvalidModelSate();
             }
 
         }
