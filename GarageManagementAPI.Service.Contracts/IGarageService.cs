@@ -1,28 +1,28 @@
 ﻿using GarageManagementAPI.Shared.DataTransferObjects.Garage;
 using GarageManagementAPI.Shared.RequestFeatures;
-using GarageManagementAPI.Shared.Responses;
+using GarageManagementAPI.Shared.ResultModel;
 
 namespace GarageManagementAPI.Service.Contracts
 {
     public interface IGarageService
     {
-        Task<ApiBaseResponse> GetAllGaragesAsync(
+        Task<Result> GetAllGaragesAsync(
             GarageParameters garageParameters,
             bool trackChanges);
 
-        Task<ApiBaseResponse> GetGarageAsync(
+        Task<Result> GetGarageAsync(
             Guid garageId,
             GarageParameters garageParameters,
             bool trackChanges);
 
-        Task<ApiBaseResponse> CreateGarageAsync(GarageForCreationDto garageForCreationDto);
+        Task<Result> CreateGarageAsync(GarageForCreationDto garageForCreationDto);
 
-        Task<ApiBaseResponse> UpdateGarageAsync(
+        Task<Result> UpdateGarageAsync(
             Guid garageId,
             GarageForUpdateDto garageForUpdateDto,
             bool trackChanges);
 
-        Task<ApiBaseResponse> GetGarageForPatchAsync(
+        Task<Result> GetGarageForPatchAsync(
             Guid garageId,
             bool trackChanges);
     }

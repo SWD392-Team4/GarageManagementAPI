@@ -7,7 +7,7 @@ namespace GarageManagementAPI.Application.MappingProfile
 {
     public class GarageMappingProfile : Profile
     {
-        public GarageMappingProfile() 
+        public GarageMappingProfile()
         {
             CreateMap<Garage, GarageDto>();
             CreateMap<Garage, GarageDtoWithRelation>()

@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Diagnostics;
 using GarageManagementAPI.Shared.ErrorModel;
-using GarageManagementAPI.Entities.Exceptions.NotFound;
+using GarageManagementAPI.Shared.ResultModel;
+using System.Net;
 
 namespace GarageManagementAPI.Application
 {
@@ -16,28 +17,19 @@ namespace GarageManagementAPI.Application
 
                 httpContext.Response.StatusCode = contextFeature.Error switch
                 {
-                    NotFoundException => StatusCodes.Status404NotFound,
                     _ => StatusCodes.Status500InternalServerError
                 };
 
-                var message = "An unexpected error occurred.";
-
-                switch (contextFeature.Error)
+                var message = contextFeature.Error.Message;
+                var errors = new ErrorsResult()
                 {
-                    case NotFoundException ex:
-                        httpContext.Response.StatusCode = StatusCodes.Status404NotFound;
-                        message = ex.Message;
-                        break;
+                    Code = "UNKNOWN",
+                    Description = message ?? "Unknown error occurred.",
+                };
 
-                    default:
-                        httpContext.Response.StatusCode = StatusCodes.Status500InternalServerError;
-                        break;
-                }
-                await httpContext.Response.WriteAsync(new ErrorDetails()
-                {
-                    StatusCode = httpContext.Response.StatusCode,
-                    Message = message
-                }.ToString());
+                await httpContext.Response.WriteAsync(
+                    Result.Failure(HttpStatusCode.InternalServerError, [errors])
+                    .ToString());
             }
 
             return true;

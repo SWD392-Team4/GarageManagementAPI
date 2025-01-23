@@ -1,9 +1,9 @@
 ﻿using GarageManagementAPI.Entities.Models;
 using GarageManagementAPI.Repository.Contracts;
 using GarageManagementAPI.Repository.Extensions;
+using GarageManagementAPI.Shared.Constant;
 using GarageManagementAPI.Shared.RequestFeatures;
 using Microsoft.EntityFrameworkCore;
-using System.ComponentModel.Design;
 
 namespace GarageManagementAPI.Repository
 {
@@ -14,13 +14,13 @@ namespace GarageManagementAPI.Repository
         }
 
         public async Task<PagedList<Employee>> GetEmployeesAsync(
-            Guid garageId,
             EmployeeParameters employeeParameters,
             bool trackChanges)
         {
-            var employees = await FindByCondition(e =>
-            e.GarageId.Equals(garageId),
-                trackChanges)
+            var employeeQuery = employeeParameters.GarageId != null ?
+                FindByCondition(e => e.GarageId.Equals(employeeParameters.GarageId), trackChanges) : FindAll(trackChanges);
+
+            var employees = await employeeQuery
             .Search(employeeParameters.SearchTerm)
             .Sort(employeeParameters.OrderBy)
             .Skip((employeeParameters.PageNumber - 1) * employeeParameters.PageSize)
@@ -28,8 +28,7 @@ namespace GarageManagementAPI.Repository
             .Includes(employeeParameters.Include)
             .ToListAsync();
 
-            var count = await FindByCondition(e => e.GarageId.Equals(garageId), trackChanges).CountAsync();
-
+            var count = await FindAll(trackChanges).CountAsync();
 
             return new PagedList<Employee>(
                 employees,
@@ -38,16 +37,10 @@ namespace GarageManagementAPI.Repository
                 employeeParameters.PageSize);
         }
 
-        public async Task<Employee?> FindByIdAsync(Guid garageId, Guid employeeId, bool trackChanges)
-            => await FindByCondition(e =>
-            e.GarageId.Equals(garageId) && e.Id.Equals(employeeId),
-                trackChanges)
-            .SingleOrDefaultAsync();
-
-        public void Create(Guid garageId, Employee employee)
+        public override void Create(Employee entity)
         {
-            employee.GarageId = garageId;
-            Create(employee);
+            entity.Status = SystemStatus.Inactive;
+            base.Create(entity);
         }
     }
 }

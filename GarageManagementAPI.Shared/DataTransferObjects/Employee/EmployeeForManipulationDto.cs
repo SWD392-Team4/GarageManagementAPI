@@ -1,5 +1,4 @@
-﻿using GarageManagementAPI.Shared.Enum;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace GarageManagementAPI.Shared.DataTransferObjects.Employee
 {
@@ -22,11 +21,14 @@ namespace GarageManagementAPI.Shared.DataTransferObjects.Employee
         public required string? CitizenIdentification { get; init; }
 
         [Required(ErrorMessage = "Employee email is required")]
+        [EmailAddress]
         public required string Email { get; init; }
 
-        [EnumDataType(typeof(SystemRole))]
         [Required(ErrorMessage = "Employee role is required")]
-        public SystemRole Role { get; init; }
+        public required string Role { get; init; }
+
+        [Required(ErrorMessage = "Employee garageId is required")]
+        public required Guid GarageId { get; init; }
 
     }
 }
