@@ -1,7 +1,4 @@
-﻿using GarageManagementAPI.Shared.CustomAttribute;
-using System.Text.Json.Serialization;
-
-namespace GarageManagementAPI.Entities.Models
+﻿namespace GarageManagementAPI.Entities.Models
 {
     public class Garage : BaseEntity<Garage>
     {
@@ -13,6 +10,16 @@ namespace GarageManagementAPI.Entities.Models
 
         public required string PhoneNumber { get; set; }
 
-        public ICollection<Employee>? Employees { get; set; }
+        public ICollection<EmployeeInfo>? EmployeesInfo { get; set; }
+
+        public ICollection<InvoiceAppointment>? InvoiceAppointments { get; set; }
+
+        public ICollection<ProductAtStore>? ProductAtStores { get; set; }
+
+        public ICollection<GoodsIssued>? GoodsIssueds { get; set; }
+
+        public ICollection<Appointment>? Appointments { get; set; }
+
+        public ICollection<InvoiceSell>? InvoiceSells { get; set; }
     }
 }

@@ -1,4 +1,6 @@
 ﻿
+using System.ComponentModel.DataAnnotations.Schema;
+
 namespace GarageManagementAPI.Entities.Models
 {
     public class Employee : BaseEntity<Employee>

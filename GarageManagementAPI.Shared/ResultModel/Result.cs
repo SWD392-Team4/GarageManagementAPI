@@ -73,6 +73,8 @@ namespace GarageManagementAPI.Shared.ResultModel
 
         public static Result<T> Success(T value, HttpStatusCode statusCode, MetaData? paging = null)
             => new Result<T>(value, statusCode, paging);
+        public static new Result<T> Failure(HttpStatusCode statusCode, List<ErrorsResult> errors)
+           => new Result<T>(statusCode, errors);
 
         public static Result<T> Ok(T value, MetaData? paging = null)
             => new Result<T>(value, HttpStatusCode.OK, paging);

@@ -3,6 +3,7 @@ using GarageManagementAPI.Entities.ConfigurationModels;
 using GarageManagementAPI.Entities.Models;
 using GarageManagementAPI.Service.Contracts;
 using GarageManagementAPI.Service.Extension;
+using GarageManagementAPI.Shared.Constant;
 using GarageManagementAPI.Shared.DataTransferObjects.User;
 using GarageManagementAPI.Shared.ResultModel;
 using Microsoft.AspNetCore.Identity;
@@ -137,6 +138,8 @@ namespace GarageManagementAPI.Service
         {
             var user = _mapper.Map<User>(userForRegistrationDto);
 
+            user.Status = SystemStatus.Inactive;
+
             using var transaction = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
 
             try
@@ -151,7 +154,7 @@ namespace GarageManagementAPI.Service
 
                 return result;
             }
-            catch (Exception ex)
+            catch
             {
                 throw;
             }

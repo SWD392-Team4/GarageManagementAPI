@@ -1,11 +1,12 @@
 ﻿using GarageManagementAPI.Entities.Models;
 using GarageManagementAPI.Repository.Configuration;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace GarageManagementAPI.Repository
 {
-    public class RepositoryContext : IdentityDbContext<User>
+    public class RepositoryContext : IdentityDbContext<User, IdentityRole<Guid>, Guid>
     {
         public RepositoryContext(DbContextOptions options) : base(options) { }
 
@@ -25,6 +26,8 @@ namespace GarageManagementAPI.Repository
             modelBuilder.ApplyConfiguration(new GarageConfiguration());
             modelBuilder.ApplyConfiguration(new EmployeeConfiguration());
             modelBuilder.ApplyConfiguration(new RoleConfiguration());
+            modelBuilder.ApplyConfiguration(new EmployeeInfoConfiguration());
+            modelBuilder.ApplyConfiguration(new ProductForCarModelConfiguration());
         }
 
         public DbSet<Garage>? Garages { get; set; }
