@@ -3,8 +3,9 @@ using GarageManagementAPI.Entities.ConfigurationModels;
 using GarageManagementAPI.Entities.Models;
 using GarageManagementAPI.Service.Contracts;
 using GarageManagementAPI.Service.Extension;
-using GarageManagementAPI.Shared.Constant;
 using GarageManagementAPI.Shared.DataTransferObjects.User;
+using GarageManagementAPI.Shared.Enum;
+using GarageManagementAPI.Shared.Extension;
 using GarageManagementAPI.Shared.ResultModel;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
@@ -53,7 +54,7 @@ namespace GarageManagementAPI.Service
         {
             var claims = new List<Claim>
             {
-                new Claim(ClaimTypes.Name, _user.UserName)
+                new Claim(ClaimTypes.Name, _user!.UserName !)
             };
 
             var roles = await _userManager.GetRolesAsync(_user);
@@ -67,7 +68,7 @@ namespace GarageManagementAPI.Service
 
         private SigningCredentials GetSigningCredentials()
         {
-            var key = Encoding.UTF8.GetBytes(Environment.GetEnvironmentVariable("SECRET"));
+            var key = Encoding.UTF8.GetBytes(Environment.GetEnvironmentVariable("SECRET")!);
             var secret = new SymmetricSecurityKey(key);
 
             return new SigningCredentials(secret, SecurityAlgorithms.HmacSha256);
@@ -91,7 +92,7 @@ namespace GarageManagementAPI.Service
                 ValidateAudience = true,
                 ValidateIssuer = true,
                 ValidateIssuerSigningKey = true,
-                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Environment.GetEnvironmentVariable("SECRET"))),
+                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Environment.GetEnvironmentVariable("SECRET")!)),
                 ValidIssuer = _jwtConfiguration.ValidIssuer,
                 ValidAudience = _jwtConfiguration.ValidAudience
             };
@@ -178,7 +179,7 @@ namespace GarageManagementAPI.Service
 
             var principal = principalResult.GetValue<ClaimsPrincipal>();
 
-            var user = await _userManager.FindByNameAsync(principal.Identity.Name);
+            var user = await _userManager.FindByNameAsync(principal!.Identity!.Name!);
 
             if (user == null || user.RefreshToken != tokenDto.RefreshToken || user.RefreshTokenExpiryTime <= DateTime.Now)
                 return tokenDto.RefreshToken.InvalidTokenBadRequest();

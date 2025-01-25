@@ -22,10 +22,9 @@ namespace GarageManagementAPI.Application.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("GarageManagementAPI.Entities.Models.Appointment", b =>
+            modelBuilder.Entity("GarageManagementAPI.Entities.NewModels.Appointment", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTimeOffset?>("ActualAppointmentTime")
@@ -36,20 +35,21 @@ namespace GarageManagementAPI.Application.Migrations
 
                     b.Property<string>("AppointmentType")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
 
-                    b.Property<Guid?>("ApprovedBy")
+                    b.Property<Guid?>("ApproveByEmployeeId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("CanceledReason")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<string>("CarCondition")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
-                    b.Property<string>("CarLicencePlateNumber")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<string>("CarLicensePlateNumber")
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
 
                     b.Property<Guid>("CarModelId")
                         .HasColumnType("uniqueidentifier");
@@ -59,24 +59,27 @@ namespace GarageManagementAPI.Application.Migrations
 
                     b.Property<string>("CustomerEmail")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
 
                     b.Property<string>("CustomerName")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
 
-                    b.Property<string>("CustomerPhone")
+                    b.Property<string>("CustomerPhoneNumber")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
 
                     b.Property<DateTimeOffset>("EstimatedAppointmentTime")
                         .HasColumnType("datetimeoffset");
 
-                    b.Property<DateTimeOffset?>("EstimatedEndTime")
+                    b.Property<DateTimeOffset>("EstimatedEndTime")
                         .HasColumnType("datetimeoffset");
 
                     b.Property<decimal>("ExpectedPrice")
-                        .HasColumnType("decimal(18,2)");
+                        .HasColumnType("decimal(18, 2)");
 
                     b.Property<Guid>("GarageId")
                         .HasColumnType("uniqueidentifier");
@@ -86,29 +89,79 @@ namespace GarageManagementAPI.Application.Migrations
 
                     b.Property<string>("Status")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
 
                     b.Property<DateTimeOffset>("UpdatedAt")
                         .HasColumnType("datetimeoffset");
 
-                    b.Property<Guid?>("UserId")
-                        .HasColumnType("uniqueidentifier");
+                    b.HasKey("Id")
+                        .HasName("appointment_id_primary");
 
-                    b.HasKey("Id");
+                    b.HasIndex("ApproveByEmployeeId");
 
                     b.HasIndex("CarModelId");
 
                     b.HasIndex("GarageId");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex(new[] { "CustomerEmail" }, "appointment_customeremail_index");
 
-                    b.ToTable("Appointment");
+                    b.HasIndex(new[] { "CustomerPhoneNumber", "CustomerEmail" }, "appointment_customerphonenumber_customeremail_index");
+
+                    b.HasIndex(new[] { "CustomerPhoneNumber" }, "appointment_customerphonenumber_index");
+
+                    b.ToTable("Appointment", (string)null);
                 });
 
-            modelBuilder.Entity("GarageManagementAPI.Entities.Models.AppointmentDetail", b =>
+            modelBuilder.Entity("GarageManagementAPI.Entities.NewModels.AppointmentDetail", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("AppointmentId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTimeOffset>("CreateAt")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<Guid>("ServiceHistoryId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("ServiceNote")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<Guid?>("UpdateByCustomerId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("UpdateByEmployeeId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTimeOffset>("UpdatedAt")
+                        .HasColumnType("datetimeoffset");
+
+                    b.HasKey("Id")
+                        .HasName("appointmentdetail_id_primary");
+
+                    b.HasIndex("ServiceHistoryId");
+
+                    b.HasIndex("UpdateByCustomerId");
+
+                    b.HasIndex("UpdateByEmployeeId");
+
+                    b.HasIndex(new[] { "AppointmentId" }, "appointmentdetail_appointmentid_index");
+
+                    b.ToTable("AppointmentDetail", (string)null);
+                });
+
+            modelBuilder.Entity("GarageManagementAPI.Entities.NewModels.AppointmentDetailPackage", b =>
+                {
+                    b.Property<Guid>("Id")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid>("AppointmentId")
@@ -117,33 +170,66 @@ namespace GarageManagementAPI.Application.Migrations
                     b.Property<DateTimeOffset>("CreatedAt")
                         .HasColumnType("datetimeoffset");
 
-                    b.Property<Guid>("ServiceHistoryId")
+                    b.Property<Guid>("PackageHistoryId")
                         .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("ServiceNotes")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Status")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<Guid?>("UpdateByCustomerId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("UpdateByEmployeeId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTimeOffset>("UpdatedAt")
                         .HasColumnType("datetimeoffset");
 
-                    b.HasKey("Id");
+                    b.HasKey("Id")
+                        .HasName("appointmentdetailpackage_id_primary");
 
                     b.HasIndex("AppointmentId");
 
-                    b.HasIndex("ServiceHistoryId");
+                    b.HasIndex("UpdateByCustomerId");
 
-                    b.ToTable("AppointmentDetail");
+                    b.HasIndex("UpdateByEmployeeId");
+
+                    b.HasIndex(new[] { "PackageHistoryId", "AppointmentId" }, "appointmentdetailpackage_packagehistoryid_appointmentid_unique")
+                        .IsUnique();
+
+                    b.ToTable("AppointmentDetailPackage", (string)null);
                 });
 
-            modelBuilder.Entity("GarageManagementAPI.Entities.Models.AppointmentReplacementParts", b =>
+            modelBuilder.Entity("GarageManagementAPI.Entities.NewModels.AppointmentPerDay", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("CountPerDay")
+                        .HasColumnType("int");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<DateTimeOffset>("UpdatedAt")
+                        .HasColumnType("datetimeoffset");
+
+                    b.HasKey("Id")
+                        .HasName("appointmentperday_id_primary");
+
+                    b.ToTable("AppointmentPerDay", (string)null);
+                });
+
+            modelBuilder.Entity("GarageManagementAPI.Entities.NewModels.AppointmentReplacementPart", b =>
+                {
+                    b.Property<Guid>("Id")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid>("AppointmentDetailId")
@@ -152,108 +238,145 @@ namespace GarageManagementAPI.Application.Migrations
                     b.Property<DateTimeOffset>("CreatedAt")
                         .HasColumnType("datetimeoffset");
 
+                    b.Property<Guid>("ProductAtGarageId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<Guid>("ProductHistoryId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<int>("Quantity")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnName("quantity");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
 
                     b.Property<DateTimeOffset>("UpdatedAt")
                         .HasColumnType("datetimeoffset");
 
-                    b.HasKey("Id");
+                    b.HasKey("Id")
+                        .HasName("appointmentreplacementpart_id_primary");
 
-                    b.HasIndex("AppointmentDetailId");
+                    b.HasIndex("ProductAtGarageId");
 
                     b.HasIndex("ProductHistoryId");
 
-                    b.ToTable("AppointmentReplacementParts");
+                    b.HasIndex(new[] { "AppointmentDetailId" }, "appointmentreplacementpart_appointmentdetailid_index");
+
+                    b.ToTable("AppointmentReplacementPart", (string)null);
                 });
 
-            modelBuilder.Entity("GarageManagementAPI.Entities.Models.Brand", b =>
+            modelBuilder.Entity("GarageManagementAPI.Entities.NewModels.Brand", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("BrandName")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
 
                     b.Property<DateTimeOffset>("CreatedAt")
                         .HasColumnType("datetimeoffset");
 
                     b.Property<string>("LinkLogo")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
 
-                    b.Property<string>("Name")
+                    b.Property<string>("Status")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
 
                     b.Property<DateTimeOffset>("UpdatedAt")
                         .HasColumnType("datetimeoffset");
 
-                    b.HasKey("Id");
+                    b.HasKey("Id")
+                        .HasName("brand_id_primary");
 
-                    b.ToTable("Brand");
+                    b.HasIndex(new[] { "BrandName" }, "brand_brandname_unique")
+                        .IsUnique();
+
+                    b.ToTable("Brand", (string)null);
                 });
 
-            modelBuilder.Entity("GarageManagementAPI.Entities.Models.CarCategory", b =>
+            modelBuilder.Entity("GarageManagementAPI.Entities.NewModels.CarCategory", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Category")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
 
                     b.Property<DateTimeOffset>("CreatedAt")
                         .HasColumnType("datetimeoffset");
 
                     b.Property<string>("Description")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
 
                     b.Property<DateTimeOffset>("UpdatedAt")
                         .HasColumnType("datetimeoffset");
 
-                    b.HasKey("Id");
+                    b.HasKey("Id")
+                        .HasName("carcategory_id_primary");
 
-                    b.ToTable("CarCategory");
+                    b.HasIndex(new[] { "Category" }, "carcategory_category_unique")
+                        .IsUnique();
+
+                    b.ToTable("CarCategory", (string)null);
                 });
 
-            modelBuilder.Entity("GarageManagementAPI.Entities.Models.CarConditionImage", b =>
+            modelBuilder.Entity("GarageManagementAPI.Entities.NewModels.CarConditionImage", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid>("AppointmentDetailId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("CarConditionType")
+                    b.Property<string>("ConditionStage")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
 
                     b.Property<DateTimeOffset>("CreatedAt")
                         .HasColumnType("datetimeoffset");
 
                     b.Property<string>("Link")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
 
                     b.Property<DateTimeOffset>("UpdatedAt")
                         .HasColumnType("datetimeoffset");
 
-                    b.HasKey("Id");
+                    b.HasKey("Id")
+                        .HasName("carconditionimage_id_primary");
 
-                    b.HasIndex("AppointmentDetailId");
+                    b.HasIndex(new[] { "AppointmentDetailId" }, "carconditionimage_appointmentdetailid_index");
 
-                    b.ToTable("CarConditionImage");
+                    b.ToTable("CarConditionImage", (string)null);
                 });
 
-            modelBuilder.Entity("GarageManagementAPI.Entities.Models.CarModel", b =>
+            modelBuilder.Entity("GarageManagementAPI.Entities.NewModels.CarModel", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid>("BrandId")
@@ -265,30 +388,37 @@ namespace GarageManagementAPI.Application.Migrations
                     b.Property<DateTimeOffset>("CreatedAt")
                         .HasColumnType("datetimeoffset");
 
+                    b.Property<string>("ModelName")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
                     b.Property<string>("ModelYear")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
 
-                    b.Property<string>("Name")
+                    b.Property<string>("Status")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
 
                     b.Property<DateTimeOffset>("UpdatedAt")
                         .HasColumnType("datetimeoffset");
 
-                    b.HasKey("Id");
+                    b.HasKey("Id")
+                        .HasName("carmodel_id_primary");
 
-                    b.HasIndex("BrandId");
+                    b.HasIndex(new[] { "BrandId" }, "carmodel_brandid_index");
 
-                    b.HasIndex("CarCategoryId");
+                    b.HasIndex(new[] { "CarCategoryId" }, "carmodel_carcategoryid_index");
 
-                    b.ToTable("CarModel");
+                    b.ToTable("CarModel", (string)null);
                 });
 
-            modelBuilder.Entity("GarageManagementAPI.Entities.Models.CarPart", b =>
+            modelBuilder.Entity("GarageManagementAPI.Entities.NewModels.CarPart", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid>("CarPartCategoryId")
@@ -297,45 +427,63 @@ namespace GarageManagementAPI.Application.Migrations
                     b.Property<DateTimeOffset>("CreatedAt")
                         .HasColumnType("datetimeoffset");
 
-                    b.Property<string>("Name")
+                    b.Property<string>("PartName")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
 
                     b.Property<DateTimeOffset>("UpdatedAt")
                         .HasColumnType("datetimeoffset");
 
-                    b.HasKey("Id");
+                    b.HasKey("Id")
+                        .HasName("carpart_id_primary");
 
-                    b.HasIndex("CarPartCategoryId");
+                    b.HasIndex(new[] { "CarPartCategoryId" }, "carpart_carpartcategoryid_index");
 
-                    b.ToTable("CarPart");
+                    b.HasIndex(new[] { "PartName" }, "carpart_partname_unique")
+                        .IsUnique();
+
+                    b.ToTable("CarPart", (string)null);
                 });
 
-            modelBuilder.Entity("GarageManagementAPI.Entities.Models.CarPartCategory", b =>
+            modelBuilder.Entity("GarageManagementAPI.Entities.NewModels.CarPartCategory", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTimeOffset>("CreatedAt")
                         .HasColumnType("datetimeoffset");
 
-                    b.Property<string>("Name")
+                    b.Property<string>("PartCategory")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
 
                     b.Property<DateTimeOffset>("UpdatedAt")
                         .HasColumnType("datetimeoffset");
 
-                    b.HasKey("Id");
+                    b.HasKey("Id")
+                        .HasName("carpartcategory_id_primary");
 
-                    b.ToTable("CarPartCategory");
+                    b.HasIndex(new[] { "PartCategory" }, "carpartcategory_partcategory_unique")
+                        .IsUnique();
+
+                    b.ToTable("CarPartCategory", (string)null);
                 });
 
-            modelBuilder.Entity("GarageManagementAPI.Entities.Models.CustomerCar", b =>
+            modelBuilder.Entity("GarageManagementAPI.Entities.NewModels.CustomerCar", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid>("CarModelId")
@@ -343,143 +491,114 @@ namespace GarageManagementAPI.Application.Migrations
 
                     b.Property<string>("Color")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
 
                     b.Property<DateTimeOffset>("CreatedAt")
                         .HasColumnType("datetimeoffset");
+
+                    b.Property<Guid>("CreatedByEmployeeId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid>("CustomerId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("EngineNumber")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
 
                     b.Property<string>("FuelType")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
 
                     b.Property<string>("LicensePlateNumber")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
 
                     b.Property<int>("Mileage")
                         .HasColumnType("int");
 
-                    b.Property<DateOnly>("RegistraionDate")
+                    b.Property<DateOnly>("RegistrationDate")
                         .HasColumnType("date");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
 
                     b.Property<DateTimeOffset>("UpdatedAt")
                         .HasColumnType("datetimeoffset");
 
                     b.Property<string>("VehicleIdentificationNumber")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
 
-                    b.HasKey("Id");
+                    b.HasKey("Id")
+                        .HasName("customercar_id_primary");
 
                     b.HasIndex("CarModelId");
 
-                    b.HasIndex("CustomerId");
+                    b.HasIndex(new[] { "CreatedByEmployeeId" }, "customercar_createdbyemployeeid_index");
 
-                    b.ToTable("CustomerCar");
-                });
+                    b.HasIndex(new[] { "CustomerId" }, "customercar_customerid_index");
 
-            modelBuilder.Entity("GarageManagementAPI.Entities.Models.Employee", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Address")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("CitizenIdentification")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTimeOffset>("CreatedAt")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<DateOnly>("DateOfBirth")
-                        .HasColumnType("date");
-
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<Guid>("GarageId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<bool>("Gender")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("PhoneNumber")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Role")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Status")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTimeOffset>("UpdatedAt")
-                        .HasColumnType("datetimeoffset");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("GarageId");
-
-                    b.ToTable("Employees");
-                });
-
-            modelBuilder.Entity("GarageManagementAPI.Entities.Models.EmployeeInfo", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("CitizenIdentification")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<DateTimeOffset>("CreatedAt")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<DateOnly>("DateOfBirth")
-                        .HasColumnType("date");
-
-                    b.Property<Guid>("GarageId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<bool>("Gender")
-                        .HasColumnType("bit");
-
-                    b.Property<DateTimeOffset>("UpdatedAt")
-                        .HasColumnType("datetimeoffset");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CitizenIdentification")
+                    b.HasIndex(new[] { "LicensePlateNumber" }, "customercar_licenseplatenumber_unique")
                         .IsUnique();
 
-                    b.HasIndex("GarageId");
+                    b.HasIndex(new[] { "VehicleIdentificationNumber" }, "customercar_vehicleidentificationnumber_unique")
+                        .IsUnique();
 
-                    b.ToTable("EmployeeInfo");
+                    b.ToTable("CustomerCar", (string)null);
                 });
 
-            modelBuilder.Entity("GarageManagementAPI.Entities.Models.EmployeeSchedule", b =>
+            modelBuilder.Entity("GarageManagementAPI.Entities.NewModels.EmployeeInfo", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("CitizenIdentification")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<DateOnly>("DateOfBirth")
+                        .HasColumnType("date");
+
+                    b.Property<bool>("Gender")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTimeOffset>("UpdatedAt")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<string>("WorkPlaceType")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<Guid>("WorkplaceId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id")
+                        .HasName("employeeinfo_userid_primary");
+
+                    b.HasIndex(new[] { "CitizenIdentification" }, "employeeinfo_citizenidentification_unique")
+                        .IsUnique();
+
+                    b.HasIndex(new[] { "WorkplaceId" }, "employeeinfo_workplaceid_index");
+
+                    b.ToTable("EmployeeInfo", (string)null);
+                });
+
+            modelBuilder.Entity("GarageManagementAPI.Entities.NewModels.EmployeeSchedule", b =>
+                {
+                    b.Property<Guid>("Id")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTimeOffset?>("ActualEndTime")
@@ -491,7 +610,10 @@ namespace GarageManagementAPI.Application.Migrations
                     b.Property<DateTimeOffset>("CreatedAt")
                         .HasColumnType("datetimeoffset");
 
-                    b.Property<DateTimeOffset>("EstimatedEndTime")
+                    b.Property<Guid>("EmployeeId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTimeOffset?>("EstimatedEndTime")
                         .HasColumnType("datetimeoffset");
 
                     b.Property<DateTimeOffset?>("StartTime")
@@ -499,157 +621,56 @@ namespace GarageManagementAPI.Application.Migrations
 
                     b.Property<string>("Status")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
 
                     b.Property<DateTimeOffset>("UpdatedAt")
                         .HasColumnType("datetimeoffset");
 
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uniqueidentifier");
+                    b.HasKey("Id")
+                        .HasName("employeeschedule_id_primary");
 
-                    b.HasKey("Id");
+                    b.HasIndex(new[] { "AppointmentDetailId", "EmployeeId" }, "employeeschedule_appointmentdetailid_employeeid_unique")
+                        .IsUnique();
 
-                    b.HasIndex("AppointmentDetailId");
+                    b.HasIndex(new[] { "AppointmentDetailId" }, "employeeschedule_appointmentdetailid_index");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex(new[] { "EmployeeId" }, "employeeschedule_employeeid_index");
 
-                    b.ToTable("EmployeeSchedule");
+                    b.ToTable("EmployeeSchedule", (string)null);
                 });
 
-            modelBuilder.Entity("GarageManagementAPI.Entities.Models.FeedBackPackage", b =>
+            modelBuilder.Entity("GarageManagementAPI.Entities.NewModels.GoodsIssued", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTimeOffset>("CreatedAt")
                         .HasColumnType("datetimeoffset");
 
-                    b.Property<Guid>("CustomerId")
+                    b.Property<Guid>("CreatedWareHouseManagerId")
                         .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<Guid?>("PackageId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("ServiceId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Status")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTimeOffset>("UpdatedAt")
-                        .HasColumnType("datetimeoffset");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CustomerId");
-
-                    b.HasIndex("PackageId");
-
-                    b.ToTable("FeedBackPackage");
-                });
-
-            modelBuilder.Entity("GarageManagementAPI.Entities.Models.FeedBackService", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTimeOffset>("CreatedAt")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<Guid>("CustomerId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<Guid>("ServiceId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Status")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTimeOffset>("UpdatedAt")
-                        .HasColumnType("datetimeoffset");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CustomerId");
-
-                    b.HasIndex("ServiceId");
-
-                    b.ToTable("FeedBackService");
-                });
-
-            modelBuilder.Entity("GarageManagementAPI.Entities.Models.Garage", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Address")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("City")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTimeOffset>("CreatedAt")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("PhoneNumber")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTimeOffset>("UpdatedAt")
-                        .HasColumnType("datetimeoffset");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Garages");
-                });
-
-            modelBuilder.Entity("GarageManagementAPI.Entities.Models.GoodsIssued", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("CreateBy")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTimeOffset>("CreatedAt")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<Guid?>("EmployeeId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateOnly>("ExportDate")
-                        .HasColumnType("date");
 
                     b.Property<Guid>("GarageId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("InvoiceCode")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
 
                     b.Property<string>("ReferenceNumber")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<decimal>("TotalCost")
+                        .HasColumnType("decimal(8, 2)");
 
                     b.Property<DateTimeOffset>("UpdatedAt")
                         .HasColumnType("datetimeoffset");
@@ -657,21 +678,21 @@ namespace GarageManagementAPI.Application.Migrations
                     b.Property<Guid>("WarehouseId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.HasKey("Id");
+                    b.HasKey("Id")
+                        .HasName("goodsissued_id_primary");
 
-                    b.HasIndex("EmployeeId");
+                    b.HasIndex("CreatedWareHouseManagerId");
 
                     b.HasIndex("GarageId");
 
                     b.HasIndex("WarehouseId");
 
-                    b.ToTable("GoodsIssued");
+                    b.ToTable("GoodsIssued", (string)null);
                 });
 
-            modelBuilder.Entity("GarageManagementAPI.Entities.Models.GoodsIssuedDetail", b =>
+            modelBuilder.Entity("GarageManagementAPI.Entities.NewModels.GoodsIssuedDetail", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTimeOffset>("CreatedAt")
@@ -680,57 +701,81 @@ namespace GarageManagementAPI.Application.Migrations
                     b.Property<Guid>("GoodsIssuedId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid?>("GoodsReceivedId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<Guid>("ProductAtWareHouseId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<int>("Quantity")
                         .HasColumnType("int");
 
-                    b.Property<decimal>("UnitPrice")
-                        .HasColumnType("decimal(18,2)");
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
 
                     b.Property<DateTimeOffset>("UpdatedAt")
                         .HasColumnType("datetimeoffset");
 
-                    b.HasKey("Id");
+                    b.HasKey("Id")
+                        .HasName("goodsissueddetail_id_primary");
 
-                    b.HasIndex("GoodsIssuedId");
+                    b.HasIndex(new[] { "GoodsIssuedId" }, "goodsissueddetail_goodsissuedid_index");
 
-                    b.HasIndex("GoodsReceivedId");
+                    b.HasIndex(new[] { "ProductAtWareHouseId" }, "goodsissueddetail_productatwarehouseid_index");
 
-                    b.HasIndex("ProductAtWareHouseId");
-
-                    b.ToTable("GoodsIssuedDetail");
+                    b.ToTable("GoodsIssuedDetail", (string)null);
                 });
 
-            modelBuilder.Entity("GarageManagementAPI.Entities.Models.GoodsReceived", b =>
+            modelBuilder.Entity("GarageManagementAPI.Entities.NewModels.GoodsReceived", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTimeOffset>("CreatedAt")
                         .HasColumnType("datetimeoffset");
 
-                    b.Property<Guid>("CreatedBy")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid?>("EmployeeId")
+                    b.Property<Guid>("CreatedWarehouseManagerId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("InvoiceCode")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
 
-                    b.Property<string>("ReferenceNumber")
+                    b.Property<string>("RefereneceNumber")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
 
-                    b.Property<Guid>("SupplierId")
+                    b.Property<string>("SourceAddress")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<string>("SourceDistrict")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<string>("SourceProvince")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<string>("SourceWards")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<Guid>("SupplierContactId")
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<decimal>("TotalPrice")
+                        .HasColumnType("decimal(8, 2)");
 
                     b.Property<DateTimeOffset>("UpdatedAt")
                         .HasColumnType("datetimeoffset");
@@ -738,21 +783,21 @@ namespace GarageManagementAPI.Application.Migrations
                     b.Property<Guid>("WarehouseId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.HasKey("Id");
+                    b.HasKey("Id")
+                        .HasName("goodsreceived_id_primary");
 
-                    b.HasIndex("EmployeeId");
+                    b.HasIndex("CreatedWarehouseManagerId");
 
-                    b.HasIndex("SupplierId");
+                    b.HasIndex(new[] { "SupplierContactId" }, "goodsreceived_suppliercontactid_index");
 
-                    b.HasIndex("WarehouseId");
+                    b.HasIndex(new[] { "WarehouseId" }, "goodsreceived_warehouseid_index");
 
-                    b.ToTable("GoodsReceived");
+                    b.ToTable("GoodsReceived", (string)null);
                 });
 
-            modelBuilder.Entity("GarageManagementAPI.Entities.Models.GoodsReceivedDetail", b =>
+            modelBuilder.Entity("GarageManagementAPI.Entities.NewModels.GoodsReceivedDetail", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTimeOffset>("CreatedAt")
@@ -767,28 +812,33 @@ namespace GarageManagementAPI.Application.Migrations
                     b.Property<int>("Quantity")
                         .HasColumnType("int");
 
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<decimal>("TotalPrice")
+                        .HasColumnType("decimal(8, 2)");
+
                     b.Property<decimal>("UnitPrice")
-                        .HasColumnType("decimal(18,2)");
+                        .HasColumnType("decimal(8, 2)");
 
                     b.Property<DateTimeOffset>("UpdatedAt")
                         .HasColumnType("datetimeoffset");
 
-                    b.HasKey("Id");
-
-                    b.HasIndex("GoodsReceivedId");
+                    b.HasKey("Id")
+                        .HasName("goodsreceiveddetail_id_primary");
 
                     b.HasIndex("ProductId");
 
-                    b.ToTable("GoodsReceivedDetail");
+                    b.HasIndex(new[] { "GoodsReceivedId" }, "goodsreceiveddetail_goodsreceivedid_index");
+
+                    b.ToTable("GoodsReceivedDetail", (string)null);
                 });
 
-            modelBuilder.Entity("GarageManagementAPI.Entities.Models.InvoiceAppointment", b =>
+            modelBuilder.Entity("GarageManagementAPI.Entities.NewModels.Invoice", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("AppointmentId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTimeOffset>("CreatedAt")
@@ -796,15 +846,21 @@ namespace GarageManagementAPI.Application.Migrations
 
                     b.Property<string>("CustomerEmail")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<Guid?>("CustomerId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("CustomerName")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
 
                     b.Property<string>("CustomerPhoneNumber")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
 
                     b.Property<Guid>("EmployeeId")
                         .HasColumnType("uniqueidentifier");
@@ -812,296 +868,127 @@ namespace GarageManagementAPI.Application.Migrations
                     b.Property<Guid>("GarageId")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<string>("InvoiceType")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
                     b.Property<string>("Status")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<decimal>("TotalPrice")
+                        .HasColumnType("decimal(8, 2)");
 
                     b.Property<DateTimeOffset>("UpdatedAt")
                         .HasColumnType("datetimeoffset");
 
-                    b.HasKey("Id");
+                    b.HasKey("Id")
+                        .HasName("invoice_appointmentid_primary");
 
-                    b.HasIndex("AppointmentId")
-                        .IsUnique();
+                    b.HasIndex("CustomerId");
 
                     b.HasIndex("EmployeeId");
 
                     b.HasIndex("GarageId");
 
-                    b.ToTable("InvoiceAppointment");
+                    b.ToTable("Invoice", (string)null);
                 });
 
-            modelBuilder.Entity("GarageManagementAPI.Entities.Models.InvoiceDetailRepair", b =>
+            modelBuilder.Entity("GarageManagementAPI.Entities.NewModels.InvoicePackageDetail", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("AppointmentDetailId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("AppointmentId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTimeOffset>("CreatedAt")
                         .HasColumnType("datetimeoffset");
 
-                    b.Property<Guid>("InvoiceAppointmentId")
+                    b.Property<Guid>("InvoiceId")
                         .HasColumnType("uniqueidentifier");
-
-                    b.Property<decimal>("TotalReplacePartPrice")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<decimal>("TotalServicePrice")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<DateTimeOffset>("UpdatedAt")
-                        .HasColumnType("datetimeoffset");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("AppointmentDetailId")
-                        .IsUnique();
-
-                    b.HasIndex("AppointmentId");
-
-                    b.HasIndex("InvoiceAppointmentId");
-
-                    b.ToTable("InvoiceDetailRepair");
-                });
-
-            modelBuilder.Entity("GarageManagementAPI.Entities.Models.InvoiceDetailSell", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTimeOffset>("CreatedAt")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<Guid>("InvoiceSellId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("ProductAtStoreId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("ProductHistoryId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<int>("Quantity")
-                        .HasColumnType("int");
-
-                    b.Property<DateTimeOffset>("UpdatedAt")
-                        .HasColumnType("datetimeoffset");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("InvoiceSellId");
-
-                    b.HasIndex("ProductAtStoreId");
-
-                    b.HasIndex("ProductHistoryId");
-
-                    b.ToTable("InvoiceDetailSell");
-                });
-
-            modelBuilder.Entity("GarageManagementAPI.Entities.Models.InvoiceReplacementParts", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTimeOffset>("CreatedAt")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<Guid>("InvoiceDetailRepairId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("ProductAtStoreId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("ProductHistoryId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<int>("Quantity")
-                        .HasColumnType("int");
-
-                    b.Property<DateTimeOffset>("UpdatedAt")
-                        .HasColumnType("datetimeoffset");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("InvoiceDetailRepairId");
-
-                    b.HasIndex("ProductAtStoreId");
-
-                    b.HasIndex("ProductHistoryId");
-
-                    b.ToTable("InvoiceReplacementParts");
-                });
-
-            modelBuilder.Entity("GarageManagementAPI.Entities.Models.InvoiceSell", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("CreateBy")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTimeOffset>("CreatedAt")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<string>("CustomerEmail")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("CustomerName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("CustomerPhoneNumber")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<Guid?>("EmployeeId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("GarageId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Status")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTimeOffset>("UpdatedAt")
-                        .HasColumnType("datetimeoffset");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("EmployeeId");
-
-                    b.HasIndex("GarageId");
-
-                    b.ToTable("InvoiceSell");
-                });
-
-            modelBuilder.Entity("GarageManagementAPI.Entities.Models.MaintainCondition", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("ConditionType")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTimeOffset>("CreatedAt")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<Guid>("PackageId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<int>("Threshold")
-                        .HasColumnType("int");
-
-                    b.Property<DateTimeOffset>("UpdatedAt")
-                        .HasColumnType("datetimeoffset");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("PackageId");
-
-                    b.ToTable("MaintainCondition");
-                });
-
-            modelBuilder.Entity("GarageManagementAPI.Entities.Models.Package", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTimeOffset>("CreatedAt")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("ServiceCategory")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTimeOffset>("UpdatedAt")
-                        .HasColumnType("datetimeoffset");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Package");
-                });
-
-            modelBuilder.Entity("GarageManagementAPI.Entities.Models.PackageDetail", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTimeOffset>("CreatedAt")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<Guid>("PackageId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("ServiceId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTimeOffset>("UpdatedAt")
-                        .HasColumnType("datetimeoffset");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("PackageId");
-
-                    b.HasIndex("ServiceId");
-
-                    b.ToTable("PackageDetail");
-                });
-
-            modelBuilder.Entity("GarageManagementAPI.Entities.Models.PackageDetailHistory", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTimeOffset>("CreatedAt")
-                        .HasColumnType("datetimeoffset");
 
                     b.Property<Guid>("PackageHistoryId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("ServiceId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTimeOffset>("UpdatedAt")
-                        .HasColumnType("datetimeoffset");
-
-                    b.HasKey("Id");
+                    b.HasKey("Id")
+                        .HasName("invoicepackagedetail_id_primary");
 
                     b.HasIndex("PackageHistoryId");
 
-                    b.HasIndex("ServiceId");
+                    b.HasIndex(new[] { "InvoiceId" }, "invoicepackagedetail_invoiceid_index");
 
-                    b.ToTable("PackageDetailHistory");
+                    b.HasIndex(new[] { "InvoiceId", "PackageHistoryId" }, "invoicepackagedetail_invoiceid_packagehistoryid_unique")
+                        .IsUnique();
+
+                    b.ToTable("InvoicePackageDetail", (string)null);
                 });
 
-            modelBuilder.Entity("GarageManagementAPI.Entities.Models.PackageHistory", b =>
+            modelBuilder.Entity("GarageManagementAPI.Entities.NewModels.InvoiceSellProduct", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<Guid>("InvoiceId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("ProductAtGarageId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("ProductHistoryId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id")
+                        .HasName("invoicesellproduct_id_primary");
+
+                    b.HasIndex("ProductAtGarageId");
+
+                    b.HasIndex(new[] { "InvoiceId" }, "invoicesellproduct_invoiceid_index");
+
+                    b.HasIndex(new[] { "ProductHistoryId", "InvoiceId", "ProductAtGarageId" }, "invoicesellproduct_producthistoryid_invoiceid_productatgarageid_unique")
+                        .IsUnique();
+
+                    b.ToTable("InvoiceSellProduct", (string)null);
+                });
+
+            modelBuilder.Entity("GarageManagementAPI.Entities.NewModels.InvoiceServiceDetail", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<Guid>("InvoiceId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("int");
+
+                    b.Property<Guid>("ServiceHistoryId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id")
+                        .HasName("invoiceservicedetail_id_primary");
+
+                    b.HasIndex("ServiceHistoryId");
+
+                    b.HasIndex(new[] { "InvoiceId" }, "invoiceservicedetail_invoiceid_index");
+
+                    b.HasIndex(new[] { "InvoiceId", "ServiceHistoryId" }, "invoiceservicedetail_invoiceid_servicehistoryid_unique")
+                        .IsUnique();
+
+                    b.ToTable("InvoiceServiceDetail", (string)null);
+                });
+
+            modelBuilder.Entity("GarageManagementAPI.Entities.NewModels.Package", b =>
+                {
+                    b.Property<Guid>("Id")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid>("CarCategoryId")
@@ -1110,11 +997,158 @@ namespace GarageManagementAPI.Application.Migrations
                     b.Property<DateTimeOffset>("CreatedAt")
                         .HasColumnType("datetimeoffset");
 
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("PackageName")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<string>("ServiceCategory")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<DateTimeOffset>("UpdatedAt")
+                        .HasColumnType("datetimeoffset");
+
+                    b.HasKey("Id")
+                        .HasName("package_id_primary");
+
+                    b.HasIndex(new[] { "CarCategoryId" }, "package_carcategoryid_index");
+
+                    b.ToTable("Package", (string)null);
+                });
+
+            modelBuilder.Entity("GarageManagementAPI.Entities.NewModels.PackageCondition", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("ConditionType")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<int>("ConditionValue")
+                        .HasColumnType("int");
+
                     b.Property<Guid>("PackageId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<decimal>("Price")
-                        .HasColumnType("decimal(18,2)");
+                    b.HasKey("Id")
+                        .HasName("packagecondition_id_primary");
+
+                    b.HasIndex(new[] { "ConditionType", "ConditionValue" }, "packagecondition_conditiontype_conditionvalue_unique")
+                        .IsUnique();
+
+                    b.HasIndex(new[] { "PackageId" }, "packagecondition_packageid_index");
+
+                    b.ToTable("PackageCondition", (string)null);
+                });
+
+            modelBuilder.Entity("GarageManagementAPI.Entities.NewModels.PackageDetail", b =>
+                {
+                    b.Property<Guid>("PackageHistoryId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("ServiceId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<DateTimeOffset>("UpdatedAt")
+                        .HasColumnType("datetimeoffset");
+
+                    b.HasKey("PackageHistoryId", "ServiceId")
+                        .HasName("packagedetail_packagehistoryid_serviceid_primary");
+
+                    b.HasIndex("ServiceId");
+
+                    b.ToTable("PackageDetail", (string)null);
+                });
+
+            modelBuilder.Entity("GarageManagementAPI.Entities.NewModels.PackageFeedBack", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<Guid>("CustomerId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Emoji")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<string>("FeedBack")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("PackageId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<DateTimeOffset>("UpdatedAt")
+                        .HasColumnType("datetimeoffset");
+
+                    b.HasKey("Id")
+                        .HasName("packagefeedback_id_primary");
+
+                    b.HasIndex(new[] { "CustomerId" }, "packagefeedback_customerid_index");
+
+                    b.HasIndex(new[] { "PackageId" }, "packagefeedback_packageid_index");
+
+                    b.ToTable("PackageFeedBack", (string)null);
+                });
+
+            modelBuilder.Entity("GarageManagementAPI.Entities.NewModels.PackageHistory", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<Guid>("PackageId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<decimal>("PackagePrice")
+                        .HasColumnType("decimal(8, 2)");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<string>("TimeUnit")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
 
                     b.Property<DateTimeOffset>("UpdatedAt")
                         .HasColumnType("datetimeoffset");
@@ -1125,19 +1159,20 @@ namespace GarageManagementAPI.Application.Migrations
                     b.Property<int>("ValidityPeriod")
                         .HasColumnType("int");
 
-                    b.HasKey("Id");
+                    b.HasKey("Id")
+                        .HasName("packagehistory_id_primary");
 
-                    b.HasIndex("CarCategoryId");
+                    b.HasIndex(new[] { "PackageId" }, "packagehistory_packageid_index");
 
-                    b.HasIndex("PackageId");
+                    b.HasIndex(new[] { "PackageId", "PackagePrice", "ValidityPeriod", "TimeUnit", "UsageLimit" }, "packagehistory_packageid_packageprice_validityperiod_timeunit_usagelimit_unique")
+                        .IsUnique();
 
-                    b.ToTable("PackageHistory");
+                    b.ToTable("PackageHistory", (string)null);
                 });
 
-            modelBuilder.Entity("GarageManagementAPI.Entities.Models.PackageImage", b =>
+            modelBuilder.Entity("GarageManagementAPI.Entities.NewModels.PackageImage", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTimeOffset>("CreatedAt")
@@ -1145,56 +1180,31 @@ namespace GarageManagementAPI.Application.Migrations
 
                     b.Property<string>("Link")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
 
                     b.Property<Guid>("PackageId")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
                     b.Property<DateTimeOffset>("UpdatedAt")
                         .HasColumnType("datetimeoffset");
 
-                    b.HasKey("Id");
+                    b.HasKey("Id")
+                        .HasName("packageimage_id_primary");
 
                     b.HasIndex("PackageId");
 
-                    b.ToTable("PackageImage");
+                    b.ToTable("PackageImage", (string)null);
                 });
 
-            modelBuilder.Entity("GarageManagementAPI.Entities.Models.PackageProvided", b =>
+            modelBuilder.Entity("GarageManagementAPI.Entities.NewModels.PackageUsage", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("AppointmentId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTimeOffset>("CreatedAt")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<Guid>("PackageHistoryId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Status")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTimeOffset>("UpdatedAt")
-                        .HasColumnType("datetimeoffset");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("AppointmentId");
-
-                    b.HasIndex("PackageHistoryId");
-
-                    b.ToTable("PackageProvided");
-                });
-
-            modelBuilder.Entity("GarageManagementAPI.Entities.Models.PackageUsage", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTimeOffset>("CreatedAt")
@@ -1203,35 +1213,43 @@ namespace GarageManagementAPI.Application.Migrations
                     b.Property<Guid>("CustomerCarId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<DateOnly>("EndDate")
-                        .HasColumnType("date");
+                    b.Property<DateTimeOffset>("EndDate")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<Guid>("InvoiceAppointmentId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid>("PackageHistoryId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<DateOnly>("StartDate")
-                        .HasColumnType("date");
+                    b.Property<DateTimeOffset>("StartDate")
+                        .HasColumnType("datetimeoffset");
 
                     b.Property<string>("Status")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
 
                     b.Property<DateTimeOffset>("UpdatedAt")
                         .HasColumnType("datetimeoffset");
 
-                    b.Property<int>("UsageCount")
+                    b.Property<int>("UsagedCount")
                         .HasColumnType("int");
 
-                    b.HasKey("Id");
-
-                    b.HasIndex("CustomerCarId");
+                    b.HasKey("Id")
+                        .HasName("packageusage_id_primary");
 
                     b.HasIndex("PackageHistoryId");
 
-                    b.ToTable("PackageUsage");
+                    b.HasIndex(new[] { "CustomerCarId" }, "packageusage_customercarid_index");
+
+                    b.HasIndex(new[] { "InvoiceAppointmentId" }, "packageusage_invoiceappointmentid_unique")
+                        .IsUnique();
+
+                    b.ToTable("PackageUsage", (string)null);
                 });
 
-            modelBuilder.Entity("GarageManagementAPI.Entities.Models.PackageUsageDetail", b =>
+            modelBuilder.Entity("GarageManagementAPI.Entities.NewModels.PackageUsageDetail", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -1248,29 +1266,30 @@ namespace GarageManagementAPI.Application.Migrations
 
                     b.Property<string>("Status")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
 
                     b.Property<DateTimeOffset>("UpdatedAt")
                         .HasColumnType("datetimeoffset");
 
-                    b.HasKey("Id");
+                    b.HasKey("Id")
+                        .HasName("packageusagedetail_id_primary");
 
-                    b.HasIndex("AppointmentId");
+                    b.HasIndex(new[] { "AppointmentId" }, "packageusagedetail_appointmentid_unique")
+                        .IsUnique();
 
-                    b.HasIndex("PackageUsageId");
+                    b.HasIndex(new[] { "PackageUsageId", "AppointmentId" }, "packageusagedetail_packageusageid_appointmentid_unique")
+                        .IsUnique();
 
-                    b.ToTable("PackageUsageDetail");
+                    b.HasIndex(new[] { "PackageUsageId" }, "packageusagedetail_packageusageid_index");
+
+                    b.ToTable("PackageUsageDetail", (string)null);
                 });
 
-            modelBuilder.Entity("GarageManagementAPI.Entities.Models.Product", b =>
+            modelBuilder.Entity("GarageManagementAPI.Entities.NewModels.Product", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Barcode")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<Guid>("BrandId")
                         .HasColumnType("uniqueidentifier");
@@ -1278,107 +1297,132 @@ namespace GarageManagementAPI.Application.Migrations
                     b.Property<DateTimeOffset>("CreatedAt")
                         .HasColumnType("datetimeoffset");
 
-                    b.Property<string>("Description")
+                    b.Property<string>("ProductBarcode")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
 
                     b.Property<Guid>("ProductCategoryId")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<string>("ProductDescription")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("ProductName")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
                     b.Property<DateTimeOffset>("UpdatedAt")
                         .HasColumnType("datetimeoffset");
 
-                    b.HasKey("Id");
+                    b.HasKey("Id")
+                        .HasName("product_id_primary");
 
-                    b.HasIndex("BrandId");
+                    b.HasIndex(new[] { "BrandId" }, "product_brandid_index");
 
-                    b.HasIndex("ProductCategoryId");
+                    b.HasIndex(new[] { "ProductBarcode" }, "product_productbarcode_unique")
+                        .IsUnique();
 
-                    b.ToTable("Product");
+                    b.HasIndex(new[] { "ProductCategoryId" }, "product_productcategoryid_index");
+
+                    b.ToTable("Product", (string)null);
                 });
 
-            modelBuilder.Entity("GarageManagementAPI.Entities.Models.ProductAtStore", b =>
+            modelBuilder.Entity("GarageManagementAPI.Entities.NewModels.ProductAtGarage", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("BarcodeAtStore")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTimeOffset>("CreatedAt")
                         .HasColumnType("datetimeoffset");
 
-                    b.Property<Guid>("GarageId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("GoodsIssuedDetailId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("ProductId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<string>("ProductBarcodeAtGarage")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
 
                     b.Property<int>("Quantity")
                         .HasColumnType("int");
 
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
                     b.Property<DateTimeOffset>("UpdatedAt")
                         .HasColumnType("datetimeoffset");
 
-                    b.HasKey("Id");
+                    b.HasKey("Id")
+                        .HasName("productatgarage_goodsissueddetailid_primary");
 
-                    b.HasIndex("GarageId");
-
-                    b.HasIndex("GoodsIssuedDetailId")
-                        .IsUnique();
-
-                    b.HasIndex("ProductId");
-
-                    b.ToTable("ProductAtStore");
+                    b.ToTable("ProductAtGarage", (string)null);
                 });
 
-            modelBuilder.Entity("GarageManagementAPI.Entities.Models.ProductAtWareHouse", b =>
+            modelBuilder.Entity("GarageManagementAPI.Entities.NewModels.ProductAtWarehouse", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTimeOffset>("CreatedAt")
                         .HasColumnType("datetimeoffset");
-
-                    b.Property<Guid>("GoodsReceivedDetailId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("ProductId")
-                        .HasColumnType("uniqueidentifier");
 
                     b.Property<int>("Quantity")
                         .HasColumnType("int");
 
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
                     b.Property<DateTimeOffset>("UpdatedAt")
                         .HasColumnType("datetimeoffset");
 
-                    b.HasKey("Id");
+                    b.HasKey("Id")
+                        .HasName("productatwarehouse_goodsreceiveddetailid_primary");
 
-                    b.HasIndex("GoodsReceivedDetailId")
+                    b.ToTable("ProductAtWarehouse", (string)null);
+                });
+
+            modelBuilder.Entity("GarageManagementAPI.Entities.NewModels.ProductCategory", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Category")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<DateTimeOffset>("UpdatedAt")
+                        .HasColumnType("datetimeoffset");
+
+                    b.HasKey("Id")
+                        .HasName("productcategory_id_primary");
+
+                    b.HasIndex(new[] { "Category" }, "productcategory_category_unique")
                         .IsUnique();
 
-                    b.HasIndex("ProductId");
-
-                    b.ToTable("ProductAtWareHouse");
+                    b.ToTable("ProductCategory", (string)null);
                 });
 
-            modelBuilder.Entity("GarageManagementAPI.Entities.Models.ProductCarPart", b =>
+            modelBuilder.Entity("GarageManagementAPI.Entities.NewModels.ProductHistory", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("CarPartId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTimeOffset>("CreatedAt")
@@ -1387,105 +1431,28 @@ namespace GarageManagementAPI.Application.Migrations
                     b.Property<Guid>("ProductId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<DateTimeOffset>("UpdatedAt")
-                        .HasColumnType("datetimeoffset");
+                    b.Property<decimal>("ProductPrice")
+                        .HasColumnType("decimal(8, 2)");
 
-                    b.HasKey("Id");
-
-                    b.HasIndex("CarPartId");
-
-                    b.HasIndex("ProductId");
-
-                    b.ToTable("ProductCarPart");
-                });
-
-            modelBuilder.Entity("GarageManagementAPI.Entities.Models.ProductCategory", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTimeOffset>("CreatedAt")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<string>("ProdcutCategory")
+                    b.Property<string>("Status")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
 
                     b.Property<DateTimeOffset>("UpdatedAt")
                         .HasColumnType("datetimeoffset");
 
-                    b.HasKey("Id");
+                    b.HasKey("Id")
+                        .HasName("producthistory_id_primary");
 
-                    b.ToTable("ProductCategory");
+                    b.HasIndex(new[] { "ProductId" }, "producthistory_productid_index");
+
+                    b.ToTable("ProductHistory", (string)null);
                 });
 
-            modelBuilder.Entity("GarageManagementAPI.Entities.Models.ProductForCarModel", b =>
+            modelBuilder.Entity("GarageManagementAPI.Entities.NewModels.ProductImage", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("CarModelId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid?>("CarModelId1")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTimeOffset>("CreatedAt")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<Guid>("ProductId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid?>("ProductId1")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTimeOffset>("UpdatedAt")
-                        .HasColumnType("datetimeoffset");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CarModelId");
-
-                    b.HasIndex("CarModelId1");
-
-                    b.HasIndex("ProductId");
-
-                    b.HasIndex("ProductId1");
-
-                    b.ToTable("ProductForCarModel");
-                });
-
-            modelBuilder.Entity("GarageManagementAPI.Entities.Models.ProductHistory", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTimeOffset>("CreatedAt")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<decimal>("Price")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<Guid>("ProductId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTimeOffset>("UpdatedAt")
-                        .HasColumnType("datetimeoffset");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ProductId");
-
-                    b.ToTable("ProductHistory");
-                });
-
-            modelBuilder.Entity("GarageManagementAPI.Entities.Models.ProductImage", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTimeOffset>("CreatedAt")
@@ -1493,327 +1460,67 @@ namespace GarageManagementAPI.Application.Migrations
 
                     b.Property<string>("Link")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
 
                     b.Property<Guid>("ProductId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<DateTimeOffset>("UpdatedAt")
-                        .HasColumnType("datetimeoffset");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ProductId");
-
-                    b.ToTable("ProductImage");
-                });
-
-            modelBuilder.Entity("GarageManagementAPI.Entities.Models.Service", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Action")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<Guid>("CarPartId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTimeOffset>("CreatedAt")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("EstimatedTime")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("ServiceCategory")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("Status")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
 
                     b.Property<DateTimeOffset>("UpdatedAt")
                         .HasColumnType("datetimeoffset");
 
-                    b.Property<string>("WorkNature")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.HasKey("Id")
+                        .HasName("productimage_id_primary");
 
-                    b.HasKey("Id");
+                    b.HasIndex(new[] { "ProductId" }, "productimage_productid_index");
 
-                    b.HasIndex("CarPartId");
-
-                    b.ToTable("Service");
+                    b.ToTable("ProductImage", (string)null);
                 });
 
-            modelBuilder.Entity("GarageManagementAPI.Entities.Models.ServiceHistory", b =>
+            modelBuilder.Entity("GarageManagementAPI.Entities.NewModels.ReplacementPart", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("CarCategoryId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTimeOffset>("CreatedAt")
                         .HasColumnType("datetimeoffset");
 
-                    b.Property<decimal>("Price")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<Guid>("ServiceId")
+                    b.Property<Guid>("InvoiceDetailId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<DateTimeOffset>("UpdatedAt")
-                        .HasColumnType("datetimeoffset");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CarCategoryId");
-
-                    b.HasIndex("ServiceId");
-
-                    b.ToTable("ServiceHistory");
-                });
-
-            modelBuilder.Entity("GarageManagementAPI.Entities.Models.ServiceImage", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
+                    b.Property<Guid>("ProductAtGarageId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<DateTimeOffset>("CreatedAt")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<string>("Link")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<Guid>("ServiceId")
+                    b.Property<Guid>("ProductHistoryId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<DateTimeOffset>("UpdatedAt")
-                        .HasColumnType("datetimeoffset");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ServiceId");
-
-                    b.ToTable("ServiceImage");
-                });
-
-            modelBuilder.Entity("GarageManagementAPI.Entities.Models.Supplier", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("CompanyAddress")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("CompanyCode")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("CompanyHotline")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("ContactEmail")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("ContactName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTimeOffset>("CreatedAt")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<DateTimeOffset>("UpdatedAt")
-                        .HasColumnType("datetimeoffset");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Supplier");
-                });
-
-            modelBuilder.Entity("GarageManagementAPI.Entities.Models.User", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<int>("AccessFailedCount")
+                    b.Property<int>("Quantity")
                         .HasColumnType("int");
 
-                    b.Property<string>("ConcurrencyStamp")
-                        .IsConcurrencyToken()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<decimal>("TotalPrice")
+                        .HasColumnType("decimal(8, 2)");
 
-                    b.Property<string>("Email")
-                        .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
+                    b.HasKey("Id")
+                        .HasName("replacementpart_id_primary");
 
-                    b.Property<bool>("EmailConfirmed")
-                        .HasColumnType("bit");
+                    b.HasIndex("ProductAtGarageId");
 
-                    b.Property<string>("FirstName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.HasIndex("ProductHistoryId");
 
-                    b.Property<string>("Image")
-                        .HasColumnType("nvarchar(max)");
+                    b.HasIndex(new[] { "InvoiceDetailId" }, "replacementpart_invoiceappointmentdetailid_index");
 
-                    b.Property<string>("LastName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.HasIndex(new[] { "InvoiceDetailId", "ProductHistoryId", "ProductAtGarageId" }, "replacementpart_invoiceappointmentdetailid_producthistoryid_productatgarageid_unique")
+                        .IsUnique();
 
-                    b.Property<bool>("LockoutEnabled")
-                        .HasColumnType("bit");
-
-                    b.Property<DateTimeOffset?>("LockoutEnd")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<string>("NormalizedEmail")
-                        .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
-
-                    b.Property<string>("NormalizedUserName")
-                        .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
-
-                    b.Property<string>("PasswordHash")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("PhoneNumber")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("PhoneNumberConfirmed")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("RefreshToken")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("RefreshTokenExpiryTime")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("SecurityStamp")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Status")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("TwoFactorEnabled")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("UserName")
-                        .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("NormalizedEmail")
-                        .HasDatabaseName("EmailIndex");
-
-                    b.HasIndex("NormalizedUserName")
-                        .IsUnique()
-                        .HasDatabaseName("UserNameIndex")
-                        .HasFilter("[NormalizedUserName] IS NOT NULL");
-
-                    b.ToTable("Users", (string)null);
+                    b.ToTable("ReplacementPart", (string)null);
                 });
 
-            modelBuilder.Entity("GarageManagementAPI.Entities.Models.Warehouse", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Address")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTimeOffset>("CreatedAt")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTimeOffset>("UpdatedAt")
-                        .HasColumnType("datetimeoffset");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Warehouse");
-                });
-
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
-                {
-                    b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("ConcurrencyStamp")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("NormalizedName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("IdentityRole");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = "2bad4a96-6dff-4fa3-9c2e-6899264fb739",
-                            Name = "Cashier",
-                            NormalizedName = "CASHIER"
-                        },
-                        new
-                        {
-                            Id = "3c5c548b-b789-41b5-b216-48ddfb5e732a",
-                            Name = "Mechanic",
-                            NormalizedName = "MECHANIC"
-                        },
-                        new
-                        {
-                            Id = "7d2b39a7-3d9d-4583-acd5-985611a29a5b",
-                            Name = "Customer",
-                            NormalizedName = "CUSTOMER"
-                        },
-                        new
-                        {
-                            Id = "b10aa072-2522-41d9-8e12-c20f28082a0e",
-                            Name = "WarehouseManager",
-                            NormalizedName = "WAREHOUSEMANAGER"
-                        },
-                        new
-                        {
-                            Id = "ef3629ba-332e-4c46-9fa8-54444803f925",
-                            Name = "Administrator",
-                            NormalizedName = "ADMINISTRATOR"
-                        });
-                });
-
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole<System.Guid>", b =>
+            modelBuilder.Entity("GarageManagementAPI.Entities.NewModels.Roles", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -1839,6 +1546,447 @@ namespace GarageManagementAPI.Application.Migrations
                         .HasFilter("[NormalizedName] IS NOT NULL");
 
                     b.ToTable("Roles", (string)null);
+                });
+
+            modelBuilder.Entity("GarageManagementAPI.Entities.NewModels.Service", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Action")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<Guid>("CarCategoryId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("CarPartId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("EstimatedHours")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ServiceCategory")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<DateTimeOffset>("UpdatedAt")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<string>("WorkNature")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.HasKey("Id")
+                        .HasName("service_id_primary");
+
+                    b.HasIndex("CarCategoryId");
+
+                    b.HasIndex(new[] { "CarPartId" }, "service_carpartid_index");
+
+                    b.HasIndex(new[] { "ServiceCategory", "WorkNature", "Action", "CarCategoryId" }, "service_servicecategory_worknature_action_carcategoryid_unique")
+                        .IsUnique();
+
+                    b.ToTable("Service", (string)null);
+                });
+
+            modelBuilder.Entity("GarageManagementAPI.Entities.NewModels.ServiceFeedBack", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<Guid>("CustomerId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Emoji")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<string>("FeedBack")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("ServiceId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<DateTimeOffset>("UpdatedAt")
+                        .HasColumnType("datetimeoffset");
+
+                    b.HasKey("Id")
+                        .HasName("servicefeedback_id_primary");
+
+                    b.HasIndex(new[] { "CustomerId" }, "servicefeedback_customerid_index");
+
+                    b.HasIndex(new[] { "ServiceId" }, "servicefeedback_serviceid_index");
+
+                    b.ToTable("ServiceFeedBack", (string)null);
+                });
+
+            modelBuilder.Entity("GarageManagementAPI.Entities.NewModels.ServiceHistory", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<decimal>("Price")
+                        .HasColumnType("decimal(8, 2)");
+
+                    b.Property<Guid>("ServiceId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<DateTimeOffset>("UpdatedAt")
+                        .HasColumnType("datetimeoffset");
+
+                    b.HasKey("Id")
+                        .HasName("servicehistory_id_primary");
+
+                    b.HasIndex(new[] { "ServiceId" }, "servicehistory_serviceid_index");
+
+                    b.ToTable("ServiceHistory", (string)null);
+                });
+
+            modelBuilder.Entity("GarageManagementAPI.Entities.NewModels.ServiceImage", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<string>("Link")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<Guid>("ServiceId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<DateTimeOffset>("UpdatedAt")
+                        .HasColumnType("datetimeoffset");
+
+                    b.HasKey("Id")
+                        .HasName("serviceimage_id_primary");
+
+                    b.HasIndex(new[] { "ServiceId" }, "serviceimage_serviceid_index");
+
+                    b.ToTable("ServiceImage", (string)null);
+                });
+
+            modelBuilder.Entity("GarageManagementAPI.Entities.NewModels.Supplier", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Address")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<string>("District")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<string>("Province")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<string>("SupplierCategory")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<string>("TaxCode")
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<DateTimeOffset>("UpdatedAt")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<string>("Wards")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.HasKey("Id")
+                        .HasName("supplier_id_primary");
+
+                    b.HasIndex(new[] { "Address", "Province", "District", "Wards" }, "supplier_address_province_district_wards_unique")
+                        .IsUnique();
+
+                    b.HasIndex(new[] { "Name" }, "supplier_name_unique")
+                        .IsUnique();
+
+                    b.ToTable("Supplier", (string)null);
+                });
+
+            modelBuilder.Entity("GarageManagementAPI.Entities.NewModels.SupplierContact", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("ContactEmail")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<string>("ContactPersonName")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<string>("ContactPhoneNumber")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<string>("ContactPosition")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("SupplierId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTimeOffset>("UpdatedAt")
+                        .HasColumnType("datetimeoffset");
+
+                    b.HasKey("Id")
+                        .HasName("suppliercontact_id_primary");
+
+                    b.HasIndex(new[] { "SupplierId" }, "suppliercontact_supplierid_index");
+
+                    b.ToTable("SupplierContact", (string)null);
+                });
+
+            modelBuilder.Entity("GarageManagementAPI.Entities.NewModels.User", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("AccessFailedCount")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ConcurrencyStamp")
+                        .IsConcurrencyToken()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<string>("Email")
+                        .HasMaxLength(255)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(255)");
+
+                    b.Property<bool>("EmailConfirmed")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("FirstName")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("Image")
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<string>("LastName")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<bool>("LockoutEnabled")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTimeOffset?>("LockoutEnd")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<string>("NormalizedEmail")
+                        .HasMaxLength(255)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(255)");
+
+                    b.Property<string>("NormalizedUserName")
+                        .HasMaxLength(25)
+                        .HasColumnType("nvarchar(25)");
+
+                    b.Property<string>("PasswordHash")
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<string>("PhoneNumber")
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<bool>("PhoneNumberConfirmed")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("RefreshToken")
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<DateTime?>("RefreshTokenExpiryTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("SecurityStamp")
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<bool>("TwoFactorEnabled")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("UserName")
+                        .HasMaxLength(25)
+                        .HasColumnType("nvarchar(25)");
+
+                    b.HasKey("Id")
+                        .HasName("users_id_primary");
+
+                    b.HasIndex("NormalizedEmail")
+                        .HasDatabaseName("EmailIndex");
+
+                    b.HasIndex("NormalizedUserName")
+                        .IsUnique()
+                        .HasDatabaseName("UserNameIndex")
+                        .HasFilter("[NormalizedUserName] IS NOT NULL");
+
+                    b.HasIndex(new[] { "Email" }, "users_email_unique")
+                        .IsUnique()
+                        .HasFilter("[Email] IS NOT NULL");
+
+                    b.HasIndex(new[] { "PhoneNumber" }, "users_phonenumber_unique")
+                        .IsUnique()
+                        .HasFilter("[PhoneNumber] IS NOT NULL");
+
+                    b.ToTable("Users", (string)null);
+                });
+
+            modelBuilder.Entity("GarageManagementAPI.Entities.NewModels.Workplace", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("id");
+
+                    b.Property<string>("Address")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<string>("District")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<string>("PhoneNumber")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<string>("Province")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<DateTimeOffset>("UpdatedAt")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<string>("Wards")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("WorkplaceType")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.HasKey("Id")
+                        .HasName("workplace_id_primary");
+
+                    b.HasIndex(new[] { "Address", "Province", "District", "Wards" }, "workplace_address_province_district_wards_unique")
+                        .IsUnique();
+
+                    b.HasIndex(new[] { "Name" }, "workplace_name_unique")
+                        .IsUnique();
+
+                    b.HasIndex(new[] { "PhoneNumber" }, "workplace_phonenumber_unique")
+                        .IsUnique();
+
+                    b.ToTable("Workplace", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<System.Guid>", b =>
@@ -1944,744 +2092,747 @@ namespace GarageManagementAPI.Application.Migrations
                     b.ToTable("UserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("GarageManagementAPI.Entities.Models.Appointment", b =>
+            modelBuilder.Entity("ProductCarModel", b =>
                 {
-                    b.HasOne("GarageManagementAPI.Entities.Models.CarModel", "CarModel")
-                        .WithMany()
-                        .HasForeignKey("CarModelId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.Property<Guid>("CarModelId")
+                        .HasColumnType("uniqueidentifier");
 
-                    b.HasOne("GarageManagementAPI.Entities.Models.Garage", "Garage")
+                    b.Property<Guid>("ProductId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("CarModelId", "ProductId")
+                        .HasName("productcarmodel_carmodelid_productid_primary");
+
+                    b.HasIndex("ProductId");
+
+                    b.ToTable("ProductCarModel", (string)null);
+                });
+
+            modelBuilder.Entity("ProductCarPart", b =>
+                {
+                    b.Property<Guid>("CarPartId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("ProductId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("CarPartId", "ProductId")
+                        .HasName("productcarpart_carpartid_productid_primary");
+
+                    b.HasIndex("ProductId");
+
+                    b.ToTable("ProductCarPart", (string)null);
+                });
+
+            modelBuilder.Entity("GarageManagementAPI.Entities.NewModels.Appointment", b =>
+                {
+                    b.HasOne("GarageManagementAPI.Entities.NewModels.User", "ApproveByEmployee")
+                        .WithMany("Appointments")
+                        .HasForeignKey("ApproveByEmployeeId")
+                        .HasConstraintName("appointment_approvebyemployeeid_foreign");
+
+                    b.HasOne("GarageManagementAPI.Entities.NewModels.CarModel", "CarModel")
+                        .WithMany("Appointments")
+                        .HasForeignKey("CarModelId")
+                        .IsRequired()
+                        .HasConstraintName("appointment_carmodelid_foreign");
+
+                    b.HasOne("GarageManagementAPI.Entities.NewModels.Workplace", "Garage")
                         .WithMany("Appointments")
                         .HasForeignKey("GarageId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("appointment_garageid_foreign");
 
-                    b.HasOne("GarageManagementAPI.Entities.Models.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId");
+                    b.Navigation("ApproveByEmployee");
 
                     b.Navigation("CarModel");
 
                     b.Navigation("Garage");
-
-                    b.Navigation("User");
                 });
 
-            modelBuilder.Entity("GarageManagementAPI.Entities.Models.AppointmentDetail", b =>
+            modelBuilder.Entity("GarageManagementAPI.Entities.NewModels.AppointmentDetail", b =>
                 {
-                    b.HasOne("GarageManagementAPI.Entities.Models.Appointment", "Appointment")
+                    b.HasOne("GarageManagementAPI.Entities.NewModels.Appointment", "Appointment")
                         .WithMany("AppointmentDetails")
                         .HasForeignKey("AppointmentId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("appointmentdetail_appointmentid_foreign");
 
-                    b.HasOne("GarageManagementAPI.Entities.Models.ServiceHistory", "ServiceHistory")
+                    b.HasOne("GarageManagementAPI.Entities.NewModels.ServiceHistory", "ServiceHistory")
                         .WithMany("AppointmentDetails")
                         .HasForeignKey("ServiceHistoryId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("appointmentdetail_servicehistoryid_foreign");
+
+                    b.HasOne("GarageManagementAPI.Entities.NewModels.User", "UpdateByCustomer")
+                        .WithMany("AppointmentDetailUpdateByCustomers")
+                        .HasForeignKey("UpdateByCustomerId")
+                        .HasConstraintName("appointmentdetail_updatebycustomerid_foreign");
+
+                    b.HasOne("GarageManagementAPI.Entities.NewModels.User", "UpdateByEmployee")
+                        .WithMany("AppointmentDetailUpdateByEmployees")
+                        .HasForeignKey("UpdateByEmployeeId")
+                        .HasConstraintName("appointmentdetail_updatebyemployeeid_foreign");
 
                     b.Navigation("Appointment");
 
                     b.Navigation("ServiceHistory");
+
+                    b.Navigation("UpdateByCustomer");
+
+                    b.Navigation("UpdateByEmployee");
                 });
 
-            modelBuilder.Entity("GarageManagementAPI.Entities.Models.AppointmentReplacementParts", b =>
+            modelBuilder.Entity("GarageManagementAPI.Entities.NewModels.AppointmentDetailPackage", b =>
                 {
-                    b.HasOne("GarageManagementAPI.Entities.Models.AppointmentDetail", "AppointmentDetail")
+                    b.HasOne("GarageManagementAPI.Entities.NewModels.Appointment", "Appointment")
+                        .WithMany("AppointmentDetailPackages")
+                        .HasForeignKey("AppointmentId")
+                        .IsRequired()
+                        .HasConstraintName("appointmentdetailpackage_appointmentid_foreign");
+
+                    b.HasOne("GarageManagementAPI.Entities.NewModels.PackageHistory", "PackageHistory")
+                        .WithMany("AppointmentDetailPackages")
+                        .HasForeignKey("PackageHistoryId")
+                        .IsRequired()
+                        .HasConstraintName("appointmentdetailpackage_packagehistoryid_foreign");
+
+                    b.HasOne("GarageManagementAPI.Entities.NewModels.User", "UpdateByCustomer")
+                        .WithMany("AppointmentDetailPackageUpdateByCustomers")
+                        .HasForeignKey("UpdateByCustomerId")
+                        .HasConstraintName("appointmentdetailpackage_updatebycustomerid_foreign");
+
+                    b.HasOne("GarageManagementAPI.Entities.NewModels.User", "UpdateByEmployee")
+                        .WithMany("AppointmentDetailPackageUpdateByEmployees")
+                        .HasForeignKey("UpdateByEmployeeId")
+                        .HasConstraintName("appointmentdetailpackage_updatebyemployeeid_foreign");
+
+                    b.Navigation("Appointment");
+
+                    b.Navigation("PackageHistory");
+
+                    b.Navigation("UpdateByCustomer");
+
+                    b.Navigation("UpdateByEmployee");
+                });
+
+            modelBuilder.Entity("GarageManagementAPI.Entities.NewModels.AppointmentReplacementPart", b =>
+                {
+                    b.HasOne("GarageManagementAPI.Entities.NewModels.AppointmentDetail", "AppointmentDetail")
                         .WithMany("AppointmentReplacementParts")
                         .HasForeignKey("AppointmentDetailId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("appointmentreplacementpart_appointmentdetailid_foreign");
 
-                    b.HasOne("GarageManagementAPI.Entities.Models.ProductHistory", "ProductHistory")
+                    b.HasOne("GarageManagementAPI.Entities.NewModels.ProductAtGarage", "ProductAtGarage")
+                        .WithMany("AppointmentReplacementParts")
+                        .HasForeignKey("ProductAtGarageId")
+                        .IsRequired()
+                        .HasConstraintName("appointmentreplacementpart_productatgarageid_foreign");
+
+                    b.HasOne("GarageManagementAPI.Entities.NewModels.ProductHistory", "ProductHistory")
                         .WithMany("AppointmentReplacementParts")
                         .HasForeignKey("ProductHistoryId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("appointmentreplacementpart_producthistoryid_foreign");
 
                     b.Navigation("AppointmentDetail");
+
+                    b.Navigation("ProductAtGarage");
 
                     b.Navigation("ProductHistory");
                 });
 
-            modelBuilder.Entity("GarageManagementAPI.Entities.Models.CarConditionImage", b =>
+            modelBuilder.Entity("GarageManagementAPI.Entities.NewModels.CarConditionImage", b =>
                 {
-                    b.HasOne("GarageManagementAPI.Entities.Models.AppointmentDetail", "AppointmentDetail")
+                    b.HasOne("GarageManagementAPI.Entities.NewModels.AppointmentDetail", "AppointmentDetail")
                         .WithMany("CarConditionImages")
                         .HasForeignKey("AppointmentDetailId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("carconditionimage_appointmentdetailid_foreign");
 
                     b.Navigation("AppointmentDetail");
                 });
 
-            modelBuilder.Entity("GarageManagementAPI.Entities.Models.CarModel", b =>
+            modelBuilder.Entity("GarageManagementAPI.Entities.NewModels.CarModel", b =>
                 {
-                    b.HasOne("GarageManagementAPI.Entities.Models.Brand", "Brand")
+                    b.HasOne("GarageManagementAPI.Entities.NewModels.Brand", "Brand")
                         .WithMany("CarModels")
                         .HasForeignKey("BrandId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("carmodel_brandid_foreign");
 
-                    b.HasOne("GarageManagementAPI.Entities.Models.CarCategory", "CarCategory")
+                    b.HasOne("GarageManagementAPI.Entities.NewModels.CarCategory", "CarCategory")
                         .WithMany("CarModels")
                         .HasForeignKey("CarCategoryId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("carmodel_carcategoryid_foreign");
 
                     b.Navigation("Brand");
 
                     b.Navigation("CarCategory");
                 });
 
-            modelBuilder.Entity("GarageManagementAPI.Entities.Models.CarPart", b =>
+            modelBuilder.Entity("GarageManagementAPI.Entities.NewModels.CarPart", b =>
                 {
-                    b.HasOne("GarageManagementAPI.Entities.Models.CarPartCategory", "CarPartCategory")
+                    b.HasOne("GarageManagementAPI.Entities.NewModels.CarPartCategory", "CarPartCategory")
                         .WithMany("CarParts")
                         .HasForeignKey("CarPartCategoryId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("carpart_carpartcategoryid_foreign");
 
                     b.Navigation("CarPartCategory");
                 });
 
-            modelBuilder.Entity("GarageManagementAPI.Entities.Models.CustomerCar", b =>
+            modelBuilder.Entity("GarageManagementAPI.Entities.NewModels.CustomerCar", b =>
                 {
-                    b.HasOne("GarageManagementAPI.Entities.Models.CarModel", "CarModel")
+                    b.HasOne("GarageManagementAPI.Entities.NewModels.CarModel", "CarModel")
                         .WithMany("CustomerCars")
                         .HasForeignKey("CarModelId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("customercar_carmodelid_foreign");
 
-                    b.HasOne("GarageManagementAPI.Entities.Models.User", "Customer")
-                        .WithMany("CustomerCars")
+                    b.HasOne("GarageManagementAPI.Entities.NewModels.User", "CreatedByEmployee")
+                        .WithMany("CustomerCarCreatedByEmployees")
+                        .HasForeignKey("CreatedByEmployeeId")
+                        .IsRequired()
+                        .HasConstraintName("customercar_createdbyemployeeid_foreign");
+
+                    b.HasOne("GarageManagementAPI.Entities.NewModels.User", "Customer")
+                        .WithMany("CustomerCarCustomers")
                         .HasForeignKey("CustomerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("customercar_customerid_foreign");
 
                     b.Navigation("CarModel");
 
+                    b.Navigation("CreatedByEmployee");
+
                     b.Navigation("Customer");
                 });
 
-            modelBuilder.Entity("GarageManagementAPI.Entities.Models.Employee", b =>
+            modelBuilder.Entity("GarageManagementAPI.Entities.NewModels.EmployeeInfo", b =>
                 {
-                    b.HasOne("GarageManagementAPI.Entities.Models.Garage", "Garage")
-                        .WithMany()
-                        .HasForeignKey("GarageId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Garage");
-                });
-
-            modelBuilder.Entity("GarageManagementAPI.Entities.Models.EmployeeInfo", b =>
-                {
-                    b.HasOne("GarageManagementAPI.Entities.Models.Garage", "Garage")
-                        .WithMany("EmployeesInfo")
-                        .HasForeignKey("GarageId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("GarageManagementAPI.Entities.Models.User", "User")
+                    b.HasOne("GarageManagementAPI.Entities.NewModels.User", "User")
                         .WithOne("EmployeeInfo")
-                        .HasForeignKey("GarageManagementAPI.Entities.Models.EmployeeInfo", "Id")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("GarageManagementAPI.Entities.NewModels.EmployeeInfo", "Id")
+                        .IsRequired()
+                        .HasConstraintName("employeeinfo_userid_foreign");
 
-                    b.Navigation("Garage");
+                    b.HasOne("GarageManagementAPI.Entities.NewModels.Workplace", "Workplace")
+                        .WithMany("EmployeeInfos")
+                        .HasForeignKey("WorkplaceId")
+                        .IsRequired()
+                        .HasConstraintName("employeeinfo_workplaceid_foreign");
 
                     b.Navigation("User");
+
+                    b.Navigation("Workplace");
                 });
 
-            modelBuilder.Entity("GarageManagementAPI.Entities.Models.EmployeeSchedule", b =>
+            modelBuilder.Entity("GarageManagementAPI.Entities.NewModels.EmployeeSchedule", b =>
                 {
-                    b.HasOne("GarageManagementAPI.Entities.Models.AppointmentDetail", "AppointmentDetail")
+                    b.HasOne("GarageManagementAPI.Entities.NewModels.AppointmentDetail", "AppointmentDetail")
                         .WithMany("EmployeeSchedules")
                         .HasForeignKey("AppointmentDetailId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("employeeschedule_appointmentdetailid_foreign");
 
-                    b.HasOne("GarageManagementAPI.Entities.Models.User", "User")
+                    b.HasOne("GarageManagementAPI.Entities.NewModels.User", "Employee")
                         .WithMany("EmployeeSchedules")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("EmployeeId")
+                        .IsRequired()
+                        .HasConstraintName("employeeschedule_employeeid_foreign");
 
                     b.Navigation("AppointmentDetail");
 
-                    b.Navigation("User");
-                });
-
-            modelBuilder.Entity("GarageManagementAPI.Entities.Models.FeedBackPackage", b =>
-                {
-                    b.HasOne("GarageManagementAPI.Entities.Models.User", "Customer")
-                        .WithMany("FeedBacksPackage")
-                        .HasForeignKey("CustomerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("GarageManagementAPI.Entities.Models.Package", "Package")
-                        .WithMany("FeedBacks")
-                        .HasForeignKey("PackageId");
-
-                    b.Navigation("Customer");
-
-                    b.Navigation("Package");
-                });
-
-            modelBuilder.Entity("GarageManagementAPI.Entities.Models.FeedBackService", b =>
-                {
-                    b.HasOne("GarageManagementAPI.Entities.Models.User", "Customer")
-                        .WithMany("FeedBacksService")
-                        .HasForeignKey("CustomerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("GarageManagementAPI.Entities.Models.Service", "Service")
-                        .WithMany("FeedBacks")
-                        .HasForeignKey("ServiceId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Customer");
-
-                    b.Navigation("Service");
-                });
-
-            modelBuilder.Entity("GarageManagementAPI.Entities.Models.GoodsIssued", b =>
-                {
-                    b.HasOne("GarageManagementAPI.Entities.Models.User", "Employee")
-                        .WithMany("GoodsIssueds")
-                        .HasForeignKey("EmployeeId");
-
-                    b.HasOne("GarageManagementAPI.Entities.Models.Garage", "Garage")
-                        .WithMany("GoodsIssueds")
-                        .HasForeignKey("GarageId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("GarageManagementAPI.Entities.Models.Warehouse", "Warehouse")
-                        .WithMany("GoodsIssueds")
-                        .HasForeignKey("WarehouseId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.Navigation("Employee");
+                });
+
+            modelBuilder.Entity("GarageManagementAPI.Entities.NewModels.GoodsIssued", b =>
+                {
+                    b.HasOne("GarageManagementAPI.Entities.NewModels.User", "CreatedWareHouseManager")
+                        .WithMany("GoodsIssueds")
+                        .HasForeignKey("CreatedWareHouseManagerId")
+                        .IsRequired()
+                        .HasConstraintName("goodsissued_createdwarehousemanagerid_foreign");
+
+                    b.HasOne("GarageManagementAPI.Entities.NewModels.Workplace", "Garage")
+                        .WithMany("GoodsIssuedGarages")
+                        .HasForeignKey("GarageId")
+                        .IsRequired()
+                        .HasConstraintName("goodsissued_garageid_foreign");
+
+                    b.HasOne("GarageManagementAPI.Entities.NewModels.Workplace", "Warehouse")
+                        .WithMany("GoodsIssuedWarehouses")
+                        .HasForeignKey("WarehouseId")
+                        .IsRequired()
+                        .HasConstraintName("goodsissued_warehouseid_foreign");
+
+                    b.Navigation("CreatedWareHouseManager");
 
                     b.Navigation("Garage");
 
                     b.Navigation("Warehouse");
                 });
 
-            modelBuilder.Entity("GarageManagementAPI.Entities.Models.GoodsIssuedDetail", b =>
+            modelBuilder.Entity("GarageManagementAPI.Entities.NewModels.GoodsIssuedDetail", b =>
                 {
-                    b.HasOne("GarageManagementAPI.Entities.Models.GoodsIssued", "GoodsIssued")
-                        .WithMany()
-                        .HasForeignKey("GoodsIssuedId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("GarageManagementAPI.Entities.Models.GoodsReceived", null)
+                    b.HasOne("GarageManagementAPI.Entities.NewModels.GoodsIssued", "GoodsIssued")
                         .WithMany("GoodsIssuedDetails")
-                        .HasForeignKey("GoodsReceivedId");
+                        .HasForeignKey("GoodsIssuedId")
+                        .IsRequired()
+                        .HasConstraintName("goodsissueddetail_goodsissuedid_foreign");
 
-                    b.HasOne("GarageManagementAPI.Entities.Models.ProductAtWareHouse", "ProductAtWareHouse")
-                        .WithMany("GoodsIssueds")
+                    b.HasOne("GarageManagementAPI.Entities.NewModels.ProductAtWarehouse", "ProductAtWareHouse")
+                        .WithMany("GoodsIssuedDetails")
                         .HasForeignKey("ProductAtWareHouseId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("goodsissueddetail_productatwarehouseid_foreign");
 
                     b.Navigation("GoodsIssued");
 
                     b.Navigation("ProductAtWareHouse");
                 });
 
-            modelBuilder.Entity("GarageManagementAPI.Entities.Models.GoodsReceived", b =>
+            modelBuilder.Entity("GarageManagementAPI.Entities.NewModels.GoodsReceived", b =>
                 {
-                    b.HasOne("GarageManagementAPI.Entities.Models.User", "Employee")
+                    b.HasOne("GarageManagementAPI.Entities.NewModels.User", "CreatedWarehouseManager")
                         .WithMany("GoodsReceiveds")
-                        .HasForeignKey("EmployeeId");
+                        .HasForeignKey("CreatedWarehouseManagerId")
+                        .IsRequired()
+                        .HasConstraintName("goodsreceived_createdwarehousemanagerid_foreign");
 
-                    b.HasOne("GarageManagementAPI.Entities.Models.Supplier", "Supplier")
+                    b.HasOne("GarageManagementAPI.Entities.NewModels.SupplierContact", "SupplierContact")
                         .WithMany("GoodsReceiveds")
-                        .HasForeignKey("SupplierId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("SupplierContactId")
+                        .IsRequired()
+                        .HasConstraintName("goodsreceived_suppliercontactid_foreign");
 
-                    b.HasOne("GarageManagementAPI.Entities.Models.Warehouse", "Warehouse")
+                    b.HasOne("GarageManagementAPI.Entities.NewModels.Workplace", "Warehouse")
                         .WithMany("GoodsReceiveds")
                         .HasForeignKey("WarehouseId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("goodsreceived_warehouseid_foreign");
 
-                    b.Navigation("Employee");
+                    b.Navigation("CreatedWarehouseManager");
 
-                    b.Navigation("Supplier");
+                    b.Navigation("SupplierContact");
 
                     b.Navigation("Warehouse");
                 });
 
-            modelBuilder.Entity("GarageManagementAPI.Entities.Models.GoodsReceivedDetail", b =>
+            modelBuilder.Entity("GarageManagementAPI.Entities.NewModels.GoodsReceivedDetail", b =>
                 {
-                    b.HasOne("GarageManagementAPI.Entities.Models.GoodsReceived", "GoodsReceived")
-                        .WithMany()
+                    b.HasOne("GarageManagementAPI.Entities.NewModels.GoodsReceived", "GoodsReceived")
+                        .WithMany("GoodsReceivedDetails")
                         .HasForeignKey("GoodsReceivedId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("goodsreceiveddetail_goodsreceivedid_foreign");
 
-                    b.HasOne("GarageManagementAPI.Entities.Models.Product", "Product")
-                        .WithMany()
+                    b.HasOne("GarageManagementAPI.Entities.NewModels.Product", "Product")
+                        .WithMany("GoodsReceivedDetails")
                         .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("goodsreceiveddetail_productid_foreign");
 
                     b.Navigation("GoodsReceived");
 
                     b.Navigation("Product");
                 });
 
-            modelBuilder.Entity("GarageManagementAPI.Entities.Models.InvoiceAppointment", b =>
+            modelBuilder.Entity("GarageManagementAPI.Entities.NewModels.Invoice", b =>
                 {
-                    b.HasOne("GarageManagementAPI.Entities.Models.Appointment", "Appointment")
-                        .WithOne("InvoiceAppointments")
-                        .HasForeignKey("GarageManagementAPI.Entities.Models.InvoiceAppointment", "AppointmentId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.HasOne("GarageManagementAPI.Entities.NewModels.User", "Customer")
+                        .WithMany("InvoiceCustomers")
+                        .HasForeignKey("CustomerId")
+                        .HasConstraintName("invoice_customerid_foreign");
 
-                    b.HasOne("GarageManagementAPI.Entities.Models.User", "Employee")
-                        .WithMany("InvoiceAppointments")
+                    b.HasOne("GarageManagementAPI.Entities.NewModels.User", "Employee")
+                        .WithMany("InvoiceEmployees")
                         .HasForeignKey("EmployeeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("invoice_employeeid_foreign");
 
-                    b.HasOne("GarageManagementAPI.Entities.Models.Garage", "Garage")
-                        .WithMany("InvoiceAppointments")
+                    b.HasOne("GarageManagementAPI.Entities.NewModels.Workplace", "Garage")
+                        .WithMany("Invoices")
                         .HasForeignKey("GarageId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("invoice_garageid_foreign");
+
+                    b.HasOne("GarageManagementAPI.Entities.NewModels.Appointment", "Appointment")
+                        .WithOne("Invoice")
+                        .HasForeignKey("GarageManagementAPI.Entities.NewModels.Invoice", "Id")
+                        .IsRequired()
+                        .HasConstraintName("invoice_appointmentid_foreign");
 
                     b.Navigation("Appointment");
+
+                    b.Navigation("Customer");
 
                     b.Navigation("Employee");
 
                     b.Navigation("Garage");
                 });
 
-            modelBuilder.Entity("GarageManagementAPI.Entities.Models.InvoiceDetailRepair", b =>
+            modelBuilder.Entity("GarageManagementAPI.Entities.NewModels.InvoicePackageDetail", b =>
                 {
-                    b.HasOne("GarageManagementAPI.Entities.Models.AppointmentDetail", "AppointmentDetail")
-                        .WithOne("InvoiceDetailRepair")
-                        .HasForeignKey("GarageManagementAPI.Entities.Models.InvoiceDetailRepair", "AppointmentDetailId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.HasOne("GarageManagementAPI.Entities.NewModels.Invoice", "Invoice")
+                        .WithMany("InvoicePackageDetails")
+                        .HasForeignKey("InvoiceId")
+                        .IsRequired()
+                        .HasConstraintName("invoicepackagedetail_invoiceid_foreign");
 
-                    b.HasOne("GarageManagementAPI.Entities.Models.Appointment", "Appointment")
-                        .WithMany()
-                        .HasForeignKey("AppointmentId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("GarageManagementAPI.Entities.Models.InvoiceAppointment", "InvoiceAppointment")
-                        .WithMany()
-                        .HasForeignKey("InvoiceAppointmentId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Appointment");
-
-                    b.Navigation("AppointmentDetail");
-
-                    b.Navigation("InvoiceAppointment");
-                });
-
-            modelBuilder.Entity("GarageManagementAPI.Entities.Models.InvoiceDetailSell", b =>
-                {
-                    b.HasOne("GarageManagementAPI.Entities.Models.InvoiceSell", "InvoiceSell")
-                        .WithMany("InvoiceDetailSells")
-                        .HasForeignKey("InvoiceSellId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("GarageManagementAPI.Entities.Models.ProductAtStore", "ProductAtStore")
-                        .WithMany("invoiceDetailSells")
-                        .HasForeignKey("ProductAtStoreId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("GarageManagementAPI.Entities.Models.ProductHistory", "ProductHistory")
-                        .WithMany("invoiceDetailSells")
-                        .HasForeignKey("ProductHistoryId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("InvoiceSell");
-
-                    b.Navigation("ProductAtStore");
-
-                    b.Navigation("ProductHistory");
-                });
-
-            modelBuilder.Entity("GarageManagementAPI.Entities.Models.InvoiceReplacementParts", b =>
-                {
-                    b.HasOne("GarageManagementAPI.Entities.Models.InvoiceDetailRepair", "InvoiceDetailRepair")
-                        .WithMany("InvoiceReplacementParts")
-                        .HasForeignKey("InvoiceDetailRepairId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("GarageManagementAPI.Entities.Models.ProductAtStore", "ProductAtStore")
-                        .WithMany("InvoiceReplacementParts")
-                        .HasForeignKey("ProductAtStoreId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("GarageManagementAPI.Entities.Models.ProductHistory", "ProductHistory")
-                        .WithMany("InvoiceReplacementParts")
-                        .HasForeignKey("ProductHistoryId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("InvoiceDetailRepair");
-
-                    b.Navigation("ProductAtStore");
-
-                    b.Navigation("ProductHistory");
-                });
-
-            modelBuilder.Entity("GarageManagementAPI.Entities.Models.InvoiceSell", b =>
-                {
-                    b.HasOne("GarageManagementAPI.Entities.Models.User", "Employee")
-                        .WithMany("InvoiceSells")
-                        .HasForeignKey("EmployeeId");
-
-                    b.HasOne("GarageManagementAPI.Entities.Models.Garage", "Garage")
-                        .WithMany("InvoiceSells")
-                        .HasForeignKey("GarageId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Employee");
-
-                    b.Navigation("Garage");
-                });
-
-            modelBuilder.Entity("GarageManagementAPI.Entities.Models.MaintainCondition", b =>
-                {
-                    b.HasOne("GarageManagementAPI.Entities.Models.Package", "Package")
-                        .WithMany("MaintainConditions")
-                        .HasForeignKey("PackageId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Package");
-                });
-
-            modelBuilder.Entity("GarageManagementAPI.Entities.Models.PackageDetail", b =>
-                {
-                    b.HasOne("GarageManagementAPI.Entities.Models.Package", "Package")
-                        .WithMany("PackageDetails")
-                        .HasForeignKey("PackageId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("GarageManagementAPI.Entities.Models.Service", "Service")
-                        .WithMany("PackageDetails")
-                        .HasForeignKey("ServiceId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Package");
-
-                    b.Navigation("Service");
-                });
-
-            modelBuilder.Entity("GarageManagementAPI.Entities.Models.PackageDetailHistory", b =>
-                {
-                    b.HasOne("GarageManagementAPI.Entities.Models.PackageHistory", "PackageHistory")
-                        .WithMany("PackageDetailHistories")
+                    b.HasOne("GarageManagementAPI.Entities.NewModels.PackageHistory", "PackageHistory")
+                        .WithMany("InvoicePackageDetails")
                         .HasForeignKey("PackageHistoryId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("invoicepackagedetail_packagehistoryid_foreign");
 
-                    b.HasOne("GarageManagementAPI.Entities.Models.Service", "Service")
-                        .WithMany()
-                        .HasForeignKey("ServiceId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.Navigation("Invoice");
 
                     b.Navigation("PackageHistory");
-
-                    b.Navigation("Service");
                 });
 
-            modelBuilder.Entity("GarageManagementAPI.Entities.Models.PackageHistory", b =>
+            modelBuilder.Entity("GarageManagementAPI.Entities.NewModels.InvoiceSellProduct", b =>
                 {
-                    b.HasOne("GarageManagementAPI.Entities.Models.CarCategory", "CarCategory")
-                        .WithMany("PackageHistories")
-                        .HasForeignKey("CarCategoryId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.HasOne("GarageManagementAPI.Entities.NewModels.Invoice", "Invoice")
+                        .WithMany("InvoiceSellProducts")
+                        .HasForeignKey("InvoiceId")
+                        .IsRequired()
+                        .HasConstraintName("invoicesellproduct_invoiceid_foreign");
 
-                    b.HasOne("GarageManagementAPI.Entities.Models.Package", "Package")
-                        .WithMany("PackageHistories")
-                        .HasForeignKey("PackageId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.HasOne("GarageManagementAPI.Entities.NewModels.ProductAtGarage", "ProductAtGarage")
+                        .WithMany("InvoiceSellProducts")
+                        .HasForeignKey("ProductAtGarageId")
+                        .IsRequired()
+                        .HasConstraintName("invoicesellproduct_productatgarageid_foreign");
+
+                    b.HasOne("GarageManagementAPI.Entities.NewModels.ProductHistory", "ProductHistory")
+                        .WithMany("InvoiceSellProducts")
+                        .HasForeignKey("ProductHistoryId")
+                        .IsRequired()
+                        .HasConstraintName("invoicesellproduct_producthistoryid_foreign");
+
+                    b.Navigation("Invoice");
+
+                    b.Navigation("ProductAtGarage");
+
+                    b.Navigation("ProductHistory");
+                });
+
+            modelBuilder.Entity("GarageManagementAPI.Entities.NewModels.InvoiceServiceDetail", b =>
+                {
+                    b.HasOne("GarageManagementAPI.Entities.NewModels.Invoice", "Invoice")
+                        .WithMany("InvoiceServiceDetails")
+                        .HasForeignKey("InvoiceId")
+                        .IsRequired()
+                        .HasConstraintName("invoiceservicedetail_invoiceid_foreign");
+
+                    b.HasOne("GarageManagementAPI.Entities.NewModels.ServiceHistory", "ServiceHistory")
+                        .WithMany("InvoiceServiceDetails")
+                        .HasForeignKey("ServiceHistoryId")
+                        .IsRequired()
+                        .HasConstraintName("invoiceservicedetail_servicehistoryid_foreign");
+
+                    b.Navigation("Invoice");
+
+                    b.Navigation("ServiceHistory");
+                });
+
+            modelBuilder.Entity("GarageManagementAPI.Entities.NewModels.Package", b =>
+                {
+                    b.HasOne("GarageManagementAPI.Entities.NewModels.CarCategory", "CarCategory")
+                        .WithMany("Packages")
+                        .HasForeignKey("CarCategoryId")
+                        .IsRequired()
+                        .HasConstraintName("package_carcategoryid_foreign");
 
                     b.Navigation("CarCategory");
-
-                    b.Navigation("Package");
                 });
 
-            modelBuilder.Entity("GarageManagementAPI.Entities.Models.PackageImage", b =>
+            modelBuilder.Entity("GarageManagementAPI.Entities.NewModels.PackageCondition", b =>
                 {
-                    b.HasOne("GarageManagementAPI.Entities.Models.Package", "Package")
-                        .WithMany("PackageImages")
+                    b.HasOne("GarageManagementAPI.Entities.NewModels.Package", "Package")
+                        .WithMany("PackageConditions")
                         .HasForeignKey("PackageId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("packagecondition_packageid_foreign");
 
                     b.Navigation("Package");
                 });
 
-            modelBuilder.Entity("GarageManagementAPI.Entities.Models.PackageProvided", b =>
+            modelBuilder.Entity("GarageManagementAPI.Entities.NewModels.PackageDetail", b =>
                 {
-                    b.HasOne("GarageManagementAPI.Entities.Models.Appointment", "Appointment")
-                        .WithMany("PackageProvideds")
-                        .HasForeignKey("AppointmentId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("GarageManagementAPI.Entities.Models.PackageHistory", "PackageHistory")
-                        .WithMany("PackageProvideds")
+                    b.HasOne("GarageManagementAPI.Entities.NewModels.PackageHistory", "PackageHistory")
+                        .WithMany("PackageDetails")
                         .HasForeignKey("PackageHistoryId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("packagedetail_packagehistoryid_foreign");
 
-                    b.Navigation("Appointment");
+                    b.HasOne("GarageManagementAPI.Entities.NewModels.Service", "Service")
+                        .WithMany("PackageDetails")
+                        .HasForeignKey("ServiceId")
+                        .IsRequired()
+                        .HasConstraintName("packagedetail_serviceid_foreign");
 
                     b.Navigation("PackageHistory");
+
+                    b.Navigation("Service");
                 });
 
-            modelBuilder.Entity("GarageManagementAPI.Entities.Models.PackageUsage", b =>
+            modelBuilder.Entity("GarageManagementAPI.Entities.NewModels.PackageFeedBack", b =>
                 {
-                    b.HasOne("GarageManagementAPI.Entities.Models.CustomerCar", "CustomerCar")
-                        .WithMany()
-                        .HasForeignKey("CustomerCarId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.HasOne("GarageManagementAPI.Entities.NewModels.User", "Customer")
+                        .WithMany("PackageFeedBacks")
+                        .HasForeignKey("CustomerId")
+                        .IsRequired()
+                        .HasConstraintName("packagefeedback_customerid_foreign");
 
-                    b.HasOne("GarageManagementAPI.Entities.Models.PackageHistory", "PackageHistory")
-                        .WithMany()
+                    b.HasOne("GarageManagementAPI.Entities.NewModels.Package", "Package")
+                        .WithMany("PackageFeedBacks")
+                        .HasForeignKey("PackageId")
+                        .IsRequired()
+                        .HasConstraintName("packagefeedback_packageid_foreign");
+
+                    b.Navigation("Customer");
+
+                    b.Navigation("Package");
+                });
+
+            modelBuilder.Entity("GarageManagementAPI.Entities.NewModels.PackageHistory", b =>
+                {
+                    b.HasOne("GarageManagementAPI.Entities.NewModels.Package", "Package")
+                        .WithMany("PackageHistories")
+                        .HasForeignKey("PackageId")
+                        .IsRequired()
+                        .HasConstraintName("packagehistory_packageid_foreign");
+
+                    b.Navigation("Package");
+                });
+
+            modelBuilder.Entity("GarageManagementAPI.Entities.NewModels.PackageImage", b =>
+                {
+                    b.HasOne("GarageManagementAPI.Entities.NewModels.Package", "Package")
+                        .WithMany("PackageImages")
+                        .HasForeignKey("PackageId")
+                        .IsRequired()
+                        .HasConstraintName("packageimage_packageid_foreign");
+
+                    b.Navigation("Package");
+                });
+
+            modelBuilder.Entity("GarageManagementAPI.Entities.NewModels.PackageUsage", b =>
+                {
+                    b.HasOne("GarageManagementAPI.Entities.NewModels.CustomerCar", "CustomerCar")
+                        .WithMany("PackageUsages")
+                        .HasForeignKey("CustomerCarId")
+                        .IsRequired()
+                        .HasConstraintName("packageusage_customercarid_foreign");
+
+                    b.HasOne("GarageManagementAPI.Entities.NewModels.Invoice", "InvoiceAppointment")
+                        .WithOne("PackageUsage")
+                        .HasForeignKey("GarageManagementAPI.Entities.NewModels.PackageUsage", "InvoiceAppointmentId")
+                        .IsRequired()
+                        .HasConstraintName("packageusage_invoiceappointmentid_foreign");
+
+                    b.HasOne("GarageManagementAPI.Entities.NewModels.PackageHistory", "PackageHistory")
+                        .WithMany("PackageUsages")
                         .HasForeignKey("PackageHistoryId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("packageusage_packagehistoryid_foreign");
 
                     b.Navigation("CustomerCar");
 
+                    b.Navigation("InvoiceAppointment");
+
                     b.Navigation("PackageHistory");
                 });
 
-            modelBuilder.Entity("GarageManagementAPI.Entities.Models.PackageUsageDetail", b =>
+            modelBuilder.Entity("GarageManagementAPI.Entities.NewModels.PackageUsageDetail", b =>
                 {
-                    b.HasOne("GarageManagementAPI.Entities.Models.Appointment", "Appointment")
-                        .WithMany("PackageUsageDetails")
-                        .HasForeignKey("AppointmentId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.HasOne("GarageManagementAPI.Entities.NewModels.Appointment", "Appointment")
+                        .WithOne("PackageUsageDetail")
+                        .HasForeignKey("GarageManagementAPI.Entities.NewModels.PackageUsageDetail", "AppointmentId")
+                        .IsRequired()
+                        .HasConstraintName("packageusagedetail_appointmentid_foreign");
 
-                    b.HasOne("GarageManagementAPI.Entities.Models.PackageUsage", "PackageUsage")
-                        .WithMany()
+                    b.HasOne("GarageManagementAPI.Entities.NewModels.PackageUsage", "PackageUsage")
+                        .WithMany("PackageUsageDetails")
                         .HasForeignKey("PackageUsageId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("packageusagedetail_packageusageid_foreign");
 
                     b.Navigation("Appointment");
 
                     b.Navigation("PackageUsage");
                 });
 
-            modelBuilder.Entity("GarageManagementAPI.Entities.Models.Product", b =>
+            modelBuilder.Entity("GarageManagementAPI.Entities.NewModels.Product", b =>
                 {
-                    b.HasOne("GarageManagementAPI.Entities.Models.Brand", "Brand")
+                    b.HasOne("GarageManagementAPI.Entities.NewModels.Brand", "Brand")
                         .WithMany("Products")
                         .HasForeignKey("BrandId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("product_brandid_foreign");
 
-                    b.HasOne("GarageManagementAPI.Entities.Models.ProductCategory", "ProductCategory")
+                    b.HasOne("GarageManagementAPI.Entities.NewModels.ProductCategory", "ProductCategory")
                         .WithMany("Products")
                         .HasForeignKey("ProductCategoryId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("product_productcategoryid_foreign");
 
                     b.Navigation("Brand");
 
                     b.Navigation("ProductCategory");
                 });
 
-            modelBuilder.Entity("GarageManagementAPI.Entities.Models.ProductAtStore", b =>
+            modelBuilder.Entity("GarageManagementAPI.Entities.NewModels.ProductAtGarage", b =>
                 {
-                    b.HasOne("GarageManagementAPI.Entities.Models.Garage", "Garage")
-                        .WithMany("ProductAtStores")
-                        .HasForeignKey("GarageId")
+                    b.HasOne("GarageManagementAPI.Entities.NewModels.GoodsIssuedDetail", "GoodsIssuedDetail")
+                        .WithOne("ProductAtGarage")
+                        .HasForeignKey("GarageManagementAPI.Entities.NewModels.ProductAtGarage", "Id")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("GarageManagementAPI.Entities.Models.GoodsIssuedDetail", "GoodsIssuedDetail")
-                        .WithOne("ProductAtStore")
-                        .HasForeignKey("GarageManagementAPI.Entities.Models.ProductAtStore", "GoodsIssuedDetailId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("GarageManagementAPI.Entities.Models.Product", "Product")
-                        .WithMany("ProductAtStores")
-                        .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Garage");
+                        .IsRequired()
+                        .HasConstraintName("productatgarage_goodsissueddetailid_foreign");
 
                     b.Navigation("GoodsIssuedDetail");
-
-                    b.Navigation("Product");
                 });
 
-            modelBuilder.Entity("GarageManagementAPI.Entities.Models.ProductAtWareHouse", b =>
+            modelBuilder.Entity("GarageManagementAPI.Entities.NewModels.ProductAtWarehouse", b =>
                 {
-                    b.HasOne("GarageManagementAPI.Entities.Models.GoodsReceivedDetail", "GoodsReceivedDetail")
-                        .WithOne("ProductAtWareHouse")
-                        .HasForeignKey("GarageManagementAPI.Entities.Models.ProductAtWareHouse", "GoodsReceivedDetailId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("GarageManagementAPI.Entities.Models.Product", "Product")
-                        .WithMany("ProductAtWareHouses")
-                        .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.HasOne("GarageManagementAPI.Entities.NewModels.GoodsReceivedDetail", "GoodsReceivedDetail")
+                        .WithOne("ProductAtWarehouse")
+                        .HasForeignKey("GarageManagementAPI.Entities.NewModels.ProductAtWarehouse", "Id")
+                        .IsRequired()
+                        .HasConstraintName("productatwarehouse_goodsreceiveddetailid_foreign");
 
                     b.Navigation("GoodsReceivedDetail");
-
-                    b.Navigation("Product");
                 });
 
-            modelBuilder.Entity("GarageManagementAPI.Entities.Models.ProductCarPart", b =>
+            modelBuilder.Entity("GarageManagementAPI.Entities.NewModels.ProductHistory", b =>
                 {
-                    b.HasOne("GarageManagementAPI.Entities.Models.CarPart", "CarPart")
-                        .WithMany("ProductCarParts")
-                        .HasForeignKey("CarPartId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("GarageManagementAPI.Entities.Models.Product", "Product")
-                        .WithMany("ProductCarParts")
+                    b.HasOne("GarageManagementAPI.Entities.NewModels.Product", "Product")
+                        .WithMany("ProductHistories")
                         .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("CarPart");
+                        .IsRequired()
+                        .HasConstraintName("producthistory_productid_foreign");
 
                     b.Navigation("Product");
                 });
 
-            modelBuilder.Entity("GarageManagementAPI.Entities.Models.ProductForCarModel", b =>
+            modelBuilder.Entity("GarageManagementAPI.Entities.NewModels.ProductImage", b =>
                 {
-                    b.HasOne("GarageManagementAPI.Entities.Models.CarModel", "CarModel")
-                        .WithMany()
-                        .HasForeignKey("CarModelId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("GarageManagementAPI.Entities.Models.CarModel", null)
-                        .WithMany("ProductForCarModels")
-                        .HasForeignKey("CarModelId1");
-
-                    b.HasOne("GarageManagementAPI.Entities.Models.Product", "Product")
-                        .WithMany()
-                        .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("GarageManagementAPI.Entities.Models.Product", null)
-                        .WithMany("ProductForCarModels")
-                        .HasForeignKey("ProductId1");
-
-                    b.Navigation("CarModel");
-
-                    b.Navigation("Product");
-                });
-
-            modelBuilder.Entity("GarageManagementAPI.Entities.Models.ProductHistory", b =>
-                {
-                    b.HasOne("GarageManagementAPI.Entities.Models.Product", "Product")
-                        .WithMany("ProductHistorys")
-                        .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Product");
-                });
-
-            modelBuilder.Entity("GarageManagementAPI.Entities.Models.ProductImage", b =>
-                {
-                    b.HasOne("GarageManagementAPI.Entities.Models.Product", "Product")
+                    b.HasOne("GarageManagementAPI.Entities.NewModels.Product", "Product")
                         .WithMany("ProductImages")
                         .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("productimage_productid_foreign");
 
                     b.Navigation("Product");
                 });
 
-            modelBuilder.Entity("GarageManagementAPI.Entities.Models.Service", b =>
+            modelBuilder.Entity("GarageManagementAPI.Entities.NewModels.ReplacementPart", b =>
                 {
-                    b.HasOne("GarageManagementAPI.Entities.Models.CarPart", "CarPart")
-                        .WithMany()
-                        .HasForeignKey("CarPartId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.HasOne("GarageManagementAPI.Entities.NewModels.InvoiceServiceDetail", "InvoiceDetail")
+                        .WithMany("ReplacementParts")
+                        .HasForeignKey("InvoiceDetailId")
+                        .IsRequired()
+                        .HasConstraintName("replacementpart_invoiceappointmentdetailid_foreign");
 
-                    b.Navigation("CarPart");
+                    b.HasOne("GarageManagementAPI.Entities.NewModels.ProductAtGarage", "ProductAtGarage")
+                        .WithMany("ReplacementParts")
+                        .HasForeignKey("ProductAtGarageId")
+                        .IsRequired()
+                        .HasConstraintName("replacementpart_productatgarageid_foreign");
+
+                    b.HasOne("GarageManagementAPI.Entities.NewModels.ProductHistory", "ProductHistory")
+                        .WithMany("ReplacementParts")
+                        .HasForeignKey("ProductHistoryId")
+                        .IsRequired()
+                        .HasConstraintName("replacementpart_producthistoryid_foreign");
+
+                    b.Navigation("InvoiceDetail");
+
+                    b.Navigation("ProductAtGarage");
+
+                    b.Navigation("ProductHistory");
                 });
 
-            modelBuilder.Entity("GarageManagementAPI.Entities.Models.ServiceHistory", b =>
+            modelBuilder.Entity("GarageManagementAPI.Entities.NewModels.Service", b =>
                 {
-                    b.HasOne("GarageManagementAPI.Entities.Models.CarCategory", "CarCategory")
-                        .WithMany("ServiceHistories")
+                    b.HasOne("GarageManagementAPI.Entities.NewModels.CarCategory", "CarCategory")
+                        .WithMany("Services")
                         .HasForeignKey("CarCategoryId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("service_carcategoryid_foreign");
 
-                    b.HasOne("GarageManagementAPI.Entities.Models.Service", "Service")
-                        .WithMany("ServiceHistories")
-                        .HasForeignKey("ServiceId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.HasOne("GarageManagementAPI.Entities.NewModels.CarPart", "CarPart")
+                        .WithMany("Services")
+                        .HasForeignKey("CarPartId")
+                        .IsRequired()
+                        .HasConstraintName("service_carpartid_foreign");
 
                     b.Navigation("CarCategory");
 
+                    b.Navigation("CarPart");
+                });
+
+            modelBuilder.Entity("GarageManagementAPI.Entities.NewModels.ServiceFeedBack", b =>
+                {
+                    b.HasOne("GarageManagementAPI.Entities.NewModels.User", "Customer")
+                        .WithMany("ServiceFeedBacks")
+                        .HasForeignKey("CustomerId")
+                        .IsRequired()
+                        .HasConstraintName("servicefeedback_customerid_foreign");
+
+                    b.HasOne("GarageManagementAPI.Entities.NewModels.Service", "Service")
+                        .WithMany("ServiceFeedBacks")
+                        .HasForeignKey("ServiceId")
+                        .IsRequired()
+                        .HasConstraintName("servicefeedback_serviceid_foreign");
+
+                    b.Navigation("Customer");
+
                     b.Navigation("Service");
                 });
 
-            modelBuilder.Entity("GarageManagementAPI.Entities.Models.ServiceImage", b =>
+            modelBuilder.Entity("GarageManagementAPI.Entities.NewModels.ServiceHistory", b =>
                 {
-                    b.HasOne("GarageManagementAPI.Entities.Models.Service", "Service")
-                        .WithMany("ServiceImages")
+                    b.HasOne("GarageManagementAPI.Entities.NewModels.Service", "Service")
+                        .WithMany("ServiceHistories")
                         .HasForeignKey("ServiceId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("servicehistory_serviceid_foreign");
 
                     b.Navigation("Service");
+                });
+
+            modelBuilder.Entity("GarageManagementAPI.Entities.NewModels.ServiceImage", b =>
+                {
+                    b.HasOne("GarageManagementAPI.Entities.NewModels.Service", "IdNavigation")
+                        .WithOne("ServiceImage")
+                        .HasForeignKey("GarageManagementAPI.Entities.NewModels.ServiceImage", "Id")
+                        .IsRequired()
+                        .HasConstraintName("serviceimage_id_foreign");
+
+                    b.Navigation("IdNavigation");
+                });
+
+            modelBuilder.Entity("GarageManagementAPI.Entities.NewModels.SupplierContact", b =>
+                {
+                    b.HasOne("GarageManagementAPI.Entities.NewModels.Supplier", "Supplier")
+                        .WithMany("SupplierContacts")
+                        .HasForeignKey("SupplierId")
+                        .IsRequired()
+                        .HasConstraintName("suppliercontact_supplierid_foreign");
+
+                    b.Navigation("Supplier");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<System.Guid>", b =>
                 {
-                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole<System.Guid>", null)
+                    b.HasOne("GarageManagementAPI.Entities.NewModels.Roles", null)
                         .WithMany()
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -2690,7 +2841,7 @@ namespace GarageManagementAPI.Application.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<System.Guid>", b =>
                 {
-                    b.HasOne("GarageManagementAPI.Entities.Models.User", null)
+                    b.HasOne("GarageManagementAPI.Entities.NewModels.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -2699,7 +2850,7 @@ namespace GarageManagementAPI.Application.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<System.Guid>", b =>
                 {
-                    b.HasOne("GarageManagementAPI.Entities.Models.User", null)
+                    b.HasOne("GarageManagementAPI.Entities.NewModels.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -2708,13 +2859,13 @@ namespace GarageManagementAPI.Application.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<System.Guid>", b =>
                 {
-                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole<System.Guid>", null)
+                    b.HasOne("GarageManagementAPI.Entities.NewModels.Roles", null)
                         .WithMany()
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("GarageManagementAPI.Entities.Models.User", null)
+                    b.HasOne("GarageManagementAPI.Entities.NewModels.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -2723,216 +2874,275 @@ namespace GarageManagementAPI.Application.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<System.Guid>", b =>
                 {
-                    b.HasOne("GarageManagementAPI.Entities.Models.User", null)
+                    b.HasOne("GarageManagementAPI.Entities.NewModels.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("GarageManagementAPI.Entities.Models.Appointment", b =>
+            modelBuilder.Entity("ProductCarModel", b =>
                 {
-                    b.Navigation("AppointmentDetails");
+                    b.HasOne("GarageManagementAPI.Entities.NewModels.CarModel", null)
+                        .WithMany()
+                        .HasForeignKey("CarModelId")
+                        .IsRequired()
+                        .HasConstraintName("productcarmodel_carmodelid_foreign");
 
-                    b.Navigation("InvoiceAppointments");
-
-                    b.Navigation("PackageProvideds");
-
-                    b.Navigation("PackageUsageDetails");
+                    b.HasOne("GarageManagementAPI.Entities.NewModels.Product", null)
+                        .WithMany()
+                        .HasForeignKey("ProductId")
+                        .IsRequired()
+                        .HasConstraintName("productcarmodel_productid_foreign");
                 });
 
-            modelBuilder.Entity("GarageManagementAPI.Entities.Models.AppointmentDetail", b =>
+            modelBuilder.Entity("ProductCarPart", b =>
+                {
+                    b.HasOne("GarageManagementAPI.Entities.NewModels.CarPart", null)
+                        .WithMany()
+                        .HasForeignKey("CarPartId")
+                        .IsRequired()
+                        .HasConstraintName("productcarpart_carpartid_foreign");
+
+                    b.HasOne("GarageManagementAPI.Entities.NewModels.Product", null)
+                        .WithMany()
+                        .HasForeignKey("ProductId")
+                        .IsRequired()
+                        .HasConstraintName("productcarpart_productid_foreign");
+                });
+
+            modelBuilder.Entity("GarageManagementAPI.Entities.NewModels.Appointment", b =>
+                {
+                    b.Navigation("AppointmentDetailPackages");
+
+                    b.Navigation("AppointmentDetails");
+
+                    b.Navigation("Invoice");
+
+                    b.Navigation("PackageUsageDetail");
+                });
+
+            modelBuilder.Entity("GarageManagementAPI.Entities.NewModels.AppointmentDetail", b =>
                 {
                     b.Navigation("AppointmentReplacementParts");
 
                     b.Navigation("CarConditionImages");
 
                     b.Navigation("EmployeeSchedules");
-
-                    b.Navigation("InvoiceDetailRepair");
                 });
 
-            modelBuilder.Entity("GarageManagementAPI.Entities.Models.Brand", b =>
+            modelBuilder.Entity("GarageManagementAPI.Entities.NewModels.Brand", b =>
                 {
                     b.Navigation("CarModels");
 
                     b.Navigation("Products");
                 });
 
-            modelBuilder.Entity("GarageManagementAPI.Entities.Models.CarCategory", b =>
+            modelBuilder.Entity("GarageManagementAPI.Entities.NewModels.CarCategory", b =>
                 {
                     b.Navigation("CarModels");
 
-                    b.Navigation("PackageHistories");
+                    b.Navigation("Packages");
 
-                    b.Navigation("ServiceHistories");
+                    b.Navigation("Services");
                 });
 
-            modelBuilder.Entity("GarageManagementAPI.Entities.Models.CarModel", b =>
+            modelBuilder.Entity("GarageManagementAPI.Entities.NewModels.CarModel", b =>
                 {
+                    b.Navigation("Appointments");
+
                     b.Navigation("CustomerCars");
-
-                    b.Navigation("ProductForCarModels");
                 });
 
-            modelBuilder.Entity("GarageManagementAPI.Entities.Models.CarPart", b =>
+            modelBuilder.Entity("GarageManagementAPI.Entities.NewModels.CarPart", b =>
                 {
-                    b.Navigation("ProductCarParts");
+                    b.Navigation("Services");
                 });
 
-            modelBuilder.Entity("GarageManagementAPI.Entities.Models.CarPartCategory", b =>
+            modelBuilder.Entity("GarageManagementAPI.Entities.NewModels.CarPartCategory", b =>
                 {
                     b.Navigation("CarParts");
                 });
 
-            modelBuilder.Entity("GarageManagementAPI.Entities.Models.Garage", b =>
+            modelBuilder.Entity("GarageManagementAPI.Entities.NewModels.CustomerCar", b =>
                 {
-                    b.Navigation("Appointments");
-
-                    b.Navigation("EmployeesInfo");
-
-                    b.Navigation("GoodsIssueds");
-
-                    b.Navigation("InvoiceAppointments");
-
-                    b.Navigation("InvoiceSells");
-
-                    b.Navigation("ProductAtStores");
+                    b.Navigation("PackageUsages");
                 });
 
-            modelBuilder.Entity("GarageManagementAPI.Entities.Models.GoodsIssuedDetail", b =>
-                {
-                    b.Navigation("ProductAtStore");
-                });
-
-            modelBuilder.Entity("GarageManagementAPI.Entities.Models.GoodsReceived", b =>
+            modelBuilder.Entity("GarageManagementAPI.Entities.NewModels.GoodsIssued", b =>
                 {
                     b.Navigation("GoodsIssuedDetails");
                 });
 
-            modelBuilder.Entity("GarageManagementAPI.Entities.Models.GoodsReceivedDetail", b =>
+            modelBuilder.Entity("GarageManagementAPI.Entities.NewModels.GoodsIssuedDetail", b =>
                 {
-                    b.Navigation("ProductAtWareHouse");
+                    b.Navigation("ProductAtGarage");
                 });
 
-            modelBuilder.Entity("GarageManagementAPI.Entities.Models.InvoiceDetailRepair", b =>
+            modelBuilder.Entity("GarageManagementAPI.Entities.NewModels.GoodsReceived", b =>
                 {
-                    b.Navigation("InvoiceReplacementParts");
+                    b.Navigation("GoodsReceivedDetails");
                 });
 
-            modelBuilder.Entity("GarageManagementAPI.Entities.Models.InvoiceSell", b =>
+            modelBuilder.Entity("GarageManagementAPI.Entities.NewModels.GoodsReceivedDetail", b =>
                 {
-                    b.Navigation("InvoiceDetailSells");
+                    b.Navigation("ProductAtWarehouse");
                 });
 
-            modelBuilder.Entity("GarageManagementAPI.Entities.Models.Package", b =>
+            modelBuilder.Entity("GarageManagementAPI.Entities.NewModels.Invoice", b =>
                 {
-                    b.Navigation("FeedBacks");
+                    b.Navigation("InvoicePackageDetails");
 
-                    b.Navigation("MaintainConditions");
+                    b.Navigation("InvoiceSellProducts");
 
-                    b.Navigation("PackageDetails");
+                    b.Navigation("InvoiceServiceDetails");
+
+                    b.Navigation("PackageUsage");
+                });
+
+            modelBuilder.Entity("GarageManagementAPI.Entities.NewModels.InvoiceServiceDetail", b =>
+                {
+                    b.Navigation("ReplacementParts");
+                });
+
+            modelBuilder.Entity("GarageManagementAPI.Entities.NewModels.Package", b =>
+                {
+                    b.Navigation("PackageConditions");
+
+                    b.Navigation("PackageFeedBacks");
 
                     b.Navigation("PackageHistories");
 
                     b.Navigation("PackageImages");
                 });
 
-            modelBuilder.Entity("GarageManagementAPI.Entities.Models.PackageHistory", b =>
+            modelBuilder.Entity("GarageManagementAPI.Entities.NewModels.PackageHistory", b =>
                 {
-                    b.Navigation("PackageDetailHistories");
+                    b.Navigation("AppointmentDetailPackages");
 
-                    b.Navigation("PackageProvideds");
+                    b.Navigation("InvoicePackageDetails");
+
+                    b.Navigation("PackageDetails");
+
+                    b.Navigation("PackageUsages");
                 });
 
-            modelBuilder.Entity("GarageManagementAPI.Entities.Models.Product", b =>
+            modelBuilder.Entity("GarageManagementAPI.Entities.NewModels.PackageUsage", b =>
                 {
-                    b.Navigation("ProductAtStores");
+                    b.Navigation("PackageUsageDetails");
+                });
 
-                    b.Navigation("ProductAtWareHouses");
+            modelBuilder.Entity("GarageManagementAPI.Entities.NewModels.Product", b =>
+                {
+                    b.Navigation("GoodsReceivedDetails");
 
-                    b.Navigation("ProductCarParts");
-
-                    b.Navigation("ProductForCarModels");
-
-                    b.Navigation("ProductHistorys");
+                    b.Navigation("ProductHistories");
 
                     b.Navigation("ProductImages");
                 });
 
-            modelBuilder.Entity("GarageManagementAPI.Entities.Models.ProductAtStore", b =>
+            modelBuilder.Entity("GarageManagementAPI.Entities.NewModels.ProductAtGarage", b =>
                 {
-                    b.Navigation("InvoiceReplacementParts");
+                    b.Navigation("AppointmentReplacementParts");
 
-                    b.Navigation("invoiceDetailSells");
+                    b.Navigation("InvoiceSellProducts");
+
+                    b.Navigation("ReplacementParts");
                 });
 
-            modelBuilder.Entity("GarageManagementAPI.Entities.Models.ProductAtWareHouse", b =>
+            modelBuilder.Entity("GarageManagementAPI.Entities.NewModels.ProductAtWarehouse", b =>
                 {
-                    b.Navigation("GoodsIssueds");
+                    b.Navigation("GoodsIssuedDetails");
                 });
 
-            modelBuilder.Entity("GarageManagementAPI.Entities.Models.ProductCategory", b =>
+            modelBuilder.Entity("GarageManagementAPI.Entities.NewModels.ProductCategory", b =>
                 {
                     b.Navigation("Products");
                 });
 
-            modelBuilder.Entity("GarageManagementAPI.Entities.Models.ProductHistory", b =>
+            modelBuilder.Entity("GarageManagementAPI.Entities.NewModels.ProductHistory", b =>
                 {
                     b.Navigation("AppointmentReplacementParts");
 
-                    b.Navigation("InvoiceReplacementParts");
+                    b.Navigation("InvoiceSellProducts");
 
-                    b.Navigation("invoiceDetailSells");
+                    b.Navigation("ReplacementParts");
                 });
 
-            modelBuilder.Entity("GarageManagementAPI.Entities.Models.Service", b =>
+            modelBuilder.Entity("GarageManagementAPI.Entities.NewModels.Service", b =>
                 {
-                    b.Navigation("FeedBacks");
-
                     b.Navigation("PackageDetails");
+
+                    b.Navigation("ServiceFeedBacks");
 
                     b.Navigation("ServiceHistories");
 
-                    b.Navigation("ServiceImages");
+                    b.Navigation("ServiceImage");
                 });
 
-            modelBuilder.Entity("GarageManagementAPI.Entities.Models.ServiceHistory", b =>
+            modelBuilder.Entity("GarageManagementAPI.Entities.NewModels.ServiceHistory", b =>
                 {
                     b.Navigation("AppointmentDetails");
+
+                    b.Navigation("InvoiceServiceDetails");
                 });
 
-            modelBuilder.Entity("GarageManagementAPI.Entities.Models.Supplier", b =>
+            modelBuilder.Entity("GarageManagementAPI.Entities.NewModels.Supplier", b =>
+                {
+                    b.Navigation("SupplierContacts");
+                });
+
+            modelBuilder.Entity("GarageManagementAPI.Entities.NewModels.SupplierContact", b =>
                 {
                     b.Navigation("GoodsReceiveds");
                 });
 
-            modelBuilder.Entity("GarageManagementAPI.Entities.Models.User", b =>
+            modelBuilder.Entity("GarageManagementAPI.Entities.NewModels.User", b =>
                 {
-                    b.Navigation("CustomerCars");
+                    b.Navigation("AppointmentDetailPackageUpdateByCustomers");
+
+                    b.Navigation("AppointmentDetailPackageUpdateByEmployees");
+
+                    b.Navigation("AppointmentDetailUpdateByCustomers");
+
+                    b.Navigation("AppointmentDetailUpdateByEmployees");
+
+                    b.Navigation("Appointments");
+
+                    b.Navigation("CustomerCarCreatedByEmployees");
+
+                    b.Navigation("CustomerCarCustomers");
 
                     b.Navigation("EmployeeInfo");
 
                     b.Navigation("EmployeeSchedules");
 
-                    b.Navigation("FeedBacksPackage");
-
-                    b.Navigation("FeedBacksService");
-
                     b.Navigation("GoodsIssueds");
 
                     b.Navigation("GoodsReceiveds");
 
-                    b.Navigation("InvoiceAppointments");
+                    b.Navigation("InvoiceCustomers");
 
-                    b.Navigation("InvoiceSells");
+                    b.Navigation("InvoiceEmployees");
+
+                    b.Navigation("PackageFeedBacks");
+
+                    b.Navigation("ServiceFeedBacks");
                 });
 
-            modelBuilder.Entity("GarageManagementAPI.Entities.Models.Warehouse", b =>
+            modelBuilder.Entity("GarageManagementAPI.Entities.NewModels.Workplace", b =>
                 {
-                    b.Navigation("GoodsIssueds");
+                    b.Navigation("Appointments");
+
+                    b.Navigation("EmployeeInfos");
+
+                    b.Navigation("GoodsIssuedGarages");
+
+                    b.Navigation("GoodsIssuedWarehouses");
 
                     b.Navigation("GoodsReceiveds");
+
+                    b.Navigation("Invoices");
                 });
 #pragma warning restore 612, 618
         }

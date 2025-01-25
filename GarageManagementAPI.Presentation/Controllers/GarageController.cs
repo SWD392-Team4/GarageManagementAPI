@@ -1,6 +1,7 @@
 ﻿using GarageManagementAPI.Presentation.Extensions;
 using GarageManagementAPI.Service.Contracts;
 using GarageManagementAPI.Shared.DataTransferObjects.Garage;
+using GarageManagementAPI.Shared.Extension;
 using GarageManagementAPI.Shared.RequestFeatures;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;

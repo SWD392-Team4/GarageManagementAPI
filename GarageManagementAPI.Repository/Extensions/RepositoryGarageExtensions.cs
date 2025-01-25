@@ -1,4 +1,4 @@
-﻿using GarageManagementAPI.Entities.Models;
+﻿using GarageManagementAPI.Entities.NewModels;
 using GarageManagementAPI.Repository.Extensions.Utility;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Dynamic.Core;

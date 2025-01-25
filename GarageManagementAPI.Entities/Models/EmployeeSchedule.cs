@@ -1,4 +1,6 @@
-﻿namespace GarageManagementAPI.Entities.Models
+﻿using GarageManagementAPI.Entities.NewModels;
+
+namespace GarageManagementAPI.Entities.Models
 {
     public class EmployeeSchedule : BaseEntity<EmployeeSchedule>
     {
@@ -16,6 +18,5 @@
 
         public User? User { get; set; }
 
-        public AppointmentDetail? AppointmentDetail { get; set; }
     }
 }

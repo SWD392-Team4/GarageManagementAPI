@@ -1,4 +1,6 @@
-﻿namespace GarageManagementAPI.Entities.Models
+﻿using GarageManagementAPI.Entities.NewModels;
+
+namespace GarageManagementAPI.Entities.Models
 {
     public class EmployeeInfo : BaseEntity<EmployeeInfo>
     {

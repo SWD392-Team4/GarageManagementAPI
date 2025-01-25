@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using GarageManagementAPI.Entities.Models;
+using GarageManagementAPI.Entities.NewModels;
 using GarageManagementAPI.Shared.DataTransferObjects.Employee;
 using GarageManagementAPI.Shared.DataTransferObjects.Garage;
 

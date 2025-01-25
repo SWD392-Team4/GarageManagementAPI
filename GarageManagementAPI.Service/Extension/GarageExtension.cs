@@ -1,4 +1,4 @@
-﻿using GarageManagementAPI.Entities.Models;
+﻿using GarageManagementAPI.Entities.NewModels;
 using GarageManagementAPI.Shared.Constant.Garage;
 using GarageManagementAPI.Shared.DataTransferObjects.Garage;
 using GarageManagementAPI.Shared.ResultModel;

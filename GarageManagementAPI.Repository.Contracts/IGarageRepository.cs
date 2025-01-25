@@ -1,4 +1,4 @@
-﻿using GarageManagementAPI.Entities.Models;
+﻿using GarageManagementAPI.Entities.NewModels;
 using GarageManagementAPI.Shared.RequestFeatures;
 
 namespace GarageManagementAPI.Repository.Contracts
