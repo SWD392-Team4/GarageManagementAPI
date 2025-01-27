@@ -9,6 +9,7 @@ namespace GarageManagementAPI.Shared.ResultModel
 {
     public class Result
     {
+        [JsonIgnore]
         public HttpStatusCode StatusCode { get; private set; }
 
         public List<ErrorsResult>? Errors { get; private set; }
@@ -53,6 +54,10 @@ namespace GarageManagementAPI.Shared.ResultModel
 
         public virtual TResult Map<TResult>(Func<Result, TResult> onSuccess, Func<Result, TResult> onFailure)
             => IsSuccess ? onSuccess(this) : onFailure(this);
+
+        public virtual async Task<TResult> Map<TResult>(Func<Result, Task<TResult>> onSuccess, Func<Result, Task<TResult>> onFailure)
+            => IsSuccess ? await onSuccess(this).ConfigureAwait(false) : await onFailure(this).ConfigureAwait(false);
+
 
         public override string ToString()
          => JsonSerializer.Serialize(this);

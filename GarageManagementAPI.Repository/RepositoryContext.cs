@@ -1,13 +1,15 @@
-﻿using GarageManagementAPI.Entities.NewModels;
+﻿using GarageManagementAPI.Entities.Models;
 using GarageManagementAPI.Repository.Configuration;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace GarageManagementAPI.Repository
 {
     public class RepositoryContext : IdentityDbContext<User, Roles, Guid>
     {
-        public RepositoryContext(DbContextOptions options) : base(options) { }
+        public RepositoryContext(DbContextOptions<RepositoryContext> options) : base(options) { }
+
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -21,6 +23,17 @@ namespace GarageManagementAPI.Repository
                     entityType.SetTableName(tableName.Substring(6));
                 }
             }
+
+            // Configure auto-generation for Guid primary keys
+            foreach (var entityType in modelBuilder.Model.GetEntityTypes())
+            {
+                var keyProperty = entityType.FindPrimaryKey()?.Properties.FirstOrDefault();
+                if (keyProperty?.ClrType == typeof(Guid))
+                {
+                    keyProperty.ValueGenerated = ValueGenerated.OnAdd;
+                }
+            }
+
             modelBuilder.ApplyConfiguration(new AppointmentConfiguration());
             modelBuilder.ApplyConfiguration(new AppointmentDetailConfiguration());
             modelBuilder.ApplyConfiguration(new AppointmentDetailPackageConfiguration());
@@ -160,5 +173,6 @@ namespace GarageManagementAPI.Repository
         public virtual DbSet<SupplierContact> SupplierContacts { get; set; }
 
         public virtual DbSet<Workplace> Workplaces { get; set; }
+
     }
 }

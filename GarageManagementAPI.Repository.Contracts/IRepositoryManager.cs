@@ -2,9 +2,7 @@
 {
     public interface IRepositoryManager
     {
-        IGarageRepository Garage { get; }
-
-        IEmployeeRepository Employee { get; }
+        IWorkplaceRepository Workplace { get; }
 
         Task SaveAsync();
     }

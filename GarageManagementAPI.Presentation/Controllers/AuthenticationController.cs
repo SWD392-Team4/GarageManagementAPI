@@ -13,13 +13,9 @@ namespace GarageManagementAPI.Presentation.Controllers
         public AuthenticationController(IServiceManager service) : base(service) { }
 
         [HttpPost("register")]
-        public async Task<IActionResult> RegisterUser([FromBody] UserForRegistrationDto userForRegistrationDto, IValidator<UserForRegistrationDto> validator)
+        public async Task<IActionResult> RegisterUser([FromBody] UserForRegistrationDto userForRegistrationDto)
         {
-            var validationResult = validator.Validate(userForRegistrationDto);
-            if (!validationResult.IsValid)
-                return await validationResult.InvalidResult();
-
-            var result = await _service.AuthenticationService.RegisterUser(userForRegistrationDto);
+            var result = await _service.AuthenticationService.RegisterUser(userForRegistrationDto, false);
 
             if (!result.Succeeded)
             {

@@ -22,7 +22,7 @@ namespace GarageManagementAPI.Application.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("GarageManagementAPI.Entities.NewModels.Appointment", b =>
+            modelBuilder.Entity("GarageManagementAPI.Entities.Models.Appointment", b =>
                 {
                     b.Property<Guid>("Id")
                         .HasColumnType("uniqueidentifier");
@@ -113,7 +113,7 @@ namespace GarageManagementAPI.Application.Migrations
                     b.ToTable("Appointment", (string)null);
                 });
 
-            modelBuilder.Entity("GarageManagementAPI.Entities.NewModels.AppointmentDetail", b =>
+            modelBuilder.Entity("GarageManagementAPI.Entities.Models.AppointmentDetail", b =>
                 {
                     b.Property<Guid>("Id")
                         .HasColumnType("uniqueidentifier");
@@ -159,7 +159,7 @@ namespace GarageManagementAPI.Application.Migrations
                     b.ToTable("AppointmentDetail", (string)null);
                 });
 
-            modelBuilder.Entity("GarageManagementAPI.Entities.NewModels.AppointmentDetailPackage", b =>
+            modelBuilder.Entity("GarageManagementAPI.Entities.Models.AppointmentDetailPackage", b =>
                 {
                     b.Property<Guid>("Id")
                         .HasColumnType("uniqueidentifier");
@@ -202,7 +202,7 @@ namespace GarageManagementAPI.Application.Migrations
                     b.ToTable("AppointmentDetailPackage", (string)null);
                 });
 
-            modelBuilder.Entity("GarageManagementAPI.Entities.NewModels.AppointmentPerDay", b =>
+            modelBuilder.Entity("GarageManagementAPI.Entities.Models.AppointmentPerDay", b =>
                 {
                     b.Property<Guid>("Id")
                         .HasColumnType("uniqueidentifier");
@@ -227,7 +227,7 @@ namespace GarageManagementAPI.Application.Migrations
                     b.ToTable("AppointmentPerDay", (string)null);
                 });
 
-            modelBuilder.Entity("GarageManagementAPI.Entities.NewModels.AppointmentReplacementPart", b =>
+            modelBuilder.Entity("GarageManagementAPI.Entities.Models.AppointmentReplacementPart", b =>
                 {
                     b.Property<Guid>("Id")
                         .HasColumnType("uniqueidentifier");
@@ -268,7 +268,7 @@ namespace GarageManagementAPI.Application.Migrations
                     b.ToTable("AppointmentReplacementPart", (string)null);
                 });
 
-            modelBuilder.Entity("GarageManagementAPI.Entities.NewModels.Brand", b =>
+            modelBuilder.Entity("GarageManagementAPI.Entities.Models.Brand", b =>
                 {
                     b.Property<Guid>("Id")
                         .HasColumnType("uniqueidentifier");
@@ -303,7 +303,7 @@ namespace GarageManagementAPI.Application.Migrations
                     b.ToTable("Brand", (string)null);
                 });
 
-            modelBuilder.Entity("GarageManagementAPI.Entities.NewModels.CarCategory", b =>
+            modelBuilder.Entity("GarageManagementAPI.Entities.Models.CarCategory", b =>
                 {
                     b.Property<Guid>("Id")
                         .HasColumnType("uniqueidentifier");
@@ -337,7 +337,7 @@ namespace GarageManagementAPI.Application.Migrations
                     b.ToTable("CarCategory", (string)null);
                 });
 
-            modelBuilder.Entity("GarageManagementAPI.Entities.NewModels.CarConditionImage", b =>
+            modelBuilder.Entity("GarageManagementAPI.Entities.Models.CarConditionImage", b =>
                 {
                     b.Property<Guid>("Id")
                         .HasColumnType("uniqueidentifier");
@@ -374,7 +374,7 @@ namespace GarageManagementAPI.Application.Migrations
                     b.ToTable("CarConditionImage", (string)null);
                 });
 
-            modelBuilder.Entity("GarageManagementAPI.Entities.NewModels.CarModel", b =>
+            modelBuilder.Entity("GarageManagementAPI.Entities.Models.CarModel", b =>
                 {
                     b.Property<Guid>("Id")
                         .HasColumnType("uniqueidentifier");
@@ -416,7 +416,7 @@ namespace GarageManagementAPI.Application.Migrations
                     b.ToTable("CarModel", (string)null);
                 });
 
-            modelBuilder.Entity("GarageManagementAPI.Entities.NewModels.CarPart", b =>
+            modelBuilder.Entity("GarageManagementAPI.Entities.Models.CarPart", b =>
                 {
                     b.Property<Guid>("Id")
                         .HasColumnType("uniqueidentifier");
@@ -451,7 +451,7 @@ namespace GarageManagementAPI.Application.Migrations
                     b.ToTable("CarPart", (string)null);
                 });
 
-            modelBuilder.Entity("GarageManagementAPI.Entities.NewModels.CarPartCategory", b =>
+            modelBuilder.Entity("GarageManagementAPI.Entities.Models.CarPartCategory", b =>
                 {
                     b.Property<Guid>("Id")
                         .HasColumnType("uniqueidentifier");
@@ -481,7 +481,7 @@ namespace GarageManagementAPI.Application.Migrations
                     b.ToTable("CarPartCategory", (string)null);
                 });
 
-            modelBuilder.Entity("GarageManagementAPI.Entities.NewModels.CustomerCar", b =>
+            modelBuilder.Entity("GarageManagementAPI.Entities.Models.CustomerCar", b =>
                 {
                     b.Property<Guid>("Id")
                         .HasColumnType("uniqueidentifier");
@@ -555,7 +555,7 @@ namespace GarageManagementAPI.Application.Migrations
                     b.ToTable("CustomerCar", (string)null);
                 });
 
-            modelBuilder.Entity("GarageManagementAPI.Entities.NewModels.EmployeeInfo", b =>
+            modelBuilder.Entity("GarageManagementAPI.Entities.Models.EmployeeInfo", b =>
                 {
                     b.Property<Guid>("Id")
                         .HasColumnType("uniqueidentifier");
@@ -596,7 +596,7 @@ namespace GarageManagementAPI.Application.Migrations
                     b.ToTable("EmployeeInfo", (string)null);
                 });
 
-            modelBuilder.Entity("GarageManagementAPI.Entities.NewModels.EmployeeSchedule", b =>
+            modelBuilder.Entity("GarageManagementAPI.Entities.Models.EmployeeSchedule", b =>
                 {
                     b.Property<Guid>("Id")
                         .HasColumnType("uniqueidentifier");
@@ -640,7 +640,7 @@ namespace GarageManagementAPI.Application.Migrations
                     b.ToTable("EmployeeSchedule", (string)null);
                 });
 
-            modelBuilder.Entity("GarageManagementAPI.Entities.NewModels.GoodsIssued", b =>
+            modelBuilder.Entity("GarageManagementAPI.Entities.Models.GoodsIssued", b =>
                 {
                     b.Property<Guid>("Id")
                         .HasColumnType("uniqueidentifier");
@@ -690,7 +690,7 @@ namespace GarageManagementAPI.Application.Migrations
                     b.ToTable("GoodsIssued", (string)null);
                 });
 
-            modelBuilder.Entity("GarageManagementAPI.Entities.NewModels.GoodsIssuedDetail", b =>
+            modelBuilder.Entity("GarageManagementAPI.Entities.Models.GoodsIssuedDetail", b =>
                 {
                     b.Property<Guid>("Id")
                         .HasColumnType("uniqueidentifier");
@@ -725,7 +725,7 @@ namespace GarageManagementAPI.Application.Migrations
                     b.ToTable("GoodsIssuedDetail", (string)null);
                 });
 
-            modelBuilder.Entity("GarageManagementAPI.Entities.NewModels.GoodsReceived", b =>
+            modelBuilder.Entity("GarageManagementAPI.Entities.Models.GoodsReceived", b =>
                 {
                     b.Property<Guid>("Id")
                         .HasColumnType("uniqueidentifier");
@@ -795,7 +795,7 @@ namespace GarageManagementAPI.Application.Migrations
                     b.ToTable("GoodsReceived", (string)null);
                 });
 
-            modelBuilder.Entity("GarageManagementAPI.Entities.NewModels.GoodsReceivedDetail", b =>
+            modelBuilder.Entity("GarageManagementAPI.Entities.Models.GoodsReceivedDetail", b =>
                 {
                     b.Property<Guid>("Id")
                         .HasColumnType("uniqueidentifier");
@@ -836,7 +836,7 @@ namespace GarageManagementAPI.Application.Migrations
                     b.ToTable("GoodsReceivedDetail", (string)null);
                 });
 
-            modelBuilder.Entity("GarageManagementAPI.Entities.NewModels.Invoice", b =>
+            modelBuilder.Entity("GarageManagementAPI.Entities.Models.Invoice", b =>
                 {
                     b.Property<Guid>("Id")
                         .HasColumnType("uniqueidentifier");
@@ -896,7 +896,7 @@ namespace GarageManagementAPI.Application.Migrations
                     b.ToTable("Invoice", (string)null);
                 });
 
-            modelBuilder.Entity("GarageManagementAPI.Entities.NewModels.InvoicePackageDetail", b =>
+            modelBuilder.Entity("GarageManagementAPI.Entities.Models.InvoicePackageDetail", b =>
                 {
                     b.Property<Guid>("Id")
                         .HasColumnType("uniqueidentifier");
@@ -923,7 +923,7 @@ namespace GarageManagementAPI.Application.Migrations
                     b.ToTable("InvoicePackageDetail", (string)null);
                 });
 
-            modelBuilder.Entity("GarageManagementAPI.Entities.NewModels.InvoiceSellProduct", b =>
+            modelBuilder.Entity("GarageManagementAPI.Entities.Models.InvoiceSellProduct", b =>
                 {
                     b.Property<Guid>("Id")
                         .HasColumnType("uniqueidentifier");
@@ -956,7 +956,7 @@ namespace GarageManagementAPI.Application.Migrations
                     b.ToTable("InvoiceSellProduct", (string)null);
                 });
 
-            modelBuilder.Entity("GarageManagementAPI.Entities.NewModels.InvoiceServiceDetail", b =>
+            modelBuilder.Entity("GarageManagementAPI.Entities.Models.InvoiceServiceDetail", b =>
                 {
                     b.Property<Guid>("Id")
                         .HasColumnType("uniqueidentifier");
@@ -986,7 +986,7 @@ namespace GarageManagementAPI.Application.Migrations
                     b.ToTable("InvoiceServiceDetail", (string)null);
                 });
 
-            modelBuilder.Entity("GarageManagementAPI.Entities.NewModels.Package", b =>
+            modelBuilder.Entity("GarageManagementAPI.Entities.Models.Package", b =>
                 {
                     b.Property<Guid>("Id")
                         .HasColumnType("uniqueidentifier");
@@ -1027,7 +1027,7 @@ namespace GarageManagementAPI.Application.Migrations
                     b.ToTable("Package", (string)null);
                 });
 
-            modelBuilder.Entity("GarageManagementAPI.Entities.NewModels.PackageCondition", b =>
+            modelBuilder.Entity("GarageManagementAPI.Entities.Models.PackageCondition", b =>
                 {
                     b.Property<Guid>("Id")
                         .HasColumnType("uniqueidentifier");
@@ -1054,7 +1054,7 @@ namespace GarageManagementAPI.Application.Migrations
                     b.ToTable("PackageCondition", (string)null);
                 });
 
-            modelBuilder.Entity("GarageManagementAPI.Entities.NewModels.PackageDetail", b =>
+            modelBuilder.Entity("GarageManagementAPI.Entities.Models.PackageDetail", b =>
                 {
                     b.Property<Guid>("PackageHistoryId")
                         .HasColumnType("uniqueidentifier");
@@ -1085,7 +1085,7 @@ namespace GarageManagementAPI.Application.Migrations
                     b.ToTable("PackageDetail", (string)null);
                 });
 
-            modelBuilder.Entity("GarageManagementAPI.Entities.NewModels.PackageFeedBack", b =>
+            modelBuilder.Entity("GarageManagementAPI.Entities.Models.PackageFeedBack", b =>
                 {
                     b.Property<Guid>("Id")
                         .HasColumnType("uniqueidentifier");
@@ -1126,7 +1126,7 @@ namespace GarageManagementAPI.Application.Migrations
                     b.ToTable("PackageFeedBack", (string)null);
                 });
 
-            modelBuilder.Entity("GarageManagementAPI.Entities.NewModels.PackageHistory", b =>
+            modelBuilder.Entity("GarageManagementAPI.Entities.Models.PackageHistory", b =>
                 {
                     b.Property<Guid>("Id")
                         .HasColumnType("uniqueidentifier");
@@ -1170,7 +1170,7 @@ namespace GarageManagementAPI.Application.Migrations
                     b.ToTable("PackageHistory", (string)null);
                 });
 
-            modelBuilder.Entity("GarageManagementAPI.Entities.NewModels.PackageImage", b =>
+            modelBuilder.Entity("GarageManagementAPI.Entities.Models.PackageImage", b =>
                 {
                     b.Property<Guid>("Id")
                         .HasColumnType("uniqueidentifier");
@@ -1202,7 +1202,7 @@ namespace GarageManagementAPI.Application.Migrations
                     b.ToTable("PackageImage", (string)null);
                 });
 
-            modelBuilder.Entity("GarageManagementAPI.Entities.NewModels.PackageUsage", b =>
+            modelBuilder.Entity("GarageManagementAPI.Entities.Models.PackageUsage", b =>
                 {
                     b.Property<Guid>("Id")
                         .HasColumnType("uniqueidentifier");
@@ -1249,7 +1249,7 @@ namespace GarageManagementAPI.Application.Migrations
                     b.ToTable("PackageUsage", (string)null);
                 });
 
-            modelBuilder.Entity("GarageManagementAPI.Entities.NewModels.PackageUsageDetail", b =>
+            modelBuilder.Entity("GarageManagementAPI.Entities.Models.PackageUsageDetail", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -1286,7 +1286,7 @@ namespace GarageManagementAPI.Application.Migrations
                     b.ToTable("PackageUsageDetail", (string)null);
                 });
 
-            modelBuilder.Entity("GarageManagementAPI.Entities.NewModels.Product", b =>
+            modelBuilder.Entity("GarageManagementAPI.Entities.Models.Product", b =>
                 {
                     b.Property<Guid>("Id")
                         .HasColumnType("uniqueidentifier");
@@ -1335,7 +1335,7 @@ namespace GarageManagementAPI.Application.Migrations
                     b.ToTable("Product", (string)null);
                 });
 
-            modelBuilder.Entity("GarageManagementAPI.Entities.NewModels.ProductAtGarage", b =>
+            modelBuilder.Entity("GarageManagementAPI.Entities.Models.ProductAtGarage", b =>
                 {
                     b.Property<Guid>("Id")
                         .HasColumnType("uniqueidentifier");
@@ -1365,7 +1365,7 @@ namespace GarageManagementAPI.Application.Migrations
                     b.ToTable("ProductAtGarage", (string)null);
                 });
 
-            modelBuilder.Entity("GarageManagementAPI.Entities.NewModels.ProductAtWarehouse", b =>
+            modelBuilder.Entity("GarageManagementAPI.Entities.Models.ProductAtWarehouse", b =>
                 {
                     b.Property<Guid>("Id")
                         .HasColumnType("uniqueidentifier");
@@ -1390,7 +1390,7 @@ namespace GarageManagementAPI.Application.Migrations
                     b.ToTable("ProductAtWarehouse", (string)null);
                 });
 
-            modelBuilder.Entity("GarageManagementAPI.Entities.NewModels.ProductCategory", b =>
+            modelBuilder.Entity("GarageManagementAPI.Entities.Models.ProductCategory", b =>
                 {
                     b.Property<Guid>("Id")
                         .HasColumnType("uniqueidentifier");
@@ -1420,7 +1420,7 @@ namespace GarageManagementAPI.Application.Migrations
                     b.ToTable("ProductCategory", (string)null);
                 });
 
-            modelBuilder.Entity("GarageManagementAPI.Entities.NewModels.ProductHistory", b =>
+            modelBuilder.Entity("GarageManagementAPI.Entities.Models.ProductHistory", b =>
                 {
                     b.Property<Guid>("Id")
                         .HasColumnType("uniqueidentifier");
@@ -1450,7 +1450,7 @@ namespace GarageManagementAPI.Application.Migrations
                     b.ToTable("ProductHistory", (string)null);
                 });
 
-            modelBuilder.Entity("GarageManagementAPI.Entities.NewModels.ProductImage", b =>
+            modelBuilder.Entity("GarageManagementAPI.Entities.Models.ProductImage", b =>
                 {
                     b.Property<Guid>("Id")
                         .HasColumnType("uniqueidentifier");
@@ -1482,7 +1482,7 @@ namespace GarageManagementAPI.Application.Migrations
                     b.ToTable("ProductImage", (string)null);
                 });
 
-            modelBuilder.Entity("GarageManagementAPI.Entities.NewModels.ReplacementPart", b =>
+            modelBuilder.Entity("GarageManagementAPI.Entities.Models.ReplacementPart", b =>
                 {
                     b.Property<Guid>("Id")
                         .HasColumnType("uniqueidentifier");
@@ -1520,7 +1520,7 @@ namespace GarageManagementAPI.Application.Migrations
                     b.ToTable("ReplacementPart", (string)null);
                 });
 
-            modelBuilder.Entity("GarageManagementAPI.Entities.NewModels.Roles", b =>
+            modelBuilder.Entity("GarageManagementAPI.Entities.Models.Roles", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -1546,9 +1546,41 @@ namespace GarageManagementAPI.Application.Migrations
                         .HasFilter("[NormalizedName] IS NOT NULL");
 
                     b.ToTable("Roles", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("2bad4a96-6dff-4fa3-9c2e-6899264fb739"),
+                            Name = "Cashier",
+                            NormalizedName = "CASHIER"
+                        },
+                        new
+                        {
+                            Id = new Guid("3c5c548b-b789-41b5-b216-48ddfb5e732a"),
+                            Name = "Mechanic",
+                            NormalizedName = "MECHANIC"
+                        },
+                        new
+                        {
+                            Id = new Guid("7d2b39a7-3d9d-4583-acd5-985611a29a5b"),
+                            Name = "Customer",
+                            NormalizedName = "CUSTOMER"
+                        },
+                        new
+                        {
+                            Id = new Guid("b10aa072-2522-41d9-8e12-c20f28082a0e"),
+                            Name = "WarehouseManager",
+                            NormalizedName = "WAREHOUSEMANAGER"
+                        },
+                        new
+                        {
+                            Id = new Guid("ef3629ba-332e-4c46-9fa8-54444803f925"),
+                            Name = "Administrator",
+                            NormalizedName = "ADMINISTRATOR"
+                        });
                 });
 
-            modelBuilder.Entity("GarageManagementAPI.Entities.NewModels.Service", b =>
+            modelBuilder.Entity("GarageManagementAPI.Entities.Models.Service", b =>
                 {
                     b.Property<Guid>("Id")
                         .HasColumnType("uniqueidentifier");
@@ -1605,7 +1637,7 @@ namespace GarageManagementAPI.Application.Migrations
                     b.ToTable("Service", (string)null);
                 });
 
-            modelBuilder.Entity("GarageManagementAPI.Entities.NewModels.ServiceFeedBack", b =>
+            modelBuilder.Entity("GarageManagementAPI.Entities.Models.ServiceFeedBack", b =>
                 {
                     b.Property<Guid>("Id")
                         .HasColumnType("uniqueidentifier");
@@ -1646,7 +1678,7 @@ namespace GarageManagementAPI.Application.Migrations
                     b.ToTable("ServiceFeedBack", (string)null);
                 });
 
-            modelBuilder.Entity("GarageManagementAPI.Entities.NewModels.ServiceHistory", b =>
+            modelBuilder.Entity("GarageManagementAPI.Entities.Models.ServiceHistory", b =>
                 {
                     b.Property<Guid>("Id")
                         .HasColumnType("uniqueidentifier");
@@ -1676,7 +1708,7 @@ namespace GarageManagementAPI.Application.Migrations
                     b.ToTable("ServiceHistory", (string)null);
                 });
 
-            modelBuilder.Entity("GarageManagementAPI.Entities.NewModels.ServiceImage", b =>
+            modelBuilder.Entity("GarageManagementAPI.Entities.Models.ServiceImage", b =>
                 {
                     b.Property<Guid>("Id")
                         .HasColumnType("uniqueidentifier");
@@ -1708,7 +1740,7 @@ namespace GarageManagementAPI.Application.Migrations
                     b.ToTable("ServiceImage", (string)null);
                 });
 
-            modelBuilder.Entity("GarageManagementAPI.Entities.NewModels.Supplier", b =>
+            modelBuilder.Entity("GarageManagementAPI.Entities.Models.Supplier", b =>
                 {
                     b.Property<Guid>("Id")
                         .HasColumnType("uniqueidentifier");
@@ -1770,7 +1802,7 @@ namespace GarageManagementAPI.Application.Migrations
                     b.ToTable("Supplier", (string)null);
                 });
 
-            modelBuilder.Entity("GarageManagementAPI.Entities.NewModels.SupplierContact", b =>
+            modelBuilder.Entity("GarageManagementAPI.Entities.Models.SupplierContact", b =>
                 {
                     b.Property<Guid>("Id")
                         .HasColumnType("uniqueidentifier");
@@ -1816,7 +1848,7 @@ namespace GarageManagementAPI.Application.Migrations
                     b.ToTable("SupplierContact", (string)null);
                 });
 
-            modelBuilder.Entity("GarageManagementAPI.Entities.NewModels.User", b =>
+            modelBuilder.Entity("GarageManagementAPI.Entities.Models.User", b =>
                 {
                     b.Property<Guid>("Id")
                         .HasColumnType("uniqueidentifier");
@@ -1829,6 +1861,9 @@ namespace GarageManagementAPI.Application.Migrations
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
 
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("datetimeoffset");
+
                     b.Property<string>("Email")
                         .HasMaxLength(255)
                         .IsUnicode(false)
@@ -1838,7 +1873,6 @@ namespace GarageManagementAPI.Application.Migrations
                         .HasColumnType("bit");
 
                     b.Property<string>("FirstName")
-                        .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
@@ -1847,7 +1881,6 @@ namespace GarageManagementAPI.Application.Migrations
                         .HasColumnType("nvarchar(255)");
 
                     b.Property<string>("LastName")
-                        .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
@@ -1896,6 +1929,9 @@ namespace GarageManagementAPI.Application.Migrations
                     b.Property<bool>("TwoFactorEnabled")
                         .HasColumnType("bit");
 
+                    b.Property<DateTimeOffset>("UpdatedAt")
+                        .HasColumnType("datetimeoffset");
+
                     b.Property<string>("UserName")
                         .HasMaxLength(25)
                         .HasColumnType("nvarchar(25)");
@@ -1922,7 +1958,7 @@ namespace GarageManagementAPI.Application.Migrations
                     b.ToTable("Users", (string)null);
                 });
 
-            modelBuilder.Entity("GarageManagementAPI.Entities.NewModels.Workplace", b =>
+            modelBuilder.Entity("GarageManagementAPI.Entities.Models.Workplace", b =>
                 {
                     b.Property<Guid>("Id")
                         .HasColumnType("uniqueidentifier")
@@ -1964,7 +2000,7 @@ namespace GarageManagementAPI.Application.Migrations
                     b.Property<DateTimeOffset>("UpdatedAt")
                         .HasColumnType("datetimeoffset");
 
-                    b.Property<string>("Wards")
+                    b.Property<string>("Ward")
                         .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
@@ -1977,7 +2013,7 @@ namespace GarageManagementAPI.Application.Migrations
                     b.HasKey("Id")
                         .HasName("workplace_id_primary");
 
-                    b.HasIndex(new[] { "Address", "Province", "District", "Wards" }, "workplace_address_province_district_wards_unique")
+                    b.HasIndex(new[] { "Address", "Province", "District", "Ward" }, "workplace_address_province_district_wards_unique")
                         .IsUnique();
 
                     b.HasIndex(new[] { "Name" }, "workplace_name_unique")
@@ -1987,6 +2023,36 @@ namespace GarageManagementAPI.Application.Migrations
                         .IsUnique();
 
                     b.ToTable("Workplace", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("c1aeb9e5-8c74-4b09-bc57-d4c3df7857f9"),
+                            Address = "123 Static St.",
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 7, 0, 0, 0)),
+                            District = "Static District",
+                            Name = "Static Company 1",
+                            PhoneNumber = "0123456789",
+                            Province = "Static Province",
+                            Status = "Active",
+                            UpdatedAt = new DateTimeOffset(new DateTime(2025, 1, 10, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 7, 0, 0, 0)),
+                            Ward = "12345",
+                            WorkplaceType = "Garage"
+                        },
+                        new
+                        {
+                            Id = new Guid("e3dbf2c8-899d-4b2a-91f7-d2315d3f3bcb"),
+                            Address = "456 Static Ave.",
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 7, 0, 0, 0)),
+                            District = "Another District",
+                            Name = "Static Company 2",
+                            PhoneNumber = "0987654321",
+                            Province = "Another Province",
+                            Status = "Inactive",
+                            UpdatedAt = new DateTimeOffset(new DateTime(2025, 1, 15, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 7, 0, 0, 0)),
+                            Ward = "67890",
+                            WorkplaceType = "Warehouse"
+                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<System.Guid>", b =>
@@ -2061,6 +2127,7 @@ namespace GarageManagementAPI.Application.Migrations
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<System.Guid>", b =>
                 {
                     b.Property<Guid>("UserId")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid>("RoleId")
@@ -2076,6 +2143,7 @@ namespace GarageManagementAPI.Application.Migrations
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<System.Guid>", b =>
                 {
                     b.Property<Guid>("UserId")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("LoginProvider")
@@ -2124,20 +2192,20 @@ namespace GarageManagementAPI.Application.Migrations
                     b.ToTable("ProductCarPart", (string)null);
                 });
 
-            modelBuilder.Entity("GarageManagementAPI.Entities.NewModels.Appointment", b =>
+            modelBuilder.Entity("GarageManagementAPI.Entities.Models.Appointment", b =>
                 {
-                    b.HasOne("GarageManagementAPI.Entities.NewModels.User", "ApproveByEmployee")
+                    b.HasOne("GarageManagementAPI.Entities.Models.User", "ApproveByEmployee")
                         .WithMany("Appointments")
                         .HasForeignKey("ApproveByEmployeeId")
                         .HasConstraintName("appointment_approvebyemployeeid_foreign");
 
-                    b.HasOne("GarageManagementAPI.Entities.NewModels.CarModel", "CarModel")
+                    b.HasOne("GarageManagementAPI.Entities.Models.CarModel", "CarModel")
                         .WithMany("Appointments")
                         .HasForeignKey("CarModelId")
                         .IsRequired()
                         .HasConstraintName("appointment_carmodelid_foreign");
 
-                    b.HasOne("GarageManagementAPI.Entities.NewModels.Workplace", "Garage")
+                    b.HasOne("GarageManagementAPI.Entities.Models.Workplace", "Garage")
                         .WithMany("Appointments")
                         .HasForeignKey("GarageId")
                         .IsRequired()
@@ -2150,26 +2218,26 @@ namespace GarageManagementAPI.Application.Migrations
                     b.Navigation("Garage");
                 });
 
-            modelBuilder.Entity("GarageManagementAPI.Entities.NewModels.AppointmentDetail", b =>
+            modelBuilder.Entity("GarageManagementAPI.Entities.Models.AppointmentDetail", b =>
                 {
-                    b.HasOne("GarageManagementAPI.Entities.NewModels.Appointment", "Appointment")
+                    b.HasOne("GarageManagementAPI.Entities.Models.Appointment", "Appointment")
                         .WithMany("AppointmentDetails")
                         .HasForeignKey("AppointmentId")
                         .IsRequired()
                         .HasConstraintName("appointmentdetail_appointmentid_foreign");
 
-                    b.HasOne("GarageManagementAPI.Entities.NewModels.ServiceHistory", "ServiceHistory")
+                    b.HasOne("GarageManagementAPI.Entities.Models.ServiceHistory", "ServiceHistory")
                         .WithMany("AppointmentDetails")
                         .HasForeignKey("ServiceHistoryId")
                         .IsRequired()
                         .HasConstraintName("appointmentdetail_servicehistoryid_foreign");
 
-                    b.HasOne("GarageManagementAPI.Entities.NewModels.User", "UpdateByCustomer")
+                    b.HasOne("GarageManagementAPI.Entities.Models.User", "UpdateByCustomer")
                         .WithMany("AppointmentDetailUpdateByCustomers")
                         .HasForeignKey("UpdateByCustomerId")
                         .HasConstraintName("appointmentdetail_updatebycustomerid_foreign");
 
-                    b.HasOne("GarageManagementAPI.Entities.NewModels.User", "UpdateByEmployee")
+                    b.HasOne("GarageManagementAPI.Entities.Models.User", "UpdateByEmployee")
                         .WithMany("AppointmentDetailUpdateByEmployees")
                         .HasForeignKey("UpdateByEmployeeId")
                         .HasConstraintName("appointmentdetail_updatebyemployeeid_foreign");
@@ -2183,26 +2251,26 @@ namespace GarageManagementAPI.Application.Migrations
                     b.Navigation("UpdateByEmployee");
                 });
 
-            modelBuilder.Entity("GarageManagementAPI.Entities.NewModels.AppointmentDetailPackage", b =>
+            modelBuilder.Entity("GarageManagementAPI.Entities.Models.AppointmentDetailPackage", b =>
                 {
-                    b.HasOne("GarageManagementAPI.Entities.NewModels.Appointment", "Appointment")
+                    b.HasOne("GarageManagementAPI.Entities.Models.Appointment", "Appointment")
                         .WithMany("AppointmentDetailPackages")
                         .HasForeignKey("AppointmentId")
                         .IsRequired()
                         .HasConstraintName("appointmentdetailpackage_appointmentid_foreign");
 
-                    b.HasOne("GarageManagementAPI.Entities.NewModels.PackageHistory", "PackageHistory")
+                    b.HasOne("GarageManagementAPI.Entities.Models.PackageHistory", "PackageHistory")
                         .WithMany("AppointmentDetailPackages")
                         .HasForeignKey("PackageHistoryId")
                         .IsRequired()
                         .HasConstraintName("appointmentdetailpackage_packagehistoryid_foreign");
 
-                    b.HasOne("GarageManagementAPI.Entities.NewModels.User", "UpdateByCustomer")
+                    b.HasOne("GarageManagementAPI.Entities.Models.User", "UpdateByCustomer")
                         .WithMany("AppointmentDetailPackageUpdateByCustomers")
                         .HasForeignKey("UpdateByCustomerId")
                         .HasConstraintName("appointmentdetailpackage_updatebycustomerid_foreign");
 
-                    b.HasOne("GarageManagementAPI.Entities.NewModels.User", "UpdateByEmployee")
+                    b.HasOne("GarageManagementAPI.Entities.Models.User", "UpdateByEmployee")
                         .WithMany("AppointmentDetailPackageUpdateByEmployees")
                         .HasForeignKey("UpdateByEmployeeId")
                         .HasConstraintName("appointmentdetailpackage_updatebyemployeeid_foreign");
@@ -2216,21 +2284,21 @@ namespace GarageManagementAPI.Application.Migrations
                     b.Navigation("UpdateByEmployee");
                 });
 
-            modelBuilder.Entity("GarageManagementAPI.Entities.NewModels.AppointmentReplacementPart", b =>
+            modelBuilder.Entity("GarageManagementAPI.Entities.Models.AppointmentReplacementPart", b =>
                 {
-                    b.HasOne("GarageManagementAPI.Entities.NewModels.AppointmentDetail", "AppointmentDetail")
+                    b.HasOne("GarageManagementAPI.Entities.Models.AppointmentDetail", "AppointmentDetail")
                         .WithMany("AppointmentReplacementParts")
                         .HasForeignKey("AppointmentDetailId")
                         .IsRequired()
                         .HasConstraintName("appointmentreplacementpart_appointmentdetailid_foreign");
 
-                    b.HasOne("GarageManagementAPI.Entities.NewModels.ProductAtGarage", "ProductAtGarage")
+                    b.HasOne("GarageManagementAPI.Entities.Models.ProductAtGarage", "ProductAtGarage")
                         .WithMany("AppointmentReplacementParts")
                         .HasForeignKey("ProductAtGarageId")
                         .IsRequired()
                         .HasConstraintName("appointmentreplacementpart_productatgarageid_foreign");
 
-                    b.HasOne("GarageManagementAPI.Entities.NewModels.ProductHistory", "ProductHistory")
+                    b.HasOne("GarageManagementAPI.Entities.Models.ProductHistory", "ProductHistory")
                         .WithMany("AppointmentReplacementParts")
                         .HasForeignKey("ProductHistoryId")
                         .IsRequired()
@@ -2243,9 +2311,9 @@ namespace GarageManagementAPI.Application.Migrations
                     b.Navigation("ProductHistory");
                 });
 
-            modelBuilder.Entity("GarageManagementAPI.Entities.NewModels.CarConditionImage", b =>
+            modelBuilder.Entity("GarageManagementAPI.Entities.Models.CarConditionImage", b =>
                 {
-                    b.HasOne("GarageManagementAPI.Entities.NewModels.AppointmentDetail", "AppointmentDetail")
+                    b.HasOne("GarageManagementAPI.Entities.Models.AppointmentDetail", "AppointmentDetail")
                         .WithMany("CarConditionImages")
                         .HasForeignKey("AppointmentDetailId")
                         .IsRequired()
@@ -2254,15 +2322,15 @@ namespace GarageManagementAPI.Application.Migrations
                     b.Navigation("AppointmentDetail");
                 });
 
-            modelBuilder.Entity("GarageManagementAPI.Entities.NewModels.CarModel", b =>
+            modelBuilder.Entity("GarageManagementAPI.Entities.Models.CarModel", b =>
                 {
-                    b.HasOne("GarageManagementAPI.Entities.NewModels.Brand", "Brand")
+                    b.HasOne("GarageManagementAPI.Entities.Models.Brand", "Brand")
                         .WithMany("CarModels")
                         .HasForeignKey("BrandId")
                         .IsRequired()
                         .HasConstraintName("carmodel_brandid_foreign");
 
-                    b.HasOne("GarageManagementAPI.Entities.NewModels.CarCategory", "CarCategory")
+                    b.HasOne("GarageManagementAPI.Entities.Models.CarCategory", "CarCategory")
                         .WithMany("CarModels")
                         .HasForeignKey("CarCategoryId")
                         .IsRequired()
@@ -2273,9 +2341,9 @@ namespace GarageManagementAPI.Application.Migrations
                     b.Navigation("CarCategory");
                 });
 
-            modelBuilder.Entity("GarageManagementAPI.Entities.NewModels.CarPart", b =>
+            modelBuilder.Entity("GarageManagementAPI.Entities.Models.CarPart", b =>
                 {
-                    b.HasOne("GarageManagementAPI.Entities.NewModels.CarPartCategory", "CarPartCategory")
+                    b.HasOne("GarageManagementAPI.Entities.Models.CarPartCategory", "CarPartCategory")
                         .WithMany("CarParts")
                         .HasForeignKey("CarPartCategoryId")
                         .IsRequired()
@@ -2284,21 +2352,21 @@ namespace GarageManagementAPI.Application.Migrations
                     b.Navigation("CarPartCategory");
                 });
 
-            modelBuilder.Entity("GarageManagementAPI.Entities.NewModels.CustomerCar", b =>
+            modelBuilder.Entity("GarageManagementAPI.Entities.Models.CustomerCar", b =>
                 {
-                    b.HasOne("GarageManagementAPI.Entities.NewModels.CarModel", "CarModel")
+                    b.HasOne("GarageManagementAPI.Entities.Models.CarModel", "CarModel")
                         .WithMany("CustomerCars")
                         .HasForeignKey("CarModelId")
                         .IsRequired()
                         .HasConstraintName("customercar_carmodelid_foreign");
 
-                    b.HasOne("GarageManagementAPI.Entities.NewModels.User", "CreatedByEmployee")
+                    b.HasOne("GarageManagementAPI.Entities.Models.User", "CreatedByEmployee")
                         .WithMany("CustomerCarCreatedByEmployees")
                         .HasForeignKey("CreatedByEmployeeId")
                         .IsRequired()
                         .HasConstraintName("customercar_createdbyemployeeid_foreign");
 
-                    b.HasOne("GarageManagementAPI.Entities.NewModels.User", "Customer")
+                    b.HasOne("GarageManagementAPI.Entities.Models.User", "Customer")
                         .WithMany("CustomerCarCustomers")
                         .HasForeignKey("CustomerId")
                         .IsRequired()
@@ -2311,15 +2379,15 @@ namespace GarageManagementAPI.Application.Migrations
                     b.Navigation("Customer");
                 });
 
-            modelBuilder.Entity("GarageManagementAPI.Entities.NewModels.EmployeeInfo", b =>
+            modelBuilder.Entity("GarageManagementAPI.Entities.Models.EmployeeInfo", b =>
                 {
-                    b.HasOne("GarageManagementAPI.Entities.NewModels.User", "User")
+                    b.HasOne("GarageManagementAPI.Entities.Models.User", "User")
                         .WithOne("EmployeeInfo")
-                        .HasForeignKey("GarageManagementAPI.Entities.NewModels.EmployeeInfo", "Id")
+                        .HasForeignKey("GarageManagementAPI.Entities.Models.EmployeeInfo", "Id")
                         .IsRequired()
                         .HasConstraintName("employeeinfo_userid_foreign");
 
-                    b.HasOne("GarageManagementAPI.Entities.NewModels.Workplace", "Workplace")
+                    b.HasOne("GarageManagementAPI.Entities.Models.Workplace", "Workplace")
                         .WithMany("EmployeeInfos")
                         .HasForeignKey("WorkplaceId")
                         .IsRequired()
@@ -2330,15 +2398,15 @@ namespace GarageManagementAPI.Application.Migrations
                     b.Navigation("Workplace");
                 });
 
-            modelBuilder.Entity("GarageManagementAPI.Entities.NewModels.EmployeeSchedule", b =>
+            modelBuilder.Entity("GarageManagementAPI.Entities.Models.EmployeeSchedule", b =>
                 {
-                    b.HasOne("GarageManagementAPI.Entities.NewModels.AppointmentDetail", "AppointmentDetail")
+                    b.HasOne("GarageManagementAPI.Entities.Models.AppointmentDetail", "AppointmentDetail")
                         .WithMany("EmployeeSchedules")
                         .HasForeignKey("AppointmentDetailId")
                         .IsRequired()
                         .HasConstraintName("employeeschedule_appointmentdetailid_foreign");
 
-                    b.HasOne("GarageManagementAPI.Entities.NewModels.User", "Employee")
+                    b.HasOne("GarageManagementAPI.Entities.Models.User", "Employee")
                         .WithMany("EmployeeSchedules")
                         .HasForeignKey("EmployeeId")
                         .IsRequired()
@@ -2349,21 +2417,21 @@ namespace GarageManagementAPI.Application.Migrations
                     b.Navigation("Employee");
                 });
 
-            modelBuilder.Entity("GarageManagementAPI.Entities.NewModels.GoodsIssued", b =>
+            modelBuilder.Entity("GarageManagementAPI.Entities.Models.GoodsIssued", b =>
                 {
-                    b.HasOne("GarageManagementAPI.Entities.NewModels.User", "CreatedWareHouseManager")
+                    b.HasOne("GarageManagementAPI.Entities.Models.User", "CreatedWareHouseManager")
                         .WithMany("GoodsIssueds")
                         .HasForeignKey("CreatedWareHouseManagerId")
                         .IsRequired()
                         .HasConstraintName("goodsissued_createdwarehousemanagerid_foreign");
 
-                    b.HasOne("GarageManagementAPI.Entities.NewModels.Workplace", "Garage")
+                    b.HasOne("GarageManagementAPI.Entities.Models.Workplace", "Garage")
                         .WithMany("GoodsIssuedGarages")
                         .HasForeignKey("GarageId")
                         .IsRequired()
                         .HasConstraintName("goodsissued_garageid_foreign");
 
-                    b.HasOne("GarageManagementAPI.Entities.NewModels.Workplace", "Warehouse")
+                    b.HasOne("GarageManagementAPI.Entities.Models.Workplace", "Warehouse")
                         .WithMany("GoodsIssuedWarehouses")
                         .HasForeignKey("WarehouseId")
                         .IsRequired()
@@ -2376,15 +2444,15 @@ namespace GarageManagementAPI.Application.Migrations
                     b.Navigation("Warehouse");
                 });
 
-            modelBuilder.Entity("GarageManagementAPI.Entities.NewModels.GoodsIssuedDetail", b =>
+            modelBuilder.Entity("GarageManagementAPI.Entities.Models.GoodsIssuedDetail", b =>
                 {
-                    b.HasOne("GarageManagementAPI.Entities.NewModels.GoodsIssued", "GoodsIssued")
+                    b.HasOne("GarageManagementAPI.Entities.Models.GoodsIssued", "GoodsIssued")
                         .WithMany("GoodsIssuedDetails")
                         .HasForeignKey("GoodsIssuedId")
                         .IsRequired()
                         .HasConstraintName("goodsissueddetail_goodsissuedid_foreign");
 
-                    b.HasOne("GarageManagementAPI.Entities.NewModels.ProductAtWarehouse", "ProductAtWareHouse")
+                    b.HasOne("GarageManagementAPI.Entities.Models.ProductAtWarehouse", "ProductAtWareHouse")
                         .WithMany("GoodsIssuedDetails")
                         .HasForeignKey("ProductAtWareHouseId")
                         .IsRequired()
@@ -2395,21 +2463,21 @@ namespace GarageManagementAPI.Application.Migrations
                     b.Navigation("ProductAtWareHouse");
                 });
 
-            modelBuilder.Entity("GarageManagementAPI.Entities.NewModels.GoodsReceived", b =>
+            modelBuilder.Entity("GarageManagementAPI.Entities.Models.GoodsReceived", b =>
                 {
-                    b.HasOne("GarageManagementAPI.Entities.NewModels.User", "CreatedWarehouseManager")
+                    b.HasOne("GarageManagementAPI.Entities.Models.User", "CreatedWarehouseManager")
                         .WithMany("GoodsReceiveds")
                         .HasForeignKey("CreatedWarehouseManagerId")
                         .IsRequired()
                         .HasConstraintName("goodsreceived_createdwarehousemanagerid_foreign");
 
-                    b.HasOne("GarageManagementAPI.Entities.NewModels.SupplierContact", "SupplierContact")
+                    b.HasOne("GarageManagementAPI.Entities.Models.SupplierContact", "SupplierContact")
                         .WithMany("GoodsReceiveds")
                         .HasForeignKey("SupplierContactId")
                         .IsRequired()
                         .HasConstraintName("goodsreceived_suppliercontactid_foreign");
 
-                    b.HasOne("GarageManagementAPI.Entities.NewModels.Workplace", "Warehouse")
+                    b.HasOne("GarageManagementAPI.Entities.Models.Workplace", "Warehouse")
                         .WithMany("GoodsReceiveds")
                         .HasForeignKey("WarehouseId")
                         .IsRequired()
@@ -2422,15 +2490,15 @@ namespace GarageManagementAPI.Application.Migrations
                     b.Navigation("Warehouse");
                 });
 
-            modelBuilder.Entity("GarageManagementAPI.Entities.NewModels.GoodsReceivedDetail", b =>
+            modelBuilder.Entity("GarageManagementAPI.Entities.Models.GoodsReceivedDetail", b =>
                 {
-                    b.HasOne("GarageManagementAPI.Entities.NewModels.GoodsReceived", "GoodsReceived")
+                    b.HasOne("GarageManagementAPI.Entities.Models.GoodsReceived", "GoodsReceived")
                         .WithMany("GoodsReceivedDetails")
                         .HasForeignKey("GoodsReceivedId")
                         .IsRequired()
                         .HasConstraintName("goodsreceiveddetail_goodsreceivedid_foreign");
 
-                    b.HasOne("GarageManagementAPI.Entities.NewModels.Product", "Product")
+                    b.HasOne("GarageManagementAPI.Entities.Models.Product", "Product")
                         .WithMany("GoodsReceivedDetails")
                         .HasForeignKey("ProductId")
                         .IsRequired()
@@ -2441,28 +2509,28 @@ namespace GarageManagementAPI.Application.Migrations
                     b.Navigation("Product");
                 });
 
-            modelBuilder.Entity("GarageManagementAPI.Entities.NewModels.Invoice", b =>
+            modelBuilder.Entity("GarageManagementAPI.Entities.Models.Invoice", b =>
                 {
-                    b.HasOne("GarageManagementAPI.Entities.NewModels.User", "Customer")
+                    b.HasOne("GarageManagementAPI.Entities.Models.User", "Customer")
                         .WithMany("InvoiceCustomers")
                         .HasForeignKey("CustomerId")
                         .HasConstraintName("invoice_customerid_foreign");
 
-                    b.HasOne("GarageManagementAPI.Entities.NewModels.User", "Employee")
+                    b.HasOne("GarageManagementAPI.Entities.Models.User", "Employee")
                         .WithMany("InvoiceEmployees")
                         .HasForeignKey("EmployeeId")
                         .IsRequired()
                         .HasConstraintName("invoice_employeeid_foreign");
 
-                    b.HasOne("GarageManagementAPI.Entities.NewModels.Workplace", "Garage")
+                    b.HasOne("GarageManagementAPI.Entities.Models.Workplace", "Garage")
                         .WithMany("Invoices")
                         .HasForeignKey("GarageId")
                         .IsRequired()
                         .HasConstraintName("invoice_garageid_foreign");
 
-                    b.HasOne("GarageManagementAPI.Entities.NewModels.Appointment", "Appointment")
+                    b.HasOne("GarageManagementAPI.Entities.Models.Appointment", "Appointment")
                         .WithOne("Invoice")
-                        .HasForeignKey("GarageManagementAPI.Entities.NewModels.Invoice", "Id")
+                        .HasForeignKey("GarageManagementAPI.Entities.Models.Invoice", "Id")
                         .IsRequired()
                         .HasConstraintName("invoice_appointmentid_foreign");
 
@@ -2475,15 +2543,15 @@ namespace GarageManagementAPI.Application.Migrations
                     b.Navigation("Garage");
                 });
 
-            modelBuilder.Entity("GarageManagementAPI.Entities.NewModels.InvoicePackageDetail", b =>
+            modelBuilder.Entity("GarageManagementAPI.Entities.Models.InvoicePackageDetail", b =>
                 {
-                    b.HasOne("GarageManagementAPI.Entities.NewModels.Invoice", "Invoice")
+                    b.HasOne("GarageManagementAPI.Entities.Models.Invoice", "Invoice")
                         .WithMany("InvoicePackageDetails")
                         .HasForeignKey("InvoiceId")
                         .IsRequired()
                         .HasConstraintName("invoicepackagedetail_invoiceid_foreign");
 
-                    b.HasOne("GarageManagementAPI.Entities.NewModels.PackageHistory", "PackageHistory")
+                    b.HasOne("GarageManagementAPI.Entities.Models.PackageHistory", "PackageHistory")
                         .WithMany("InvoicePackageDetails")
                         .HasForeignKey("PackageHistoryId")
                         .IsRequired()
@@ -2494,21 +2562,21 @@ namespace GarageManagementAPI.Application.Migrations
                     b.Navigation("PackageHistory");
                 });
 
-            modelBuilder.Entity("GarageManagementAPI.Entities.NewModels.InvoiceSellProduct", b =>
+            modelBuilder.Entity("GarageManagementAPI.Entities.Models.InvoiceSellProduct", b =>
                 {
-                    b.HasOne("GarageManagementAPI.Entities.NewModels.Invoice", "Invoice")
+                    b.HasOne("GarageManagementAPI.Entities.Models.Invoice", "Invoice")
                         .WithMany("InvoiceSellProducts")
                         .HasForeignKey("InvoiceId")
                         .IsRequired()
                         .HasConstraintName("invoicesellproduct_invoiceid_foreign");
 
-                    b.HasOne("GarageManagementAPI.Entities.NewModels.ProductAtGarage", "ProductAtGarage")
+                    b.HasOne("GarageManagementAPI.Entities.Models.ProductAtGarage", "ProductAtGarage")
                         .WithMany("InvoiceSellProducts")
                         .HasForeignKey("ProductAtGarageId")
                         .IsRequired()
                         .HasConstraintName("invoicesellproduct_productatgarageid_foreign");
 
-                    b.HasOne("GarageManagementAPI.Entities.NewModels.ProductHistory", "ProductHistory")
+                    b.HasOne("GarageManagementAPI.Entities.Models.ProductHistory", "ProductHistory")
                         .WithMany("InvoiceSellProducts")
                         .HasForeignKey("ProductHistoryId")
                         .IsRequired()
@@ -2521,15 +2589,15 @@ namespace GarageManagementAPI.Application.Migrations
                     b.Navigation("ProductHistory");
                 });
 
-            modelBuilder.Entity("GarageManagementAPI.Entities.NewModels.InvoiceServiceDetail", b =>
+            modelBuilder.Entity("GarageManagementAPI.Entities.Models.InvoiceServiceDetail", b =>
                 {
-                    b.HasOne("GarageManagementAPI.Entities.NewModels.Invoice", "Invoice")
+                    b.HasOne("GarageManagementAPI.Entities.Models.Invoice", "Invoice")
                         .WithMany("InvoiceServiceDetails")
                         .HasForeignKey("InvoiceId")
                         .IsRequired()
                         .HasConstraintName("invoiceservicedetail_invoiceid_foreign");
 
-                    b.HasOne("GarageManagementAPI.Entities.NewModels.ServiceHistory", "ServiceHistory")
+                    b.HasOne("GarageManagementAPI.Entities.Models.ServiceHistory", "ServiceHistory")
                         .WithMany("InvoiceServiceDetails")
                         .HasForeignKey("ServiceHistoryId")
                         .IsRequired()
@@ -2540,9 +2608,9 @@ namespace GarageManagementAPI.Application.Migrations
                     b.Navigation("ServiceHistory");
                 });
 
-            modelBuilder.Entity("GarageManagementAPI.Entities.NewModels.Package", b =>
+            modelBuilder.Entity("GarageManagementAPI.Entities.Models.Package", b =>
                 {
-                    b.HasOne("GarageManagementAPI.Entities.NewModels.CarCategory", "CarCategory")
+                    b.HasOne("GarageManagementAPI.Entities.Models.CarCategory", "CarCategory")
                         .WithMany("Packages")
                         .HasForeignKey("CarCategoryId")
                         .IsRequired()
@@ -2551,9 +2619,9 @@ namespace GarageManagementAPI.Application.Migrations
                     b.Navigation("CarCategory");
                 });
 
-            modelBuilder.Entity("GarageManagementAPI.Entities.NewModels.PackageCondition", b =>
+            modelBuilder.Entity("GarageManagementAPI.Entities.Models.PackageCondition", b =>
                 {
-                    b.HasOne("GarageManagementAPI.Entities.NewModels.Package", "Package")
+                    b.HasOne("GarageManagementAPI.Entities.Models.Package", "Package")
                         .WithMany("PackageConditions")
                         .HasForeignKey("PackageId")
                         .IsRequired()
@@ -2562,15 +2630,15 @@ namespace GarageManagementAPI.Application.Migrations
                     b.Navigation("Package");
                 });
 
-            modelBuilder.Entity("GarageManagementAPI.Entities.NewModels.PackageDetail", b =>
+            modelBuilder.Entity("GarageManagementAPI.Entities.Models.PackageDetail", b =>
                 {
-                    b.HasOne("GarageManagementAPI.Entities.NewModels.PackageHistory", "PackageHistory")
+                    b.HasOne("GarageManagementAPI.Entities.Models.PackageHistory", "PackageHistory")
                         .WithMany("PackageDetails")
                         .HasForeignKey("PackageHistoryId")
                         .IsRequired()
                         .HasConstraintName("packagedetail_packagehistoryid_foreign");
 
-                    b.HasOne("GarageManagementAPI.Entities.NewModels.Service", "Service")
+                    b.HasOne("GarageManagementAPI.Entities.Models.Service", "Service")
                         .WithMany("PackageDetails")
                         .HasForeignKey("ServiceId")
                         .IsRequired()
@@ -2581,15 +2649,15 @@ namespace GarageManagementAPI.Application.Migrations
                     b.Navigation("Service");
                 });
 
-            modelBuilder.Entity("GarageManagementAPI.Entities.NewModels.PackageFeedBack", b =>
+            modelBuilder.Entity("GarageManagementAPI.Entities.Models.PackageFeedBack", b =>
                 {
-                    b.HasOne("GarageManagementAPI.Entities.NewModels.User", "Customer")
+                    b.HasOne("GarageManagementAPI.Entities.Models.User", "Customer")
                         .WithMany("PackageFeedBacks")
                         .HasForeignKey("CustomerId")
                         .IsRequired()
                         .HasConstraintName("packagefeedback_customerid_foreign");
 
-                    b.HasOne("GarageManagementAPI.Entities.NewModels.Package", "Package")
+                    b.HasOne("GarageManagementAPI.Entities.Models.Package", "Package")
                         .WithMany("PackageFeedBacks")
                         .HasForeignKey("PackageId")
                         .IsRequired()
@@ -2600,9 +2668,9 @@ namespace GarageManagementAPI.Application.Migrations
                     b.Navigation("Package");
                 });
 
-            modelBuilder.Entity("GarageManagementAPI.Entities.NewModels.PackageHistory", b =>
+            modelBuilder.Entity("GarageManagementAPI.Entities.Models.PackageHistory", b =>
                 {
-                    b.HasOne("GarageManagementAPI.Entities.NewModels.Package", "Package")
+                    b.HasOne("GarageManagementAPI.Entities.Models.Package", "Package")
                         .WithMany("PackageHistories")
                         .HasForeignKey("PackageId")
                         .IsRequired()
@@ -2611,9 +2679,9 @@ namespace GarageManagementAPI.Application.Migrations
                     b.Navigation("Package");
                 });
 
-            modelBuilder.Entity("GarageManagementAPI.Entities.NewModels.PackageImage", b =>
+            modelBuilder.Entity("GarageManagementAPI.Entities.Models.PackageImage", b =>
                 {
-                    b.HasOne("GarageManagementAPI.Entities.NewModels.Package", "Package")
+                    b.HasOne("GarageManagementAPI.Entities.Models.Package", "Package")
                         .WithMany("PackageImages")
                         .HasForeignKey("PackageId")
                         .IsRequired()
@@ -2622,21 +2690,21 @@ namespace GarageManagementAPI.Application.Migrations
                     b.Navigation("Package");
                 });
 
-            modelBuilder.Entity("GarageManagementAPI.Entities.NewModels.PackageUsage", b =>
+            modelBuilder.Entity("GarageManagementAPI.Entities.Models.PackageUsage", b =>
                 {
-                    b.HasOne("GarageManagementAPI.Entities.NewModels.CustomerCar", "CustomerCar")
+                    b.HasOne("GarageManagementAPI.Entities.Models.CustomerCar", "CustomerCar")
                         .WithMany("PackageUsages")
                         .HasForeignKey("CustomerCarId")
                         .IsRequired()
                         .HasConstraintName("packageusage_customercarid_foreign");
 
-                    b.HasOne("GarageManagementAPI.Entities.NewModels.Invoice", "InvoiceAppointment")
+                    b.HasOne("GarageManagementAPI.Entities.Models.Invoice", "InvoiceAppointment")
                         .WithOne("PackageUsage")
-                        .HasForeignKey("GarageManagementAPI.Entities.NewModels.PackageUsage", "InvoiceAppointmentId")
+                        .HasForeignKey("GarageManagementAPI.Entities.Models.PackageUsage", "InvoiceAppointmentId")
                         .IsRequired()
                         .HasConstraintName("packageusage_invoiceappointmentid_foreign");
 
-                    b.HasOne("GarageManagementAPI.Entities.NewModels.PackageHistory", "PackageHistory")
+                    b.HasOne("GarageManagementAPI.Entities.Models.PackageHistory", "PackageHistory")
                         .WithMany("PackageUsages")
                         .HasForeignKey("PackageHistoryId")
                         .IsRequired()
@@ -2649,15 +2717,15 @@ namespace GarageManagementAPI.Application.Migrations
                     b.Navigation("PackageHistory");
                 });
 
-            modelBuilder.Entity("GarageManagementAPI.Entities.NewModels.PackageUsageDetail", b =>
+            modelBuilder.Entity("GarageManagementAPI.Entities.Models.PackageUsageDetail", b =>
                 {
-                    b.HasOne("GarageManagementAPI.Entities.NewModels.Appointment", "Appointment")
+                    b.HasOne("GarageManagementAPI.Entities.Models.Appointment", "Appointment")
                         .WithOne("PackageUsageDetail")
-                        .HasForeignKey("GarageManagementAPI.Entities.NewModels.PackageUsageDetail", "AppointmentId")
+                        .HasForeignKey("GarageManagementAPI.Entities.Models.PackageUsageDetail", "AppointmentId")
                         .IsRequired()
                         .HasConstraintName("packageusagedetail_appointmentid_foreign");
 
-                    b.HasOne("GarageManagementAPI.Entities.NewModels.PackageUsage", "PackageUsage")
+                    b.HasOne("GarageManagementAPI.Entities.Models.PackageUsage", "PackageUsage")
                         .WithMany("PackageUsageDetails")
                         .HasForeignKey("PackageUsageId")
                         .IsRequired()
@@ -2668,15 +2736,15 @@ namespace GarageManagementAPI.Application.Migrations
                     b.Navigation("PackageUsage");
                 });
 
-            modelBuilder.Entity("GarageManagementAPI.Entities.NewModels.Product", b =>
+            modelBuilder.Entity("GarageManagementAPI.Entities.Models.Product", b =>
                 {
-                    b.HasOne("GarageManagementAPI.Entities.NewModels.Brand", "Brand")
+                    b.HasOne("GarageManagementAPI.Entities.Models.Brand", "Brand")
                         .WithMany("Products")
                         .HasForeignKey("BrandId")
                         .IsRequired()
                         .HasConstraintName("product_brandid_foreign");
 
-                    b.HasOne("GarageManagementAPI.Entities.NewModels.ProductCategory", "ProductCategory")
+                    b.HasOne("GarageManagementAPI.Entities.Models.ProductCategory", "ProductCategory")
                         .WithMany("Products")
                         .HasForeignKey("ProductCategoryId")
                         .IsRequired()
@@ -2687,11 +2755,11 @@ namespace GarageManagementAPI.Application.Migrations
                     b.Navigation("ProductCategory");
                 });
 
-            modelBuilder.Entity("GarageManagementAPI.Entities.NewModels.ProductAtGarage", b =>
+            modelBuilder.Entity("GarageManagementAPI.Entities.Models.ProductAtGarage", b =>
                 {
-                    b.HasOne("GarageManagementAPI.Entities.NewModels.GoodsIssuedDetail", "GoodsIssuedDetail")
+                    b.HasOne("GarageManagementAPI.Entities.Models.GoodsIssuedDetail", "GoodsIssuedDetail")
                         .WithOne("ProductAtGarage")
-                        .HasForeignKey("GarageManagementAPI.Entities.NewModels.ProductAtGarage", "Id")
+                        .HasForeignKey("GarageManagementAPI.Entities.Models.ProductAtGarage", "Id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
                         .HasConstraintName("productatgarage_goodsissueddetailid_foreign");
@@ -2699,20 +2767,20 @@ namespace GarageManagementAPI.Application.Migrations
                     b.Navigation("GoodsIssuedDetail");
                 });
 
-            modelBuilder.Entity("GarageManagementAPI.Entities.NewModels.ProductAtWarehouse", b =>
+            modelBuilder.Entity("GarageManagementAPI.Entities.Models.ProductAtWarehouse", b =>
                 {
-                    b.HasOne("GarageManagementAPI.Entities.NewModels.GoodsReceivedDetail", "GoodsReceivedDetail")
+                    b.HasOne("GarageManagementAPI.Entities.Models.GoodsReceivedDetail", "GoodsReceivedDetail")
                         .WithOne("ProductAtWarehouse")
-                        .HasForeignKey("GarageManagementAPI.Entities.NewModels.ProductAtWarehouse", "Id")
+                        .HasForeignKey("GarageManagementAPI.Entities.Models.ProductAtWarehouse", "Id")
                         .IsRequired()
                         .HasConstraintName("productatwarehouse_goodsreceiveddetailid_foreign");
 
                     b.Navigation("GoodsReceivedDetail");
                 });
 
-            modelBuilder.Entity("GarageManagementAPI.Entities.NewModels.ProductHistory", b =>
+            modelBuilder.Entity("GarageManagementAPI.Entities.Models.ProductHistory", b =>
                 {
-                    b.HasOne("GarageManagementAPI.Entities.NewModels.Product", "Product")
+                    b.HasOne("GarageManagementAPI.Entities.Models.Product", "Product")
                         .WithMany("ProductHistories")
                         .HasForeignKey("ProductId")
                         .IsRequired()
@@ -2721,9 +2789,9 @@ namespace GarageManagementAPI.Application.Migrations
                     b.Navigation("Product");
                 });
 
-            modelBuilder.Entity("GarageManagementAPI.Entities.NewModels.ProductImage", b =>
+            modelBuilder.Entity("GarageManagementAPI.Entities.Models.ProductImage", b =>
                 {
-                    b.HasOne("GarageManagementAPI.Entities.NewModels.Product", "Product")
+                    b.HasOne("GarageManagementAPI.Entities.Models.Product", "Product")
                         .WithMany("ProductImages")
                         .HasForeignKey("ProductId")
                         .IsRequired()
@@ -2732,21 +2800,21 @@ namespace GarageManagementAPI.Application.Migrations
                     b.Navigation("Product");
                 });
 
-            modelBuilder.Entity("GarageManagementAPI.Entities.NewModels.ReplacementPart", b =>
+            modelBuilder.Entity("GarageManagementAPI.Entities.Models.ReplacementPart", b =>
                 {
-                    b.HasOne("GarageManagementAPI.Entities.NewModels.InvoiceServiceDetail", "InvoiceDetail")
+                    b.HasOne("GarageManagementAPI.Entities.Models.InvoiceServiceDetail", "InvoiceDetail")
                         .WithMany("ReplacementParts")
                         .HasForeignKey("InvoiceDetailId")
                         .IsRequired()
                         .HasConstraintName("replacementpart_invoiceappointmentdetailid_foreign");
 
-                    b.HasOne("GarageManagementAPI.Entities.NewModels.ProductAtGarage", "ProductAtGarage")
+                    b.HasOne("GarageManagementAPI.Entities.Models.ProductAtGarage", "ProductAtGarage")
                         .WithMany("ReplacementParts")
                         .HasForeignKey("ProductAtGarageId")
                         .IsRequired()
                         .HasConstraintName("replacementpart_productatgarageid_foreign");
 
-                    b.HasOne("GarageManagementAPI.Entities.NewModels.ProductHistory", "ProductHistory")
+                    b.HasOne("GarageManagementAPI.Entities.Models.ProductHistory", "ProductHistory")
                         .WithMany("ReplacementParts")
                         .HasForeignKey("ProductHistoryId")
                         .IsRequired()
@@ -2759,15 +2827,15 @@ namespace GarageManagementAPI.Application.Migrations
                     b.Navigation("ProductHistory");
                 });
 
-            modelBuilder.Entity("GarageManagementAPI.Entities.NewModels.Service", b =>
+            modelBuilder.Entity("GarageManagementAPI.Entities.Models.Service", b =>
                 {
-                    b.HasOne("GarageManagementAPI.Entities.NewModels.CarCategory", "CarCategory")
+                    b.HasOne("GarageManagementAPI.Entities.Models.CarCategory", "CarCategory")
                         .WithMany("Services")
                         .HasForeignKey("CarCategoryId")
                         .IsRequired()
                         .HasConstraintName("service_carcategoryid_foreign");
 
-                    b.HasOne("GarageManagementAPI.Entities.NewModels.CarPart", "CarPart")
+                    b.HasOne("GarageManagementAPI.Entities.Models.CarPart", "CarPart")
                         .WithMany("Services")
                         .HasForeignKey("CarPartId")
                         .IsRequired()
@@ -2778,15 +2846,15 @@ namespace GarageManagementAPI.Application.Migrations
                     b.Navigation("CarPart");
                 });
 
-            modelBuilder.Entity("GarageManagementAPI.Entities.NewModels.ServiceFeedBack", b =>
+            modelBuilder.Entity("GarageManagementAPI.Entities.Models.ServiceFeedBack", b =>
                 {
-                    b.HasOne("GarageManagementAPI.Entities.NewModels.User", "Customer")
+                    b.HasOne("GarageManagementAPI.Entities.Models.User", "Customer")
                         .WithMany("ServiceFeedBacks")
                         .HasForeignKey("CustomerId")
                         .IsRequired()
                         .HasConstraintName("servicefeedback_customerid_foreign");
 
-                    b.HasOne("GarageManagementAPI.Entities.NewModels.Service", "Service")
+                    b.HasOne("GarageManagementAPI.Entities.Models.Service", "Service")
                         .WithMany("ServiceFeedBacks")
                         .HasForeignKey("ServiceId")
                         .IsRequired()
@@ -2797,9 +2865,9 @@ namespace GarageManagementAPI.Application.Migrations
                     b.Navigation("Service");
                 });
 
-            modelBuilder.Entity("GarageManagementAPI.Entities.NewModels.ServiceHistory", b =>
+            modelBuilder.Entity("GarageManagementAPI.Entities.Models.ServiceHistory", b =>
                 {
-                    b.HasOne("GarageManagementAPI.Entities.NewModels.Service", "Service")
+                    b.HasOne("GarageManagementAPI.Entities.Models.Service", "Service")
                         .WithMany("ServiceHistories")
                         .HasForeignKey("ServiceId")
                         .IsRequired()
@@ -2808,20 +2876,20 @@ namespace GarageManagementAPI.Application.Migrations
                     b.Navigation("Service");
                 });
 
-            modelBuilder.Entity("GarageManagementAPI.Entities.NewModels.ServiceImage", b =>
+            modelBuilder.Entity("GarageManagementAPI.Entities.Models.ServiceImage", b =>
                 {
-                    b.HasOne("GarageManagementAPI.Entities.NewModels.Service", "IdNavigation")
+                    b.HasOne("GarageManagementAPI.Entities.Models.Service", "IdNavigation")
                         .WithOne("ServiceImage")
-                        .HasForeignKey("GarageManagementAPI.Entities.NewModels.ServiceImage", "Id")
+                        .HasForeignKey("GarageManagementAPI.Entities.Models.ServiceImage", "Id")
                         .IsRequired()
                         .HasConstraintName("serviceimage_id_foreign");
 
                     b.Navigation("IdNavigation");
                 });
 
-            modelBuilder.Entity("GarageManagementAPI.Entities.NewModels.SupplierContact", b =>
+            modelBuilder.Entity("GarageManagementAPI.Entities.Models.SupplierContact", b =>
                 {
-                    b.HasOne("GarageManagementAPI.Entities.NewModels.Supplier", "Supplier")
+                    b.HasOne("GarageManagementAPI.Entities.Models.Supplier", "Supplier")
                         .WithMany("SupplierContacts")
                         .HasForeignKey("SupplierId")
                         .IsRequired()
@@ -2832,7 +2900,7 @@ namespace GarageManagementAPI.Application.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<System.Guid>", b =>
                 {
-                    b.HasOne("GarageManagementAPI.Entities.NewModels.Roles", null)
+                    b.HasOne("GarageManagementAPI.Entities.Models.Roles", null)
                         .WithMany()
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -2841,7 +2909,7 @@ namespace GarageManagementAPI.Application.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<System.Guid>", b =>
                 {
-                    b.HasOne("GarageManagementAPI.Entities.NewModels.User", null)
+                    b.HasOne("GarageManagementAPI.Entities.Models.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -2850,7 +2918,7 @@ namespace GarageManagementAPI.Application.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<System.Guid>", b =>
                 {
-                    b.HasOne("GarageManagementAPI.Entities.NewModels.User", null)
+                    b.HasOne("GarageManagementAPI.Entities.Models.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -2859,13 +2927,13 @@ namespace GarageManagementAPI.Application.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<System.Guid>", b =>
                 {
-                    b.HasOne("GarageManagementAPI.Entities.NewModels.Roles", null)
+                    b.HasOne("GarageManagementAPI.Entities.Models.Roles", null)
                         .WithMany()
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("GarageManagementAPI.Entities.NewModels.User", null)
+                    b.HasOne("GarageManagementAPI.Entities.Models.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -2874,7 +2942,7 @@ namespace GarageManagementAPI.Application.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<System.Guid>", b =>
                 {
-                    b.HasOne("GarageManagementAPI.Entities.NewModels.User", null)
+                    b.HasOne("GarageManagementAPI.Entities.Models.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -2883,13 +2951,13 @@ namespace GarageManagementAPI.Application.Migrations
 
             modelBuilder.Entity("ProductCarModel", b =>
                 {
-                    b.HasOne("GarageManagementAPI.Entities.NewModels.CarModel", null)
+                    b.HasOne("GarageManagementAPI.Entities.Models.CarModel", null)
                         .WithMany()
                         .HasForeignKey("CarModelId")
                         .IsRequired()
                         .HasConstraintName("productcarmodel_carmodelid_foreign");
 
-                    b.HasOne("GarageManagementAPI.Entities.NewModels.Product", null)
+                    b.HasOne("GarageManagementAPI.Entities.Models.Product", null)
                         .WithMany()
                         .HasForeignKey("ProductId")
                         .IsRequired()
@@ -2898,20 +2966,20 @@ namespace GarageManagementAPI.Application.Migrations
 
             modelBuilder.Entity("ProductCarPart", b =>
                 {
-                    b.HasOne("GarageManagementAPI.Entities.NewModels.CarPart", null)
+                    b.HasOne("GarageManagementAPI.Entities.Models.CarPart", null)
                         .WithMany()
                         .HasForeignKey("CarPartId")
                         .IsRequired()
                         .HasConstraintName("productcarpart_carpartid_foreign");
 
-                    b.HasOne("GarageManagementAPI.Entities.NewModels.Product", null)
+                    b.HasOne("GarageManagementAPI.Entities.Models.Product", null)
                         .WithMany()
                         .HasForeignKey("ProductId")
                         .IsRequired()
                         .HasConstraintName("productcarpart_productid_foreign");
                 });
 
-            modelBuilder.Entity("GarageManagementAPI.Entities.NewModels.Appointment", b =>
+            modelBuilder.Entity("GarageManagementAPI.Entities.Models.Appointment", b =>
                 {
                     b.Navigation("AppointmentDetailPackages");
 
@@ -2922,7 +2990,7 @@ namespace GarageManagementAPI.Application.Migrations
                     b.Navigation("PackageUsageDetail");
                 });
 
-            modelBuilder.Entity("GarageManagementAPI.Entities.NewModels.AppointmentDetail", b =>
+            modelBuilder.Entity("GarageManagementAPI.Entities.Models.AppointmentDetail", b =>
                 {
                     b.Navigation("AppointmentReplacementParts");
 
@@ -2931,14 +2999,14 @@ namespace GarageManagementAPI.Application.Migrations
                     b.Navigation("EmployeeSchedules");
                 });
 
-            modelBuilder.Entity("GarageManagementAPI.Entities.NewModels.Brand", b =>
+            modelBuilder.Entity("GarageManagementAPI.Entities.Models.Brand", b =>
                 {
                     b.Navigation("CarModels");
 
                     b.Navigation("Products");
                 });
 
-            modelBuilder.Entity("GarageManagementAPI.Entities.NewModels.CarCategory", b =>
+            modelBuilder.Entity("GarageManagementAPI.Entities.Models.CarCategory", b =>
                 {
                     b.Navigation("CarModels");
 
@@ -2947,49 +3015,49 @@ namespace GarageManagementAPI.Application.Migrations
                     b.Navigation("Services");
                 });
 
-            modelBuilder.Entity("GarageManagementAPI.Entities.NewModels.CarModel", b =>
+            modelBuilder.Entity("GarageManagementAPI.Entities.Models.CarModel", b =>
                 {
                     b.Navigation("Appointments");
 
                     b.Navigation("CustomerCars");
                 });
 
-            modelBuilder.Entity("GarageManagementAPI.Entities.NewModels.CarPart", b =>
+            modelBuilder.Entity("GarageManagementAPI.Entities.Models.CarPart", b =>
                 {
                     b.Navigation("Services");
                 });
 
-            modelBuilder.Entity("GarageManagementAPI.Entities.NewModels.CarPartCategory", b =>
+            modelBuilder.Entity("GarageManagementAPI.Entities.Models.CarPartCategory", b =>
                 {
                     b.Navigation("CarParts");
                 });
 
-            modelBuilder.Entity("GarageManagementAPI.Entities.NewModels.CustomerCar", b =>
+            modelBuilder.Entity("GarageManagementAPI.Entities.Models.CustomerCar", b =>
                 {
                     b.Navigation("PackageUsages");
                 });
 
-            modelBuilder.Entity("GarageManagementAPI.Entities.NewModels.GoodsIssued", b =>
+            modelBuilder.Entity("GarageManagementAPI.Entities.Models.GoodsIssued", b =>
                 {
                     b.Navigation("GoodsIssuedDetails");
                 });
 
-            modelBuilder.Entity("GarageManagementAPI.Entities.NewModels.GoodsIssuedDetail", b =>
+            modelBuilder.Entity("GarageManagementAPI.Entities.Models.GoodsIssuedDetail", b =>
                 {
                     b.Navigation("ProductAtGarage");
                 });
 
-            modelBuilder.Entity("GarageManagementAPI.Entities.NewModels.GoodsReceived", b =>
+            modelBuilder.Entity("GarageManagementAPI.Entities.Models.GoodsReceived", b =>
                 {
                     b.Navigation("GoodsReceivedDetails");
                 });
 
-            modelBuilder.Entity("GarageManagementAPI.Entities.NewModels.GoodsReceivedDetail", b =>
+            modelBuilder.Entity("GarageManagementAPI.Entities.Models.GoodsReceivedDetail", b =>
                 {
                     b.Navigation("ProductAtWarehouse");
                 });
 
-            modelBuilder.Entity("GarageManagementAPI.Entities.NewModels.Invoice", b =>
+            modelBuilder.Entity("GarageManagementAPI.Entities.Models.Invoice", b =>
                 {
                     b.Navigation("InvoicePackageDetails");
 
@@ -3000,12 +3068,12 @@ namespace GarageManagementAPI.Application.Migrations
                     b.Navigation("PackageUsage");
                 });
 
-            modelBuilder.Entity("GarageManagementAPI.Entities.NewModels.InvoiceServiceDetail", b =>
+            modelBuilder.Entity("GarageManagementAPI.Entities.Models.InvoiceServiceDetail", b =>
                 {
                     b.Navigation("ReplacementParts");
                 });
 
-            modelBuilder.Entity("GarageManagementAPI.Entities.NewModels.Package", b =>
+            modelBuilder.Entity("GarageManagementAPI.Entities.Models.Package", b =>
                 {
                     b.Navigation("PackageConditions");
 
@@ -3016,7 +3084,7 @@ namespace GarageManagementAPI.Application.Migrations
                     b.Navigation("PackageImages");
                 });
 
-            modelBuilder.Entity("GarageManagementAPI.Entities.NewModels.PackageHistory", b =>
+            modelBuilder.Entity("GarageManagementAPI.Entities.Models.PackageHistory", b =>
                 {
                     b.Navigation("AppointmentDetailPackages");
 
@@ -3027,12 +3095,12 @@ namespace GarageManagementAPI.Application.Migrations
                     b.Navigation("PackageUsages");
                 });
 
-            modelBuilder.Entity("GarageManagementAPI.Entities.NewModels.PackageUsage", b =>
+            modelBuilder.Entity("GarageManagementAPI.Entities.Models.PackageUsage", b =>
                 {
                     b.Navigation("PackageUsageDetails");
                 });
 
-            modelBuilder.Entity("GarageManagementAPI.Entities.NewModels.Product", b =>
+            modelBuilder.Entity("GarageManagementAPI.Entities.Models.Product", b =>
                 {
                     b.Navigation("GoodsReceivedDetails");
 
@@ -3041,7 +3109,7 @@ namespace GarageManagementAPI.Application.Migrations
                     b.Navigation("ProductImages");
                 });
 
-            modelBuilder.Entity("GarageManagementAPI.Entities.NewModels.ProductAtGarage", b =>
+            modelBuilder.Entity("GarageManagementAPI.Entities.Models.ProductAtGarage", b =>
                 {
                     b.Navigation("AppointmentReplacementParts");
 
@@ -3050,17 +3118,17 @@ namespace GarageManagementAPI.Application.Migrations
                     b.Navigation("ReplacementParts");
                 });
 
-            modelBuilder.Entity("GarageManagementAPI.Entities.NewModels.ProductAtWarehouse", b =>
+            modelBuilder.Entity("GarageManagementAPI.Entities.Models.ProductAtWarehouse", b =>
                 {
                     b.Navigation("GoodsIssuedDetails");
                 });
 
-            modelBuilder.Entity("GarageManagementAPI.Entities.NewModels.ProductCategory", b =>
+            modelBuilder.Entity("GarageManagementAPI.Entities.Models.ProductCategory", b =>
                 {
                     b.Navigation("Products");
                 });
 
-            modelBuilder.Entity("GarageManagementAPI.Entities.NewModels.ProductHistory", b =>
+            modelBuilder.Entity("GarageManagementAPI.Entities.Models.ProductHistory", b =>
                 {
                     b.Navigation("AppointmentReplacementParts");
 
@@ -3069,7 +3137,7 @@ namespace GarageManagementAPI.Application.Migrations
                     b.Navigation("ReplacementParts");
                 });
 
-            modelBuilder.Entity("GarageManagementAPI.Entities.NewModels.Service", b =>
+            modelBuilder.Entity("GarageManagementAPI.Entities.Models.Service", b =>
                 {
                     b.Navigation("PackageDetails");
 
@@ -3080,24 +3148,24 @@ namespace GarageManagementAPI.Application.Migrations
                     b.Navigation("ServiceImage");
                 });
 
-            modelBuilder.Entity("GarageManagementAPI.Entities.NewModels.ServiceHistory", b =>
+            modelBuilder.Entity("GarageManagementAPI.Entities.Models.ServiceHistory", b =>
                 {
                     b.Navigation("AppointmentDetails");
 
                     b.Navigation("InvoiceServiceDetails");
                 });
 
-            modelBuilder.Entity("GarageManagementAPI.Entities.NewModels.Supplier", b =>
+            modelBuilder.Entity("GarageManagementAPI.Entities.Models.Supplier", b =>
                 {
                     b.Navigation("SupplierContacts");
                 });
 
-            modelBuilder.Entity("GarageManagementAPI.Entities.NewModels.SupplierContact", b =>
+            modelBuilder.Entity("GarageManagementAPI.Entities.Models.SupplierContact", b =>
                 {
                     b.Navigation("GoodsReceiveds");
                 });
 
-            modelBuilder.Entity("GarageManagementAPI.Entities.NewModels.User", b =>
+            modelBuilder.Entity("GarageManagementAPI.Entities.Models.User", b =>
                 {
                     b.Navigation("AppointmentDetailPackageUpdateByCustomers");
 
@@ -3130,7 +3198,7 @@ namespace GarageManagementAPI.Application.Migrations
                     b.Navigation("ServiceFeedBacks");
                 });
 
-            modelBuilder.Entity("GarageManagementAPI.Entities.NewModels.Workplace", b =>
+            modelBuilder.Entity("GarageManagementAPI.Entities.Models.Workplace", b =>
                 {
                     b.Navigation("Appointments");
 

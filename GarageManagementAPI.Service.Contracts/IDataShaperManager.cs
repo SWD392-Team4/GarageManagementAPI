@@ -1,12 +1,9 @@
-﻿using GarageManagementAPI.Shared.DataTransferObjects.Employee;
-using GarageManagementAPI.Shared.DataTransferObjects.Garage;
+﻿using GarageManagementAPI.Shared.DataTransferObjects.Workplace;
 
 namespace GarageManagementAPI.Service.Contracts
 {
     public interface IDataShaperManager
     {
-        IDataShaper<EmployeeDto> EmployeeShaper { get; }
-
-        IDataShaper<GarageDto> GarageShaper { get; }
+        IDataShaper<WorkplaceDto> Workplace { get; }
     }
 }

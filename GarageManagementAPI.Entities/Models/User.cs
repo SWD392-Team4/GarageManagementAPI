@@ -1,28 +1,60 @@
-﻿using GarageManagementAPI.Shared.Enum;
+﻿using GarageManagementAPI.Shared.Enums;
 using Microsoft.AspNetCore.Identity;
+using System.ComponentModel.DataAnnotations;
 using System.Reflection;
 using System.Runtime.Serialization;
 
 namespace GarageManagementAPI.Entities.Models
 {
-    public class User : IdentityUser<Guid>
+    public partial class User : IdentityUser<Guid>
     {
-        public required string FirstName { get; set; }
+        public new Guid Id { get; set; } = Guid.NewGuid();
+        public string? FirstName { get; set; }
 
-        public required string LastName { get; set; }
+        public string? LastName { get; set; }
 
         public string? RefreshToken { get; set; }
 
-        public DateTime RefreshTokenExpiryTime { get; set; }
-
-        public required SystemStatus Status { get; set; }
+        public DateTime? RefreshTokenExpiryTime { get; set; }
 
         public string? Image { get; set; }
 
-        public EmployeeInfo? EmployeeInfo { get; set; }
+        [EnumDataType(typeof(SystemStatus))]
+        public SystemStatus Status { get; set; }
 
+        public DateTimeOffset CreatedAt { get; set; }
 
+        public DateTimeOffset UpdatedAt { get; set; }
 
+        public virtual ICollection<AppointmentDetailPackage> AppointmentDetailPackageUpdateByCustomers { get; set; } = new List<AppointmentDetailPackage>();
+
+        public virtual ICollection<AppointmentDetailPackage> AppointmentDetailPackageUpdateByEmployees { get; set; } = new List<AppointmentDetailPackage>();
+
+        public virtual ICollection<AppointmentDetail> AppointmentDetailUpdateByCustomers { get; set; } = new List<AppointmentDetail>();
+
+        public virtual ICollection<AppointmentDetail> AppointmentDetailUpdateByEmployees { get; set; } = new List<AppointmentDetail>();
+
+        public virtual ICollection<Appointment> Appointments { get; set; } = new List<Appointment>();
+
+        public virtual ICollection<CustomerCar> CustomerCarCreatedByEmployees { get; set; } = new List<CustomerCar>();
+
+        public virtual ICollection<CustomerCar> CustomerCarCustomers { get; set; } = new List<CustomerCar>();
+
+        public virtual EmployeeInfo? EmployeeInfo { get; set; }
+
+        public virtual ICollection<EmployeeSchedule> EmployeeSchedules { get; set; } = new List<EmployeeSchedule>();
+
+        public virtual ICollection<GoodsIssued> GoodsIssueds { get; set; } = new List<GoodsIssued>();
+
+        public virtual ICollection<GoodsReceived> GoodsReceiveds { get; set; } = new List<GoodsReceived>();
+
+        public virtual ICollection<Invoice> InvoiceCustomers { get; set; } = new List<Invoice>();
+
+        public virtual ICollection<Invoice> InvoiceEmployees { get; set; } = new List<Invoice>();
+
+        public virtual ICollection<PackageFeedBack> PackageFeedBacks { get; set; } = new List<PackageFeedBack>();
+
+        public virtual ICollection<ServiceFeedBack> ServiceFeedBacks { get; set; } = new List<ServiceFeedBack>();
 
         [IgnoreDataMember]
         public static readonly PropertyInfo[] PropertyInfos;
@@ -33,3 +65,5 @@ namespace GarageManagementAPI.Entities.Models
         }
     }
 }
+
+

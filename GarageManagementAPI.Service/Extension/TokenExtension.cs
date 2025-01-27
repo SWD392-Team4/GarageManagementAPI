@@ -5,7 +5,7 @@ namespace GarageManagementAPI.Service.Extension
 {
     public static class TokenExtension
     {
-        public static Result InvalidTokenBadRequest(this string str)
-            => Result.BadRequest([RequestErrors.GetInvalidTokenError()]);
+        public static Result<T> InvalidTokenBadRequest<T>(this string str)
+            => Result<T>.BadRequest([RequestErrors.GetInvalidTokenError()]);
     }
 }

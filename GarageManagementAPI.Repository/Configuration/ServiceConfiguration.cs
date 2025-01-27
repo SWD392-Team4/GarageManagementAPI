@@ -1,4 +1,4 @@
-﻿using GarageManagementAPI.Entities.NewModels;
+﻿using GarageManagementAPI.Entities.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 

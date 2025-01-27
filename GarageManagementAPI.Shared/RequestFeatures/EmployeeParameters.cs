@@ -6,7 +6,7 @@
 
         public string? SearchTerm { get; set; }
 
-        public Guid? GarageId { get; set; }
+        public Guid? WorkplaceId { get; set; }
 
 
     }

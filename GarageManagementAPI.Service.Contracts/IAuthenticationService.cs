@@ -6,12 +6,12 @@ namespace GarageManagementAPI.Service.Contracts
 {
     public interface IAuthenticationService
     {
-        Task<IdentityResult> RegisterUser(UserForRegistrationDto userForRegistrationDto);
+        Task<IdentityResult> RegisterUser(UserForRegistrationDto userForRegistrationDto, bool IsCustomer);
 
         Task<bool> ValidateUser(UserForAuthenticationDto userForAuth);
 
-        Task<Result> CreateToken(bool populateExp);
+        Task<Result<TokenDto>> CreateToken(bool populateExp);
 
-        Task<Result> RefreshToken(TokenDto tokenDto);
+        Task<Result<TokenDto>> RefreshToken(TokenDto tokenDto);
     }
 }

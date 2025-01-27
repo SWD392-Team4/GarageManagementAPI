@@ -2,9 +2,7 @@
 {
     public interface IServiceManager
     {
-        IGarageService GarageService { get; }
-
-        IEmployeeService EmployeeService { get; }
+        IWorkplaceService WorkplaceService { get; }
 
         IAuthenticationService AuthenticationService { get; }
     }

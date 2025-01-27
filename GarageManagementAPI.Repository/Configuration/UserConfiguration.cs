@@ -1,4 +1,7 @@
-﻿using GarageManagementAPI.Entities.NewModels;
+﻿using GarageManagementAPI.Entities.Models;
+using GarageManagementAPI.Shared.Enums;
+using GarageManagementAPI.Shared.Enums.SystemStatuss;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -37,6 +40,10 @@ namespace GarageManagementAPI.Repository.Configuration
 
             entity.Property(e => e.Status)
                 .HasConversion<string>();
+        }
+
+        protected override void SeedData(EntityTypeBuilder<User> entity)
+        {
         }
     }
 }

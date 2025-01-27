@@ -11,7 +11,14 @@ namespace GarageManagementAPI.Shared.Extension
 
         public static Result<TOut> Then<TIn, TOut>(this Result<TIn> result, Func<TIn, Result<TOut>> nextStep)
         {
-            return result.IsSuccess ? nextStep(result.Value!) : Result<TOut>.Failure(HttpStatusCode.BadRequest, result.Errors!);
+            return result.IsSuccess ? nextStep(result.Value!) : Result<TOut>.Failure(result.StatusCode, result.Errors!);
+        }
+
+        public static Result<TOut> ThenIf<TIn, TOut>(this Result<TIn> result, bool condition, Func<TIn, Result<TOut>> nextStep)
+        {
+            return result.IsSuccess && condition
+                ? nextStep(result.Value!)
+                : Result<TOut>.Failure(result.StatusCode, result.Errors!);
         }
 
         public static Result<TOut> SafeExecute<TIn, TOut>(this Result<TIn> result, Func<TIn, TOut> func, List<ErrorsResult> fallbackError)
@@ -19,7 +26,7 @@ namespace GarageManagementAPI.Shared.Extension
             try
             {
                 return result.IsSuccess ?
-                    Result<TOut>.Success(func(result.Value!), HttpStatusCode.OK) : Result<TOut>.Failure(HttpStatusCode.BadRequest, result.Errors!);
+                    Result<TOut>.Success(func(result.Value!), result.StatusCode) : Result<TOut>.Failure(result.StatusCode, result.Errors!);
             }
             catch
             {

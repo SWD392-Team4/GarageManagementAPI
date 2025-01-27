@@ -4,7 +4,7 @@ using GarageManagementAPI.Entities.Models;
 using GarageManagementAPI.Service.Contracts;
 using GarageManagementAPI.Service.Extension;
 using GarageManagementAPI.Shared.DataTransferObjects.User;
-using GarageManagementAPI.Shared.Enum;
+using GarageManagementAPI.Shared.Enums;
 using GarageManagementAPI.Shared.Extension;
 using GarageManagementAPI.Shared.ResultModel;
 using Microsoft.AspNetCore.Identity;
@@ -22,6 +22,7 @@ namespace GarageManagementAPI.Service
     {
         private readonly IMapper _mapper;
         private readonly UserManager<User> _userManager;
+        private readonly SignInManager<User> _signInManager;
         private readonly IOptionsSnapshot<JwtConfiguration> _configuration;
         private readonly JwtConfiguration _jwtConfiguration;
         private User? _user;
@@ -29,10 +30,12 @@ namespace GarageManagementAPI.Service
         public AuthenticationService(
             IMapper mapper,
             UserManager<User> userManager,
+            SignInManager<User> signInManager,
              IOptionsSnapshot<JwtConfiguration> configuration)
         {
             _mapper = mapper;
             _userManager = userManager;
+            _signInManager = signInManager;
             _configuration = configuration;
             _jwtConfiguration = _configuration.Value;        }
 
@@ -85,7 +88,7 @@ namespace GarageManagementAPI.Service
             }
         }
 
-        private Result GetPrincipalFomExpiredToken(string token)
+        private Result<ClaimsPrincipal> GetPrincipalFomExpiredToken(string token)
         {
             var tokenValidationParameters = new TokenValidationParameters
             {
@@ -104,12 +107,13 @@ namespace GarageManagementAPI.Service
             var jwtSecurityToken = securityToken as JwtSecurityToken;
 
             if (jwtSecurityToken == null || !jwtSecurityToken.Header.Alg.Equals(SecurityAlgorithms.HmacSha256, StringComparison.InvariantCultureIgnoreCase))
-                return token.InvalidTokenBadRequest();
+                return token.InvalidTokenBadRequest<ClaimsPrincipal>();
 
             return Result<ClaimsPrincipal>.Ok(principal);
         }
 
-        public async Task<Result> CreateToken(bool populateExp)
+
+        public async Task<Result<TokenDto>> CreateToken(bool populateExp)
         {
             var signingCredentials = GetSigningCredentials();
 
@@ -135,21 +139,31 @@ namespace GarageManagementAPI.Service
             });
         }
 
-        public async Task<IdentityResult> RegisterUser(UserForRegistrationDto userForRegistrationDto)
+        public async Task<IdentityResult> RegisterUser(UserForRegistrationDto userForRegistrationDto, bool IsCustomer)
         {
+            var check = await _userManager.FindByEmailAsync(userForRegistrationDto.Email!);
+            if (check != null) return IdentityResult.Failed(
+                    [
+                        new(User)
+                    ]
+                );
             var user = _mapper.Map<User>(userForRegistrationDto);
 
-            user.Status = SystemStatus.Inactive;
+            user.Status = SystemStatus.Active;
 
             using var transaction = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
 
             try
             {
-                var result = await _userManager.CreateAsync(user, userForRegistrationDto.Password);
+                var result = await _userManager.CreateAsync(user, userForRegistrationDto.Password!);
 
                 if (!result.Succeeded)
                     return result;
-                await _userManager.AddToRoleAsync(user, userForRegistrationDto.Role);
+
+                if (IsCustomer)
+                    await _userManager.AddToRoleAsync(user, SystemRole.Customer.ToString());
+                else
+                    await _userManager.AddToRoleAsync(user, userForRegistrationDto.Role.ToString());
 
                 transaction.Complete();
 
@@ -163,26 +177,26 @@ namespace GarageManagementAPI.Service
 
         public async Task<bool> ValidateUser(UserForAuthenticationDto userForAuth)
         {
-            _user = await _userManager.FindByNameAsync(userForAuth.UserName);
+            _user = await _userManager.FindByNameAsync(userForAuth.UserName!);
 
-            var result = (_user != null && await _userManager.CheckPasswordAsync(_user, userForAuth.Password));
+            var result = (_user != null && await _userManager.CheckPasswordAsync(_user, userForAuth.Password!));
 
             return result;
         }
 
-        public async Task<Result> RefreshToken(TokenDto tokenDto)
+        public async Task<Result<TokenDto>> RefreshToken(TokenDto tokenDto)
         {
-            var principalResult = GetPrincipalFomExpiredToken(tokenDto.AccessToken);
+            var principalResult = GetPrincipalFomExpiredToken(tokenDto.AccessToken!);
 
             if (!principalResult.IsSuccess)
-                return principalResult;
+                return Result<TokenDto>.BadRequest(principalResult.Errors!);
 
             var principal = principalResult.GetValue<ClaimsPrincipal>();
 
             var user = await _userManager.FindByNameAsync(principal!.Identity!.Name!);
 
             if (user == null || user.RefreshToken != tokenDto.RefreshToken || user.RefreshTokenExpiryTime <= DateTime.Now)
-                return tokenDto.RefreshToken.InvalidTokenBadRequest();
+                return tokenDto.RefreshToken!.InvalidTokenBadRequest<TokenDto>();
 
             _user = user;
 
