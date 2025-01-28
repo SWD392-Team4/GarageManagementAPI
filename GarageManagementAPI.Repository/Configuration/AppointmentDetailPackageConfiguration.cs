@@ -14,7 +14,7 @@ namespace GarageManagementAPI.Repository.Configuration
 
             entity.HasIndex(e => new { e.PackageHistoryId, e.AppointmentId }, "appointmentdetailpackage_packagehistoryid_appointmentid_unique").IsUnique();
 
-            entity.Property(e => e.Id).ValueGeneratedNever();
+            entity.Property(e => e.Id).ValueGeneratedOnAdd().HasDefaultValueSql("NEWID()");
             entity.Property(e => e.Status).HasMaxLength(255);
 
             entity.HasOne(d => d.Appointment).WithMany(p => p.AppointmentDetailPackages)

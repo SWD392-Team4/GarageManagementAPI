@@ -25,7 +25,9 @@ namespace GarageManagementAPI.Application.Migrations
             modelBuilder.Entity("GarageManagementAPI.Entities.Models.Appointment", b =>
                 {
                     b.Property<Guid>("Id")
-                        .HasColumnType("uniqueidentifier");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier")
+                        .HasDefaultValueSql("NEWID()");
 
                     b.Property<DateTimeOffset?>("ActualAppointmentTime")
                         .HasColumnType("datetimeoffset");
@@ -116,7 +118,9 @@ namespace GarageManagementAPI.Application.Migrations
             modelBuilder.Entity("GarageManagementAPI.Entities.Models.AppointmentDetail", b =>
                 {
                     b.Property<Guid>("Id")
-                        .HasColumnType("uniqueidentifier");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier")
+                        .HasDefaultValueSql("NEWID()");
 
                     b.Property<Guid>("AppointmentId")
                         .HasColumnType("uniqueidentifier");
@@ -162,7 +166,9 @@ namespace GarageManagementAPI.Application.Migrations
             modelBuilder.Entity("GarageManagementAPI.Entities.Models.AppointmentDetailPackage", b =>
                 {
                     b.Property<Guid>("Id")
-                        .HasColumnType("uniqueidentifier");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier")
+                        .HasDefaultValueSql("NEWID()");
 
                     b.Property<Guid>("AppointmentId")
                         .HasColumnType("uniqueidentifier");
@@ -1851,7 +1857,9 @@ namespace GarageManagementAPI.Application.Migrations
             modelBuilder.Entity("GarageManagementAPI.Entities.Models.User", b =>
                 {
                     b.Property<Guid>("Id")
-                        .HasColumnType("uniqueidentifier");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier")
+                        .HasDefaultValueSql("NEWID()");
 
                     b.Property<int>("AccessFailedCount")
                         .HasColumnType("int");

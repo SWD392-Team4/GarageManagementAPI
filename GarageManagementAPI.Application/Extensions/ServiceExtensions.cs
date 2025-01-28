@@ -93,6 +93,7 @@ namespace GarageManagementAPI.Application.Extensions
         public static void ConfigureActionFilter(this IServiceCollection services)
         {
             services.AddScoped<ValidationFilterAttribute>();
+            services.AddScoped<CheckAdminRoleFilterAttribute>();
         }
 
         public static void ConfigureResponseCaching(this IServiceCollection services) =>

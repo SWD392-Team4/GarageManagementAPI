@@ -3,6 +3,7 @@ using GarageManagementAPI.Entities.ConfigurationModels;
 using GarageManagementAPI.Entities.Models;
 using GarageManagementAPI.Service.Contracts;
 using GarageManagementAPI.Service.Extension;
+using GarageManagementAPI.Shared.Constant.Authentication;
 using GarageManagementAPI.Shared.DataTransferObjects.User;
 using GarageManagementAPI.Shared.Enums;
 using GarageManagementAPI.Shared.Extension;
@@ -144,7 +145,10 @@ namespace GarageManagementAPI.Service
             var check = await _userManager.FindByEmailAsync(userForRegistrationDto.Email!);
             if (check != null) return IdentityResult.Failed(
                     [
-                        new(User)
+                        new(){
+                            Code = nameof(UserErrors.EmailExisted),
+                            Description = UserErrors.EmailExisted
+                        }
                     ]
                 );
             var user = _mapper.Map<User>(userForRegistrationDto);

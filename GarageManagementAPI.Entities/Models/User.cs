@@ -8,7 +8,6 @@ namespace GarageManagementAPI.Entities.Models
 {
     public partial class User : IdentityUser<Guid>
     {
-        public new Guid Id { get; set; } = Guid.NewGuid();
         public string? FirstName { get; set; }
 
         public string? LastName { get; set; }

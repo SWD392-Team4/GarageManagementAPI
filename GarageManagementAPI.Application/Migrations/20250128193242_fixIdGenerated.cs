@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace GarageManagementAPI.Application.Migrations
 {
     /// <inheritdoc />
-    public partial class InitAdminAccount : Migration
+    public partial class fixIdGenerated : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -129,7 +129,7 @@ namespace GarageManagementAPI.Application.Migrations
                 name: "Users",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false, defaultValueSql: "NEWID()"),
                     FirstName = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
                     LastName = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
                     RefreshToken = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
@@ -477,7 +477,7 @@ namespace GarageManagementAPI.Application.Migrations
                 name: "Appointment",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false, defaultValueSql: "NEWID()"),
                     ApproveByEmployeeId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     CarModelId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     GarageId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
@@ -851,7 +851,7 @@ namespace GarageManagementAPI.Application.Migrations
                 name: "AppointmentDetailPackage",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false, defaultValueSql: "NEWID()"),
                     PackageHistoryId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     AppointmentId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     UpdateByEmployeeId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
@@ -1073,7 +1073,7 @@ namespace GarageManagementAPI.Application.Migrations
                 name: "AppointmentDetail",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false, defaultValueSql: "NEWID()"),
                     ServiceHistoryId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     UpdateByEmployeeId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     UpdateByCustomerId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
@@ -1376,9 +1376,16 @@ namespace GarageManagementAPI.Application.Migrations
                 });
 
             migrationBuilder.InsertData(
-                table: "Users",
-                columns: new[] { "Id", "AccessFailedCount", "ConcurrencyStamp", "CreatedAt", "Email", "EmailConfirmed", "FirstName", "Image", "LastName", "LockoutEnabled", "LockoutEnd", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "RefreshToken", "RefreshTokenExpiryTime", "SecurityStamp", "Status", "TwoFactorEnabled", "UpdatedAt", "UserName" },
-                values: new object[] { new Guid("c9d4c053-49b6-410c-bc78-2d54a9991870"), 0, "1f25afc3-f1d2-4d8f-816b-b803b18af7d3", new DateTimeOffset(new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 7, 0, 0, 0)), "admin@elearning.com", true, null, null, null, false, null, "ADMIN@ELEARNING.COM", "admin@elearning.com", "AQAAAAIAAYagAAAAEIOxpvAlk80ZqL/LYuROLFz65a5y1iLek5cxtcEZ3ge+sTLGCKua1UUpGWbzZmsVlA==", null, false, null, null, "fd0ec05e-e488-4ea9-aeef-b275e155112f", "Active", false, new DateTimeOffset(new DateTime(2025, 1, 10, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 7, 0, 0, 0)), "admin@elearning.com" });
+                table: "Roles",
+                columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
+                values: new object[,]
+                {
+                    { new Guid("2bad4a96-6dff-4fa3-9c2e-6899264fb739"), null, "Cashier", "CASHIER" },
+                    { new Guid("3c5c548b-b789-41b5-b216-48ddfb5e732a"), null, "Mechanic", "MECHANIC" },
+                    { new Guid("7d2b39a7-3d9d-4583-acd5-985611a29a5b"), null, "Customer", "CUSTOMER" },
+                    { new Guid("b10aa072-2522-41d9-8e12-c20f28082a0e"), null, "WarehouseManager", "WAREHOUSEMANAGER" },
+                    { new Guid("ef3629ba-332e-4c46-9fa8-54444803f925"), null, "Administrator", "ADMINISTRATOR" }
+                });
 
             migrationBuilder.InsertData(
                 table: "Workplace",

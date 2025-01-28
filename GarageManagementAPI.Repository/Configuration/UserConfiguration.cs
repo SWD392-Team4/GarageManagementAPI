@@ -18,7 +18,7 @@ namespace GarageManagementAPI.Repository.Configuration
             entity.HasIndex(e => e.PhoneNumber, "users_phonenumber_unique").IsUnique();
 
 
-            entity.Property(e => e.Id).ValueGeneratedNever();
+            entity.Property(e => e.Id).ValueGeneratedOnAdd().HasDefaultValueSql("NEWID()");
             entity.Property(e => e.ConcurrencyStamp).HasMaxLength(255);
             entity.Property(e => e.Email)
                 .HasMaxLength(255)

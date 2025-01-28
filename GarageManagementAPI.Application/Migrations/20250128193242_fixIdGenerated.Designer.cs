@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GarageManagementAPI.Application.Migrations
 {
     [DbContext(typeof(RepositoryContext))]
-    [Migration("20250127205758_InitAdminAccount-5")]
-    partial class InitAdminAccount5
+    [Migration("20250128193242_fixIdGenerated")]
+    partial class fixIdGenerated
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -28,7 +28,9 @@ namespace GarageManagementAPI.Application.Migrations
             modelBuilder.Entity("GarageManagementAPI.Entities.Models.Appointment", b =>
                 {
                     b.Property<Guid>("Id")
-                        .HasColumnType("uniqueidentifier");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier")
+                        .HasDefaultValueSql("NEWID()");
 
                     b.Property<DateTimeOffset?>("ActualAppointmentTime")
                         .HasColumnType("datetimeoffset");
@@ -119,7 +121,9 @@ namespace GarageManagementAPI.Application.Migrations
             modelBuilder.Entity("GarageManagementAPI.Entities.Models.AppointmentDetail", b =>
                 {
                     b.Property<Guid>("Id")
-                        .HasColumnType("uniqueidentifier");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier")
+                        .HasDefaultValueSql("NEWID()");
 
                     b.Property<Guid>("AppointmentId")
                         .HasColumnType("uniqueidentifier");
@@ -165,7 +169,9 @@ namespace GarageManagementAPI.Application.Migrations
             modelBuilder.Entity("GarageManagementAPI.Entities.Models.AppointmentDetailPackage", b =>
                 {
                     b.Property<Guid>("Id")
-                        .HasColumnType("uniqueidentifier");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier")
+                        .HasDefaultValueSql("NEWID()");
 
                     b.Property<Guid>("AppointmentId")
                         .HasColumnType("uniqueidentifier");
@@ -1549,6 +1555,38 @@ namespace GarageManagementAPI.Application.Migrations
                         .HasFilter("[NormalizedName] IS NOT NULL");
 
                     b.ToTable("Roles", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("2bad4a96-6dff-4fa3-9c2e-6899264fb739"),
+                            Name = "Cashier",
+                            NormalizedName = "CASHIER"
+                        },
+                        new
+                        {
+                            Id = new Guid("3c5c548b-b789-41b5-b216-48ddfb5e732a"),
+                            Name = "Mechanic",
+                            NormalizedName = "MECHANIC"
+                        },
+                        new
+                        {
+                            Id = new Guid("7d2b39a7-3d9d-4583-acd5-985611a29a5b"),
+                            Name = "Customer",
+                            NormalizedName = "CUSTOMER"
+                        },
+                        new
+                        {
+                            Id = new Guid("b10aa072-2522-41d9-8e12-c20f28082a0e"),
+                            Name = "WarehouseManager",
+                            NormalizedName = "WAREHOUSEMANAGER"
+                        },
+                        new
+                        {
+                            Id = new Guid("ef3629ba-332e-4c46-9fa8-54444803f925"),
+                            Name = "Administrator",
+                            NormalizedName = "ADMINISTRATOR"
+                        });
                 });
 
             modelBuilder.Entity("GarageManagementAPI.Entities.Models.Service", b =>
@@ -1822,7 +1860,9 @@ namespace GarageManagementAPI.Application.Migrations
             modelBuilder.Entity("GarageManagementAPI.Entities.Models.User", b =>
                 {
                     b.Property<Guid>("Id")
-                        .HasColumnType("uniqueidentifier");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier")
+                        .HasDefaultValueSql("NEWID()");
 
                     b.Property<int>("AccessFailedCount")
                         .HasColumnType("int");
@@ -2098,6 +2138,7 @@ namespace GarageManagementAPI.Application.Migrations
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<System.Guid>", b =>
                 {
                     b.Property<Guid>("UserId")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid>("RoleId")
@@ -2113,6 +2154,7 @@ namespace GarageManagementAPI.Application.Migrations
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<System.Guid>", b =>
                 {
                     b.Property<Guid>("UserId")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("LoginProvider")

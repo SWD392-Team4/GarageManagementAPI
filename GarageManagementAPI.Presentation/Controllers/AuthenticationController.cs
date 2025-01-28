@@ -1,4 +1,5 @@
 ﻿using FluentValidation;
+using GarageManagementAPI.Presentation.ActionFilters;
 using GarageManagementAPI.Presentation.Extensions;
 using GarageManagementAPI.Service.Contracts;
 using GarageManagementAPI.Shared.DataTransferObjects.User;
@@ -13,6 +14,7 @@ namespace GarageManagementAPI.Presentation.Controllers
         public AuthenticationController(IServiceManager service) : base(service) { }
 
         [HttpPost("register")]
+        [ServiceFilter(typeof(CheckAdminRoleFilterAttribute))]
         public async Task<IActionResult> RegisterUser([FromBody] UserForRegistrationDto userForRegistrationDto)
         {
             var result = await _service.AuthenticationService.RegisterUser(userForRegistrationDto, false);

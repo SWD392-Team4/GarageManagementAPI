@@ -18,7 +18,7 @@ namespace GarageManagementAPI.Repository.Configuration
 
             entity.HasIndex(e => e.CustomerPhoneNumber, "appointment_customerphonenumber_index");
 
-            entity.Property(e => e.Id).ValueGeneratedNever();
+            entity.Property(e => e.Id).ValueGeneratedOnAdd().HasDefaultValueSql("NEWID()");
             entity.Property(e => e.AppointmentType).HasMaxLength(255);
             entity.Property(e => e.CanceledReason).HasColumnType("text");
             entity.Property(e => e.CarCondition).HasColumnType("text");
