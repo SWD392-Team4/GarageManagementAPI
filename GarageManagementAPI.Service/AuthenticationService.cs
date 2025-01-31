@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using GarageManagementAPI.Entities.ConfigurationModels;
 using GarageManagementAPI.Entities.Models;
+using GarageManagementAPI.Repository.Contracts;
 using GarageManagementAPI.Service.Contracts;
 using GarageManagementAPI.Service.Extension;
 using GarageManagementAPI.Shared.Constant.Authentication;
@@ -9,36 +10,43 @@ using GarageManagementAPI.Shared.Enums;
 using GarageManagementAPI.Shared.Extension;
 using GarageManagementAPI.Shared.ResultModel;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
+using System.Text.Encodings.Web;
 using System.Transactions;
 
 namespace GarageManagementAPI.Service
 {
     public class AuthenticationService : IAuthenticationService
     {
+        private readonly IRepositoryManager _repositoryManager;
         private readonly IMapper _mapper;
         private readonly UserManager<User> _userManager;
         private readonly SignInManager<User> _signInManager;
         private readonly IOptionsSnapshot<JwtConfiguration> _configuration;
-        private readonly JwtConfiguration _jwtConfiguration;
+        private readonly JwtConfiguration _jwtConfiguration;
+
         private User? _user;
 
         public AuthenticationService(
+            IRepositoryManager repositoryManager,
             IMapper mapper,
             UserManager<User> userManager,
             SignInManager<User> signInManager,
              IOptionsSnapshot<JwtConfiguration> configuration)
         {
+            _repositoryManager = repositoryManager;
             _mapper = mapper;
             _userManager = userManager;
             _signInManager = signInManager;
             _configuration = configuration;
-            _jwtConfiguration = _configuration.Value;        }
+            _jwtConfiguration = _configuration.Value;
+        }
 
 
 
@@ -48,7 +56,8 @@ namespace GarageManagementAPI.Service
                 issuer: _jwtConfiguration.ValidIssuer,
                 audience: _jwtConfiguration.ValidAudience,
                 claims: claims,
-                expires: DateTime.Now.AddMinutes(Convert.ToDouble(_jwtConfiguration.Expires)),                signingCredentials: signingCredentials
+                expires: DateTime.Now.AddMinutes(Convert.ToDouble(_jwtConfiguration.Expires)),
+                signingCredentials: signingCredentials
                 );
 
             return tokenOptions;
@@ -58,13 +67,13 @@ namespace GarageManagementAPI.Service
         {
             var claims = new List<Claim>
             {
-                new Claim(ClaimTypes.Name, _user!.UserName !)
+                new Claim("UserName", _user!.UserName !)
             };
 
             var roles = await _userManager.GetRolesAsync(_user);
             foreach (var role in roles)
             {
-                claims.Add(new Claim(ClaimTypes.Role, role));
+                claims.Add(new Claim("Role", role));
             }
 
             return claims;
@@ -113,6 +122,19 @@ namespace GarageManagementAPI.Service
             return Result<ClaimsPrincipal>.Ok(principal);
         }
 
+        private async Task<bool> CheckIfUserExist(UserForRegistrationDto userForRegistrationDto)
+        {
+            var emailRegister = userForRegistrationDto.Email!.ToLower();
+            var phoneNumberRegister = userForRegistrationDto.Email!.ToLower();
+            var userNameRegister = userForRegistrationDto.UserName;
+
+            var check = await _repositoryManager.User.FindByCondition(u => 
+                u.Email!.ToLower().Equals(emailRegister) || 
+                u.PhoneNumber!.Equals(phoneNumberRegister) || 
+                u.UserName!.Equals(userNameRegister), false).AnyAsync();
+
+            return check;
+        }
 
         public async Task<Result<TokenDto>> CreateToken(bool populateExp)
         {
@@ -137,17 +159,18 @@ namespace GarageManagementAPI.Service
             {
                 AccessToken = accessToken,
                 RefreshToken = refreshToken,
-            });
+            });
+
         }
 
-        public async Task<IdentityResult> RegisterUser(UserForRegistrationDto userForRegistrationDto, bool IsCustomer)
+        public async Task<IdentityResult> RegisterUser(UserForRegistrationDto userForRegistrationDto)
         {
-            var check = await _userManager.FindByEmailAsync(userForRegistrationDto.Email!);
-            if (check != null) return IdentityResult.Failed(
+            var check = await CheckIfUserExist(userForRegistrationDto);
+            if (check) return IdentityResult.Failed(
                     [
                         new(){
-                            Code = nameof(UserErrors.EmailExisted),
-                            Description = UserErrors.EmailExisted
+                            Code = nameof(UserErrors.UserExisted),
+                            Description = string.Format(UserErrors.UserExisted, userForRegistrationDto.Email, userForRegistrationDto.UserName, userForRegistrationDto.PhoneNumber)
                         }
                     ]
                 );
@@ -163,11 +186,8 @@ namespace GarageManagementAPI.Service
 
                 if (!result.Succeeded)
                     return result;
-
-                if (IsCustomer)
-                    await _userManager.AddToRoleAsync(user, SystemRole.Customer.ToString());
-                else
-                    await _userManager.AddToRoleAsync(user, userForRegistrationDto.Role.ToString());
+                
+                await _userManager.AddToRoleAsync(user, userForRegistrationDto.Role.ToString());
 
                 transaction.Complete();
 
@@ -205,6 +225,26 @@ namespace GarageManagementAPI.Service
             _user = user;
 
             return await CreateToken(populateExp: false);
+        }
+
+        public async Task<Result<string>> ForgotPassword(UserForForgotPasswordDto userForForgotPasswordDto)
+        {
+            _user = await _userManager.FindByEmailAsync(userForForgotPasswordDto.Email!);
+            if (_user == null)
+                return Result<string>.NotFound([UserErrors.GetUserNotFoundWithEmailError(userForForgotPasswordDto.Email)]);
+
+            var token = await _userManager.GeneratePasswordResetTokenAsync(_user);
+
+            var baseUrl = _jwtConfiguration.ValidAudience;
+            var builder = new UriBuilder(baseUrl!)
+            {
+                Path = "reset-password",
+                Query = $"email={userForForgotPasswordDto.Email}&token={Uri.EscapeDataString(token)}"
+            };
+            var resetPasswordUrl = builder.ToString();
+
+            return Result<string>.Ok(resetPasswordUrl);
+
         }
     }
 }

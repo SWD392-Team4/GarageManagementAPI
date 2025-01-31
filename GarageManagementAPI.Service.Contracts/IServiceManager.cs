@@ -5,5 +5,7 @@
         IWorkplaceService WorkplaceService { get; }
 
         IAuthenticationService AuthenticationService { get; }
+
+        IMailService MailService { get; }
     }
 }

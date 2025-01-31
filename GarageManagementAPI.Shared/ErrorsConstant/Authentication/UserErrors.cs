@@ -1,7 +1,12 @@
-﻿namespace GarageManagementAPI.Shared.Constant.Authentication
+﻿using GarageManagementAPI.Shared.ErrorModel;
+
+namespace GarageManagementAPI.Shared.Constant.Authentication
 {
     public static class UserErrors
     {
+        //User
+        public const string UserExisted = "The provided user with email {0}, username {1} and phonenumber {2} is already existed.";
+
         // Username Errors
         public const string UsernameRequired = "The username is required.";
         public const string UsernameTooShort = "The username must be at least 5 characters long.";
@@ -14,7 +19,6 @@
         // Email Errors
         public const string EmailRequired = "The email address is required.";
         public const string EmailInvalid = "The provided email address is invalid.";
-        public const string EmailExisted = "The provided email address is already existed.";
 
         // Password Errors
         public const string PasswordRequired = "The password is required.";
@@ -36,5 +40,27 @@
         // Role Errors
         public const string RoleRequired = "The user role is required.";
         public const string RoleInvalid = "The provided user role is invalid.";
+        public const string DoNotHavePermission = "You are not authorized to create users with this role.";
+
+        //NotFoundErrors
+        public const string UserNotFoundWithEmail = "Can not found user with email {0}";
+
+        public static ErrorsResult GetUnAuthorizedToCreateUserErrors()
+        {
+            return new()
+            {
+                Code = nameof(DoNotHavePermission),
+                Description = DoNotHavePermission,
+            };
+        }
+
+        public static ErrorsResult GetUserNotFoundWithEmailError(string email)
+        {
+            return new()
+            {
+                Code = nameof(UserNotFoundWithEmail),
+                Description = string.Format(UserNotFoundWithEmail, email),
+            };
+        }
     }
 }

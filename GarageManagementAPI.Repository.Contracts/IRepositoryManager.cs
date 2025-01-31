@@ -4,6 +4,8 @@
     {
         IWorkplaceRepository Workplace { get; }
 
+        IUserRepository User { get; }
+
         Task SaveAsync();
     }
 }

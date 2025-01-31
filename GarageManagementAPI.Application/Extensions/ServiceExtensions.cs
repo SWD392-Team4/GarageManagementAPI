@@ -93,7 +93,6 @@ namespace GarageManagementAPI.Application.Extensions
         public static void ConfigureActionFilter(this IServiceCollection services)
         {
             services.AddScoped<ValidationFilterAttribute>();
-            services.AddScoped<CheckAdminRoleFilterAttribute>();
         }
 
         public static void ConfigureResponseCaching(this IServiceCollection services) =>
@@ -147,7 +146,17 @@ namespace GarageManagementAPI.Application.Extensions
                 options.Password.RequireNonAlphanumeric = true;
                 options.Password.RequiredLength = 10;
                 options.Password.RequiredUniqueChars = 1;
+                
                 options.User.RequireUniqueEmail = true;
+                
+                options.ClaimsIdentity.UserNameClaimType = "UserName";
+                options.ClaimsIdentity.RoleClaimType = "Role";
+
+                options.SignIn.RequireConfirmedAccount = true;
+                options.SignIn.RequireConfirmedPhoneNumber = true;
+                options.SignIn.RequireConfirmedEmail = true;
+
+
             }).AddEntityFrameworkStores<RepositoryContext>()
             .AddDefaultTokenProviders();
         }
@@ -180,6 +189,8 @@ namespace GarageManagementAPI.Application.Extensions
         public static void AddJwtConfiguration(this IServiceCollection services, IConfiguration configuration) =>
             services.Configure<JwtConfiguration>(configuration.GetSection("JwtSettings"));
 
+        public static void AddMailConfiguration(this IServiceCollection services, IConfiguration configuration) =>
+            services.Configure<MailConfiguration>(configuration.GetSection("MailSettings"));
 
         public static void ConfigureSwagger(this IServiceCollection services)
         {

@@ -16,7 +16,7 @@ namespace GarageManagementAPI.Shared.DataTransferObjects.User
         public string? PhoneNumber { get; init; }
 
         [EnumDataType(typeof(SystemRole), ErrorMessage = UserErrors.RoleInvalid)]
-        public SystemRole Role { get; init; }
+        public SystemRole Role { get; set; }
 
         public string? ConfirmPassword { get; init; }
     }
