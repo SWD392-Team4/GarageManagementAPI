@@ -7,7 +7,7 @@ namespace GarageManagementAPI.Presentation.Extensions
 {
     public static class IdentityResultExtension
     {
-        public static Task<IActionResult> InvalidResult(this IdentityResult identityResult)
+        public static IActionResult InvalidResult(this IdentityResult identityResult)
         {
             var errors = identityResult.Errors
                     .Select(ms =>
@@ -19,7 +19,7 @@ namespace GarageManagementAPI.Presentation.Extensions
                     ).ToList();
 
             var errorResult = Result.BadRequest(errors);
-            return Task.FromResult<IActionResult>(new BadRequestObjectResult(errorResult));
+            return new BadRequestObjectResult(errorResult);
         }
     }
 }

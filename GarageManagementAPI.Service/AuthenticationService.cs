@@ -14,11 +14,13 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
+using System.Net;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.Encodings.Web;
 using System.Transactions;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace GarageManagementAPI.Service
 {
@@ -125,7 +127,7 @@ namespace GarageManagementAPI.Service
         private async Task<bool> CheckIfUserExist(UserForRegistrationDto userForRegistrationDto)
         {
             var emailRegister = userForRegistrationDto.Email!.ToLower();
-            var phoneNumberRegister = userForRegistrationDto.Email!.ToLower();
+            var phoneNumberRegister = userForRegistrationDto.PhoneNumber!.ToLower();
             var userNameRegister = userForRegistrationDto.UserName;
 
             var check = await _repositoryManager.User.FindByCondition(u => 
@@ -199,13 +201,24 @@ namespace GarageManagementAPI.Service
             }
         }
 
-        public async Task<bool> ValidateUser(UserForAuthenticationDto userForAuth)
+        public async Task<Result> ValidateUser(UserForAuthenticationDto userForAuth)
         {
-            _user = await _userManager.FindByNameAsync(userForAuth.UserName!);
+            _user = userForAuth.UserName!.Contains("@")
+               ? await _userManager.FindByEmailAsync(userForAuth.UserName)
+               : await _userManager.FindByNameAsync(userForAuth.UserName);
 
-            var result = (_user != null && await _userManager.CheckPasswordAsync(_user, userForAuth.Password!));
+            if (_user is null || !await _userManager.CheckPasswordAsync(_user, userForAuth.Password!))
+            {
+                var error = userForAuth.UserName.Contains("@")
+                    ? UserErrors.GetUserNotFoundWithEmailError(userForAuth.UserName)
+                    : UserErrors.GetUserNotFoundWithUsernameError(userForAuth.UserName);
+                return Result.NotFound([error]);
+            }
 
-            return result;
+            if (!_user.EmailConfirmed)
+                return Result.Unauthorized([UserErrors.GetConfirmEmailRequiredError()]);
+
+            return Result.Ok();
         }
 
         public async Task<Result<TokenDto>> RefreshToken(TokenDto tokenDto)
@@ -227,11 +240,14 @@ namespace GarageManagementAPI.Service
             return await CreateToken(populateExp: false);
         }
 
-        public async Task<Result<string>> ForgotPassword(UserForForgotPasswordDto userForForgotPasswordDto)
+        public async Task<Result<string>> CreateForgotPasswordUrl(string email)
         {
-            _user = await _userManager.FindByEmailAsync(userForForgotPasswordDto.Email!);
+            _user = await _userManager.FindByEmailAsync(email);
             if (_user == null)
-                return Result<string>.NotFound([UserErrors.GetUserNotFoundWithEmailError(userForForgotPasswordDto.Email)]);
+                return Result<string>.NotFound([UserErrors.GetUserNotFoundWithEmailError(email)]);
+
+            if (!_user.EmailConfirmed)
+                return Result<string>.Unauthorized([UserErrors.GetConfirmEmailRequiredError()]);
 
             var token = await _userManager.GeneratePasswordResetTokenAsync(_user);
 
@@ -239,12 +255,65 @@ namespace GarageManagementAPI.Service
             var builder = new UriBuilder(baseUrl!)
             {
                 Path = "reset-password",
-                Query = $"email={userForForgotPasswordDto.Email}&token={Uri.EscapeDataString(token)}"
+                Query = $"email={email}&token={Uri.EscapeDataString(token)}"
             };
             var resetPasswordUrl = builder.ToString();
 
             return Result<string>.Ok(resetPasswordUrl);
 
+        }
+
+        public async Task<Result<string>> CreateConfirmEmailUrl(string email)
+        {
+            _user = await _userManager.FindByEmailAsync(email);
+            if (_user == null)
+                return Result<string>.NotFound([UserErrors.GetUserNotFoundWithEmailError(email)]);
+
+            var token = await _userManager.GenerateEmailConfirmationTokenAsync(_user);
+
+            var baseUrl = _jwtConfiguration.ValidAudience;
+            var builder = new UriBuilder(baseUrl!)
+            {
+                Path = "confirm-email",
+                Query = $"email={email}&token={Uri.EscapeDataString(token)}"
+            };
+            var resetPasswordUrl = builder.ToString();
+
+            return Result<string>.Ok(resetPasswordUrl);
+
+        }
+
+        public async Task<Result<IdentityResult>> ConfirmEmail(UserForConfirmEmail userForConfirmEmail)
+        {
+            _user = await _userManager.FindByEmailAsync(userForConfirmEmail.Email!);
+            if (_user == null)
+                return Result<IdentityResult>.NotFound([UserErrors.GetUserNotFoundWithEmailError(userForConfirmEmail.Email!)]);
+
+            var result = await _userManager.ConfirmEmailAsync(_user, userForConfirmEmail.Token!);
+
+            return Result<IdentityResult>.Ok(result);
+        }
+
+        public async Task<Result<IdentityResult>> ResetPassword(UserForResetPasswordDto userForResetPasswordDto)
+        {
+            _user = await _userManager.FindByEmailAsync(userForResetPasswordDto.Email!);
+            if (_user == null)
+                return Result<IdentityResult>.NotFound([UserErrors.GetUserNotFoundWithEmailError(userForResetPasswordDto.Email!)]);
+
+            var resetPassResult = await _userManager.ResetPasswordAsync(_user, userForResetPasswordDto.Token!, userForResetPasswordDto.Password!);
+
+            return Result<IdentityResult>.Ok(resetPassResult);
+        }
+
+        public async Task<Result<IdentityResult>> ChangePassword(string username, UserForChangePasswordDto userForChangePasswordDto)
+        {
+            _user = await _userManager.FindByNameAsync(username);
+            if (_user == null || !await _userManager.CheckPasswordAsync(_user, userForChangePasswordDto.CurrentPassword!))
+                return Result<IdentityResult>.NotFound([UserErrors.GetUserNotFoundWithUsernameError(username)]);
+
+            var resetPassResult = await _userManager.ChangePasswordAsync(_user, userForChangePasswordDto.CurrentPassword!, userForChangePasswordDto.NewPassword!);
+
+            return Result<IdentityResult>.Ok(resetPassResult);
         }
     }
 }

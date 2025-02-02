@@ -1,6 +1,6 @@
 ﻿namespace GarageManagementAPI.Shared.DataTransferObjects.User
 {
-    public record UserForForgotPasswordDto
+    public record UserForResendConfirmEmailDto
     {
         public string? Email { get; init; }
     }

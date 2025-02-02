@@ -11,6 +11,7 @@ namespace GarageManagementAPI.Shared.Constant.Authentication
         public const string UsernameRequired = "The username is required.";
         public const string UsernameTooShort = "The username must be at least 5 characters long.";
         public const string UsernameTooLong = "The username must not exceed 25 characters.";
+        public const string UsernameContainSpecialCharacter = " The username can not contain special character.";
 
         // Name Errors
         public const string FirstNameRequired = "The first name is required.";
@@ -33,6 +34,9 @@ namespace GarageManagementAPI.Shared.Constant.Authentication
         public const string ConfirmPasswordRequired = "The confirmation password is required.";
         public const string ConfirmPasswordMismatch = "The confirmation password does not match the password.";
 
+        //Current Password Errors
+        public const string CurrentPasswordRequired = "The current password is required.";
+
         // Phone Number Errors
         public const string PhoneNumberRequired = "The phone number is required.";
         public const string PhoneNumberInvalid = "The phone number is invalid. Ensure it is a valid Vietnamese phone number.";
@@ -44,6 +48,14 @@ namespace GarageManagementAPI.Shared.Constant.Authentication
 
         //NotFoundErrors
         public const string UserNotFoundWithEmail = "Can not found user with email {0}";
+        public const string UserNotFoundWithUsername = "Can not found user with username {0}";
+
+        //UnauthorizeUser
+        public const string ConfirmEmailRequired = "Email not confirmed.";
+
+        //Token
+        public const string TokenConfirmEmailRequired = "Token use for confirm email is required.";
+        public const string TokenResetPasswordRequired = "Token use for reset password is required.";
 
         public static ErrorsResult GetUnAuthorizedToCreateUserErrors()
         {
@@ -60,6 +72,24 @@ namespace GarageManagementAPI.Shared.Constant.Authentication
             {
                 Code = nameof(UserNotFoundWithEmail),
                 Description = string.Format(UserNotFoundWithEmail, email),
+            };
+        }
+
+        public static ErrorsResult GetUserNotFoundWithUsernameError(string username)
+        {
+            return new()
+            {
+                Code = nameof(UserNotFoundWithUsername),
+                Description = string.Format(UserNotFoundWithUsername, username),
+            };
+        }
+
+        public static ErrorsResult GetConfirmEmailRequiredError()
+        {
+            return new()
+            {
+                Code = nameof(ConfirmEmailRequired),
+                Description = ConfirmEmailRequired
             };
         }
     }

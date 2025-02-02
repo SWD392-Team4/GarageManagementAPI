@@ -6,8 +6,11 @@ using GarageManagementAPI.Shared.Constant.Authentication;
 using GarageManagementAPI.Shared.DataTransferObjects;
 using GarageManagementAPI.Shared.DataTransferObjects.User;
 using GarageManagementAPI.Shared.Enums;
+using GarageManagementAPI.Shared.Extension;
 using GarageManagementAPI.Shared.ResultModel;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
 using System.Security.Claims;
@@ -33,7 +36,7 @@ namespace GarageManagementAPI.Presentation.Controllers
                 userRole != null && userForRegistrationDto.Role != SystemRole.Customer && !userRole.Equals(SystemRole.Administrator.ToString()))
             {
                 return new ObjectResult(
-                        Result.Failure(HttpStatusCode.Forbidden,
+                        Result.Forbidden(
                         [UserErrors.GetUnAuthorizedToCreateUserErrors()]))
                 {
                     StatusCode = StatusCodes.Status403Forbidden
@@ -45,8 +48,14 @@ namespace GarageManagementAPI.Presentation.Controllers
 
             if (!result.Succeeded)
             {
-                return await result.InvalidResult();
+                return result.InvalidResult();
             }
+
+            var resultUrl = await _service.AuthenticationService.CreateConfirmEmailUrl(userForRegistrationDto.Email!);
+
+            var url = resultUrl.GetValue<string>();
+
+            await _service.MailService.SendConfirmEmailEmail(userForRegistrationDto.Email!, url).ConfigureAwait(false);
 
             return Created();
         }
@@ -54,8 +63,10 @@ namespace GarageManagementAPI.Presentation.Controllers
         [HttpPost("login")]
         public async Task<IActionResult> LoginUser([FromBody] UserForAuthenticationDto userForAuthenticationDto)
         {
-            if (!await _service.AuthenticationService.ValidateUser(userForAuthenticationDto))
-                return Unauthorized();
+            var result = await _service.AuthenticationService.ValidateUser(userForAuthenticationDto);
+
+            if(!result.IsSuccess)
+                return ProcessError(result);
 
             var tokenDto = await _service.AuthenticationService
                 .CreateToken(populateExp: true);
@@ -65,18 +76,36 @@ namespace GarageManagementAPI.Presentation.Controllers
                 onFailure: result => ProcessError(result));
         }
 
-        [HttpPost("confirm")]
-        public async Task<IActionResult> ConfirmAccount()
+
+        [HttpPost("resend-confirm-email")]
+        public async Task<IActionResult> ResendConfirmEmail([FromBody] UserForResendConfirmEmailDto resendConfirmEmailDto)
         {
 
-            throw new NotImplementedException();
+            var resultUrl = await _service.AuthenticationService.CreateConfirmEmailUrl(resendConfirmEmailDto.Email!);
+
+            var url = resultUrl.GetValue<string>();
+
+            await _service.MailService.SendConfirmEmailEmail(resendConfirmEmailDto.Email!, url).ConfigureAwait(false);
+
+            return Ok();
         }
 
         [HttpPost("confirm-email")]
-        public async Task<IActionResult> ConfirmEmail()
+        public async Task<IActionResult> ConfirmEmail([FromBody] UserForConfirmEmail userForConfirmEmailDto)
         {
 
-            throw new NotImplementedException();
+            var result = await _service.AuthenticationService.ConfirmEmail(userForConfirmEmailDto);
+
+            return result.Map(
+                onSuccess: result =>
+                {
+                    var identityResult = result.GetValue<IdentityResult>();
+                    if (!identityResult.Succeeded) return identityResult.InvalidResult();
+
+                    return Ok();
+                },
+                onFailure: ProcessError
+                );
         }
 
         [HttpPost("confirm-phone")]
@@ -88,18 +117,51 @@ namespace GarageManagementAPI.Presentation.Controllers
         [HttpPost("forgot-password")]
         public async Task<IActionResult> ForgotPassowrd([FromBody] UserForForgotPasswordDto userForForgotPasswordDto)
         {
-            var resultUrl = await _service.AuthenticationService.ForgotPassword(userForForgotPasswordDto);
+            var resultUrl = await _service.AuthenticationService.CreateForgotPasswordUrl(userForForgotPasswordDto.Email!);
 
             if (!resultUrl.IsSuccess)
                 return ProcessError(resultUrl);
 
-            return Ok(resultUrl);
+            var url = resultUrl.GetValue<string>();
+
+           await _service.MailService.SendForgotPasswordEmail(userForForgotPasswordDto.Email!, url).ConfigureAwait(false);
+            return Ok() ;
+        }
+
+        [HttpPost("reset-password")]
+        public async Task<IActionResult> ResetPassowrd([FromBody] UserForResetPasswordDto userForResetPasswordDto)
+        {
+            var result = await _service.AuthenticationService.ResetPassword(userForResetPasswordDto);
+
+            return result.Map(
+                onSuccess: result =>
+                {
+                    var identityResult = result.GetValue<IdentityResult>();
+                    if (!identityResult.Succeeded) return identityResult.InvalidResult();
+
+                    return Ok();
+                },
+                onFailure: ProcessError
+                );
         }
 
         [HttpPost("change-password")]
-        public async Task<IActionResult> ChangePassowrd()
+        [Authorize]
+        public async Task<IActionResult> ChangePassword([FromBody] UserForChangePasswordDto userForChangePasswordDto)
         {
-            throw new NotImplementedException();
+            var username = HttpContext.User.Identity!.Name;
+            var result = await _service.AuthenticationService.ChangePassword(username!, userForChangePasswordDto);
+
+            return result.Map(
+                onSuccess: result =>
+                {
+                    var identityResult = result.GetValue<IdentityResult>();
+                    if (!identityResult.Succeeded) return identityResult.InvalidResult();
+
+                    return Ok();
+                },
+                onFailure: ProcessError
+                );
         }
     }
 }

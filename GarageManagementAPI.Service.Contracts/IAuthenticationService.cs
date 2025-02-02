@@ -8,12 +8,20 @@ namespace GarageManagementAPI.Service.Contracts
     {
         Task<IdentityResult> RegisterUser(UserForRegistrationDto userForRegistrationDto);
 
-        Task<bool> ValidateUser(UserForAuthenticationDto userForAuth);
+        Task<Result<string>> CreateConfirmEmailUrl(string email);
+
+        Task<Result<IdentityResult>> ConfirmEmail(UserForConfirmEmail userForConfirmEmail);
+
+        Task<Result> ValidateUser(UserForAuthenticationDto userForAuth);
 
         Task<Result<TokenDto>> CreateToken(bool populateExp);
 
         Task<Result<TokenDto>> RefreshToken(TokenDto tokenDto);
 
-        Task<Result<string>> ForgotPassword(UserForForgotPasswordDto userForForgotPasswordDto);
+        Task<Result<string>> CreateForgotPasswordUrl(string email);
+
+        Task<Result<IdentityResult>> ResetPassword(UserForResetPasswordDto userForResetPasswordDto);
+
+        Task<Result<IdentityResult>> ChangePassword(string username, UserForChangePasswordDto userForChangePasswordDto);
     }
 }

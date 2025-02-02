@@ -4,6 +4,10 @@ namespace GarageManagementAPI.Service.Contracts
 {
     public interface IMailService
     {
-        bool SendMail(MailData Mail_Data);
+        Task<bool> SendForgotPasswordEmail(string ToEmail, string url);
+
+        Task<bool> SendConfirmEmailEmail(string ToEmail, string url);
+
+        Task<bool> SendMail(MailData Mail_Data);
     }
 }

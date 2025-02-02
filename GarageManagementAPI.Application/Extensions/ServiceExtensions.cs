@@ -1,4 +1,5 @@
 ﻿using FluentValidation;
+using GarageManagementAPI.Application.Security;
 using GarageManagementAPI.Entities.ConfigurationModels;
 using GarageManagementAPI.Entities.Models;
 using GarageManagementAPI.Presentation.ActionFilters;
@@ -146,19 +147,32 @@ namespace GarageManagementAPI.Application.Extensions
                 options.Password.RequireNonAlphanumeric = true;
                 options.Password.RequiredLength = 10;
                 options.Password.RequiredUniqueChars = 1;
-                
+
                 options.User.RequireUniqueEmail = true;
-                
+                options.User.AllowedUserNameCharacters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+
                 options.ClaimsIdentity.UserNameClaimType = "UserName";
                 options.ClaimsIdentity.RoleClaimType = "Role";
 
-                options.SignIn.RequireConfirmedAccount = true;
-                options.SignIn.RequireConfirmedPhoneNumber = true;
                 options.SignIn.RequireConfirmedEmail = true;
 
+                options.Tokens.EmailConfirmationTokenProvider = "CustomEmailConfirmation";
 
             }).AddEntityFrameworkStores<RepositoryContext>()
-            .AddDefaultTokenProviders();
+            .AddDefaultTokenProviders()
+            .AddTokenProvider<CustomEmailConfirmationTokenProvider<User>>("CustomEmailConfirmation");
+
+            services.Configure<DataProtectionTokenProviderOptions>(o =>
+            {
+                o.TokenLifespan = TimeSpan.FromHours(5);
+            });
+
+            services.Configure<CustomEmailConfirmationTokenProviderOptions>(o =>
+            {
+                o.TokenLifespan = TimeSpan.FromDays(3);
+            });
+
+
         }
 
         public static void ConfigureJWT(this IServiceCollection services, IConfiguration configuration)
@@ -181,7 +195,9 @@ namespace GarageManagementAPI.Application.Extensions
                     ValidateIssuerSigningKey = true,
                     ValidIssuer = jwtConfiguration.ValidIssuer,
                     ValidAudience = jwtConfiguration.ValidAudience,
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey!))
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey!)),
+                    NameClaimType = "UserName", 
+                    RoleClaimType = "Role"
                 };
             });
         }

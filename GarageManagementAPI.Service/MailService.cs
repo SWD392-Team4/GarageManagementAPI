@@ -1,5 +1,6 @@
 ﻿using GarageManagementAPI.Entities.ConfigurationModels;
 using GarageManagementAPI.Service.Contracts;
+using GarageManagementAPI.Service.Utilities;
 using GarageManagementAPI.Shared.DataTransferObjects;
 using MailKit.Net.Smtp;
 using MailKit.Security;
@@ -11,16 +12,41 @@ namespace GarageManagementAPI.Service
     public class MailService : IMailService
     {
         public readonly MailConfiguration _mail;
+        public const string ConfirmEmail = "Confirm your email.";
+        public const string ForgotPassword = "Forgot password.";
+
 
         public MailService(IOptionsSnapshot<MailConfiguration> mailConfiguration)
         {
             _mail = mailConfiguration.Value;
         }
 
-        public bool SendMail(MailData Mail_Data)
+        public async Task<bool> SendConfirmEmailEmail(string ToEmail,string url)
         {
-            try
+            MailData mailData = new MailData()
             {
+                EmailSubject = ConfirmEmail,
+                EmailBody = MailHelper.ConfirmEmailTemplate(url),
+                EmailToId = ToEmail,
+            };
+            return await SendMail(mailData);
+        }
+
+        public async Task<bool> SendForgotPasswordEmail(string ToEmail, string url)
+        {
+            MailData mailData = new MailData()
+            {
+                EmailSubject = ForgotPassword,
+                EmailBody = MailHelper.ForgotPasswordTemplate(url),
+                EmailToId = ToEmail,
+            };
+            return await SendMail(mailData);
+        }
+
+        public async Task<bool> SendMail(MailData Mail_Data)
+        {
+            //try
+            //{
                 //MimeMessage - a class from Mimekit
                 MimeMessage email_Message = new MimeMessage();
                 MailboxAddress email_From = new MailboxAddress(_mail.Name, _mail.EmailId);
@@ -29,21 +55,21 @@ namespace GarageManagementAPI.Service
                 email_Message.To.Add(email_To);
                 email_Message.Subject = Mail_Data.EmailSubject;
                 BodyBuilder emailBodyBuilder = new BodyBuilder();
-                emailBodyBuilder.TextBody = Mail_Data.EmailBody;
+                emailBodyBuilder.HtmlBody = Mail_Data.EmailBody;
                 email_Message.Body = emailBodyBuilder.ToMessageBody();
                 //this is the SmtpClient class from the Mailkit.Net.Smtp namespace, not the System.Net.Mail one
                 SmtpClient MailClient = new SmtpClient();
-                MailClient.Connect(_mail.Host, (int)_mail.Port!, SecureSocketOptions.StartTls);
-                MailClient.Authenticate(_mail.EmailId, _mail.Password);
-                MailClient.Send(email_Message);
-                MailClient.Disconnect(true);
+                await MailClient.ConnectAsync(_mail.Host, (int)_mail.Port!, SecureSocketOptions.StartTls);
+                await MailClient.AuthenticateAsync(_mail.EmailId, _mail.Password);
+                await MailClient.SendAsync(email_Message);
+                await MailClient.DisconnectAsync(true);
                 MailClient.Dispose();
                 return true;
-            }
-            catch
-            {
-                throw;
-            }
+            //}
+            //catch
+            //{
+            //    throw;
+            //}
         }
     }
 }

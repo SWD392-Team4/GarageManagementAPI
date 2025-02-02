@@ -4,6 +4,7 @@ using System.Net;
 using System.Net.NetworkInformation;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace GarageManagementAPI.Shared.ResultModel
 {
@@ -45,6 +46,12 @@ namespace GarageManagementAPI.Shared.ResultModel
 
         public static Result BadRequest(List<ErrorsResult> errors)
              => new Result(HttpStatusCode.BadRequest, errors);
+
+        public static Result Unauthorized(List<ErrorsResult> errors)
+            => new Result(HttpStatusCode.Unauthorized, errors);
+
+        public static Result Forbidden(List<ErrorsResult> errors)
+            => new Result(HttpStatusCode.Forbidden, errors);
 
         public static implicit operator Result(HttpStatusCode statusCode)
             => Success(statusCode);
@@ -95,6 +102,12 @@ namespace GarageManagementAPI.Shared.ResultModel
 
         public static new Result<T> BadRequest(List<ErrorsResult> errors)
             => new Result<T>(HttpStatusCode.BadRequest, errors);
+
+        public static new Result<T> Unauthorized(List<ErrorsResult> errors)
+            => new Result<T>(HttpStatusCode.Unauthorized, errors);
+
+        public static new Result<T> Forbidden(List<ErrorsResult> errors)
+            => new Result<T>(HttpStatusCode.Forbidden, errors);
 
     }
 
