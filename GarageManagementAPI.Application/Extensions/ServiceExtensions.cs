@@ -112,6 +112,22 @@ namespace GarageManagementAPI.Application.Extensions
                     QueueProcessingOrder = QueueProcessingOrder.OldestFirst,
                     Window = TimeSpan.FromMinutes(1)
                 }));
+                options.AddPolicy("SendMailConfirmEmailPolicy", context =>
+                 RateLimitPartition.GetFixedWindowLimiter("SendMailPolicyLimiter",
+                 partition => new FixedWindowRateLimiterOptions
+                 {
+                     AutoReplenishment = true,
+                     PermitLimit = 1,
+                     Window = TimeSpan.FromMinutes(5)
+                 }));
+                options.AddPolicy("SendMailForgotPasswordPolicy", context =>
+                 RateLimitPartition.GetFixedWindowLimiter("SendMailPolicyLimiter",
+                 partition => new FixedWindowRateLimiterOptions
+                 {
+                     AutoReplenishment = true,
+                     PermitLimit = 1,
+                     Window = TimeSpan.FromMinutes(5)
+                 }));
 
                 options.OnRejected = async (context, token) =>
                 {
@@ -196,8 +212,8 @@ namespace GarageManagementAPI.Application.Extensions
                     ValidIssuer = jwtConfiguration.ValidIssuer,
                     ValidAudience = jwtConfiguration.ValidAudience,
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey!)),
-                    NameClaimType = "UserName", 
-                    RoleClaimType = "Role"
+                    NameClaimType = "UserName",
+                    RoleClaimType = "Role",
                 };
             });
         }

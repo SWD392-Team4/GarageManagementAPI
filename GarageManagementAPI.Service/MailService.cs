@@ -2,6 +2,7 @@
 using GarageManagementAPI.Service.Contracts;
 using GarageManagementAPI.Service.Utilities;
 using GarageManagementAPI.Shared.DataTransferObjects;
+using GarageManagementAPI.Shared.DataTransferObjects.User;
 using MailKit.Net.Smtp;
 using MailKit.Security;
 using Microsoft.Extensions.Options;
@@ -21,7 +22,36 @@ namespace GarageManagementAPI.Service
             _mail = mailConfiguration.Value;
         }
 
-        public async Task<bool> SendConfirmEmailEmail(string ToEmail,string url)
+        public async Task<bool> SendMail(MailData Mail_Data)
+        {
+            try
+            {
+                //MimeMessage - a class from Mimekit
+                MimeMessage email_Message = new MimeMessage();
+                MailboxAddress email_From = new MailboxAddress(_mail.Name, _mail.EmailId);
+                email_Message.From.Add(email_From);
+                MailboxAddress email_To = new MailboxAddress(string.Empty, Mail_Data.EmailToId);
+                email_Message.To.Add(email_To);
+                email_Message.Subject = Mail_Data.EmailSubject;
+                BodyBuilder emailBodyBuilder = new BodyBuilder();
+                emailBodyBuilder.HtmlBody = Mail_Data.EmailBody;
+                email_Message.Body = emailBodyBuilder.ToMessageBody();
+                //this is the SmtpClient class from the Mailkit.Net.Smtp namespace, not the System.Net.Mail one
+                SmtpClient MailClient = new SmtpClient();
+                await MailClient.ConnectAsync(_mail.Host, (int)_mail.Port!, SecureSocketOptions.StartTls);
+                await MailClient.AuthenticateAsync(_mail.EmailId, _mail.Password);
+                await MailClient.SendAsync(email_Message);
+                await MailClient.DisconnectAsync(true);
+                MailClient.Dispose();
+                return true;
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+        public async Task<bool> SendConfirmEmailEmail(string ToEmail, string url)
         {
             MailData mailData = new MailData()
             {
@@ -43,33 +73,18 @@ namespace GarageManagementAPI.Service
             return await SendMail(mailData);
         }
 
-        public async Task<bool> SendMail(MailData Mail_Data)
+
+
+        public async Task<bool> SendConfirmEmailEmployeeEmail(UserForRegistrationEmployeeDto userForRegistrationEmployeeDto, string url)
         {
-            //try
-            //{
-                //MimeMessage - a class from Mimekit
-                MimeMessage email_Message = new MimeMessage();
-                MailboxAddress email_From = new MailboxAddress(_mail.Name, _mail.EmailId);
-                email_Message.From.Add(email_From);
-                MailboxAddress email_To = new MailboxAddress(string.Empty, Mail_Data.EmailToId);
-                email_Message.To.Add(email_To);
-                email_Message.Subject = Mail_Data.EmailSubject;
-                BodyBuilder emailBodyBuilder = new BodyBuilder();
-                emailBodyBuilder.HtmlBody = Mail_Data.EmailBody;
-                email_Message.Body = emailBodyBuilder.ToMessageBody();
-                //this is the SmtpClient class from the Mailkit.Net.Smtp namespace, not the System.Net.Mail one
-                SmtpClient MailClient = new SmtpClient();
-                await MailClient.ConnectAsync(_mail.Host, (int)_mail.Port!, SecureSocketOptions.StartTls);
-                await MailClient.AuthenticateAsync(_mail.EmailId, _mail.Password);
-                await MailClient.SendAsync(email_Message);
-                await MailClient.DisconnectAsync(true);
-                MailClient.Dispose();
-                return true;
-            //}
-            //catch
-            //{
-            //    throw;
-            //}
+            string fullname = $"{userForRegistrationEmployeeDto.LastName} {userForRegistrationEmployeeDto.FirstName}";
+            MailData mailData = new MailData()
+            {
+                EmailSubject = ConfirmEmail,
+                EmailBody = MailHelper.ConfirmEmailEmployeeTemplate(fullname, userForRegistrationEmployeeDto.UserName!, userForRegistrationEmployeeDto.Password!, url),
+                EmailToId = userForRegistrationEmployeeDto.Email,
+            };
+            return await SendMail(mailData);
         }
     }
 }

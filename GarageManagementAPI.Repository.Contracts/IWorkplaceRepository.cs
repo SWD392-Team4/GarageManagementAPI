@@ -5,9 +5,9 @@ namespace GarageManagementAPI.Repository.Contracts
 {
     public interface IWorkplaceRepository : IRepositoryBase<Workplace>
     {
-        public Task<Workplace?> GetWorkplace(Guid id, bool trackChanges);
+        public Task<Workplace?> GetWorkplaceAsync(Guid id, bool trackChanges);
 
-        public Task<PagedList<Workplace>> GetWorkplaces(WorkplaceParameters workplaceParameters, bool trackChanges);
+        public Task<PagedList<Workplace>> GetWorkplacesAsync(WorkplaceParameters workplaceParameters, bool trackChanges);
 
         public Task CreateWorkplaceAsync(Workplace workplace);
 

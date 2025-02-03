@@ -4,11 +4,11 @@ using GarageManagementAPI.Shared.DataTransferObjects.User;
 
 namespace GarageManagementAPI.Application.MappingProfile
 {
-    public class UserMappingProfile : Profile
+    public class EmployeeInfoMappingProfile : Profile
     {
-        public UserMappingProfile()
+        public EmployeeInfoMappingProfile()
         {
-            CreateMap<UserForRegistrationDto, User>();
+            CreateMap<UserForRegistrationEmployeeDto, EmployeeInfo>();
         }
     }
 }

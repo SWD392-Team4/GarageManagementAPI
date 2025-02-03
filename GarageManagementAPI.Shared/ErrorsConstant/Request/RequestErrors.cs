@@ -12,6 +12,7 @@ namespace GarageManagementAPI.Shared.Constant.Request
         public const string TooManyRequests = "You have made too many requests. Please wait a moment and try again.";
         public const string TooManyRequestsWithRetryAfter = "You have exceeded the request limit. Please wait {0} second(s) before retrying.";
         public const string InvalidToken = "The request is invalid due to a malformed or incorrect token. Please check and try again.";
+        public const string AccessTokenExpired = "Lifetime validation failed. The token is expired.";
         #endregion
 
         #region Static Methods

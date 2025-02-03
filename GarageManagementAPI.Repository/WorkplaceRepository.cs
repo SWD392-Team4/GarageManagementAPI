@@ -29,14 +29,14 @@ namespace GarageManagementAPI.Repository
             base.Delete(workplace);
         }
 
-        public async Task<Workplace?> GetWorkplace(Guid id, bool trackChanges)
+        public async Task<Workplace?> GetWorkplaceAsync(Guid id, bool trackChanges)
         {
             var Worplace = await FindByCondition(wp => wp.Id.Equals(id), trackChanges).SingleOrDefaultAsync();
 
             return Worplace;
         }
 
-        public async Task<PagedList<Workplace>> GetWorkplaces(WorkplaceParameters workplaceParameters, bool trackChanges)
+        public async Task<PagedList<Workplace>> GetWorkplacesAsync(WorkplaceParameters workplaceParameters, bool trackChanges)
         {
             var worplaces = await FindAll(trackChanges)
             .SearchByStatus(workplaceParameters.WorkplaceStatus)

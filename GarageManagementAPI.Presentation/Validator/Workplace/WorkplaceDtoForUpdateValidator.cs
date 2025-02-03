@@ -17,11 +17,11 @@ namespace GarageManagementAPI.Presentation.Validator.Workplace
         {
             RuleFor(w => w.Status)
                .NotEmpty()
-               .WithMessage(WorkplaceErros.WorkplaceStatusRequired)
-               .WithErrorCode(nameof(WorkplaceErros.WorkplaceStatusRequired))
+               .WithMessage(WorkplaceErrors.WorkplaceStatusRequired)
+               .WithErrorCode(nameof(WorkplaceErrors.WorkplaceStatusRequired))
                .Must(status => Enum.IsDefined(typeof(WorkplaceStatus), status))
-                .WithMessage(WorkplaceErros.WorkplaceStatusInvalid)
-                .WithErrorCode(nameof(WorkplaceErros.WorkplaceStatusInvalid));
+                .WithMessage(WorkplaceErrors.WorkplaceStatusInvalid)
+                .WithErrorCode(nameof(WorkplaceErrors.WorkplaceStatusInvalid));
         }
     }
 }

@@ -12,8 +12,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using System.Net;
-using System.Security.Claims;
+using Microsoft.AspNetCore.RateLimiting;
 
 namespace GarageManagementAPI.Presentation.Controllers
 {
@@ -26,29 +25,11 @@ namespace GarageManagementAPI.Presentation.Controllers
         [HttpPost("register")]
         public async Task<IActionResult> RegisterUser([FromBody] UserForRegistrationDto userForRegistrationDto)
         {
-            var userRole = HttpContext.User.Claims
-           .FirstOrDefault(c => c.Type == "Role")?.Value;
+            var result = await _service.AuthenticationService.RegisterUser(userForRegistrationDto, SystemRole.Customer, userForRegistrationDto.Password!);
 
-
-            if (
-                userRole == null && userForRegistrationDto.Role != SystemRole.Customer ||
-                userRole != null && userForRegistrationDto.Role == SystemRole.Administrator ||
-                userRole != null && userForRegistrationDto.Role != SystemRole.Customer && !userRole.Equals(SystemRole.Administrator.ToString()))
+            if (!result.IsSuccess)
             {
-                return new ObjectResult(
-                        Result.Forbidden(
-                        [UserErrors.GetUnAuthorizedToCreateUserErrors()]))
-                {
-                    StatusCode = StatusCodes.Status403Forbidden
-                };
-            }
-
-
-            var result = await _service.AuthenticationService.RegisterUser(userForRegistrationDto);
-
-            if (!result.Succeeded)
-            {
-                return result.InvalidResult();
+                return ProcessError(result);
             }
 
             var resultUrl = await _service.AuthenticationService.CreateConfirmEmailUrl(userForRegistrationDto.Email!);
@@ -60,12 +41,52 @@ namespace GarageManagementAPI.Presentation.Controllers
             return Created();
         }
 
+        [HttpPost("register-employee")]
+        [Authorize(Roles = nameof(SystemRole.Administrator))]
+        public async Task<IActionResult> RegisterEmployee([FromBody] UserForRegistrationEmployeeDto userForRegistrationEmployeeDto)
+        {
+            if (userForRegistrationEmployeeDto.Role == SystemRole.Administrator)
+            {
+                return new ObjectResult(
+                        Result.Forbidden(
+                        [UserErrors.GetUnAuthorizedToCreateUserErrors()]))
+                {
+                    StatusCode = StatusCodes.Status403Forbidden
+                };
+            }
+
+            if (userForRegistrationEmployeeDto.Role == SystemRole.Customer)
+            {
+                return new BadRequestObjectResult(
+                                        Result.Forbidden(
+                                        [UserErrors.GetInvalidEndpointError()]));
+            }
+
+            userForRegistrationEmployeeDto.Password = _service.AuthenticationService.GenerateRandomPassword(10);
+            userForRegistrationEmployeeDto.UserName = _service.AuthenticationService.GenerateUserName(userForRegistrationEmployeeDto.FirstName!, userForRegistrationEmployeeDto.LastName!);
+
+            var resultRegsiterUser = await _service.AuthenticationService.RegisterEmployeeInfo(userForRegistrationEmployeeDto, userForRegistrationEmployeeDto.Role, userForRegistrationEmployeeDto.Password!);
+
+            if (!resultRegsiterUser.IsSuccess)
+            {
+                return ProcessError(resultRegsiterUser);
+            }
+
+            var resultUrl = await _service.AuthenticationService.CreateConfirmEmailUrl(userForRegistrationEmployeeDto.Email!);
+
+            var url = resultUrl.GetValue<string>();
+
+            await _service.MailService.SendConfirmEmailEmployeeEmail(userForRegistrationEmployeeDto, url).ConfigureAwait(false);
+
+            return Created();
+        }
+
         [HttpPost("login")]
         public async Task<IActionResult> LoginUser([FromBody] UserForAuthenticationDto userForAuthenticationDto)
         {
             var result = await _service.AuthenticationService.ValidateUser(userForAuthenticationDto);
 
-            if(!result.IsSuccess)
+            if (!result.IsSuccess)
                 return ProcessError(result);
 
             var tokenDto = await _service.AuthenticationService
@@ -78,10 +99,14 @@ namespace GarageManagementAPI.Presentation.Controllers
 
 
         [HttpPost("resend-confirm-email")]
+        [EnableRateLimiting("SendMailConfirmEmailPolicy")]
         public async Task<IActionResult> ResendConfirmEmail([FromBody] UserForResendConfirmEmailDto resendConfirmEmailDto)
         {
 
             var resultUrl = await _service.AuthenticationService.CreateConfirmEmailUrl(resendConfirmEmailDto.Email!);
+
+            if (!resultUrl.IsSuccess)
+                return ProcessError(resultUrl);
 
             var url = resultUrl.GetValue<string>();
 
@@ -97,13 +122,7 @@ namespace GarageManagementAPI.Presentation.Controllers
             var result = await _service.AuthenticationService.ConfirmEmail(userForConfirmEmailDto);
 
             return result.Map(
-                onSuccess: result =>
-                {
-                    var identityResult = result.GetValue<IdentityResult>();
-                    if (!identityResult.Succeeded) return identityResult.InvalidResult();
-
-                    return Ok();
-                },
+                onSuccess: Ok,
                 onFailure: ProcessError
                 );
         }
@@ -115,6 +134,7 @@ namespace GarageManagementAPI.Presentation.Controllers
         }
 
         [HttpPost("forgot-password")]
+        [EnableRateLimiting("SendMailForgotPasswordPolicy")]
         public async Task<IActionResult> ForgotPassowrd([FromBody] UserForForgotPasswordDto userForForgotPasswordDto)
         {
             var resultUrl = await _service.AuthenticationService.CreateForgotPasswordUrl(userForForgotPasswordDto.Email!);
@@ -124,8 +144,8 @@ namespace GarageManagementAPI.Presentation.Controllers
 
             var url = resultUrl.GetValue<string>();
 
-           await _service.MailService.SendForgotPasswordEmail(userForForgotPasswordDto.Email!, url).ConfigureAwait(false);
-            return Ok() ;
+            await _service.MailService.SendForgotPasswordEmail(userForForgotPasswordDto.Email!, url).ConfigureAwait(false);
+            return Ok();
         }
 
         [HttpPost("reset-password")]
@@ -134,13 +154,7 @@ namespace GarageManagementAPI.Presentation.Controllers
             var result = await _service.AuthenticationService.ResetPassword(userForResetPasswordDto);
 
             return result.Map(
-                onSuccess: result =>
-                {
-                    var identityResult = result.GetValue<IdentityResult>();
-                    if (!identityResult.Succeeded) return identityResult.InvalidResult();
-
-                    return Ok();
-                },
+                onSuccess: Ok,
                 onFailure: ProcessError
                 );
         }
@@ -153,15 +167,19 @@ namespace GarageManagementAPI.Presentation.Controllers
             var result = await _service.AuthenticationService.ChangePassword(username!, userForChangePasswordDto);
 
             return result.Map(
-                onSuccess: result =>
-                {
-                    var identityResult = result.GetValue<IdentityResult>();
-                    if (!identityResult.Succeeded) return identityResult.InvalidResult();
-
-                    return Ok();
-                },
+                onSuccess: Ok,
                 onFailure: ProcessError
                 );
+        }
+
+        [HttpPost("refresh")]
+        public async Task<IActionResult> Refresh([FromBody] TokenDto tokenDto)
+        {
+            var result = await _service.AuthenticationService.RefreshToken(tokenDto);
+
+            return result.Map(
+               onSuccess: result => Ok(result),
+               onFailure: result => ProcessError(result));
         }
     }
 }

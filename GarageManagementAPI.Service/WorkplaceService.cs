@@ -11,6 +11,7 @@ using GarageManagementAPI.Shared.Extension;
 using GarageManagementAPI.Shared.RequestFeatures;
 using GarageManagementAPI.Shared.ResultModel;
 using Microsoft.EntityFrameworkCore;
+using System;
 using System.Dynamic;
 
 namespace GarageManagementAPI.Service
@@ -33,7 +34,7 @@ namespace GarageManagementAPI.Service
 
         private async Task<Result<Workplace>> GetAndCheckIfWorkplaceExist(Guid workplaceId, bool trackChanges)
         {
-            var workplace = await _repository.Workplace.GetWorkplace(workplaceId, trackChanges);
+            var workplace = await _repository.Workplace.GetWorkplaceAsync(workplaceId, trackChanges);
             if (workplace == null)
                 return workplace.NotFound(workplaceId);
 
@@ -65,12 +66,12 @@ namespace GarageManagementAPI.Service
         {
             var check = await CheckIfWorkPlaceExistByNameAndFullAddressAndPhoneNumber(workplaceDtoForCreation);
             if (check)
-                return Result<WorkplaceDto>.BadRequest([WorkplaceErros.GetWorkplaceAlreadyExistError(workplaceDtoForCreation)]);
+                return Result<WorkplaceDto>.BadRequest([WorkplaceErrors.GetWorkplaceAlreadyExistError(workplaceDtoForCreation)]);
 
             var workplaceEntity = _mapper.Map<Workplace>(workplaceDtoForCreation);
 
-            workplaceEntity.CreatedAt = DateTimeHelper.SEAsiaStandardTime();
-            workplaceEntity.UpdatedAt = DateTimeHelper.SEAsiaStandardTime();
+            workplaceEntity.CreatedAt = DateTimeOffset.UtcNow.SEAsiaStandardTime();
+            workplaceEntity.UpdatedAt = DateTimeOffset.UtcNow.SEAsiaStandardTime();
             workplaceEntity.Status = WorkplaceStatus.PendingActivation;
 
             await _repository.Workplace.CreateWorkplaceAsync(workplaceEntity);
@@ -93,12 +94,12 @@ namespace GarageManagementAPI.Service
 
             var workplaceShaper = _dataShaper.Workplace.ShapeData(workplaceDto, workplaceParameters.Fields);
 
-            return workplaceShaper;
+            return Result<ExpandoObject>.Ok(workplaceShaper);
         }
 
         public async Task<Result<IEnumerable<ExpandoObject>>> GetWorkplaces(WorkplaceParameters workplaceParameters, bool trackChanges)
         {
-            var workplacesWithMetadata = await _repository.Workplace.GetWorkplaces(workplaceParameters, trackChanges);
+            var workplacesWithMetadata = await _repository.Workplace.GetWorkplacesAsync(workplaceParameters, trackChanges);
 
             var workplacesDto = _mapper.Map<IEnumerable<WorkplaceDto>>(workplacesWithMetadata);
 
@@ -117,7 +118,7 @@ namespace GarageManagementAPI.Service
 
             _mapper.Map(workplaceDtoForUpdate, workplaceEntity);
 
-            workplaceEntity.UpdatedAt = DateTimeHelper.SEAsiaStandardTime();
+            workplaceEntity.UpdatedAt = DateTimeOffset.UtcNow.SEAsiaStandardTime();
             await _repository.SaveAsync();
 
             return Result.NoContent();
@@ -133,7 +134,7 @@ namespace GarageManagementAPI.Service
 
             var workplaceDtoForUpdate = _mapper.Map<WorkplaceDtoForUpdate>(workplaceEntity);
 
-            return workplaceDtoForUpdate;
+            return Result<WorkplaceDtoForUpdate>.Ok(workplaceDtoForUpdate);
         }
     }
 }

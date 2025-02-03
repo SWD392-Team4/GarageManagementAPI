@@ -4,6 +4,7 @@ using GarageManagementAPI.Repository;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GarageManagementAPI.Application.Migrations
 {
     [DbContext(typeof(RepositoryContext))]
-    partial class RepositoryContextModelSnapshot : ModelSnapshot
+    [Migration("20250203091812_RemoveWorkplaceTypeInEmployeeInfo")]
+    partial class RemoveWorkplaceTypeInEmployeeInfo
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -583,7 +586,7 @@ namespace GarageManagementAPI.Application.Migrations
                     b.Property<DateTimeOffset>("UpdatedAt")
                         .HasColumnType("datetimeoffset");
 
-                    b.Property<Guid?>("WorkplaceId")
+                    b.Property<Guid>("WorkplaceId")
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id")
@@ -2526,14 +2529,13 @@ namespace GarageManagementAPI.Application.Migrations
                     b.HasOne("GarageManagementAPI.Entities.Models.User", "User")
                         .WithOne("EmployeeInfo")
                         .HasForeignKey("GarageManagementAPI.Entities.Models.EmployeeInfo", "Id")
-                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
                         .HasConstraintName("employeeinfo_userid_foreign");
 
                     b.HasOne("GarageManagementAPI.Entities.Models.Workplace", "Workplace")
                         .WithMany("EmployeeInfos")
                         .HasForeignKey("WorkplaceId")
-                        .OnDelete(DeleteBehavior.SetNull)
+                        .IsRequired()
                         .HasConstraintName("employeeinfo_workplaceid_foreign");
 
                     b.Navigation("User");

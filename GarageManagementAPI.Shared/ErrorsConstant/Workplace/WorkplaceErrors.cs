@@ -3,7 +3,7 @@ using GarageManagementAPI.Shared.ErrorModel;
 
 namespace GarageManagementAPI.Shared.ErrorsConstant.Workplace
 {
-    public class WorkplaceErros
+    public class WorkplaceErrors
     {
         #region Workplace const errors
         public const string WorkplaceNotFound = "Work place with id {0} doesn't exist.";

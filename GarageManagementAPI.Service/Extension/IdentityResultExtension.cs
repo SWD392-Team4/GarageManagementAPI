@@ -1,13 +1,12 @@
 ﻿using GarageManagementAPI.Shared.ErrorModel;
 using GarageManagementAPI.Shared.ResultModel;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
 
-namespace GarageManagementAPI.Presentation.Extensions
+namespace GarageManagementAPI.Service.Extension
 {
     public static class IdentityResultExtension
     {
-        public static IActionResult InvalidResult(this IdentityResult identityResult)
+        public static Result InvalidResult(this IdentityResult identityResult)
         {
             var errors = identityResult.Errors
                     .Select(ms =>
@@ -18,8 +17,7 @@ namespace GarageManagementAPI.Presentation.Extensions
                         }
                     ).ToList();
 
-            var errorResult = Result.BadRequest(errors);
-            return new BadRequestObjectResult(errorResult);
+            return Result.BadRequest(errors);
         }
     }
 }

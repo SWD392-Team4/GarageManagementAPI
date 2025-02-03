@@ -1,4 +1,5 @@
 ﻿using GarageManagementAPI.Shared.DataTransferObjects.User;
+using GarageManagementAPI.Shared.Enums;
 using GarageManagementAPI.Shared.ResultModel;
 using Microsoft.AspNetCore.Identity;
 
@@ -6,11 +7,16 @@ namespace GarageManagementAPI.Service.Contracts
 {
     public interface IAuthenticationService
     {
-        Task<IdentityResult> RegisterUser(UserForRegistrationDto userForRegistrationDto);
+        string GenerateRandomPassword(int length);
+        string GenerateUserName(string firstName, string lasName);
+
+        Task<Result> RegisterUser(UserForRegistrationDto userForRegistrationDto, SystemRole role, string password);
+
+        Task<Result> RegisterEmployeeInfo(UserForRegistrationEmployeeDto userForRegistrationEmployeeDto, SystemRole role, string password);
 
         Task<Result<string>> CreateConfirmEmailUrl(string email);
 
-        Task<Result<IdentityResult>> ConfirmEmail(UserForConfirmEmail userForConfirmEmail);
+        Task<Result> ConfirmEmail(UserForConfirmEmail userForConfirmEmail);
 
         Task<Result> ValidateUser(UserForAuthenticationDto userForAuth);
 
@@ -20,8 +26,8 @@ namespace GarageManagementAPI.Service.Contracts
 
         Task<Result<string>> CreateForgotPasswordUrl(string email);
 
-        Task<Result<IdentityResult>> ResetPassword(UserForResetPasswordDto userForResetPasswordDto);
+        Task<Result> ResetPassword(UserForResetPasswordDto userForResetPasswordDto);
 
-        Task<Result<IdentityResult>> ChangePassword(string username, UserForChangePasswordDto userForChangePasswordDto);
+        Task<Result> ChangePassword(string username, UserForChangePasswordDto userForChangePasswordDto);
     }
 }

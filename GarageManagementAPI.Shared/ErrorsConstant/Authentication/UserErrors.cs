@@ -1,4 +1,5 @@
-﻿using GarageManagementAPI.Shared.ErrorModel;
+﻿using GarageManagementAPI.Shared.DataTransferObjects.User;
+using GarageManagementAPI.Shared.ErrorModel;
 
 namespace GarageManagementAPI.Shared.Constant.Authentication
 {
@@ -46,6 +47,15 @@ namespace GarageManagementAPI.Shared.Constant.Authentication
         public const string RoleInvalid = "The provided user role is invalid.";
         public const string DoNotHavePermission = "You are not authorized to create users with this role.";
 
+        //WorkplaceId errors
+        public const string WorkplaceIdRequired = " The user work place type required.";
+
+        //CitizenIdentification errors
+        public const string CitizenIdentificationRequied = "The employee citizen identification is requied.";
+
+        //employee existed
+        public const string EmployeeExisted = "The employee with citizen identification {0} existed.";
+
         //NotFoundErrors
         public const string UserNotFoundWithEmail = "Can not found user with email {0}";
         public const string UserNotFoundWithUsername = "Can not found user with username {0}";
@@ -53,10 +63,14 @@ namespace GarageManagementAPI.Shared.Constant.Authentication
         //UnauthorizeUser
         public const string ConfirmEmailRequired = "Email not confirmed.";
 
+
         //Token
         public const string TokenConfirmEmailRequired = "Token use for confirm email is required.";
         public const string TokenResetPasswordRequired = "Token use for reset password is required.";
 
+
+        //Wrong enpoint to create customer
+        public const string InvalidEndpoint = "The endpoint used is incorrect for creating a customer. Please verify the URL and try again.";
         public static ErrorsResult GetUnAuthorizedToCreateUserErrors()
         {
             return new()
@@ -90,6 +104,33 @@ namespace GarageManagementAPI.Shared.Constant.Authentication
             {
                 Code = nameof(ConfirmEmailRequired),
                 Description = ConfirmEmailRequired
+            };
+        }
+
+        public static ErrorsResult GetUserExistedError(string email, string userName, string phoneNumber)
+        {
+            return new()
+            {
+                Code = nameof(UserExisted),
+                Description = string.Format(UserExisted, email, userName, phoneNumber)
+            };
+        }
+
+        public static ErrorsResult GetInvalidEndpointError()
+        {
+            return new()
+            {
+                Code = nameof(InvalidEndpoint),
+                Description = InvalidEndpoint
+            };
+        }
+
+        public static ErrorsResult GetEmployeeExistedError(string citizenIdentification)
+        {
+            return new()
+            {
+                Code = nameof(EmployeeExisted),
+                Description = string.Format(EmployeeExisted, citizenIdentification)
             };
         }
     }

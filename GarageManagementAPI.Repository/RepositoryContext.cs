@@ -80,11 +80,10 @@ namespace GarageManagementAPI.Repository
             modelBuilder.ApplyConfiguration(new SupplierContactConfiguration());
             modelBuilder.ApplyConfiguration(new UserConfiguration());
             modelBuilder.ApplyConfiguration(new WorkplaceConfiguration());
+            modelBuilder.ApplyConfiguration(new UserRolesConfiguration());
         }
 
-        //public DbSet<Garage>? Garages { get; set; }
 
-        //public DbSet<Employee>? Employees { get; set; }
 
         public virtual DbSet<Appointment> Appointments { get; set; }
 

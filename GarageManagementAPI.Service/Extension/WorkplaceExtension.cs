@@ -17,6 +17,6 @@ namespace GarageManagementAPI.Service.Extension
             => Result<WorkplaceDto>.Created(workplaceDto);
 
         public static Result<Workplace> NotFound(this Workplace? workplace, Guid workplaceId)
-            => Result<Workplace>.NotFound([WorkplaceErros.GetWorkplaceNotFoundError(workplaceId)]);
+            => Result<Workplace>.NotFound([WorkplaceErrors.GetWorkplaceNotFoundError(workplaceId)]);
     }
 }

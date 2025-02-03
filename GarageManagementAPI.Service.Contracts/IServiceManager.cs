@@ -6,6 +6,8 @@
 
         IAuthenticationService AuthenticationService { get; }
 
+        IEmployeeInfoService EmployeeInfoService { get; }
+
         IMailService MailService { get; }
     }
 }

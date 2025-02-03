@@ -6,6 +6,8 @@
 
         IUserRepository User { get; }
 
+        IEmployeeInfoRepository EmployeeInfo { get; }
+
         Task SaveAsync();
     }
 }

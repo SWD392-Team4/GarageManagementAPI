@@ -4,15 +4,18 @@ using GarageManagementAPI.Entities.Models;
 using GarageManagementAPI.Repository.Contracts;
 using GarageManagementAPI.Service.Contracts;
 using GarageManagementAPI.Service.Extension;
+using GarageManagementAPI.Service.Utilities;
 using GarageManagementAPI.Shared.Constant.Authentication;
 using GarageManagementAPI.Shared.DataTransferObjects.User;
 using GarageManagementAPI.Shared.Enums;
+using GarageManagementAPI.Shared.ErrorsConstant.Workplace;
 using GarageManagementAPI.Shared.Extension;
 using GarageManagementAPI.Shared.ResultModel;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.Net;
 using System.Security.Claims;
@@ -32,7 +35,7 @@ namespace GarageManagementAPI.Service
         private readonly SignInManager<User> _signInManager;
         private readonly IOptionsSnapshot<JwtConfiguration> _configuration;
         private readonly JwtConfiguration _jwtConfiguration;
-
+        private readonly Random random = new Random();
         private User? _user;
 
         public AuthenticationService(
@@ -50,7 +53,44 @@ namespace GarageManagementAPI.Service
             _jwtConfiguration = _configuration.Value;
         }
 
+        public string GenerateRandomPassword(int length)
+        {
+            const string lowerChars = "abcdefghijklmnopqrstuvwxyz";
+            const string upperChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+            const string digitChars = "0123456789";
+            const string specialChars = "!@#$%^&*()_+-=[]{}|;:'\",.<>?/";
+            const string allChars = lowerChars + upperChars + digitChars + specialChars;
 
+            StringBuilder result = new StringBuilder();
+
+            result.Append(lowerChars[random.Next(lowerChars.Length)]);
+            result.Append(upperChars[random.Next(upperChars.Length)]);
+            result.Append(digitChars[random.Next(digitChars.Length)]);
+            result.Append(specialChars[random.Next(specialChars.Length)]);
+
+            for (int i = 4; i <= length; i++)
+            {
+                result.Append(allChars[random.Next(allChars.Length)]);
+            }
+
+            return new string(result.ToString().ToCharArray().OrderBy(c => random.Next()).ToArray());
+        }
+
+        public string GenerateUserName(string firstName, string lastName)
+        {
+            StringBuilder result = new StringBuilder();
+            result.Append(firstName.Substring(0, 1));
+            result.Append(lastName.Substring(0, 1));
+            var dateToString = DateTimeOffset.Now.SEAsiaStandardTime().ToString("yyyyMMddHHmmss");
+            result.Append(dateToString);
+
+            return result.ToString();
+        }
+        private async Task UpdateUserAsync()
+        {
+            _user!.UpdatedAt = DateTimeOffset.Now.SEAsiaStandardTime();
+            await _userManager.UpdateAsync(_user);
+        }
 
         private JwtSecurityToken GenerateTokenOptions(SigningCredentials signingCredentials, List<Claim> claims)
         {
@@ -58,7 +98,7 @@ namespace GarageManagementAPI.Service
                 issuer: _jwtConfiguration.ValidIssuer,
                 audience: _jwtConfiguration.ValidAudience,
                 claims: claims,
-                expires: DateTime.Now.AddMinutes(Convert.ToDouble(_jwtConfiguration.Expires)),
+                expires: DateTime.UtcNow.SEAsiaStandardTime().AddMinutes(Convert.ToDouble(_jwtConfiguration.Expires)),
                 signingCredentials: signingCredentials
                 );
 
@@ -69,7 +109,11 @@ namespace GarageManagementAPI.Service
         {
             var claims = new List<Claim>
             {
-                new Claim("UserName", _user!.UserName !)
+                new Claim("UserName", _user!.UserName!),
+                new Claim("UserId", _user!.Id.ToString()!),
+                new Claim("Image", _user!.Image ?? "No image"),
+                new Claim("FirstName", _user!.FirstName!),
+                new Claim("LastName", _user!.LastName!),
             };
 
             var roles = await _userManager.GetRolesAsync(_user);
@@ -109,7 +153,10 @@ namespace GarageManagementAPI.Service
                 ValidateIssuerSigningKey = true,
                 IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Environment.GetEnvironmentVariable("SECRET")!)),
                 ValidIssuer = _jwtConfiguration.ValidIssuer,
-                ValidAudience = _jwtConfiguration.ValidAudience
+                ValidAudience = _jwtConfiguration.ValidAudience,
+                NameClaimType = "UserName",
+                RoleClaimType = "Role",
+                ValidateLifetime = false
             };
 
             var tokenHandler = new JwtSecurityTokenHandler();
@@ -124,18 +171,35 @@ namespace GarageManagementAPI.Service
             return Result<ClaimsPrincipal>.Ok(principal);
         }
 
-        private async Task<bool> CheckIfUserExist(UserForRegistrationDto userForRegistrationDto)
+        private async Task<Result> CheckIfUserExist(UserForRegistrationDto userForRegistrationDto)
         {
             var emailRegister = userForRegistrationDto.Email!.ToLower();
             var phoneNumberRegister = userForRegistrationDto.PhoneNumber!.ToLower();
             var userNameRegister = userForRegistrationDto.UserName;
 
-            var check = await _repositoryManager.User.FindByCondition(u => 
-                u.Email!.ToLower().Equals(emailRegister) || 
-                u.PhoneNumber!.Equals(phoneNumberRegister) || 
+            var check = await _repositoryManager.User.FindByCondition(u =>
+                u.Email!.ToLower().Equals(emailRegister) ||
+                u.PhoneNumber!.Equals(phoneNumberRegister) ||
                 u.UserName!.Equals(userNameRegister), false).AnyAsync();
 
-            return check;
+            if (check)
+                return Result.BadRequest([UserErrors.GetUserExistedError(
+                   userForRegistrationDto.Email!,
+                   userForRegistrationDto.UserName!,
+                   userForRegistrationDto.PhoneNumber!)]);
+
+            return Result.Ok();
+        }
+
+        private async Task<Result> CheckIfEmployeeExist(string citizenIdentification)
+        {
+
+            var check = await _repositoryManager.EmployeeInfo.FindByCondition(u => u.CitizenIdentification.ToLower().Trim().Equals(citizenIdentification.ToLower().Trim()), false).AnyAsync();
+
+            if (check)
+                return Result.BadRequest([UserErrors.GetEmployeeExistedError(citizenIdentification)]);
+
+            return Result.Ok();
         }
 
         public async Task<Result<TokenDto>> CreateToken(bool populateExp)
@@ -150,9 +214,9 @@ namespace GarageManagementAPI.Service
             _user!.RefreshToken = refreshToken;
 
             if (populateExp)
-                _user.RefreshTokenExpiryTime = DateTime.UtcNow.AddDays(7);
+                _user.RefreshTokenExpiryTime = DateTime.UtcNow.SEAsiaStandardTime().AddDays(7);
 
-            await _userManager.UpdateAsync(_user);
+            await UpdateUserAsync();
 
             var accessToken = new JwtSecurityTokenHandler().WriteToken(tokenOptions);
 
@@ -165,40 +229,89 @@ namespace GarageManagementAPI.Service
 
         }
 
-        public async Task<IdentityResult> RegisterUser(UserForRegistrationDto userForRegistrationDto)
+        public async Task<Result> RegisterUser(UserForRegistrationDto userForRegistrationDto, SystemRole role, string password)
         {
             var check = await CheckIfUserExist(userForRegistrationDto);
-            if (check) return IdentityResult.Failed(
-                    [
-                        new(){
-                            Code = nameof(UserErrors.UserExisted),
-                            Description = string.Format(UserErrors.UserExisted, userForRegistrationDto.Email, userForRegistrationDto.UserName, userForRegistrationDto.PhoneNumber)
-                        }
-                    ]
-                );
-            var user = _mapper.Map<User>(userForRegistrationDto);
+            if (!check.IsSuccess)
+                return check;
 
-            user.Status = SystemStatus.Active;
+
+            _user = _mapper.Map<User>(userForRegistrationDto);
+
+            _user.Status = SystemStatus.Active;
+            _user.CreatedAt = DateTimeOffset.UtcNow.SEAsiaStandardTime();
+            _user.UpdatedAt = DateTimeOffset.UtcNow.SEAsiaStandardTime();
 
             using var transaction = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
 
             try
             {
-                var result = await _userManager.CreateAsync(user, userForRegistrationDto.Password!);
+                var result = await _userManager.CreateAsync(_user, password);
 
                 if (!result.Succeeded)
-                    return result;
-                
-                await _userManager.AddToRoleAsync(user, userForRegistrationDto.Role.ToString());
+                    return result.InvalidResult();
+
+                result = await _userManager.AddToRoleAsync(_user, role.ToString());
+
+                if (!result.Succeeded)
+                    return result.InvalidResult();
 
                 transaction.Complete();
 
-                return result;
+                return Result.Ok();
             }
             catch
             {
                 throw;
             }
+        }
+
+        public async Task<Result> RegisterEmployeeInfo(UserForRegistrationEmployeeDto userForRegistrationEmployeeDto, SystemRole role, string password)
+        {
+            var result = await CheckIfWorkplaceExist((Guid)userForRegistrationEmployeeDto.WorkplaceId!);
+            if (!result.IsSuccess)
+                return result;
+
+            result = await CheckIfEmployeeExist(userForRegistrationEmployeeDto.CitizenIdentification!);
+
+            if (!result.IsSuccess)
+                return result;
+
+            using var transaction = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
+
+            try
+            {
+                result = await RegisterUser(userForRegistrationEmployeeDto, role, password);
+
+                if (!result.IsSuccess)
+                    return result;
+
+                var employeeInfoEntity = _mapper.Map<EmployeeInfo>(userForRegistrationEmployeeDto);
+
+                employeeInfoEntity.Id = _user!.Id;
+                employeeInfoEntity.CreatedAt = DateTimeOffset.UtcNow.SEAsiaStandardTime();
+                employeeInfoEntity.UpdatedAt = DateTimeOffset.UtcNow.SEAsiaStandardTime();
+
+                await _repositoryManager.EmployeeInfo.CreateAsync(employeeInfoEntity);
+                await _repositoryManager.SaveAsync();
+
+                transaction.Complete();
+            }
+            catch
+            {
+                throw;
+            }
+
+            return result;
+        }
+
+        private async Task<Result> CheckIfWorkplaceExist(Guid workplaceId)
+        {
+            var workplace = await _repositoryManager.Workplace.GetWorkplaceAsync(workplaceId, false);
+            if (workplace is null)
+                return Result.NotFound([WorkplaceErrors.GetWorkplaceNotFoundError(workplaceId)]);
+
+            return Result.NoContent();
         }
 
         public async Task<Result> ValidateUser(UserForAuthenticationDto userForAuth)
@@ -232,7 +345,7 @@ namespace GarageManagementAPI.Service
 
             var user = await _userManager.FindByNameAsync(principal!.Identity!.Name!);
 
-            if (user == null || user.RefreshToken != tokenDto.RefreshToken || user.RefreshTokenExpiryTime <= DateTime.Now)
+            if (user == null || user.RefreshToken != tokenDto.RefreshToken || user.RefreshTokenExpiryTime <= DateTime.UtcNow.SEAsiaStandardTime())
                 return tokenDto.RefreshToken!.InvalidTokenBadRequest<TokenDto>();
 
             _user = user;
@@ -283,35 +396,50 @@ namespace GarageManagementAPI.Service
 
         }
 
-        public async Task<Result<IdentityResult>> ConfirmEmail(UserForConfirmEmail userForConfirmEmail)
+        public async Task<Result> ConfirmEmail(UserForConfirmEmail userForConfirmEmail)
         {
             _user = await _userManager.FindByEmailAsync(userForConfirmEmail.Email!);
             if (_user == null)
-                return Result<IdentityResult>.NotFound([UserErrors.GetUserNotFoundWithEmailError(userForConfirmEmail.Email!)]);
+                return Result.NotFound([UserErrors.GetUserNotFoundWithEmailError(userForConfirmEmail.Email!)]);
 
-            var result = await _userManager.ConfirmEmailAsync(_user, userForConfirmEmail.Token!);
+            var result = await _userManager.ConfirmEmailAsync(_user, Uri.UnescapeDataString(userForConfirmEmail.Token!));
 
-            return Result<IdentityResult>.Ok(result);
+            if (!result.Succeeded)
+                return result.InvalidResult();
+
+            await UpdateUserAsync();
+
+            return Result.Ok();
         }
 
-        public async Task<Result<IdentityResult>> ResetPassword(UserForResetPasswordDto userForResetPasswordDto)
+        public async Task<Result> ResetPassword(UserForResetPasswordDto userForResetPasswordDto)
         {
             _user = await _userManager.FindByEmailAsync(userForResetPasswordDto.Email!);
             if (_user == null)
                 return Result<IdentityResult>.NotFound([UserErrors.GetUserNotFoundWithEmailError(userForResetPasswordDto.Email!)]);
 
-            var resetPassResult = await _userManager.ResetPasswordAsync(_user, userForResetPasswordDto.Token!, userForResetPasswordDto.Password!);
+            var resetPassResult = await _userManager.ResetPasswordAsync(_user, Uri.UnescapeDataString(userForResetPasswordDto.Token!), userForResetPasswordDto.Password!);
+
+            if (!resetPassResult.Succeeded)
+                return resetPassResult.InvalidResult();
+
+            await UpdateUserAsync();
 
             return Result<IdentityResult>.Ok(resetPassResult);
         }
 
-        public async Task<Result<IdentityResult>> ChangePassword(string username, UserForChangePasswordDto userForChangePasswordDto)
+        public async Task<Result> ChangePassword(string username, UserForChangePasswordDto userForChangePasswordDto)
         {
             _user = await _userManager.FindByNameAsync(username);
             if (_user == null || !await _userManager.CheckPasswordAsync(_user, userForChangePasswordDto.CurrentPassword!))
                 return Result<IdentityResult>.NotFound([UserErrors.GetUserNotFoundWithUsernameError(username)]);
 
             var resetPassResult = await _userManager.ChangePasswordAsync(_user, userForChangePasswordDto.CurrentPassword!, userForChangePasswordDto.NewPassword!);
+
+            if (!resetPassResult.Succeeded)
+                return resetPassResult.InvalidResult();
+
+            await UpdateUserAsync();
 
             return Result<IdentityResult>.Ok(resetPassResult);
         }

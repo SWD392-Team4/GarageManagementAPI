@@ -20,59 +20,59 @@ namespace GarageManagementAPI.Presentation.Validator.Workplace
         {
             RuleFor(w => w.Name)
                 .NotEmpty()
-                .WithMessage(WorkplaceErros.NameRequired)
-                .WithErrorCode(nameof(WorkplaceErros.NameRequired));
+                .WithMessage(WorkplaceErrors.NameRequired)
+                .WithErrorCode(nameof(WorkplaceErrors.NameRequired));
         }
 
         private void AddPhoneNumberRules()
         {
             RuleFor(u => u.PhoneNumber)
                 .NotEmpty()
-                .WithMessage(WorkplaceErros.PhoneNumberRequired)
-                .WithErrorCode(WorkplaceErros.PhoneNumberRequired)
+                .WithMessage(WorkplaceErrors.PhoneNumberRequired)
+                .WithErrorCode(WorkplaceErrors.PhoneNumberRequired)
                 .Matches(@"(?:\+84|0084|0)[235789][0-9]{1,2}[0-9]{7}(?:[^\d]+|$)")
-                .WithMessage(WorkplaceErros.PhoneNumberInvalid)
-                .WithErrorCode(nameof(WorkplaceErros.PhoneNumberInvalid));
+                .WithMessage(WorkplaceErrors.PhoneNumberInvalid)
+                .WithErrorCode(nameof(WorkplaceErrors.PhoneNumberInvalid));
         }
 
         private void AddAddressRules()
         {
             RuleFor(w => w.Address)
                .NotEmpty()
-               .WithMessage(WorkplaceErros.AddressRequired)
-               .WithErrorCode(nameof(WorkplaceErros.AddressRequired));
+               .WithMessage(WorkplaceErrors.AddressRequired)
+               .WithErrorCode(nameof(WorkplaceErrors.AddressRequired));
         }
         private void AddProvincesRules()
         {
             RuleFor(w => w.Province)
                .NotEmpty()
-               .WithMessage(WorkplaceErros.ProvinceRequired)
-               .WithErrorCode(nameof(WorkplaceErros.ProvinceRequired));
+               .WithMessage(WorkplaceErrors.ProvinceRequired)
+               .WithErrorCode(nameof(WorkplaceErrors.ProvinceRequired));
         }
         private void AddDistrictRules()
         {
             RuleFor(w => w.District)
                .NotEmpty()
-               .WithMessage(WorkplaceErros.DistrictRequred)
-               .WithErrorCode(nameof(WorkplaceErros.DistrictRequred));
+               .WithMessage(WorkplaceErrors.DistrictRequred)
+               .WithErrorCode(nameof(WorkplaceErrors.DistrictRequred));
         }
         private void AddWardRules()
         {
             RuleFor(w => w.Ward)
                .NotEmpty()
-               .WithMessage(WorkplaceErros.WardRequired)
-               .WithErrorCode(nameof(WorkplaceErros.WardRequired));
+               .WithMessage(WorkplaceErrors.WardRequired)
+               .WithErrorCode(nameof(WorkplaceErrors.WardRequired));
         }
 
         private void AddWorkplaceTypeRules()
         {
             RuleFor(w => w.WorkplaceType)
                 .NotEmpty()
-                .WithMessage(WorkplaceErros.WorkplaceTypeRequired)
-                .WithErrorCode(nameof(WorkplaceErros.WorkplaceTypeRequired))
+                .WithMessage(WorkplaceErrors.WorkplaceTypeRequired)
+                .WithErrorCode(nameof(WorkplaceErrors.WorkplaceTypeRequired))
                 .IsInEnum()
-                .WithMessage(WorkplaceErros.WorkplaceTypeInvalid)
-                .WithErrorCode(nameof(WorkplaceErros.WorkplaceTypeInvalid));
+                .WithMessage(WorkplaceErrors.WorkplaceTypeInvalid)
+                .WithErrorCode(nameof(WorkplaceErrors.WorkplaceTypeInvalid));
 
         }
     }

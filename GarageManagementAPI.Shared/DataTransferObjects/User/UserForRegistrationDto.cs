@@ -1,12 +1,9 @@
-﻿
-using GarageManagementAPI.Shared.Constant.Authentication;
-using GarageManagementAPI.Shared.Enums;
-using System.ComponentModel.DataAnnotations;
-
-namespace GarageManagementAPI.Shared.DataTransferObjects.User
+﻿namespace GarageManagementAPI.Shared.DataTransferObjects.User
 {
     public record UserForRegistrationDto : UserForManipulationDto
     {
+        public string? ConfirmPassword { get; init; }
+
         public string? FirstName { get; init; }
 
         public string? LastName { get; init; }
@@ -15,9 +12,5 @@ namespace GarageManagementAPI.Shared.DataTransferObjects.User
 
         public string? PhoneNumber { get; init; }
 
-        [EnumDataType(typeof(SystemRole), ErrorMessage = UserErrors.RoleInvalid)]
-        public SystemRole Role { get; set; }
-
-        public string? ConfirmPassword { get; init; }
     }
 }

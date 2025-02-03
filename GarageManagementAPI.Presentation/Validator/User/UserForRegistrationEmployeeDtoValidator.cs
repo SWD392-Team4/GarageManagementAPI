@@ -5,18 +5,17 @@ using GarageManagementAPI.Shared.Enums;
 
 namespace GarageManagementAPI.Presentation.Validator.User
 {
-    public class UserForRegistrationDtoValidator : AbstractValidator<UserForRegistrationDto>
+    internal class UserForRegistrationEmployeeDtoValidator : AbstractValidator<UserForRegistrationEmployeeDto>
     {
-        public UserForRegistrationDtoValidator()
+        public UserForRegistrationEmployeeDtoValidator()
         {
-            Include(new UserForManipulationValidator());
-
             AddUserNameRules();
             AddNameRules();
             AddEmailRules();
-            AddPasswordRules();
-            AddConfirmPasswordRules();
             AddPhoneNumberRules();
+            AddRoleRules();
+            AddWorkplaceIdRules();
+            AddCitizenIdentificationRules();
         }
 
         // Username validation rules
@@ -57,42 +56,6 @@ namespace GarageManagementAPI.Presentation.Validator.User
                 .WithErrorCode(nameof(UserErrors.EmailInvalid));
         }
 
-        // Password validation rules
-        private void AddPasswordRules()
-        {
-            RuleFor(x => x.Password)
-                .MinimumLength(10)
-                .WithMessage(UserErrors.PasswordTooShort)
-                .WithErrorCode(nameof(UserErrors.PasswordTooShort))
-                .MaximumLength(50)
-                .WithMessage(UserErrors.PasswordTooLong)
-                .WithErrorCode(nameof(UserErrors.PasswordTooLong))
-                .Matches(@"[A-Z]+")
-                .WithMessage(UserErrors.PasswordMissingUppercase)
-                .WithErrorCode(nameof(UserErrors.PasswordMissingUppercase))
-                .Matches(@"[a-z]+")
-                .WithMessage(UserErrors.PasswordMissingLowercase)
-                .WithErrorCode(nameof(UserErrors.PasswordMissingLowercase))
-                .Matches(@"[0-9]+")
-                .WithMessage(UserErrors.PasswordMissingDigit)
-                .WithErrorCode(nameof(UserErrors.PasswordMissingDigit))
-                .Matches(@"^(?=.*[\!\@\#\$\%\^\&\*\(\)_\+\-\=\[\]\{\}\|\;\:\'\""\,\.\<\>\?\/\\]).+$")
-                .WithMessage(UserErrors.PasswordMissingSpecialCharacter)
-                .WithErrorCode(nameof(UserErrors.PasswordMissingSpecialCharacter));
-        }
-
-        // Confirm Password validation rules
-        private void AddConfirmPasswordRules()
-        {
-            RuleFor(x => x.ConfirmPassword)
-                .NotEmpty()
-                .WithMessage(UserErrors.ConfirmPasswordRequired)
-                .WithErrorCode(nameof(UserErrors.ConfirmPasswordRequired))
-                .Equal(x => x.Password)
-                .WithMessage(UserErrors.ConfirmPasswordMismatch)
-                .WithErrorCode(nameof(UserErrors.ConfirmPasswordMismatch));
-        }
-
         // Phone Number validation rules
         private void AddPhoneNumberRules()
         {
@@ -104,5 +67,41 @@ namespace GarageManagementAPI.Presentation.Validator.User
                 .WithMessage(UserErrors.PhoneNumberInvalid)
                 .WithErrorCode(nameof(UserErrors.PhoneNumberInvalid));
         }
+
+        //Rule for CitizenIdentification
+        private void AddCitizenIdentificationRules()
+        {
+            RuleFor(u => u.CitizenIdentification)
+                .NotEmpty()
+                .WithMessage(UserErrors.CitizenIdentificationRequied)
+                .WithErrorCode(nameof(UserErrors.CitizenIdentificationRequied));
+        }
+
+        private void AddWorkplaceIdRules()
+        {
+            RuleFor(u => u.WorkplaceId)
+               .NotEmpty()
+               .WithMessage(UserErrors.WorkplaceIdRequired)
+               .WithErrorCode(nameof(UserErrors.WorkplaceIdRequired));
+        }
+
+        // Role validation rules
+        private void AddRoleRules()
+        {
+            RuleFor(u => u.Role)
+                .NotEmpty()
+                .WithMessage(UserErrors.RoleRequired)
+                .WithErrorCode(nameof(UserErrors.RoleRequired))
+                .Must(ValidRole)
+                .WithMessage(UserErrors.RoleInvalid)
+                .WithErrorCode(nameof(UserErrors.RoleInvalid));
+        }
+
+
+        private bool ValidRole<T>(T role)
+        {
+            return Enum.IsDefined(typeof(T), role!);
+        }
+
     }
 }

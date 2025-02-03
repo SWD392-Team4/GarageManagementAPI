@@ -18,16 +18,15 @@ namespace GarageManagementAPI.Repository.Configuration
 
             entity.Property(e => e.Id).ValueGeneratedNever();
             entity.Property(e => e.CitizenIdentification).HasMaxLength(255);
-            entity.Property(e => e.WorkPlaceType).HasConversion<string>().HasMaxLength(255);
 
             entity.HasOne(d => d.User).WithOne(p => p.EmployeeInfo)
                 .HasForeignKey<EmployeeInfo>(d => d.Id)
-                .OnDelete(DeleteBehavior.ClientSetNull)
+                .OnDelete(DeleteBehavior.Cascade)
                 .HasConstraintName("employeeinfo_userid_foreign");
 
             entity.HasOne(d => d.Workplace).WithMany(p => p.EmployeeInfos)
                 .HasForeignKey(d => d.WorkplaceId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
+                .OnDelete(DeleteBehavior.SetNull)
                 .HasConstraintName("employeeinfo_workplaceid_foreign");
 
 

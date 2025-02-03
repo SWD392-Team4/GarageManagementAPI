@@ -53,11 +53,11 @@ namespace GarageManagementAPI.Shared.ResultModel
         public static Result Forbidden(List<ErrorsResult> errors)
             => new Result(HttpStatusCode.Forbidden, errors);
 
-        public static implicit operator Result(HttpStatusCode statusCode)
-            => Success(statusCode);
+        //public static implicit operator Result(HttpStatusCode statusCode)
+        //    => Success(statusCode);
 
-        public static implicit operator Result(List<ErrorsResult> errors)
-            => Failure(HttpStatusCode.BadRequest, errors);
+        //public static implicit operator Result(List<ErrorsResult> errors)
+        //    => Failure(HttpStatusCode.BadRequest, errors);
 
         public virtual TResult Map<TResult>(Func<Result, TResult> onSuccess, Func<Result, TResult> onFailure)
             => IsSuccess ? onSuccess(this) : onFailure(this);
@@ -94,8 +94,11 @@ namespace GarageManagementAPI.Shared.ResultModel
         public static Result<T> Created(T value)
             => new Result<T>(value, HttpStatusCode.Created);
 
-        public static implicit operator Result<T>(T value)
-            => Success(value, HttpStatusCode.OK);
+        //public static implicit operator Result<T>(T value)
+        //    => Success(value, HttpStatusCode.OK);
+
+        public static new Result<T> NoContent()
+            => new Result<T>(default, HttpStatusCode.NoContent);
 
         public static new Result<T> NotFound(List<ErrorsResult> errors)
             => new Result<T>(HttpStatusCode.NotFound, errors);
