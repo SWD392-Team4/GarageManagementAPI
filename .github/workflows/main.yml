@@ -18,10 +18,10 @@ jobs:
           dotnet-version: "8.0.x"
   
       - name: Restore
-        run: dotnet restore ./GarageManagementAPI.Application.sln
+        run: dotnet restore ./GarageManagementAPI.sln
 
       - name: Build
-        run: dotnet build ./GarageManagementAPI.Application.sln --configuration Release --no-restore
+        run: dotnet build ./GarageManagementAPI.sln --configuration Release --no-restore
 
       - name: Publish
-        run: dotnet publish ./GarageManagementAPI.Application.sln --configuration Release --no-build
+        run: dotnet publish ./GarageManagementAPI.sln --configuration Release --no-build
