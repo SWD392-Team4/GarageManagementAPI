@@ -1,0 +1,27 @@
+name: Publish
+
+on: 
+   workflow_dispatch:
+   push:
+     branches:
+     - develop
+jobs:
+  publish: 
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-verison: "8.0.x"
+  
+      - name: Restore
+        run: dotnet restore ./GarageManagementAPI.Application.sln
+
+      - name: Build
+        run: dotnet build ./GarageManagementAPI.Application.sln --configuration Release --no-restore
+
+      - name: Publish
+        run: dotnet publish ./GarageManagementAPI.Application.sln --configuration Release --no-build
