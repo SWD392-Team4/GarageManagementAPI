@@ -1,16 +1,20 @@
 ﻿using FluentValidation;
+using GarageManagementAPI.Application.Security;
 using GarageManagementAPI.Entities.ConfigurationModels;
 using GarageManagementAPI.Entities.Models;
 using GarageManagementAPI.Presentation.ActionFilters;
+using GarageManagementAPI.Presentation.Validator;
 using GarageManagementAPI.Repository;
 using GarageManagementAPI.Repository.Contracts;
 using GarageManagementAPI.Service;
 using GarageManagementAPI.Service.Contracts;
 using GarageManagementAPI.Service.DataShaping;
 using GarageManagementAPI.Shared.Constant.Request;
+using GarageManagementAPI.Shared.DataTransferObjects.Workplace;
 using GarageManagementAPI.Shared.ResultModel;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.EntityFrameworkCore;
@@ -81,6 +85,7 @@ namespace GarageManagementAPI.Application.Extensions
             })
             .AddJsonOptions(options =>
             {
+                options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
                 options.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
             })
             .AddApplicationPart(typeof(GarageManagementAPI.Presentation.AssemblyReference).Assembly);
@@ -107,6 +112,22 @@ namespace GarageManagementAPI.Application.Extensions
                     QueueProcessingOrder = QueueProcessingOrder.OldestFirst,
                     Window = TimeSpan.FromMinutes(1)
                 }));
+                options.AddPolicy("SendMailConfirmEmailPolicy", context =>
+                 RateLimitPartition.GetFixedWindowLimiter("SendMailPolicyLimiter",
+                 partition => new FixedWindowRateLimiterOptions
+                 {
+                     AutoReplenishment = true,
+                     PermitLimit = 1,
+                     Window = TimeSpan.FromMinutes(5)
+                 }));
+                options.AddPolicy("SendMailForgotPasswordPolicy", context =>
+                 RateLimitPartition.GetFixedWindowLimiter("SendMailPolicyLimiter",
+                 partition => new FixedWindowRateLimiterOptions
+                 {
+                     AutoReplenishment = true,
+                     PermitLimit = 1,
+                     Window = TimeSpan.FromMinutes(5)
+                 }));
 
                 options.OnRejected = async (context, token) =>
                 {
@@ -134,7 +155,7 @@ namespace GarageManagementAPI.Application.Extensions
 
         public static void ConfigureIdentity(this IServiceCollection services)
         {
-            var builder = services.AddIdentity<User, IdentityRole>(options =>
+            var builder = services.AddIdentity<User, Roles>(options =>
             {
                 options.Password.RequireDigit = true;
                 options.Password.RequireLowercase = true;
@@ -142,9 +163,32 @@ namespace GarageManagementAPI.Application.Extensions
                 options.Password.RequireNonAlphanumeric = true;
                 options.Password.RequiredLength = 10;
                 options.Password.RequiredUniqueChars = 1;
+
                 options.User.RequireUniqueEmail = true;
+                options.User.AllowedUserNameCharacters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+
+                options.ClaimsIdentity.UserNameClaimType = "UserName";
+                options.ClaimsIdentity.RoleClaimType = "Role";
+
+                options.SignIn.RequireConfirmedEmail = true;
+
+                options.Tokens.EmailConfirmationTokenProvider = "CustomEmailConfirmation";
+
             }).AddEntityFrameworkStores<RepositoryContext>()
-            .AddDefaultTokenProviders();
+            .AddDefaultTokenProviders()
+            .AddTokenProvider<CustomEmailConfirmationTokenProvider<User>>("CustomEmailConfirmation");
+
+            services.Configure<DataProtectionTokenProviderOptions>(o =>
+            {
+                o.TokenLifespan = TimeSpan.FromHours(5);
+            });
+
+            services.Configure<CustomEmailConfirmationTokenProviderOptions>(o =>
+            {
+                o.TokenLifespan = TimeSpan.FromDays(3);
+            });
+
+
         }
 
         public static void ConfigureJWT(this IServiceCollection services, IConfiguration configuration)
@@ -167,7 +211,9 @@ namespace GarageManagementAPI.Application.Extensions
                     ValidateIssuerSigningKey = true,
                     ValidIssuer = jwtConfiguration.ValidIssuer,
                     ValidAudience = jwtConfiguration.ValidAudience,
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey!))
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey!)),
+                    NameClaimType = "UserName",
+                    RoleClaimType = "Role",
                 };
             });
         }
@@ -175,6 +221,8 @@ namespace GarageManagementAPI.Application.Extensions
         public static void AddJwtConfiguration(this IServiceCollection services, IConfiguration configuration) =>
             services.Configure<JwtConfiguration>(configuration.GetSection("JwtSettings"));
 
+        public static void AddMailConfiguration(this IServiceCollection services, IConfiguration configuration) =>
+            services.Configure<MailConfiguration>(configuration.GetSection("MailSettings"));
 
         public static void ConfigureSwagger(this IServiceCollection services)
         {
@@ -210,6 +258,8 @@ namespace GarageManagementAPI.Application.Extensions
         }
 
         public static void ConfigureValidator(this IServiceCollection services)
-            => services.AddValidatorsFromAssembly(typeof(GarageManagementAPI.Shared.AssmblyReference).Assembly, includeInternalTypes: true);
+            => services.AddValidatorsFromAssembly(typeof(GarageManagementAPI.Presentation.AssemblyReference).Assembly, includeInternalTypes: true);
+
+
     }
 }

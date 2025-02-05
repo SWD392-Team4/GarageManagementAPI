@@ -15,14 +15,14 @@ namespace GarageManagementAPI.Shared.CustomAttribute
             _enumType = enumType;
         }
 
-        protected override ValidationResult IsValid(object value, ValidationContext validationContext)
+        protected override ValidationResult IsValid(object? value, ValidationContext validationContext)
         {
             if (value == null || !System.Enum.IsDefined(_enumType, value))
             {
                 return new ValidationResult($"The value '{value}' is not valid for enum '{_enumType.Name}'.");
             }
 
-            return ValidationResult.Success;
+            return ValidationResult.Success!;
         }
     }
 }

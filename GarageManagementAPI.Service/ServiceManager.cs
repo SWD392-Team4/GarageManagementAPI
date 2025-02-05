@@ -4,46 +4,68 @@ using GarageManagementAPI.Entities.Models;
 using GarageManagementAPI.Repository.Contracts;
 using GarageManagementAPI.Service.Contracts;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 
 namespace GarageManagementAPI.Service
 {
     public sealed class ServiceManager : IServiceManager
     {
-        private readonly Lazy<IGarageService> _garageService;
-        private readonly Lazy<IEmployeeService> _employeeService;
+
+        private readonly Lazy<IWorkplaceService> _workplaceService;
         private readonly Lazy<IAuthenticationService> _authenticationService;
+        private readonly Lazy<IMailService> _mailService;
+        private readonly Lazy<IEmployeeInfoService> _employeeInfoService;
+        private readonly Lazy<IUserService> _userService;
 
         public ServiceManager(
             IRepositoryManager repositoryManager,
             IMapper mapper,
             IDataShaperManager dataShaper,
             UserManager<User> userManager,
-            IOptionsSnapshot<JwtConfiguration> jwtConfiguration)
+            SignInManager<User> signInManager,
+            IOptionsSnapshot<JwtConfiguration> jwtConfiguration,
+            IOptionsSnapshot<MailConfiguration> mailConfiguration)
         {
-            _garageService = new Lazy<IGarageService>(
-                () => new GarageService(
-                    repositoryManager,
-                    mapper,
-                    dataShaper));
 
-            _employeeService = new Lazy<IEmployeeService>(
-                () => new EmployeeService(
-                    repositoryManager,
-                    mapper,
-                    dataShaper));
 
             _authenticationService = new Lazy<IAuthenticationService>(
                 () => new AuthenticationService(
+                    repositoryManager,
                     mapper,
                     userManager,
+                    signInManager,
                     jwtConfiguration));
-        }
-        public IGarageService GarageService => _garageService.Value;
 
-        public IEmployeeService EmployeeService => _employeeService.Value;
+            _workplaceService = new Lazy<IWorkplaceService>(
+                () => new WorkplaceService(
+                    repositoryManager,
+                    mapper,
+                    dataShaper));
+
+            _mailService = new Lazy<IMailService>(
+                () => new MailService(mailConfiguration));
+
+            _employeeInfoService = new Lazy<IEmployeeInfoService>(() =>
+            new EmployeeInfoService(
+                repositoryManager,
+                    mapper));
+
+            _userService = new Lazy<IUserService>(() =>
+            new UserService(
+                repositoryManager,
+                mapper,
+                userManager,
+                dataShaper));
+        }
 
         public IAuthenticationService AuthenticationService => _authenticationService.Value;
+
+        public IWorkplaceService WorkplaceService => _workplaceService.Value;
+
+        public IMailService MailService => _mailService.Value;
+
+        public IEmployeeInfoService EmployeeInfoService => _employeeInfoService.Value;
+
+        public IUserService UserService => _userService.Value;
     }
 }

@@ -7,7 +7,7 @@ namespace GarageManagementAPI.Entities.Models
     public abstract class BaseEntity<T>
     {
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public Guid Id { get; set; }
+        public virtual Guid Id { get; set; } = Guid.NewGuid();
 
         [IgnoreDataMember]
         public static readonly PropertyInfo[] PropertyInfos;

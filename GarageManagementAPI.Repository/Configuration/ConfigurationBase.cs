@@ -1,19 +1,22 @@
-﻿using GarageManagementAPI.Entities.Models;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace GarageManagementAPI.Repository.Configuration
 {
     public abstract class ConfigurationBase<T> : IEntityTypeConfiguration<T> where T : class
     {
-        public void Configure(EntityTypeBuilder<T> builder)
+        public void Configure(EntityTypeBuilder<T> entity)
         {
-            SeedData(builder);
-            ModelCreating(builder);
+            SeedData(entity);
+            ModelCreating(entity);
         }
 
-        protected virtual void SeedData(EntityTypeBuilder<T> builder) { }
+        protected virtual void SeedData(EntityTypeBuilder<T> entity) { }
 
-        protected virtual void ModelCreating(EntityTypeBuilder<T> builder) { }
+        protected virtual void ModelCreating(EntityTypeBuilder<T> entity) { }
     }
 }
+
+
+
+

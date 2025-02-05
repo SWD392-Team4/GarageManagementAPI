@@ -20,7 +20,8 @@ namespace GarageManagementAPI.Presentation.Controllers
             return result.StatusCode switch
             {
                 HttpStatusCode.NotFound => NotFound(result),
-                HttpStatusCode.BadRequest => BadRequest(result)
+                HttpStatusCode.BadRequest => BadRequest(result),
+                HttpStatusCode.Unauthorized => Unauthorized(result)
                 ,
                 _ => throw new NotImplementedException()
             };

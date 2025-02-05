@@ -36,7 +36,5 @@
 
         public string? Fields { get; set; }
 
-        public string? Include { get; set; }
-
     }
 }

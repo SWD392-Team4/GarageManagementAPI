@@ -1,25 +1,25 @@
 ﻿using GarageManagementAPI.Service.Contracts;
-using GarageManagementAPI.Shared.DataTransferObjects.Employee;
-using GarageManagementAPI.Shared.DataTransferObjects.Garage;
+using GarageManagementAPI.Shared.DataTransferObjects.User;
+using GarageManagementAPI.Shared.DataTransferObjects.Workplace;
 
 namespace GarageManagementAPI.Service.DataShaping
 {
     public class DataShaperManager : IDataShaperManager
     {
-        private readonly Lazy<IDataShaper<GarageDto>> _garageShaper;
-        private readonly Lazy<IDataShaper<EmployeeDto>> _employeeShaper;
+        private readonly Lazy<IDataShaper<WorkplaceDto>> _workplaceShaper;
+        private readonly Lazy<IDataShaper<UserDto>> _userShaper;
 
         public DataShaperManager()
         {
-            _garageShaper = new Lazy<IDataShaper<GarageDto>>(
-                () => new DataShaper<GarageDto>(GarageDto.PropertyInfos));
+            _workplaceShaper = new Lazy<IDataShaper<WorkplaceDto>>(
+                () => new DataShaper<WorkplaceDto>(WorkplaceDto.PropertyInfos));
 
-            _employeeShaper = new Lazy<IDataShaper<EmployeeDto>>(
-                () => new DataShaper<EmployeeDto>(EmployeeDto.PropertyInfos));
+            _userShaper = new Lazy<IDataShaper<UserDto>>(
+               () => new DataShaper<UserDto>(UserDto.PropertyInfos));
         }
 
-        public IDataShaper<EmployeeDto> EmployeeShaper => _employeeShaper.Value;
+        public IDataShaper<WorkplaceDto> Workplace => _workplaceShaper.Value;
 
-        public IDataShaper<GarageDto> GarageShaper => _garageShaper.Value;
+        public IDataShaper<UserDto> User => _userShaper.Value;
     }
 }

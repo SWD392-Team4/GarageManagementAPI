@@ -1,5 +1,4 @@
 ﻿using GarageManagementAPI.Shared.CustomAttribute;
-using GarageManagementAPI.Shared.DataTransferObjects.Employee;
 using System.Reflection;
 
 namespace GarageManagementAPI.Shared.DataTransferObjects

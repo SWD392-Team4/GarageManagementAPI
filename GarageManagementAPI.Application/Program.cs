@@ -1,4 +1,3 @@
-using FluentValidation;
 using GarageManagementAPI.Application;
 using GarageManagementAPI.Application.Extensions;
 using Microsoft.AspNetCore.HttpOverrides;
@@ -22,8 +21,10 @@ builder.Services.AddAuthentication();
 builder.Services.ConfigureIdentity();
 builder.Services.ConfigureJWT(builder.Configuration);
 builder.Services.AddJwtConfiguration(builder.Configuration);
+builder.Services.AddMailConfiguration(builder.Configuration);
 builder.Services.ConfigureSwagger();
 builder.Services.ConfigureValidator();
+
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();

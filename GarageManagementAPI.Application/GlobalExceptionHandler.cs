@@ -2,6 +2,9 @@
 using GarageManagementAPI.Shared.ErrorModel;
 using GarageManagementAPI.Shared.ResultModel;
 using System.Net;
+using Microsoft.IdentityModel.Tokens;
+using GarageManagementAPI.Entities.Exceptions.NotFound;
+using GarageManagementAPI.Shared.Constant.Request;
 
 namespace GarageManagementAPI.Application
 {
@@ -14,17 +17,27 @@ namespace GarageManagementAPI.Application
             var contextFeature = httpContext.Features.Get<IExceptionHandlerFeature>();
             if (contextFeature != null)
             {
+                var code = "UNKNOWN";
+                var message = "Unknown error occurred.";
 
-                httpContext.Response.StatusCode = contextFeature.Error switch
+                switch (contextFeature.Error)
                 {
-                    _ => StatusCodes.Status500InternalServerError
-                };
 
-                var message = contextFeature.Error.Message;
+                    case SecurityTokenExpiredException ex:
+                        httpContext.Response.StatusCode = StatusCodes.Status401Unauthorized;
+                        code = nameof(RequestErrors.AccessTokenExpired);
+                        message = RequestErrors.AccessTokenExpired;
+                        break;
+
+                    default:
+                        httpContext.Response.StatusCode = StatusCodes.Status500InternalServerError;
+                        message = contextFeature.Error.Message;
+                        break;
+                }
                 var errors = new ErrorsResult()
                 {
-                    Code = "UNKNOWN",
-                    Description = message ?? "Unknown error occurred.",
+                    Code = code,
+                    Description = message,
                 };
 
                 await httpContext.Response.WriteAsync(
