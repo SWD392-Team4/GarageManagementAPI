@@ -4,6 +4,7 @@ using GarageManagementAPI.Repository;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GarageManagementAPI.Application.Migrations
 {
     [DbContext(typeof(RepositoryContext))]
-    partial class RepositoryContextModelSnapshot : ModelSnapshot
+    [Migration("20250204203718_ConfigIdentity")]
+    partial class ConfigIdentity
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -2305,38 +2308,20 @@ namespace GarageManagementAPI.Application.Migrations
                     b.Property<Guid>("RoleId")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<string>("Discriminator")
+                        .IsRequired()
+                        .HasMaxLength(34)
+                        .HasColumnType("nvarchar(34)");
+
                     b.HasKey("UserId", "RoleId");
 
                     b.HasIndex("RoleId");
 
                     b.ToTable("UserRoles", (string)null);
 
-                    b.HasData(
-                        new
-                        {
-                            UserId = new Guid("1230a288-3e5e-4ee1-a75c-3fd7af6480a0"),
-                            RoleId = new Guid("ef3629ba-332e-4c46-9fa8-54444803f925")
-                        },
-                        new
-                        {
-                            UserId = new Guid("b78245a2-a2bf-45b4-8572-b2c3f1948629"),
-                            RoleId = new Guid("ef3629ba-332e-4c46-9fa8-54444803f925")
-                        },
-                        new
-                        {
-                            UserId = new Guid("f8a4e60d-3113-4f25-8477-be205b0860c9"),
-                            RoleId = new Guid("ef3629ba-332e-4c46-9fa8-54444803f925")
-                        },
-                        new
-                        {
-                            UserId = new Guid("e2060ff5-5fb9-4b20-a11a-bf6ae4716ad5"),
-                            RoleId = new Guid("ef3629ba-332e-4c46-9fa8-54444803f925")
-                        },
-                        new
-                        {
-                            UserId = new Guid("de0d20e6-17e6-40e8-8274-c89a66e64fa5"),
-                            RoleId = new Guid("ef3629ba-332e-4c46-9fa8-54444803f925")
-                        });
+                    b.HasDiscriminator().HasValue("IdentityUserRole<Guid>");
+
+                    b.UseTphMappingStrategy();
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<System.Guid>", b =>
@@ -2391,20 +2376,50 @@ namespace GarageManagementAPI.Application.Migrations
                     b.ToTable("ProductCarPart", (string)null);
                 });
 
-            modelBuilder.Entity("RolesUser", b =>
+            modelBuilder.Entity("GarageManagementAPI.Entities.Models.UserRoles", b =>
                 {
-                    b.Property<Guid>("RolesId")
-                        .ValueGeneratedOnAdd()
+                    b.HasBaseType("Microsoft.AspNetCore.Identity.IdentityUserRole<System.Guid>");
+
+                    b.Property<Guid?>("RoleId1")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("UsersId")
+                    b.Property<Guid?>("UserId1")
                         .HasColumnType("uniqueidentifier");
 
-                    b.HasKey("RolesId", "UsersId");
+                    b.HasIndex("RoleId1");
 
-                    b.HasIndex("UsersId");
+                    b.HasIndex("UserId1");
 
-                    b.ToTable("RolesUser");
+                    b.ToTable("UserRoles");
+
+                    b.HasDiscriminator().HasValue("UserRoles");
+
+                    b.HasData(
+                        new
+                        {
+                            UserId = new Guid("1230a288-3e5e-4ee1-a75c-3fd7af6480a0"),
+                            RoleId = new Guid("ef3629ba-332e-4c46-9fa8-54444803f925")
+                        },
+                        new
+                        {
+                            UserId = new Guid("b78245a2-a2bf-45b4-8572-b2c3f1948629"),
+                            RoleId = new Guid("ef3629ba-332e-4c46-9fa8-54444803f925")
+                        },
+                        new
+                        {
+                            UserId = new Guid("f8a4e60d-3113-4f25-8477-be205b0860c9"),
+                            RoleId = new Guid("ef3629ba-332e-4c46-9fa8-54444803f925")
+                        },
+                        new
+                        {
+                            UserId = new Guid("e2060ff5-5fb9-4b20-a11a-bf6ae4716ad5"),
+                            RoleId = new Guid("ef3629ba-332e-4c46-9fa8-54444803f925")
+                        },
+                        new
+                        {
+                            UserId = new Guid("de0d20e6-17e6-40e8-8274-c89a66e64fa5"),
+                            RoleId = new Guid("ef3629ba-332e-4c46-9fa8-54444803f925")
+                        });
                 });
 
             modelBuilder.Entity("GarageManagementAPI.Entities.Models.Appointment", b =>
@@ -3195,19 +3210,19 @@ namespace GarageManagementAPI.Application.Migrations
                         .HasConstraintName("productcarpart_productid_foreign");
                 });
 
-            modelBuilder.Entity("RolesUser", b =>
+            modelBuilder.Entity("GarageManagementAPI.Entities.Models.UserRoles", b =>
                 {
-                    b.HasOne("GarageManagementAPI.Entities.Models.Roles", null)
-                        .WithMany()
-                        .HasForeignKey("RolesId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.HasOne("GarageManagementAPI.Entities.Models.Roles", "Role")
+                        .WithMany("UserRoles")
+                        .HasForeignKey("RoleId1");
 
-                    b.HasOne("GarageManagementAPI.Entities.Models.User", null)
-                        .WithMany()
-                        .HasForeignKey("UsersId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.HasOne("GarageManagementAPI.Entities.Models.User", "User")
+                        .WithMany("UserRoles")
+                        .HasForeignKey("UserId1");
+
+                    b.Navigation("Role");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("GarageManagementAPI.Entities.Models.Appointment", b =>
@@ -3368,6 +3383,11 @@ namespace GarageManagementAPI.Application.Migrations
                     b.Navigation("ReplacementParts");
                 });
 
+            modelBuilder.Entity("GarageManagementAPI.Entities.Models.Roles", b =>
+                {
+                    b.Navigation("UserRoles");
+                });
+
             modelBuilder.Entity("GarageManagementAPI.Entities.Models.Service", b =>
                 {
                     b.Navigation("PackageDetails");
@@ -3427,6 +3447,8 @@ namespace GarageManagementAPI.Application.Migrations
                     b.Navigation("PackageFeedBacks");
 
                     b.Navigation("ServiceFeedBacks");
+
+                    b.Navigation("UserRoles");
                 });
 
             modelBuilder.Entity("GarageManagementAPI.Entities.Models.Workplace", b =>

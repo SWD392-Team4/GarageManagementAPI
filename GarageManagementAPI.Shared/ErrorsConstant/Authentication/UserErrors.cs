@@ -52,13 +52,15 @@ namespace GarageManagementAPI.Shared.Constant.Authentication
 
         //CitizenIdentification errors
         public const string CitizenIdentificationRequied = "The employee citizen identification is requied.";
+        public const string CitizenIdentificationInvalid = "The employee citizen identification is invalid. Ensure it is a valid Vietnamese citizen identification.";
 
         //employee existed
         public const string EmployeeExisted = "The employee with citizen identification {0} existed.";
 
         //NotFoundErrors
-        public const string UserNotFoundWithEmail = "Can not found user with email {0}";
-        public const string UserNotFoundWithUsername = "Can not found user with username {0}";
+        public const string UserNotFoundWithEmail = "Can not found user with email {0}.";
+        public const string UserNotFoundWithUsername = "Can not found user with username {0}.";
+        public const string UserNotFoundWithId = "Can not found user with id {0}.";
 
         //UnauthorizeUser
         public const string ConfirmEmailRequired = "Email not confirmed.";
@@ -131,6 +133,15 @@ namespace GarageManagementAPI.Shared.Constant.Authentication
             {
                 Code = nameof(EmployeeExisted),
                 Description = string.Format(EmployeeExisted, citizenIdentification)
+            };
+        }
+
+        public static ErrorsResult GetUserNotFoundWithIdError()
+        {
+            return new()
+            {
+                Code = nameof(UserNotFoundWithId),
+                Description = UserNotFoundWithId
             };
         }
     }

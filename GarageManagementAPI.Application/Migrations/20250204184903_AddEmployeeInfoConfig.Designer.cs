@@ -4,6 +4,7 @@ using GarageManagementAPI.Repository;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GarageManagementAPI.Application.Migrations
 {
     [DbContext(typeof(RepositoryContext))]
-    partial class RepositoryContextModelSnapshot : ModelSnapshot
+    [Migration("20250204184903_AddEmployeeInfoConfig")]
+    partial class AddEmployeeInfoConfig
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -2022,7 +2025,6 @@ namespace GarageManagementAPI.Application.Migrations
                             Email = "hanhthse171828@fpt.edu.vn",
                             EmailConfirmed = true,
                             FirstName = "Hanh",
-                            Image = "N/A",
                             LastName = "Trần",
                             LockoutEnabled = true,
                             NormalizedEmail = "HANHTHSE171828@FPT.EDU.VN",
@@ -2045,7 +2047,6 @@ namespace GarageManagementAPI.Application.Migrations
                             Email = "tannhnse171836@fpt.edu.vn",
                             EmailConfirmed = true,
                             FirstName = "Tân",
-                            Image = "N/A",
                             LastName = "Nguyễn",
                             LockoutEnabled = true,
                             NormalizedEmail = "TANNHNSE171836@FPT.EDU.VN",
@@ -2068,7 +2069,6 @@ namespace GarageManagementAPI.Application.Migrations
                             Email = "tanlhnse171831@fpt.edu.vn",
                             EmailConfirmed = true,
                             FirstName = "Tân",
-                            Image = "N/A",
                             LastName = "Lê",
                             LockoutEnabled = true,
                             NormalizedEmail = "TANLHNSE171831@FPT.EDU.VN",
@@ -2091,7 +2091,6 @@ namespace GarageManagementAPI.Application.Migrations
                             Email = "giangnthse183257@fpt.edu.vn",
                             EmailConfirmed = true,
                             FirstName = "Giang",
-                            Image = "N/A",
                             LastName = "Nguyễn",
                             LockoutEnabled = true,
                             NormalizedEmail = "GIANGNTHSE183257@FPT.EDU.VN",
@@ -2114,7 +2113,6 @@ namespace GarageManagementAPI.Application.Migrations
                             Email = "khanhbdse173224@fpt.edu.vn",
                             EmailConfirmed = true,
                             FirstName = "Khánh",
-                            Image = "N/A",
                             LastName = "Bùi",
                             LockoutEnabled = true,
                             NormalizedEmail = "KHANHBDSE173224@FPT.EDU.VN",
@@ -2389,22 +2387,6 @@ namespace GarageManagementAPI.Application.Migrations
                     b.HasIndex("ProductId");
 
                     b.ToTable("ProductCarPart", (string)null);
-                });
-
-            modelBuilder.Entity("RolesUser", b =>
-                {
-                    b.Property<Guid>("RolesId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("UsersId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("RolesId", "UsersId");
-
-                    b.HasIndex("UsersId");
-
-                    b.ToTable("RolesUser");
                 });
 
             modelBuilder.Entity("GarageManagementAPI.Entities.Models.Appointment", b =>
@@ -3193,21 +3175,6 @@ namespace GarageManagementAPI.Application.Migrations
                         .HasForeignKey("ProductId")
                         .IsRequired()
                         .HasConstraintName("productcarpart_productid_foreign");
-                });
-
-            modelBuilder.Entity("RolesUser", b =>
-                {
-                    b.HasOne("GarageManagementAPI.Entities.Models.Roles", null)
-                        .WithMany()
-                        .HasForeignKey("RolesId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("GarageManagementAPI.Entities.Models.User", null)
-                        .WithMany()
-                        .HasForeignKey("UsersId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
                 });
 
             modelBuilder.Entity("GarageManagementAPI.Entities.Models.Appointment", b =>

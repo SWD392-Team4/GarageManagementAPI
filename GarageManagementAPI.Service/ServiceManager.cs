@@ -15,6 +15,7 @@ namespace GarageManagementAPI.Service
         private readonly Lazy<IAuthenticationService> _authenticationService;
         private readonly Lazy<IMailService> _mailService;
         private readonly Lazy<IEmployeeInfoService> _employeeInfoService;
+        private readonly Lazy<IUserService> _userService;
 
         public ServiceManager(
             IRepositoryManager repositoryManager,
@@ -48,6 +49,13 @@ namespace GarageManagementAPI.Service
             new EmployeeInfoService(
                 repositoryManager,
                     mapper));
+
+            _userService = new Lazy<IUserService>(() =>
+            new UserService(
+                repositoryManager,
+                mapper,
+                userManager,
+                dataShaper));
         }
 
         public IAuthenticationService AuthenticationService => _authenticationService.Value;
@@ -57,5 +65,7 @@ namespace GarageManagementAPI.Service
         public IMailService MailService => _mailService.Value;
 
         public IEmployeeInfoService EmployeeInfoService => _employeeInfoService.Value;
+
+        public IUserService UserService => _userService.Value;
     }
 }

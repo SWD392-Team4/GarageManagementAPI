@@ -8,6 +8,8 @@
 
         IEmployeeInfoService EmployeeInfoService { get; }
 
+        IUserService UserService { get; }
+
         IMailService MailService { get; }
     }
 }

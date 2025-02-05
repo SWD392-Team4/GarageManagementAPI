@@ -19,5 +19,13 @@ namespace GarageManagementAPI.Shared.DataTransferObjects.User
         public DateTimeOffset CreatedAt { get; set; }
 
         public DateTimeOffset UpdatedAt { get; set; }
+
+        public string? CitizenIdentification { get; set; }
+
+        public bool? Gender { get; set; }
+
+        public DateOnly? DateOfBirth { get; set; }
+
+        public Guid? WorkPlaceId { get; set; }
     }
 }

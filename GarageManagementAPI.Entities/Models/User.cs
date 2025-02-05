@@ -16,7 +16,7 @@ namespace GarageManagementAPI.Entities.Models
 
         public DateTime? RefreshTokenExpiryTime { get; set; }
 
-        public string? Image { get; set; }
+        public string? Image { get; set; } = "N/A";
 
         [EnumDataType(typeof(SystemStatus))]
         public SystemStatus Status { get; set; }
@@ -54,6 +54,8 @@ namespace GarageManagementAPI.Entities.Models
         public virtual ICollection<PackageFeedBack> PackageFeedBacks { get; set; } = new List<PackageFeedBack>();
 
         public virtual ICollection<ServiceFeedBack> ServiceFeedBacks { get; set; } = new List<ServiceFeedBack>();
+
+        public virtual ICollection<Roles> Roles { get; set; } = new List<Roles>();
 
         [IgnoreDataMember]
         public static readonly PropertyInfo[] PropertyInfos;

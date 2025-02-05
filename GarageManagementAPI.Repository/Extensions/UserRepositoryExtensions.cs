@@ -1,0 +1,76 @@
+﻿using GarageManagementAPI.Entities.Models;
+using GarageManagementAPI.Repository.Extensions.Utility;
+using Microsoft.EntityFrameworkCore;
+using System.Linq.Dynamic.Core;
+using System.Reflection;
+
+namespace GarageManagementAPI.Repository.Extensions
+{
+    public static class UserRepositoryExtensions
+    {
+        public static IQueryable<User> SearchByFirstName(this IQueryable<User> user, string? name)
+        {
+            if (string.IsNullOrWhiteSpace(name))
+            {
+                return user;
+            }
+
+            var lowerCaseTerm = name.Trim().ToLower();
+            return user.Where(g => g.FirstName!.ToLower().Contains(name));
+        }
+
+        public static IQueryable<User> SearchByLastName(this IQueryable<User> user, string? name)
+        {
+            if (string.IsNullOrWhiteSpace(name))
+            {
+                return user;
+            }
+
+            var lowerCaseTerm = name.Trim().ToLower();
+            return user.Where(g => g.LastName!.ToLower().Contains(name));
+        }
+
+        public static IQueryable<User> Sort(this IQueryable<User> user, string? orderByQueryString)
+        {
+            if (string.IsNullOrWhiteSpace(orderByQueryString))
+                return user.OrderBy(e => e.FirstName);
+
+            var orderQuery = QueryBuilder.CreateOrderQuery<User>(orderByQueryString, User.PropertyInfos);
+
+            if (string.IsNullOrWhiteSpace(orderQuery))
+                return user.OrderBy(e => e.FirstName);
+
+            return user.OrderBy(orderQuery);
+
+        }
+
+        public static IQueryable<User> IsInlcude(this IQueryable<User> user, string? fieldsString)
+        {
+            if (string.IsNullOrWhiteSpace(fieldsString))
+                return user;
+
+            var fields = fieldsString.Split(',', StringSplitOptions.RemoveEmptyEntries);
+
+
+            foreach (var field in fields)
+            {
+                var property = User.PropertyInfos
+                    .FirstOrDefault(pi => pi.Name.Equals(field.Trim(), StringComparison.InvariantCultureIgnoreCase));
+
+                if (property != null && IsNavigationProperty(property))
+                {
+                    user = user.Include(field.Trim());
+                }
+            }
+
+            return user;
+        }
+
+        private static bool IsNavigationProperty(PropertyInfo property)
+        {
+            return (property.PropertyType.IsGenericType && typeof(IEnumerable<>).IsAssignableFrom(property.PropertyType.GetGenericTypeDefinition())) // Kiểm tra nếu là Collection
+                   || (property.PropertyType.IsClass && property.PropertyType != typeof(string)); // Kiểm tra nếu là một class ngoại trừ string
+        }
+
+    }
+}

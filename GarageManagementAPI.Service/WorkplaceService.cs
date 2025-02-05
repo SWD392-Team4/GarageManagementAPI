@@ -34,7 +34,7 @@ namespace GarageManagementAPI.Service
 
         private async Task<Result<Workplace>> GetAndCheckIfWorkplaceExist(Guid workplaceId, bool trackChanges)
         {
-            var workplace = await _repository.Workplace.GetWorkplaceAsync(workplaceId, trackChanges);
+            var workplace = await _repository.Workplace.GetWorkplaceByIdAsync(workplaceId, trackChanges);
             if (workplace == null)
                 return workplace.NotFound(workplaceId);
 

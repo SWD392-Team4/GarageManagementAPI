@@ -70,15 +70,15 @@ namespace GarageManagementAPI.Service.DataShaping
 
             foreach (var property in requiredPropertites)
             {
-                    var objectPropertyValue = property.GetValue(entity);
-                    if (objectPropertyValue != null)
-                        shapedObject.TryAdd(property.Name, objectPropertyValue);
+                var objectPropertyValue = property.GetValue(entity);
+                if (objectPropertyValue != null)
+                    shapedObject.TryAdd(property.Name, objectPropertyValue);
             }
 
             return shapedObject;
         }
 
-       
+
     }
 }
 
