@@ -1,4 +1,6 @@
-﻿namespace GarageManagementAPI.Entities.Models
+﻿using System.Data;
+
+namespace GarageManagementAPI.Entities.Models
 {
     public partial class InvoiceServiceDetail : BaseEntity<InvoiceServiceDetail>
     {
@@ -16,6 +18,7 @@
 
         public virtual ServiceHistory ServiceHistory { get; set; } = null!;
     }
+
 
 }
 

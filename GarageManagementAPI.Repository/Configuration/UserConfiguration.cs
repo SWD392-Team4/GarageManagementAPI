@@ -40,6 +40,17 @@ namespace GarageManagementAPI.Repository.Configuration
 
             entity.Property(e => e.Status)
                 .HasConversion<string>();
+
+            entity.HasMany(u => u.Roles)
+                    .WithMany(r => r.Users)
+                    .UsingEntity<IdentityUserRole<Guid>>(
+                        j => j.HasOne<Roles>().WithMany().HasForeignKey(ur => ur.RoleId),
+                        j => j.HasOne<User>().WithMany().HasForeignKey(ur => ur.UserId),
+                        j =>
+                        {
+                            j.HasKey(ur => new { ur.UserId, ur.RoleId });
+                            j.ToTable("UserRoles");
+                        });
         }
 
         protected override void SeedData(EntityTypeBuilder<User> entity)

@@ -22,7 +22,7 @@ namespace GarageManagementAPI.Presentation.Controllers
         {
             var userId = HttpContext.User.FindFirstValue("UserId");
             var isCustomer = HttpContext.User.IsInRole(nameof(SystemRole.Customer));
-            var include = isCustomer ? null : "EmployeeInfo";
+            var include = isCustomer ? "Roles" : "EmployeeInfo,Roles";
 
             var user = await _service.UserService.GetUserAsync(new Guid(userId!), userParameters, !isCustomer, include);
 
@@ -34,7 +34,7 @@ namespace GarageManagementAPI.Presentation.Controllers
         [Authorize(Roles = $"{nameof(SystemRole.Administrator)},{nameof(SystemRole.Cashier)}")]
         public async Task<IActionResult> GetUsersIsCustomer([FromQuery] UserParameters userParameters)
         {
-            var userResult = await _service.UserService.GetUsersAsync(userParameters, trackChanges: false, isEmployee: false);
+            var userResult = await _service.UserService.GetUsersAsync(userParameters, trackChanges: false, isEmployee: false, "Roles");
 
             return userResult.Map(
                 onSuccess: Ok,

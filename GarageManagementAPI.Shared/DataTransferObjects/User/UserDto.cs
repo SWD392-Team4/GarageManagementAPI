@@ -20,6 +20,9 @@ namespace GarageManagementAPI.Shared.DataTransferObjects.User
         [EnumDataType(typeof(SystemStatus))]
         public SystemStatus Status { get; set; }
 
+        [EnumDataType(typeof(SystemRole))]
+        public SystemRole Role { get; set; }
+
         public DateTimeOffset CreatedAt { get; set; }
 
         public DateTimeOffset UpdatedAt { get; set; }
