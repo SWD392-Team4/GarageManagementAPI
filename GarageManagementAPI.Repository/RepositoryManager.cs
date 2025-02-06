@@ -1,4 +1,5 @@
 ﻿using GarageManagementAPI.Repository.Contracts;
+using Microsoft.EntityFrameworkCore.Storage;
 
 namespace GarageManagementAPI.Repository
 {
@@ -21,6 +22,8 @@ namespace GarageManagementAPI.Repository
 
             _employeeInfoRepository = new Lazy<IEmployeeInfoRepository>(() =>
             new EmployeeInfoRepository(repositoryContext));
+
+
         }
 
         public IWorkplaceRepository Workplace => _workplaceRepository.Value;
@@ -28,6 +31,16 @@ namespace GarageManagementAPI.Repository
         public IUserRepository User => _userRepository.Value;
 
         public IEmployeeInfoRepository EmployeeInfo => _employeeInfoRepository.Value;
+
+        public async Task<IDbContextTransaction> BeginTransactionAsync()
+        {
+            return await _repositoryContext.Database.BeginTransactionAsync();
+        }
+
+        public IExecutionStrategy CreateExecutionStrategy()
+        {
+            return _repositoryContext.Database.CreateExecutionStrategy();
+        }
 
         public async Task SaveAsync() => await _repositoryContext.SaveChangesAsync();
     }

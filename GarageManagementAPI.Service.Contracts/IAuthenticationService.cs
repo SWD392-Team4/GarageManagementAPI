@@ -2,6 +2,7 @@
 using GarageManagementAPI.Shared.Enums;
 using GarageManagementAPI.Shared.ResultModel;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore.Storage;
 
 namespace GarageManagementAPI.Service.Contracts
 {
@@ -10,7 +11,7 @@ namespace GarageManagementAPI.Service.Contracts
         string GenerateRandomPassword(int length);
         string GenerateUserName(string firstName, string lasName);
 
-        Task<Result> RegisterUser(UserForRegistrationDto userForRegistrationDto, SystemRole role, string password);
+        Task<Result> RegisterUser(UserForRegistrationDto userForRegistrationDto, SystemRole role, string password, IDbContextTransaction? transaction = null);
 
         Task<Result> RegisterEmployeeInfo(UserForRegistrationEmployeeDto userForRegistrationEmployeeDto, SystemRole role, string password);
 
