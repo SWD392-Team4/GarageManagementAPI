@@ -13,6 +13,7 @@ using GarageManagementAPI.Shared.Extension;
 using GarageManagementAPI.Shared.ResultModel;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System;
@@ -229,41 +230,50 @@ namespace GarageManagementAPI.Service
 
         }
 
-        public async Task<Result> RegisterUser(UserForRegistrationDto userForRegistrationDto, SystemRole role, string password)
+        public async Task<Result> RegisterUser(UserForRegistrationDto userForRegistrationDto, SystemRole role, string password, IDbContextTransaction? transaction = null)
         {
             var check = await CheckIfUserExist(userForRegistrationDto);
             if (!check.IsSuccess)
                 return check;
 
-
             _user = _mapper.Map<User>(userForRegistrationDto);
-
             _user.Status = SystemStatus.Active;
             _user.CreatedAt = DateTimeOffset.UtcNow.SEAsiaStandardTime();
             _user.UpdatedAt = DateTimeOffset.UtcNow.SEAsiaStandardTime();
 
-            using var transaction = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
+            var isTransactionOwner = false;
+            var strategy = _repositoryManager.CreateExecutionStrategy();
 
-            try
+            return await strategy.ExecuteAsync(async () =>
             {
-                var result = await _userManager.CreateAsync(_user, password);
+                if (transaction == null)
+                {
+                    transaction = await _repositoryManager.BeginTransactionAsync();
+                    isTransactionOwner = true;
+                }
 
-                if (!result.Succeeded)
-                    return result.InvalidResult();
+                try
+                {
+                    var result = await _userManager.CreateAsync(_user, password);
+                    if (!result.Succeeded)
+                        return result.InvalidResult();
 
-                result = await _userManager.AddToRoleAsync(_user, role.ToString());
+                    result = await _userManager.AddToRoleAsync(_user, role.ToString());
+                    if (!result.Succeeded)
+                        return result.InvalidResult();
 
-                if (!result.Succeeded)
-                    return result.InvalidResult();
+                    if (isTransactionOwner)
+                        await transaction.CommitAsync();
 
-                transaction.Complete();
-
-                return Result.Ok();
-            }
-            catch
-            {
-                throw;
-            }
+                    return Result.Ok();
+                }
+                catch
+                {
+                    if (isTransactionOwner)
+                        await transaction.RollbackAsync();
+                    throw;
+                }
+            });
         }
 
         public async Task<Result> RegisterEmployeeInfo(UserForRegistrationEmployeeDto userForRegistrationEmployeeDto, SystemRole role, string password)
@@ -273,36 +283,38 @@ namespace GarageManagementAPI.Service
                 return result;
 
             result = await CheckIfEmployeeExist(userForRegistrationEmployeeDto.CitizenIdentification!);
-
             if (!result.IsSuccess)
                 return result;
 
-            using var transaction = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
+            var strategy = _repositoryManager.CreateExecutionStrategy();
 
-            try
+            return await strategy.ExecuteAsync(async () =>
             {
-                result = await RegisterUser(userForRegistrationEmployeeDto, role, password);
+                await using var transaction = await _repositoryManager.BeginTransactionAsync();
+                try
+                {
+                    result = await RegisterUser(userForRegistrationEmployeeDto, role, password, transaction);
+                    if (!result.IsSuccess)
+                        return result;
 
-                if (!result.IsSuccess)
-                    return result;
+                    var employeeInfoEntity = _mapper.Map<EmployeeInfo>(userForRegistrationEmployeeDto);
+                    employeeInfoEntity.Id = _user!.Id;
+                    employeeInfoEntity.CreatedAt = DateTimeOffset.UtcNow.SEAsiaStandardTime();
+                    employeeInfoEntity.UpdatedAt = DateTimeOffset.UtcNow.SEAsiaStandardTime();
 
-                var employeeInfoEntity = _mapper.Map<EmployeeInfo>(userForRegistrationEmployeeDto);
+                    await _repositoryManager.EmployeeInfo.CreateAsync(employeeInfoEntity);
+                    await _repositoryManager.SaveAsync();
 
-                employeeInfoEntity.Id = _user!.Id;
-                employeeInfoEntity.CreatedAt = DateTimeOffset.UtcNow.SEAsiaStandardTime();
-                employeeInfoEntity.UpdatedAt = DateTimeOffset.UtcNow.SEAsiaStandardTime();
+                    await transaction.CommitAsync();
+                }
+                catch
+                {
+                    await transaction.RollbackAsync();
+                    throw;
+                }
 
-                await _repositoryManager.EmployeeInfo.CreateAsync(employeeInfoEntity);
-                await _repositoryManager.SaveAsync();
-
-                transaction.Complete();
-            }
-            catch
-            {
-                throw;
-            }
-
-            return result;
+                return result;
+            });
         }
 
         private async Task<Result> CheckIfWorkplaceExist(Guid workplaceId)
