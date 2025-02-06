@@ -10,6 +10,11 @@ namespace GarageManagementAPI.Application.MappingProfile
         {
             CreateMap<UserForRegistrationDto, User>();
             CreateMap<User, UserDto>()
+                .ForMember(dest => dest.Role, opts =>
+                {
+                    opts.PreCondition(src => src.Roles != null);
+                    opts.MapFrom(src => src.Roles.FirstOrDefault()!.Name);
+                })
                 .ForMember(dest => dest.CitizenIdentification, opt =>
                 {
                     opt.PreCondition(src => src.EmployeeInfo != null);

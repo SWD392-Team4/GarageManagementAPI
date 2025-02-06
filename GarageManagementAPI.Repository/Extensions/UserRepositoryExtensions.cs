@@ -44,7 +44,7 @@ namespace GarageManagementAPI.Repository.Extensions
 
         }
 
-        public static IQueryable<User> IsInlcude(this IQueryable<User> user, string? fieldsString)
+        public static IQueryable<User> IsInclude(this IQueryable<User> user, string? fieldsString)
         {
             if (string.IsNullOrWhiteSpace(fieldsString))
                 return user;
@@ -57,7 +57,7 @@ namespace GarageManagementAPI.Repository.Extensions
                 var property = User.PropertyInfos
                     .FirstOrDefault(pi => pi.Name.Equals(field.Trim(), StringComparison.InvariantCultureIgnoreCase));
 
-                if (property != null && IsNavigationProperty(property))
+                if (property != null)
                 {
                     user = user.Include(field.Trim());
                 }
@@ -65,12 +65,5 @@ namespace GarageManagementAPI.Repository.Extensions
 
             return user;
         }
-
-        private static bool IsNavigationProperty(PropertyInfo property)
-        {
-            return (property.PropertyType.IsGenericType && typeof(IEnumerable<>).IsAssignableFrom(property.PropertyType.GetGenericTypeDefinition())) // Kiểm tra nếu là Collection
-                   || (property.PropertyType.IsClass && property.PropertyType != typeof(string)); // Kiểm tra nếu là một class ngoại trừ string
-        }
-
     }
 }

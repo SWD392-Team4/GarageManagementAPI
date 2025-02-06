@@ -42,6 +42,7 @@ namespace GarageManagementAPI.Repository.Configuration
                 });
         }
     }
+
 }
 
 
