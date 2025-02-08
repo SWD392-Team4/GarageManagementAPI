@@ -1,14 +1,8 @@
-﻿using Bogus.DataSets;
-using GarageManagementAPI.Entities.Models;
+﻿using GarageManagementAPI.Entities.Models;
 using GarageManagementAPI.Repository.Extensions.Utility;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Linq.Expressions;
+using System.Linq.Dynamic.Core;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace GarageManagementAPI.Repository.Extensions
 {
@@ -64,14 +58,8 @@ namespace GarageManagementAPI.Repository.Extensions
             if (string.IsNullOrWhiteSpace(orderQuery))
                 return brands.OrderBy(p => p.BrandName);  // Nếu không có chuỗi sắp xếp hợp lệ, sắp xếp theo BrandName
 
-            // Chuyển đổi chuỗi thành một biểu thức lambda hợp lệ
-            var parameter = Expression.Parameter(typeof(Brand), "p");
-            var property = Expression.Property(parameter, orderQuery);  // Giả sử orderQuery là tên thuộc tính
-
-            var lambda = Expression.Lambda<Func<Brand, object>>(property, parameter);
-
             // Áp dụng sắp xếp động với biểu thức đã tạo
-            return brands.OrderBy(lambda);  // Điều này sẽ hoạt động nếu `lambda` là hợp lệ
+            return brands.OrderBy(orderQuery);  
         }
     }
 }
