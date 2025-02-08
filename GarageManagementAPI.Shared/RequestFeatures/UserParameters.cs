@@ -10,6 +10,5 @@
 
         public Guid? WorkplaceId { get; set; }
 
-
     }
 }

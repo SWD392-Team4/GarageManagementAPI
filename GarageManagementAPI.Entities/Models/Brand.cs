@@ -1,4 +1,6 @@
 ﻿using GarageManagementAPI.Shared.Enums;
+using GarageManagementAPI.Shared.ErrorsConstant.Brand;
+using GarageManagementAPI.Shared.ErrorsConstant.Workplace;
 using System.ComponentModel.DataAnnotations;
 
 namespace GarageManagementAPI.Entities.Models
