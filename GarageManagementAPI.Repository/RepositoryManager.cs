@@ -9,7 +9,8 @@ namespace GarageManagementAPI.Repository
         private readonly Lazy<IWorkplaceRepository> _workplaceRepository;
         private readonly Lazy<IUserRepository> _userRepository;
         private readonly Lazy<IEmployeeInfoRepository> _employeeInfoRepository;
-        private readonly Lazy<IBrandRepository> _brandoRepository;
+        private readonly Lazy<IBrandRepository> _brandRepository;
+        private readonly Lazy<IProductRepository> _productRepository;
 
         public RepositoryManager(RepositoryContext repositoryContext)
         {
@@ -23,8 +24,12 @@ namespace GarageManagementAPI.Repository
 
             _employeeInfoRepository = new Lazy<IEmployeeInfoRepository>(() =>
             new EmployeeInfoRepository(repositoryContext));
-            _brandoRepository = new Lazy<IBrandRepository>(() =>
+
+            _brandRepository = new Lazy<IBrandRepository>(() =>
             new BrandRepository(repositoryContext));
+
+            _productRepository = new Lazy<IProductRepository>(() =>
+            new ProductRepository(repositoryContext));
 
         }
 
@@ -33,7 +38,8 @@ namespace GarageManagementAPI.Repository
         public IUserRepository User => _userRepository.Value;
 
         public IEmployeeInfoRepository EmployeeInfo => _employeeInfoRepository.Value;
-        public IBrandRepository Brand => _brandoRepository.Value;
+        public IBrandRepository Brand => _brandRepository.Value;
+        public IProductRepository Product => _productRepository.Value;
 
         public async Task<IDbContextTransaction> BeginTransactionAsync()
         {

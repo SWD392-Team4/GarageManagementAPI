@@ -1,16 +1,22 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using GarageManagementAPI.Shared.Enums;
+using System.ComponentModel.DataAnnotations;
+
 
 namespace GarageManagementAPI.Shared.DataTransferObjects.Product
 {
-    public class ProductDto
+    public record class ProductDto : BaseDto<ProductDto>
     {
-        string ProductName { get; set; }
-        string ProductBarcode { get; set; }
-        string ProductDescription { get; set; }
+        public Guid Id {get; set; }
+        public string ProductName { get; set; }
+        public string ProductBarcode { get; set; }
+        public string ProductDescription { get; set; }
         public Guid BrandId { get; set; }
+
+        [EnumDataType(typeof(SystemStatus))]
+        public SystemStatus Status { get; set; }
+
+        public DateTimeOffset CreatedAt { get; set; }
+
+        public DateTimeOffset UpdatedAt { get; set; }
     }
 }

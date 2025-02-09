@@ -12,7 +12,6 @@ namespace GarageManagementAPI.Shared.ErrorsConstant.Brand
         public const string BrandStatusRequired = "The brand status is required";
         public const string BrandStatusInvalid = "Invalid brand status.";
         public const string BrandNotFoundWithId = "Can not found brand with id {0}.";
-        public const string WorkplaceStatusInvalid = "Invalid work place status.";
         #endregion
 
         #region static method

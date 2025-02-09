@@ -51,9 +51,9 @@ namespace GarageManagementAPI.Service
 
             var brandsDto = _mapper.Map<BrandDto>(brandEntity);
 
-            var userShaped = _dataShaper.Brand.ShapeData(brandsDto, brandParameters.Fields);
+            var brandShaped = _dataShaper.Brand.ShapeData(brandsDto, brandParameters.Fields);
 
-            return Result<ExpandoObject>.Ok(userShaped);
+            return Result<ExpandoObject>.Ok(brandShaped);
         }
 
         public async Task<Result<BrandDto>> CreateBrandAsync(BrandDtoForCreation brandDtoForCreation)

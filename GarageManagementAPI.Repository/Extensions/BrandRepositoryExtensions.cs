@@ -29,22 +29,16 @@ namespace GarageManagementAPI.Repository.Extensions
 
             foreach (var field in fields)
             {
-                var property = User.PropertyInfos
+                var property = Brand.PropertyInfos
                     .FirstOrDefault(pi => pi.Name.Equals(field.Trim(), StringComparison.InvariantCultureIgnoreCase));
 
-                if (property != null && IsNavigationProperty(property))
+                if (property != null)
                 {
                     brand = brand.Include(field.Trim());
                 }
             }
 
             return brand;
-        }
-
-        private static bool IsNavigationProperty(PropertyInfo property)
-        {
-            return (property.PropertyType.IsGenericType && typeof(IEnumerable<>).IsAssignableFrom(property.PropertyType.GetGenericTypeDefinition())) // Kiểm tra nếu là Collection
-                   || (property.PropertyType.IsClass && property.PropertyType != typeof(string)); // Kiểm tra nếu là một class ngoại trừ string
         }
 
         public static IQueryable<Brand> Sort(this IQueryable<Brand> brands, string? orderByQueryString)

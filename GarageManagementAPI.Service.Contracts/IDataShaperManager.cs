@@ -11,5 +11,6 @@ namespace GarageManagementAPI.Service.Contracts
 
         IDataShaper<UserDto> User { get; }
         IDataShaper<BrandDto> Brand { get; }
+        IDataShaper<ProductDto> Product { get; }
     }
 }
