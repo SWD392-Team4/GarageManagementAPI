@@ -1,0 +1,155 @@
+﻿using AutoMapper;
+using Microsoft.EntityFrameworkCore;
+using GarageManagementAPI.Entities.Models;
+using GarageManagementAPI.Repository.Contracts;
+using GarageManagementAPI.Service.Contracts;
+using GarageManagementAPI.Service.Extension;
+using GarageManagementAPI.Shared.Extension;
+using GarageManagementAPI.Shared.DataTransferObjects.Product;
+using GarageManagementAPI.Shared.ErrorsConstant.Product;
+using GarageManagementAPI.Shared.RequestFeatures;
+using GarageManagementAPI.Shared.ResultModel;
+using System.Dynamic;
+using GarageManagementAPI.Shared.Enums.SystemStatuss;
+using GarageManagementAPI.Shared.DataTransferObjects.Workplace;
+
+namespace GarageManagementAPI.Service
+{
+    public class ProductService : IProductService
+    {
+        private readonly IRepositoryManager _repoManager;
+        private readonly IMapper _mapper;
+        private readonly IDataShaperManager _dataShaper;
+
+        public ProductService(IRepositoryManager repoManager, IMapper mapper, IDataShaperManager dataShaper)
+        {
+            _repoManager = repoManager;
+            _mapper = mapper;
+            _dataShaper = dataShaper;
+        }
+
+        public async Task<Result<ProductDto>> CreateProductAsync(ProductDtoForCreation productDtoForCreation)
+        {
+            var check = await CheckIfProductExistByNameAndBrandOrBarCode(productDtoForCreation);
+            if (check)
+                return Result<ProductDto>.BadRequest([ProductErrors.GetProductNameAlreadyExistError(productDtoForCreation)]);
+
+            var productEntity = _mapper.Map<Product>(productDtoForCreation);
+
+            productEntity.CreatedAt = DateTimeOffset.UtcNow.SEAsiaStandardTime();
+            productEntity.UpdatedAt = DateTimeOffset.UtcNow.SEAsiaStandardTime();
+            productEntity.Status = ProductStatus.Inactive;
+
+            await _repoManager.Product.CreateProductAsync(productEntity);
+            await _repoManager.SaveAsync();
+
+            var productDtoToReturn = _mapper.Map<ProductDto>(productEntity);
+
+            return productDtoToReturn.CreatedResult();
+        }
+
+        public async Task<Result<ExpandoObject>> GetProductAsync(Guid productId, ProductParameters productParameters, bool trackChanges, string? include = null)
+        {
+            var productResult = await GetAndCheckIfProductExist(productId, trackChanges);
+
+            if (!productResult.IsSuccess)
+                return Result<ExpandoObject>.NotFound(productResult.Errors!);
+
+            var productEntity = productResult.GetValue<Product>();
+
+            var productsDto = _mapper.Map<ProductDto>(productEntity);
+
+            var userShaped = _dataShaper.Product.ShapeData(productsDto, productParameters.Fields);
+
+            return Result<ExpandoObject>.Ok(userShaped);
+        }
+
+        public async Task<Result<ExpandoObject>> GetProductByBarcode1Async(string barcode, ProductParameters productParameters, bool trackChanges, string? include = null)
+        {
+            var productResult = await GetAndCheckIfProductByBarCodeExist(barcode, trackChanges);
+
+            if (!productResult.IsSuccess)
+                return Result<ExpandoObject>.NotFound(productResult.Errors!);
+
+            var productEntity = productResult.GetValue<Product>();
+
+            var productsDto = _mapper.Map<ProductDto>(productEntity);
+
+            var productShaped = _dataShaper.Product.ShapeData(productsDto, productParameters.Fields);
+
+            return Result<ExpandoObject>.Ok(productShaped);
+        }
+
+        public async Task<Result<ProductDtoForUpdate>> GetProductForPartiallyUpdate(Guid productId, bool trackChanges)
+        {
+            var productResult = await GetAndCheckIfProductExist(productId, trackChanges);
+            if (!productResult.IsSuccess)
+                return Result<ProductDtoForUpdate>.Failure(productResult.StatusCode, productResult.Errors!);
+
+            var productEntity = productResult.GetValue<Product>();
+
+            var productDtoForUpdate = _mapper.Map<ProductDtoForUpdate>(productEntity);
+
+            return Result<ProductDtoForUpdate>.Ok(productDtoForUpdate);
+        }
+
+        public async Task<Result<IEnumerable<ExpandoObject>>> GetProductsAsync(ProductParameters productParameters, bool trackChanges, string? include = null)
+        {
+            var productsWithMetadata = await _repoManager.Product.GetProductsAsync(productParameters, trackChanges, include);
+
+            var productsDto = _mapper.Map<IEnumerable<ProductDto>>(productsWithMetadata);
+
+            var productsShaped = _dataShaper.Product.ShapeData(productsDto, productParameters.Fields);
+
+            return Result<IEnumerable<ExpandoObject>>.Ok(productsShaped, productsWithMetadata.MetaData);
+        }
+
+        public async Task<Result> UpdateProduct(Guid productId, ProductDtoForUpdate productDtoForUpdate, bool trackChanges)
+        {
+            var productResult = await GetAndCheckIfProductExist(productId, trackChanges);
+            if (!productResult.IsSuccess)
+                return Result<ProductDto>.Failure(productResult.StatusCode, productResult.Errors!);
+            var productEntity = productResult.GetValue<Product>();
+
+            _mapper.Map(productDtoForUpdate, productEntity);
+
+            productEntity.UpdatedAt = DateTimeOffset.UtcNow.SEAsiaStandardTime();
+            await _repoManager.SaveAsync();
+
+            return Result.NoContent();
+        }
+
+        private async Task<bool> CheckIfProductExistByNameAndBrandOrBarCode(ProductDtoForCreation productDtoForCreation)
+        {
+            var brandId = productDtoForCreation.BrandId;
+            var barcode = productDtoForCreation.ProductBarcode!.Trim();
+            var name = productDtoForCreation.ProductName!.Trim();
+
+            var exists = await _repoManager.Product.FindByCondition(p =>
+                p.BrandId.Equals(brandId) &&
+                 p.ProductName.Trim().Equals(name) ||
+                 p.ProductBarcode.Trim().Equals(barcode),
+                false).AnyAsync();
+
+            return exists;
+        }
+
+        private async Task<Result<Product>> GetAndCheckIfProductExist(Guid productId, bool trackChanges)
+        {
+            var product = await _repoManager.Product.GetProductByIdAsync(productId, trackChanges);
+            if (product == null)
+                return product.NotFoundId(productId);
+
+            return product.OkResult();
+        }
+
+        private async Task<Result<Product>> GetAndCheckIfProductByBarCodeExist(string barcode, bool trackChanges)
+        {
+            var product = await _repoManager.Product.GetProductByBarCodeAsync(barcode, trackChanges);
+            if (product == null)
+                return product.NotFoundBarCode(barcode);
+
+            return product.OkResult();
+        }
+    }
+}

@@ -11,5 +11,7 @@
         IUserService UserService { get; }
 
         IMailService MailService { get; }
+        IBrandService BrandService { get; }
+        IProductService ProductService { get; }
     }
 }

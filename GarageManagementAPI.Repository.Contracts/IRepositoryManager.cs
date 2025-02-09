@@ -10,6 +10,9 @@ namespace GarageManagementAPI.Repository.Contracts
 
         IEmployeeInfoRepository EmployeeInfo { get; }
 
+        IBrandRepository Brand { get; }
+        IProductRepository Product { get; }
+
         Task<IDbContextTransaction> BeginTransactionAsync();
 
         IExecutionStrategy CreateExecutionStrategy();

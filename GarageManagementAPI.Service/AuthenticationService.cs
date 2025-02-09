@@ -35,7 +35,8 @@ namespace GarageManagementAPI.Service
         private readonly UserManager<User> _userManager;
         private readonly SignInManager<User> _signInManager;
         private readonly IOptionsSnapshot<JwtConfiguration> _configuration;
-        private readonly JwtConfiguration _jwtConfiguration;        private readonly Random random = new Random();
+        private readonly JwtConfiguration _jwtConfiguration;
+        private readonly Random random = new Random();
         private User? _user;
 
         public AuthenticationService(
@@ -50,7 +51,8 @@ namespace GarageManagementAPI.Service
             _userManager = userManager;
             _signInManager = signInManager;
             _configuration = configuration;
-            _jwtConfiguration = _configuration.Value;        }
+            _jwtConfiguration = _configuration.Value;
+        }
 
         public string GenerateRandomPassword(int length)
         {
@@ -224,7 +226,8 @@ namespace GarageManagementAPI.Service
             {
                 AccessToken = accessToken,
                 RefreshToken = refreshToken,
-            });
+            });
+
         }
 
         public async Task<Result> RegisterUser(UserForRegistrationDto userForRegistrationDto, SystemRole role, string password, IDbContextTransaction? transaction = null)
