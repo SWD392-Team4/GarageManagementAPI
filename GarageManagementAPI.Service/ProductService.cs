@@ -11,7 +11,6 @@ using GarageManagementAPI.Shared.RequestFeatures;
 using GarageManagementAPI.Shared.ResultModel;
 using System.Dynamic;
 using GarageManagementAPI.Shared.Enums.SystemStatuss;
-using GarageManagementAPI.Shared.DataTransferObjects.Workplace;
 
 namespace GarageManagementAPI.Service
 {
@@ -107,6 +106,9 @@ namespace GarageManagementAPI.Service
         public async Task<Result> UpdateProduct(Guid productId, ProductDtoForUpdate productDtoForUpdate, bool trackChanges)
         {
             var productResult = await GetAndCheckIfProductExist(productId, trackChanges);
+            var check = await CheckIfProductExistByNameAndBrandOrBarCodeForUpdate(productDtoForUpdate, productId);
+            if (check)
+                return Result<ProductDto>.BadRequest([ProductErrors.GetProductNameUpdateAlreadyExistError(productDtoForUpdate)]);
             if (!productResult.IsSuccess)
                 return Result<ProductDto>.Failure(productResult.StatusCode, productResult.Errors!);
             var productEntity = productResult.GetValue<Product>();
@@ -129,6 +131,22 @@ namespace GarageManagementAPI.Service
                 p.BrandId.Equals(brandId) &&
                  p.ProductName.Trim().Equals(name) ||
                  p.ProductBarcode.Trim().Equals(barcode),
+                false).AnyAsync();
+
+            return exists;
+        }
+
+        private async Task<bool> CheckIfProductExistByNameAndBrandOrBarCodeForUpdate(ProductDtoForUpdate productDtoForUpdate, Guid productId)
+        {
+            var brandId = productDtoForUpdate.BrandId;
+            var barcode = productDtoForUpdate.ProductBarcode!.Trim();
+            var name = productDtoForUpdate.ProductName!.Trim();
+
+            var exists = await _repoManager.Product.FindByCondition(p =>
+            !p.Id.Equals(productId) &&
+               (p.BrandId.Equals(brandId) &&
+                 p.ProductName.Trim().Equals(name) ||
+                 p.ProductBarcode.Trim().Equals(barcode)),
                 false).AnyAsync();
 
             return exists;

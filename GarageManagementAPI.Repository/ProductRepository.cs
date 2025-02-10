@@ -37,7 +37,7 @@ namespace GarageManagementAPI.Repository
 
         public async Task<PagedList<Product>> GetProductsAsync(ProductParameters productParameters, bool trackChanges, string? include = null)
         {
-            // Lọc và sắp xếp danh sách brands theo các điều kiện
+            // Lọc và sắp xếp danh sách products theo các điều kiện
             var productsQuery = FindByCondition(b =>
                     (string.IsNullOrEmpty(productParameters.ProductName) || b.ProductName.Contains(productParameters.ProductName)),
                     trackChanges)

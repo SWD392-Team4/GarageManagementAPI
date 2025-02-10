@@ -10,7 +10,8 @@ namespace GarageManagementAPI.Service.Contracts
         IDataShaper<WorkplaceDto> Workplace { get; }
 
         IDataShaper<UserDto> User { get; }
-        IDataShaper<BrandDto> Brand { get; }
-        IDataShaper<ProductDto> Product { get; }
+        IDataShaper<Shared.DataTransferObjects.Brand.BrandDto> Brand { get; }
+        IDataShaper<Shared.DataTransferObjects.Product.ProductDto> Product { get; }
+        IDataShaper<Shared.DataTransferObjects.ProductHistory.ProductHistoryDto> ProductHistory { get; }
     }
 }

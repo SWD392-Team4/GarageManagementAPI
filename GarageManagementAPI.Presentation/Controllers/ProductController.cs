@@ -5,7 +5,6 @@ using Microsoft.AspNetCore.Mvc;
 using GarageManagementAPI.Shared.RequestFeatures;
 using GarageManagementAPI.Shared.Enums;
 using Microsoft.AspNetCore.Authorization;
-using GarageManagementAPI.Shared.DataTransferObjects.Workplace;
 using FluentValidation;
 using Microsoft.AspNetCore.JsonPatch;
 using GarageManagementAPI.Presentation.Extensions;
@@ -47,18 +46,18 @@ namespace GarageManagementAPI.Presentation.Controllers
 
         [HttpGet]
         //[Authorize(Roles = $"{nameof(SystemRole.Administrator)},{nameof(SystemRole.Cashier)}")]
-        public async Task<IActionResult> GetBrands([FromQuery] ProductParameters productParameters)
+        public async Task<IActionResult> GetProducts([FromQuery] ProductParameters productParameters)
         {
-            var brandResult = await _service.ProductService.GetProductsAsync(productParameters, trackChanges: false);
+            var productResult = await _service.ProductService.GetProductsAsync(productParameters, trackChanges: false);
 
-            return brandResult.Map(
+            return productResult.Map(
                 onSuccess: Ok,
                 onFailure: ProcessError
                 );
         }
 
         [HttpPost(Name = "CreateProduct")]
-        public async Task<IActionResult> CreateBrand([FromBody] ProductDtoForCreation productDtoForCreation)
+        public async Task<IActionResult> CreateProduct([FromBody] ProductDtoForCreation productDtoForCreation)
         {
             var result = await _service.ProductService.CreateProductAsync(productDtoForCreation);
 
@@ -74,7 +73,7 @@ namespace GarageManagementAPI.Presentation.Controllers
         }
 
         [HttpPut("{productId:guid}")]
-        public async Task<IActionResult> UpdateWorkplace(Guid productId, [FromBody] ProductDtoForUpdate prductDtoForUpdate)
+        public async Task<IActionResult> UpdateProduct(Guid productId, [FromBody] ProductDtoForUpdate prductDtoForUpdate)
         {
             var result = await _service.ProductService
                 .UpdateProduct(

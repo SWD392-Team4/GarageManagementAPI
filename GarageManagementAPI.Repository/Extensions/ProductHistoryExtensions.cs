@@ -8,22 +8,22 @@ using System.Reflection;
 
 namespace GarageManagementAPI.Repository.Extensions
 {
-    public static class ProductRepositoryExtensions
+    public static class ProductHistoryExtensions
     {
-        public static IQueryable<Product> SearchByName(this IQueryable<Product> product, string? name)
+        public static IQueryable<ProductHistory> SearchByPrice(this IQueryable<ProductHistory> product, decimal? price)
         {
-            if (string.IsNullOrWhiteSpace(name))
+            if (price == 0 || price < 0)
             {
                 return product;
             }
 
-            var lowerCaseTerm = name.Trim().ToLower();
-            return product.Where(p => p.ProductName!.ToLower().Contains(name.Trim().ToLower()));
+           
+            return product.Where(p => p.ProductPrice == price);
         }
 
-        public static IQueryable<Product> SearchByStatus(this IQueryable<Product> products, ProductStatus? status)
+        public static IQueryable<ProductHistory> SearchByStatus(this IQueryable<ProductHistory> products, ProductHistoryStatus? status)
         {
-            if (status is null || status.Equals(ProductStatus.None))
+            if (status is null || status.Equals(ProductHistoryStatus.None))
             {
                 return products;
             }
@@ -31,7 +31,7 @@ namespace GarageManagementAPI.Repository.Extensions
             return products.Where(p => p.Status == status);
         }
 
-        public static IQueryable<Product> IsInclude(this IQueryable<Product> product, string? fieldsString)
+        public static IQueryable<ProductHistory> IsInclude(this IQueryable<ProductHistory> product, string? fieldsString)
         {
             if (string.IsNullOrWhiteSpace(fieldsString))
                 return product;
@@ -41,7 +41,7 @@ namespace GarageManagementAPI.Repository.Extensions
 
             foreach (var field in fields)
             {
-                var property = Product.PropertyInfos
+                var property = ProductHistory.PropertyInfos
                     .FirstOrDefault(pi => pi.Name.Equals(field.Trim(), StringComparison.InvariantCultureIgnoreCase));
 
                 if (property != null)
@@ -53,16 +53,16 @@ namespace GarageManagementAPI.Repository.Extensions
             return product;
         }
 
-        public static IQueryable<Product> Sort(this IQueryable<Product> products, string? orderByQueryString)
+        public static IQueryable<ProductHistory> Sort(this IQueryable<ProductHistory> products, string? orderByQueryString)
         {
             if (string.IsNullOrWhiteSpace(orderByQueryString))
-                return products.OrderBy(p => p.ProductName);  // Sắp xếp mặc định theo ProductName
+                return products.OrderBy(p => p.ProductPrice);  // Sắp xếp mặc định theo ProductName
 
             // Tạo biểu thức sắp xếp động từ query string
-            var orderQuery = QueryBuilder.CreateOrderQuery<Product>(orderByQueryString, Product.PropertyInfos);
+            var orderQuery = QueryBuilder.CreateOrderQuery<ProductHistory>(orderByQueryString, ProductHistory.PropertyInfos);
 
             if (string.IsNullOrWhiteSpace(orderQuery))
-                return products.OrderBy(p => p.ProductName);  // Nếu không có chuỗi sắp xếp hợp lệ, sắp xếp theo ProductName
+                return products.OrderBy(p => p.ProductPrice);  // Nếu không có chuỗi sắp xếp hợp lệ, sắp xếp theo ProductName
 
             // Áp dụng sắp xếp động với biểu thức đã tạo
             return products.OrderBy(orderQuery);

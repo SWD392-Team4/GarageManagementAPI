@@ -11,7 +11,6 @@ using GarageManagementAPI.Shared.ErrorsConstant.Brand;
 using GarageManagementAPI.Service.Extension;
 using Microsoft.EntityFrameworkCore;
 using GarageManagementAPI.Shared.Enums;
-using GarageManagementAPI.Shared.DataTransferObjects.Workplace;
 
 namespace GarageManagementAPI.Service
 {
@@ -79,8 +78,11 @@ namespace GarageManagementAPI.Service
         public async Task<Result> UpdateBrand(Guid brandId, BrandDtoForUpdate brandDtoForUpdate, bool trackChanges)
         {
             var brandResult = await GetAndCheckIfBrandExist(brandId, trackChanges);
+            var check = await CheckIfBrandUpdateExistByName(brandDtoForUpdate, brandId);
+            if (check)
+                return Result<BrandDto>.BadRequest([BrandErrors.GetBrandNameUpdateAlreadyExistError(brandDtoForUpdate)]);
             if (!brandResult.IsSuccess)
-                return Result<WorkplaceDto>.Failure(brandResult.StatusCode, brandResult.Errors!);
+                return Result<BrandDto>.Failure(brandResult.StatusCode, brandResult.Errors!);
             var brandEntity = brandResult.GetValue<Brand>();
 
             _mapper.Map(brandDtoForUpdate, brandEntity);
@@ -116,6 +118,17 @@ namespace GarageManagementAPI.Service
             return exists;
         }
 
+        private async Task<bool> CheckIfBrandUpdateExistByName(BrandDtoForUpdate brandDtoForUpdate, Guid brandId)
+        {
+
+            var name = brandDtoForUpdate.BrandName!.Trim();
+
+            var exists = await _repoManager.Brand.FindByCondition(x =>
+                !x.Id.Equals(brandId) && x.BrandName.Trim().Equals(name),
+                false).AnyAsync();
+
+            return exists;
+        }
         private async Task<Result<Brand>> GetAndCheckIfBrandExist(Guid brandId, bool trackChanges)
         {
             var brand = await _repoManager.Brand.GetBrandByIdAsync(brandId, trackChanges);

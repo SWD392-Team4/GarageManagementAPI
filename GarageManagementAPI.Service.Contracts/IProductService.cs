@@ -1,6 +1,4 @@
-﻿
-
-using GarageManagementAPI.Shared.DataTransferObjects.Product;
+﻿using GarageManagementAPI.Shared.DataTransferObjects.Product;
 using GarageManagementAPI.Shared.RequestFeatures;
 using GarageManagementAPI.Shared.ResultModel;
 using System.Dynamic;

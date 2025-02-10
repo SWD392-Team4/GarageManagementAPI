@@ -1,6 +1,6 @@
 ﻿namespace GarageManagementAPI.Shared.Enums.SystemStatuss
 {
-    public enum ProductStatus
+    public enum ProductHistoryStatus
     {
         None = 0,
         Active = 1,
