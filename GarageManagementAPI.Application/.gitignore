@@ -1,0 +1,4 @@
+﻿# Bỏ qua appsettings và launchSettings
+appsettings.json
+appsettings.*.json
+Properties/launchSettings.json

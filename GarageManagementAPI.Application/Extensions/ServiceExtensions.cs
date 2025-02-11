@@ -56,10 +56,10 @@ namespace GarageManagementAPI.Application.Extensions
             services.AddScoped<IDataShaperManager, DataShaperManager>();
 
         public static void ConfigureSqlContext(this IServiceCollection services, IConfiguration configuration) =>
-           services.AddDbContext<RepositoryContext>(opts => opts.UseSqlServer(configuration.GetConnectionString("sqlConnection"), opts =>
-           {
-               opts.EnableRetryOnFailure();
-           }));
+            services.AddDbContext<RepositoryContext>(opts => opts.UseSqlServer(configuration.GetConnectionString("sqlConnection"), opts =>
+            {
+                opts.EnableRetryOnFailure();
+            }));
 
         public static void ConfigureApiBehavior(this IServiceCollection services) =>
             services.Configure<ApiBehaviorOptions>(options =>

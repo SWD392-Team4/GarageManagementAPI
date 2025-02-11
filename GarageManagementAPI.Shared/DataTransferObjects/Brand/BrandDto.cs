@@ -1,12 +1,13 @@
 ﻿using GarageManagementAPI.Shared.Enums;
-using GarageManagementAPI.Shared.ErrorsConstant.Brand;
-using GarageManagementAPI.Shared.ErrorsConstant.Workplace;
+using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
-namespace GarageManagementAPI.Entities.Models
+namespace GarageManagementAPI.Shared.DataTransferObjects.Brand
 {
-    public partial class Brand : BaseEntity<Brand>
+    public record class BrandDto : BaseDto<BrandDto>
     {
+        public Guid Id { get; set; }
         public string BrandName { get; set; } = null!;
 
         public string LinkLogo { get; set; } = null!;
@@ -18,10 +19,5 @@ namespace GarageManagementAPI.Entities.Models
 
         public DateTimeOffset UpdatedAt { get; set; }
 
-        public virtual ICollection<CarModel> CarModels { get; set; } = new List<CarModel>();
-
-        public virtual ICollection<Product> Products { get; set; } = new List<Product>();
     }
-
 }
-
