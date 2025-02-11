@@ -116,7 +116,8 @@ namespace GarageManagementAPI.Application.Extensions
                     Window = TimeSpan.FromMinutes(1)
                 }));
                 options.AddPolicy("SendMailConfirmEmailPolicy", context =>
-                 RateLimitPartition.GetFixedWindowLimiter("SendMailPolicyLimiter",
+                 RateLimitPartition.GetFixedWindowLimiter(
+                 partitionKey: context.User.Identity.Name ?? context.Connection.RemoteIpAddress?.ToString() ?? "anonymous",
                  partition => new FixedWindowRateLimiterOptions
                  {
                      AutoReplenishment = true,
@@ -124,13 +125,16 @@ namespace GarageManagementAPI.Application.Extensions
                      Window = TimeSpan.FromMinutes(5)
                  }));
                 options.AddPolicy("SendMailForgotPasswordPolicy", context =>
-                 RateLimitPartition.GetFixedWindowLimiter("SendMailPolicyLimiter",
-                 partition => new FixedWindowRateLimiterOptions
-                 {
-                     AutoReplenishment = true,
-                     PermitLimit = 1,
-                     Window = TimeSpan.FromMinutes(5)
-                 }));
+                {
+                    return RateLimitPartition.GetFixedWindowLimiter(
+                        partitionKey: context.User.Identity.Name ?? context.Connection.RemoteIpAddress?.ToString() ?? "anonymous",
+                        factory: partition => new FixedWindowRateLimiterOptions
+                        {
+                            AutoReplenishment = true,
+                            PermitLimit = 1,
+                            Window = TimeSpan.FromMinutes(5)
+                        });
+                });
 
                 options.OnRejected = async (context, token) =>
                 {
