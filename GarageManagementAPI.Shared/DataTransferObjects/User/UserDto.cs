@@ -1,4 +1,5 @@
 ﻿using GarageManagementAPI.Shared.Enums;
+using GarageManagementAPI.Shared.Enums.SystemStatuss;
 using System.ComponentModel.DataAnnotations;
 
 namespace GarageManagementAPI.Shared.DataTransferObjects.User
@@ -13,12 +14,16 @@ namespace GarageManagementAPI.Shared.DataTransferObjects.User
 
         public string? Email { get; set; }
 
+        public bool? EmailConfirmed { get; set; }
+
         public string? PhoneNumber { get; set; }
+
+        public bool PhoneNumberConfirmed { get; set; }
 
         public string? Image { get; set; }
 
-        [EnumDataType(typeof(SystemStatus))]
-        public SystemStatus Status { get; set; }
+        [EnumDataType(typeof(UserStatus))]
+        public UserStatus Status { get; set; }
 
         [EnumDataType(typeof(SystemRole))]
         public SystemRole Role { get; set; }

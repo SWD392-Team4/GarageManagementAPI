@@ -12,7 +12,7 @@ namespace GarageManagementAPI.Repository.Configuration
 
             entity.ToTable("PackageImage");
 
-            entity.Property(e => e.Id).ValueGeneratedNever();
+            entity.Property(e => e.Id).ValueGeneratedOnAdd().HasDefaultValueSql("NEWID()");
             entity.Property(e => e.Link).HasMaxLength(255);
             entity.Property(e => e.Status).HasMaxLength(255);
 

@@ -11,6 +11,7 @@ namespace GarageManagementAPI.Service.Contracts
 
         public Task<Result<IEnumerable<ExpandoObject>>> GetUsersAsync(UserParameters userParameters, bool trackChanges, bool isEmployee, string? include = null);
 
+        public Task<Result> UpdateEmployeeAsync(Guid id, UserForUpdateEmployeeDto userForUpdateEmployeeDto, bool trackChanges, string? imgUrl = null);
 
     }
 }

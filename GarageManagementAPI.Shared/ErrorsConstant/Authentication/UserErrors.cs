@@ -20,6 +20,7 @@ namespace GarageManagementAPI.Shared.Constant.Authentication
 
         // Email Errors
         public const string EmailRequired = "The email address is required.";
+        public const string EmailAlreadyConfirmed = "This email is already confirmed.";
         public const string EmailInvalid = "The provided email address is invalid.";
 
         // Password Errors
@@ -106,6 +107,15 @@ namespace GarageManagementAPI.Shared.Constant.Authentication
             {
                 Code = nameof(ConfirmEmailRequired),
                 Description = ConfirmEmailRequired
+            };
+        }
+
+        public static ErrorsResult GetEmailAlreadyConfirmedError()
+        {
+            return new()
+            {
+                Code = nameof(EmailAlreadyConfirmed),
+                Description = EmailAlreadyConfirmed
             };
         }
 

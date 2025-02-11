@@ -18,7 +18,7 @@ namespace GarageManagementAPI.Repository.Configuration
 
             entity.HasIndex(e => e.ProductCategoryId, "product_productcategoryid_index");
 
-            entity.Property(e => e.Id).ValueGeneratedNever();
+            entity.Property(e => e.Id).ValueGeneratedOnAdd().HasDefaultValueSql("NEWID()");
             entity.Property(e => e.ProductBarcode).HasMaxLength(255);
             entity.Property(e => e.ProductDescription).HasColumnType("text");
             entity.Property(e => e.ProductName).HasMaxLength(255);

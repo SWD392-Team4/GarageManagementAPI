@@ -16,7 +16,7 @@ namespace GarageManagementAPI.Repository.Configuration
 
             entity.HasIndex(e => e.WorkplaceId, "employeeinfo_workplaceid_index");
 
-            entity.Property(e => e.Id).ValueGeneratedNever();
+            entity.Property(e => e.Id).ValueGeneratedOnAdd().HasDefaultValueSql("NEWID()");
             entity.Property(e => e.CitizenIdentification).HasMaxLength(255);
 
             entity.HasOne(d => d.User).WithOne(p => p.EmployeeInfo)

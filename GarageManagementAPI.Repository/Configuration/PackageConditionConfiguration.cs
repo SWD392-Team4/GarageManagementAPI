@@ -16,7 +16,7 @@ namespace GarageManagementAPI.Repository.Configuration
 
             entity.HasIndex(e => e.PackageId, "packagecondition_packageid_index");
 
-            entity.Property(e => e.Id).ValueGeneratedNever();
+            entity.Property(e => e.Id).ValueGeneratedOnAdd().HasDefaultValueSql("NEWID()");
             entity.Property(e => e.ConditionType).HasMaxLength(255);
 
             entity.HasOne(d => d.Package).WithMany(p => p.PackageConditions)

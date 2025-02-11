@@ -12,7 +12,7 @@ namespace GarageManagementAPI.Repository.Configuration
 
             entity.ToTable("ProductAtWarehouse");
 
-            entity.Property(e => e.Id).ValueGeneratedNever();
+            entity.Property(e => e.Id).ValueGeneratedOnAdd().HasDefaultValueSql("NEWID()");
             entity.Property(e => e.Status).HasMaxLength(255);
 
             entity.HasOne(d => d.GoodsReceivedDetail).WithOne(p => p.ProductAtWarehouse)

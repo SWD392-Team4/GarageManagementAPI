@@ -20,7 +20,7 @@ namespace GarageManagementAPI.Repository.Configuration
 
             entity.HasIndex(e => e.VehicleIdentificationNumber, "customercar_vehicleidentificationnumber_unique").IsUnique();
 
-            entity.Property(e => e.Id).ValueGeneratedNever();
+            entity.Property(e => e.Id).ValueGeneratedOnAdd().HasDefaultValueSql("NEWID()");
             entity.Property(e => e.Color).HasMaxLength(255);
             entity.Property(e => e.EngineNumber).HasMaxLength(255);
             entity.Property(e => e.FuelType).HasMaxLength(255);

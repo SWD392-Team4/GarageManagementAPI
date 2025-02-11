@@ -1,4 +1,5 @@
 ﻿using GarageManagementAPI.Shared.ErrorModel;
+using Microsoft.AspNetCore.Http;
 
 namespace GarageManagementAPI.Shared.Constant.Request
 {
@@ -13,6 +14,10 @@ namespace GarageManagementAPI.Shared.Constant.Request
         public const string TooManyRequestsWithRetryAfter = "You have exceeded the request limit. Please wait {0} second(s) before retrying.";
         public const string InvalidToken = "The request is invalid due to a malformed or incorrect token. Please check and try again.";
         public const string AccessTokenExpired = "Lifetime validation failed. The token is expired.";
+        public const string FileNotFound = "No file uploaded.";
+        public const string FileTooLarge = "File size exceeds the maximum limit.";
+        public const string FileExtensionInvalid = "Invalid file extension.";
+        public const string FileTypeInvalid = "Invalid file type.";
         #endregion
 
         #region Static Methods
@@ -57,6 +62,42 @@ namespace GarageManagementAPI.Shared.Constant.Request
                 Code = nameof(InvalidToken),
                 Description = InvalidToken
             };
+
+        public static ErrorsResult GetFileNotFoundErrors()
+        {
+            return new ErrorsResult
+            {
+                Code = nameof(FileNotFound),
+                Description = FileNotFound
+            };
+        }
+
+        public static ErrorsResult GetFileTooLargeErrors()
+        {
+            return new ErrorsResult
+            {
+                Code = nameof(FileTooLarge),
+                Description = FileTooLarge
+            };
+        }
+
+        public static ErrorsResult GetFileExtensionInvalidErrors()
+        {
+            return new ErrorsResult
+            {
+                Code = nameof(FileExtensionInvalid),
+                Description = FileExtensionInvalid
+            };
+        }
+
+        public static ErrorsResult GetFileTypeInvalidErrors()
+        {
+            return new ErrorsResult
+            {
+                Code = nameof(FileTypeInvalid),
+                Description = FileTypeInvalid
+            };
+        }
         #endregion
     }
 }

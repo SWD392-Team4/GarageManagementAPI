@@ -18,7 +18,7 @@ namespace GarageManagementAPI.Repository.Configuration
 
             entity.HasIndex(e => e.EmployeeId, "employeeschedule_employeeid_index");
 
-            entity.Property(e => e.Id).ValueGeneratedNever();
+            entity.Property(e => e.Id).ValueGeneratedOnAdd().HasDefaultValueSql("NEWID()");
             entity.Property(e => e.Status).HasMaxLength(255);
 
             entity.HasOne(d => d.AppointmentDetail).WithMany(p => p.EmployeeSchedules)

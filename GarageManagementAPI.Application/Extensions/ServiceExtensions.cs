@@ -227,6 +227,9 @@ namespace GarageManagementAPI.Application.Extensions
         public static void AddMailConfiguration(this IServiceCollection services, IConfiguration configuration) =>
             services.Configure<MailConfiguration>(configuration.GetSection("MailSettings"));
 
+        public static void AddCloudinaryConfiguration(this IServiceCollection services, IConfiguration configuration) =>
+            services.Configure<CloudinaryConfigurations>(configuration.GetSection("CloudinarySettings"));
+
         public static void ConfigureSwagger(this IServiceCollection services)
         {
             services.AddSwaggerGen(s =>

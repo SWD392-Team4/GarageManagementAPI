@@ -29,13 +29,13 @@ namespace GarageManagementAPI.Entities.Models
 
         public DateTimeOffset UpdatedAt { get; set; }
 
-        public virtual Appointment Appointment { get; set; } = null!;
+        public virtual Appointment? Appointment { get; set; }
 
         public virtual User? Customer { get; set; }
 
-        public virtual User Employee { get; set; } = null!;
+        public virtual User? Employee { get; set; }
 
-        public virtual Workplace Garage { get; set; } = null!;
+        public virtual Workplace? Garage { get; set; }
 
         public virtual ICollection<InvoicePackageDetail> InvoicePackageDetails { get; set; } = new List<InvoicePackageDetail>();
 

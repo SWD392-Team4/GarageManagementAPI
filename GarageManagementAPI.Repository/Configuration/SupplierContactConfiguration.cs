@@ -14,7 +14,7 @@ namespace GarageManagementAPI.Repository.Configuration
 
             entity.HasIndex(e => e.SupplierId, "suppliercontact_supplierid_index");
 
-            entity.Property(e => e.Id).ValueGeneratedNever();
+            entity.Property(e => e.Id).ValueGeneratedOnAdd().HasDefaultValueSql("NEWID()");
             entity.Property(e => e.ContactEmail).HasMaxLength(255);
             entity.Property(e => e.ContactPersonName).HasMaxLength(255);
             entity.Property(e => e.ContactPhoneNumber).HasMaxLength(255);

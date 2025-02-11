@@ -1,8 +1,11 @@
 ﻿
 using GarageManagementAPI.Service.Contracts;
+using GarageManagementAPI.Shared.DataTransferObjects.User;
 using GarageManagementAPI.Shared.Enums;
+using GarageManagementAPI.Shared.Extension;
 using GarageManagementAPI.Shared.RequestFeatures;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 
@@ -50,6 +53,30 @@ namespace GarageManagementAPI.Presentation.Controllers
 
             return userResult.Map(
                 onSuccess: Ok,
+                onFailure: ProcessError
+                );
+        }
+
+        [HttpPut("{userId:guid}")]
+        [Authorize(Roles = $"{nameof(SystemRole.Administrator)}")]
+        public async Task<IActionResult> UpdateEmployeeInfo(Guid userId, [FromForm] IFormFile? file, [FromForm] UserForUpdateEmployeeDto userForUpdateEmployeeDto)
+        {
+            string? urlLink = null;
+            if (file != null)
+            {
+                var uploadFileResult = await _service.MediaService.UploadImageAsync(file);
+
+                if (!uploadFileResult.IsSuccess)
+                    return ProcessError(uploadFileResult);
+
+                urlLink = uploadFileResult.GetValue<string>();
+            }
+
+
+            var updateResult = await _service.UserService.UpdateEmployeeAsync(userId, userForUpdateEmployeeDto, true, urlLink);
+
+            return updateResult.Map(
+                onSuccess: _ => NoContent(),
                 onFailure: ProcessError
                 );
         }

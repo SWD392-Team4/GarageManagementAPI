@@ -12,7 +12,7 @@ namespace GarageManagementAPI.Repository.Configuration
 
             entity.ToTable("Invoice");
 
-            entity.Property(e => e.Id).ValueGeneratedNever();
+            entity.Property(e => e.Id).ValueGeneratedOnAdd().HasDefaultValueSql("NEWID()");
             entity.Property(e => e.CustomerEmail).HasMaxLength(255);
             entity.Property(e => e.CustomerName).HasMaxLength(255);
             entity.Property(e => e.CustomerPhoneNumber).HasMaxLength(255);

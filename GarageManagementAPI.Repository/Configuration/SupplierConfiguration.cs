@@ -16,7 +16,7 @@ namespace GarageManagementAPI.Repository.Configuration
 
             entity.HasIndex(e => e.Name, "supplier_name_unique").IsUnique();
 
-            entity.Property(e => e.Id).ValueGeneratedNever();
+            entity.Property(e => e.Id).ValueGeneratedOnAdd().HasDefaultValueSql("NEWID()");
             entity.Property(e => e.Address).HasMaxLength(50);
             entity.Property(e => e.District).HasMaxLength(50);
             entity.Property(e => e.Name).HasMaxLength(255);

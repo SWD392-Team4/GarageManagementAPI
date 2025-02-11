@@ -9,6 +9,7 @@ namespace GarageManagementAPI.Application.MappingProfile
         public EmployeeInfoMappingProfile()
         {
             CreateMap<UserForRegistrationEmployeeDto, EmployeeInfo>();
+            CreateMap<UserForUpdateEmployeeDto, EmployeeInfo>();
         }
     }
 }

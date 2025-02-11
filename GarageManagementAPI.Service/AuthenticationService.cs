@@ -8,6 +8,7 @@ using GarageManagementAPI.Service.Utilities;
 using GarageManagementAPI.Shared.Constant.Authentication;
 using GarageManagementAPI.Shared.DataTransferObjects.User;
 using GarageManagementAPI.Shared.Enums;
+using GarageManagementAPI.Shared.Enums.SystemStatuss;
 using GarageManagementAPI.Shared.ErrorsConstant.Workplace;
 using GarageManagementAPI.Shared.Extension;
 using GarageManagementAPI.Shared.ResultModel;
@@ -237,7 +238,7 @@ namespace GarageManagementAPI.Service
                 return check;
 
             _user = _mapper.Map<User>(userForRegistrationDto);
-            _user.Status = SystemStatus.Active;
+            _user.Status = UserStatus.Active;
             _user.CreatedAt = DateTimeOffset.UtcNow.SEAsiaStandardTime();
             _user.UpdatedAt = DateTimeOffset.UtcNow.SEAsiaStandardTime();
 
@@ -393,6 +394,9 @@ namespace GarageManagementAPI.Service
             _user = await _userManager.FindByEmailAsync(email);
             if (_user == null)
                 return Result<string>.NotFound([UserErrors.GetUserNotFoundWithEmailError(email)]);
+
+            if (_user.EmailConfirmed)
+                return Result<string>.BadRequest([UserErrors.GetEmailAlreadyConfirmedError()]);
 
             var token = await _userManager.GenerateEmailConfirmationTokenAsync(_user);
 

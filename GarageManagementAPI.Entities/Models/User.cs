@@ -1,4 +1,5 @@
 ﻿using GarageManagementAPI.Shared.Enums;
+using GarageManagementAPI.Shared.Enums.SystemStatuss;
 using Microsoft.AspNetCore.Identity;
 using System.ComponentModel.DataAnnotations;
 using System.Reflection;
@@ -18,8 +19,8 @@ namespace GarageManagementAPI.Entities.Models
 
         public string? Image { get; set; } = "N/A";
 
-        [EnumDataType(typeof(SystemStatus))]
-        public SystemStatus Status { get; set; }
+        [EnumDataType(typeof(UserStatus))]
+        public UserStatus Status { get; set; }
 
         public DateTimeOffset CreatedAt { get; set; }
 

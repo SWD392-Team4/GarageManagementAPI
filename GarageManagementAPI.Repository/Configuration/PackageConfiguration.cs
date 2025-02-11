@@ -14,7 +14,7 @@ namespace GarageManagementAPI.Repository.Configuration
 
             entity.HasIndex(e => e.CarCategoryId, "package_carcategoryid_index");
 
-            entity.Property(e => e.Id).ValueGeneratedNever();
+            entity.Property(e => e.Id).ValueGeneratedOnAdd().HasDefaultValueSql("NEWID()");
             entity.Property(e => e.Description).HasColumnType("text");
             entity.Property(e => e.PackageName).HasMaxLength(255);
             entity.Property(e => e.ServiceCategory).HasMaxLength(255);

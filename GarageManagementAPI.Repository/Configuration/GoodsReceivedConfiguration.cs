@@ -16,7 +16,7 @@ namespace GarageManagementAPI.Repository.Configuration
 
             entity.HasIndex(e => e.WarehouseId, "goodsreceived_warehouseid_index");
 
-            entity.Property(e => e.Id).ValueGeneratedNever();
+            entity.Property(e => e.Id).ValueGeneratedOnAdd().HasDefaultValueSql("NEWID()");
             entity.Property(e => e.InvoiceCode).HasMaxLength(255);
             entity.Property(e => e.RefereneceNumber).HasMaxLength(255);
             entity.Property(e => e.SourceAddress).HasMaxLength(255);

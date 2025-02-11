@@ -16,7 +16,7 @@ namespace GarageManagementAPI.Repository.Configuration
 
             entity.HasIndex(e => e.ServiceId, "servicefeedback_serviceid_index");
 
-            entity.Property(e => e.Id).ValueGeneratedNever();
+            entity.Property(e => e.Id).ValueGeneratedOnAdd().HasDefaultValueSql("NEWID()");
             entity.Property(e => e.Emoji).HasMaxLength(255);
             entity.Property(e => e.FeedBack).HasColumnType("text");
             entity.Property(e => e.Status).HasMaxLength(255);

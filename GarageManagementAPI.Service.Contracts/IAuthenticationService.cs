@@ -1,7 +1,6 @@
 ﻿using GarageManagementAPI.Shared.DataTransferObjects.User;
 using GarageManagementAPI.Shared.Enums;
 using GarageManagementAPI.Shared.ResultModel;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore.Storage;
 
 namespace GarageManagementAPI.Service.Contracts

@@ -7,6 +7,6 @@ namespace GarageManagementAPI.Shared.DataTransferObjects.Brand
     public record BrandDtoForUpdate : BrandDtoForManipulation
     {
         [EnumDataType(typeof(SystemStatus))]
-        public SystemStatus Status { get; set; }
+        public new SystemStatus Status { get; set; }
     }
 }

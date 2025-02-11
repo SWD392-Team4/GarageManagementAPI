@@ -2,8 +2,10 @@
 using GarageManagementAPI.Entities.Models;
 using GarageManagementAPI.Repository.Contracts;
 using GarageManagementAPI.Service.Contracts;
+using GarageManagementAPI.Service.Extension;
 using GarageManagementAPI.Shared.Constant.Authentication;
 using GarageManagementAPI.Shared.DataTransferObjects.User;
+using GarageManagementAPI.Shared.DataTransferObjects.Workplace;
 using GarageManagementAPI.Shared.Extension;
 using GarageManagementAPI.Shared.RequestFeatures;
 using GarageManagementAPI.Shared.ResultModel;
@@ -62,6 +64,24 @@ namespace GarageManagementAPI.Service
             var usersShaped = _dataShaper.User.ShapeData(usersDto, userParameters.Fields);
 
             return Result<IEnumerable<ExpandoObject>>.Ok(usersShaped, usersWithMetadata.MetaData);
+        }
+
+        public async Task<Result> UpdateEmployeeAsync(Guid id, UserForUpdateEmployeeDto userForUpdateEmployeeDto, bool trackChanges, string? imgUrl = null)
+        {
+            var resultCheck = await GetAndCheckIfUserExist(id, trackChanges, "EmployeeInfo");
+
+            if (!resultCheck.IsSuccess) return Result.BadRequest(resultCheck.Errors!);
+            var userEntity = resultCheck.GetValue<User>();
+
+            _mapper.Map(userForUpdateEmployeeDto, userEntity);
+            _mapper.Map(userForUpdateEmployeeDto, userEntity.EmployeeInfo);
+
+            userEntity.UpdatedAt = DateTimeOffset.UtcNow.SEAsiaStandardTime();
+            userEntity.EmployeeInfo!.UpdatedAt = DateTimeOffset.UtcNow.SEAsiaStandardTime();
+            await _repoManager.SaveAsync();
+
+            return Result.NoContent();
+
         }
     }
 }

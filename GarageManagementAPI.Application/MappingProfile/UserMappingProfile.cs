@@ -43,6 +43,11 @@ namespace GarageManagementAPI.Application.MappingProfile
                             : src.UpdatedAt);
 
                 });
+
+            CreateMap<UserForUpdateDto, User>();
+
+            CreateMap<UserForUpdateEmployeeDto, User>()
+                .IncludeBase<UserForUpdateDto, User>();
         }
     }
 }
