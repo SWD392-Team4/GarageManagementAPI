@@ -3,12 +3,11 @@ using GarageManagementAPI.Repository.Extensions.Utility;
 using GarageManagementAPI.Shared.Enums.SystemStatuss;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Dynamic.Core;
-using System.Reflection;
 
 
 namespace GarageManagementAPI.Repository.Extensions
 {
-    public static class ProductHistoryExtensions
+    public static class ProductHistoryRepositoryExtensions
     {
         public static IQueryable<ProductHistory> SearchByPrice(this IQueryable<ProductHistory> product, decimal? price)
         {
@@ -38,20 +37,22 @@ namespace GarageManagementAPI.Repository.Extensions
 
             var fields = fieldsString.Split(',', StringSplitOptions.RemoveEmptyEntries);
 
-
             foreach (var field in fields)
             {
+                // Tìm thuộc tính trong PropertyInfos của lớp ProductHistory
                 var property = ProductHistory.PropertyInfos
                     .FirstOrDefault(pi => pi.Name.Equals(field.Trim(), StringComparison.InvariantCultureIgnoreCase));
 
+                // Nếu thuộc tính hợp lệ, thực hiện Include
                 if (property != null)
                 {
-                    product = product.Include(field.Trim());
+                        // Bao gồm các tất cả thuộc tính 
+                        product = product.Include(field.Trim());
                 }
             }
-
             return product;
         }
+
 
         public static IQueryable<ProductHistory> Sort(this IQueryable<ProductHistory> products, string? orderByQueryString)
         {

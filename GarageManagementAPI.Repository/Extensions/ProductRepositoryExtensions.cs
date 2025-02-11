@@ -3,8 +3,6 @@ using GarageManagementAPI.Repository.Extensions.Utility;
 using GarageManagementAPI.Shared.Enums.SystemStatuss;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Dynamic.Core;
-using System.Reflection;
-
 
 namespace GarageManagementAPI.Repository.Extensions
 {
@@ -38,18 +36,19 @@ namespace GarageManagementAPI.Repository.Extensions
 
             var fields = fieldsString.Split(',', StringSplitOptions.RemoveEmptyEntries);
 
-
             foreach (var field in fields)
             {
+                // Tìm thuộc tính trong PropertyInfos của lớp Product
                 var property = Product.PropertyInfos
                     .FirstOrDefault(pi => pi.Name.Equals(field.Trim(), StringComparison.InvariantCultureIgnoreCase));
 
+                // Nếu thuộc tính hợp lệ, thực hiện Include
                 if (property != null)
                 {
+                    // Bao gồm các tất cả thuộc tính 
                     product = product.Include(field.Trim());
                 }
             }
-
             return product;
         }
 
