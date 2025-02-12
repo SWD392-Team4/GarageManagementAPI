@@ -9,7 +9,7 @@ namespace GarageManagementAPI.Service.Contracts
     public interface IProductHistoryService
     {
         public Task<Result<IEnumerable<ExpandoObject>>> GetHistoryProductByIdProductAsync(Guid productHistoryId, ProductHistoryParameters productHistoryParameters, bool trackChanges, string? include = null);
-        public Task<Result<IEnumerable<ExpandoObject>>> GetProductHistorysAsync(ProductHistoryParameters productHistoryParameters, bool trackChanges, string? include = null);
+        public Task<Result<IEnumerable<ExpandoObject>>> GetProductHistoriesAsync(ProductHistoryParameters productHistoryParameters, bool trackChanges, string? include = null);
         public Task<Result<ProductHistoryDto>> CreateProductHistoryAsync(ProductHistoryDtoForCreation ProductHistoryDtoForCreation);
     }
 }

@@ -3,6 +3,8 @@ using GarageManagementAPI.Repository.Contracts;
 using GarageManagementAPI.Shared.RequestFeatures;
 using Microsoft.EntityFrameworkCore;
 using GarageManagementAPI.Repository.Extensions;
+using GarageManagementAPI.Shared.Enums.SystemStatuss;
+using GarageManagementAPI.Shared.DataTransferObjects.Product;
 
 namespace GarageManagementAPI.Repository
 {
@@ -26,44 +28,76 @@ namespace GarageManagementAPI.Repository
             return product;
         }
 
-        public async Task<Product?> GetProductByIdAsync(Guid productId, bool trackChanges, string? include = null)
+        public async Task<ProductDtoWithPrice> GetProductByIdAsync(Guid productId, bool trackChanges, string? include = null)
         {
             var product = include is null ?
            await FindByCondition(p => p.Id.Equals(productId), trackChanges).SingleOrDefaultAsync() :
-           await FindByCondition(p => p.Id.Equals(productId), trackChanges).Include(include).SingleOrDefaultAsync();
+           await FindByCondition(p => p.Id.Equals(productId), trackChanges).IsInclude(include).SingleOrDefaultAsync();
+            var activeHistory = product?.ProductHistories
+                 .Where(ph => ph.Status == ProductHistoryStatus.Active && ph.ProductId ==productId) // Lọc ProductHistories với trạng thái Active
+                 .OrderByDescending(ph => ph.CreatedAt) // Sắp xếp theo CreatedAt giảm dần (lấy bản ghi mới nhất)
+                 .FirstOrDefault();
 
-            return product;
+            // Tạo và trả về DTO với thông tin về sản phẩm và giá
+            var productDtoWithPrice = new ProductDtoWithPrice
+            {
+                Id = product.Id,
+                ProductName = product.ProductName,
+                ProductPrice = activeHistory == null ? 0 : activeHistory.ProductPrice,
+                Status = product.Status,
+                CreatedAt = product.CreatedAt,
+                UpdatedAt = product.UpdatedAt
+            };
+            return productDtoWithPrice;
         }
 
-        public async Task<PagedList<Product>> GetProductsAsync(ProductParameters productParameters, bool trackChanges, string? include = null)
+        public async Task<PagedList<ProductDtoWithPrice>> GetProductsAsync(ProductParameters productParameters, bool trackChanges, string? include = null)
         {
-            // Lọc và sắp xếp danh sách products theo các điều kiện
-            var productsQuery = FindByCondition(b =>
-                    (string.IsNullOrEmpty(productParameters.ProductName) || b.ProductName.Contains(productParameters.ProductName)),
+            // Lọc và sắp xếp danh sách sản phẩm theo các điều kiện từ productParameters
+            var productsQuery = FindByCondition(p =>
+                    (string.IsNullOrEmpty(productParameters.ProductName) || p.ProductName.Contains(productParameters.ProductName)),
                     trackChanges)
                 .SearchByName(productParameters.ProductName) // Tìm kiếm theo tên sản phẩm
-                .SearchByStatus(productParameters.Status)
                 .Sort(productParameters.OrderBy)
                 .IsInclude(include)
                 .AsQueryable();
 
-            // Lấy danh sách sản phẩm sau khi phân trang
+            // Phân trang dữ liệu sản phẩm
             var products = await productsQuery
                 .Skip((productParameters.PageNumber - 1) * productParameters.PageSize)
                 .Take(productParameters.PageSize)
                 .ToListAsync();
 
+            // Lọc ra ProductHistories có trạng thái Active và lấy giá ProductPrice mới nhất cho mỗi sản phẩm
+            var productsWithPrice = products
+                .Select(p => new ProductDtoWithPrice
+                {
+                    Id= p.Id,
+                    ProductName = p.ProductName,
+                    ProductBarcode = p.ProductBarcode,
+                    Status = p.Status,
+                    CreatedAt= p.CreatedAt,
+                    UpdatedAt= p.UpdatedAt,
+                    ProductPrice = p.ProductHistories
+                        .Where(ph => ph.Status == ProductHistoryStatus.Active && p.Id == ph.ProductId)
+                        .OrderByDescending(ph => ph.CreatedAt)
+                        .Select(ph => ph.ProductPrice)
+                        .FirstOrDefault()
+                })
+                .ToList();
+
             // Lấy tổng số bản ghi để tính toán tổng số trang
             var count = await productsQuery.CountAsync();
 
             // Trả về kết quả dưới dạng PagedList
-            return new PagedList<Product>(
-                products,
+            return new PagedList<ProductDtoWithPrice>(
+                productsWithPrice,
                 count,
                 productParameters.PageNumber,
                 productParameters.PageSize
             );
         }
+
 
         public void UpdateProductAsync(Product product)
         {

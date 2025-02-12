@@ -46,7 +46,7 @@ namespace GarageManagementAPI.Presentation.Controllers
         //[Authorize(Roles = $"{nameof(SystemRole.Administrator)},{nameof(SystemRole.Cashier)}")]
         public async Task<IActionResult> GetProductHistories([FromQuery] ProductHistoryParameters productParameters)
         {
-            var productResult = await _service.ProductHistoryService.GetProductHistorysAsync(productParameters, trackChanges: false);
+            var productResult = await _service.ProductHistoryService.GetProductHistoriesAsync(productParameters, trackChanges: false);
 
             return productResult.Map(
                 onSuccess: Ok,

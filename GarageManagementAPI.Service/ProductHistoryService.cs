@@ -9,10 +9,10 @@ using GarageManagementAPI.Shared.ErrorsConstant.Product;
 using GarageManagementAPI.Shared.RequestFeatures;
 using GarageManagementAPI.Shared.ResultModel;
 using Microsoft.EntityFrameworkCore;
-using GarageManagementAPI.Shared.Extension;
 using System.Dynamic;
 using GarageManagementAPI.Shared.ErrorsConstant.ProductHistory;
-using GarageManagementAPI.Shared.DataTransferObjects.Product;
+using GarageManagementAPI.Shared.ErrorModel;
+using System.Collections.Generic;
 
 namespace GarageManagementAPI.Service
 {
@@ -37,7 +37,10 @@ namespace GarageManagementAPI.Service
             if (checkPrice)
                 return Result<ProductHistoryDto>.BadRequest([ProductHistoryErrors.GetProductHistoryPriceAlreadyExistError(productHistoryDtoForCreation)]);
 
-            await UpdateStatusProductHistory(productHistoryDtoForCreation.ProductId);
+            // Gọi UpdateStatusProductHistory và kiểm tra kết quả
+            var updateStatusResult = await UpdateStatusProductHistory(productHistoryDtoForCreation.ProductId);
+            if (!updateStatusResult.IsSuccess) 
+                return updateStatusResult;
 
             var productEntity = _mapper.Map<ProductHistory>(productHistoryDtoForCreation);
 
@@ -65,7 +68,7 @@ namespace GarageManagementAPI.Service
             return Result<IEnumerable<ExpandoObject>>.Ok(productsShaped, productsWithMetadata.MetaData);
         }
 
-        public async Task<Result<IEnumerable<ExpandoObject>>> GetProductHistorysAsync(ProductHistoryParameters productHistoryParameters, bool trackChanges, string? include = null)
+        public async Task<Result<IEnumerable<ExpandoObject>>> GetProductHistoriesAsync(ProductHistoryParameters productHistoryParameters, bool trackChanges, string? include = null)
         {
             var productsWithMetadata = await _repoManager.ProductHistory.GetProductsAsync(productHistoryParameters, trackChanges, include);
 
@@ -81,11 +84,13 @@ namespace GarageManagementAPI.Service
             var productResult = await GetHistoriesIsActiveAsync(productId);
             if (productResult == null)
             {
-                return Result.NoContent();
+                return Result<ProductHistoryDto>.NoContent();
             }
             productResult.Status = ProductHistoryStatus.Inactive;
             productResult.UpdatedAt = DateTimeOffset.UtcNow;
-            return Result.NoContent();
+            await _repoManager.SaveAsync();
+            var productsDto = _mapper.Map<IEnumerable<ProductHistoryDto>>(productResult);
+            return Result<ProductHistoryDto>.Ok(productsDto);
         }
 
         private async Task<bool> CheckIfProductHistoryByIdAndPrice(ProductHistoryDtoForCreation productHistoryDtoForCreation)
@@ -117,7 +122,7 @@ namespace GarageManagementAPI.Service
             return product;
         }
 
-        private async Task<ProductHistory> GetHistoriesIsActiveAsync(Guid productId)
+        private async Task<ProductHistory?> GetHistoriesIsActiveAsync(Guid productId)
         {
 
             var productHistories = await _repoManager.ProductHistory

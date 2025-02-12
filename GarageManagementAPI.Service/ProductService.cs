@@ -56,7 +56,7 @@ namespace GarageManagementAPI.Service
 
             var productEntity = productResult.GetValue<Product>();
 
-            var productsDto = _mapper.Map<ProductDto>(productEntity);
+            var productsDto = _mapper.Map<ProductDtoWithPrice>(productEntity);
 
             var userShaped = _dataShaper.Product.ShapeData(productsDto, productParameters.Fields);
 
@@ -72,7 +72,7 @@ namespace GarageManagementAPI.Service
 
             var productEntity = productResult.GetValue<Product>();
 
-            var productsDto = _mapper.Map<ProductDto>(productEntity);
+            var productsDto = _mapper.Map<ProductDtoWithPrice>(productEntity);
 
             var productShaped = _dataShaper.Product.ShapeData(productsDto, productParameters.Fields);
 
@@ -96,7 +96,7 @@ namespace GarageManagementAPI.Service
         {
             var productsWithMetadata = await _repoManager.Product.GetProductsAsync(productParameters, trackChanges, include);
 
-            var productsDto = _mapper.Map<IEnumerable<ProductDto>>(productsWithMetadata);
+            var productsDto = _mapper.Map<IEnumerable<ProductDtoWithPrice>>(productsWithMetadata);
 
             var productsShaped = _dataShaper.Product.ShapeData(productsDto, productParameters.Fields);
 
@@ -152,13 +152,13 @@ namespace GarageManagementAPI.Service
             return exists;
         }
 
-        private async Task<Result<Product>> GetAndCheckIfProductExist(Guid productId, bool trackChanges)
+        private async Task<Result<ProductDtoWithPrice>> GetAndCheckIfProductExist(Guid productId, bool trackChanges)
         {
             var product = await _repoManager.Product.GetProductByIdAsync(productId, trackChanges);
             if (product == null)
-                return product.NotFoundId(productId);
+                return product.NotFoundWithPriceId(productId);
 
-            return product.OkResult();
+            return product.OkResultWithPrice();
         }
 
         private async Task<Result<Product>> GetAndCheckIfProductByBarCodeExist(string barcode, bool trackChanges)

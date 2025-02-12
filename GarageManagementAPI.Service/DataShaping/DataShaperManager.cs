@@ -11,7 +11,7 @@ namespace GarageManagementAPI.Service.DataShaping
         private readonly Lazy<IDataShaper<WorkplaceDto>> _workplaceShaper;
         private readonly Lazy<IDataShaper<UserDto>> _userShaper;
         private readonly Lazy<IDataShaper<Shared.DataTransferObjects.Brand.BrandDto>> _brandShaper;
-        private readonly Lazy<IDataShaper<Shared.DataTransferObjects.Product.ProductDto>> _productShaper;
+        private readonly Lazy<IDataShaper<Shared.DataTransferObjects.Product.ProductDtoWithPrice>> _productShaper;
         private readonly Lazy<IDataShaper<Shared.DataTransferObjects.ProductHistory.ProductHistoryDto>> _productHistoryShaper;
 
         public DataShaperManager()
@@ -25,8 +25,8 @@ namespace GarageManagementAPI.Service.DataShaping
             _brandShaper = new Lazy<IDataShaper<Shared.DataTransferObjects.Brand.BrandDto>>(
                () => new DataShaper<Shared.DataTransferObjects.Brand.BrandDto>(Shared.DataTransferObjects.Brand.BrandDto.PropertyInfos));
 
-            _productShaper = new Lazy<IDataShaper<Shared.DataTransferObjects.Product.ProductDto>>(
-              () => new DataShaper<Shared.DataTransferObjects.Product.ProductDto>(Shared.DataTransferObjects.Product.ProductDto.PropertyInfos));
+            _productShaper = new Lazy<IDataShaper<Shared.DataTransferObjects.Product.ProductDtoWithPrice>>(
+              () => new DataShaper<Shared.DataTransferObjects.Product.ProductDtoWithPrice>(Shared.DataTransferObjects.Product.ProductDtoWithPrice.PropertyInfos));
 
             _productHistoryShaper = new Lazy<IDataShaper<Shared.DataTransferObjects.ProductHistory.ProductHistoryDto>>(
               () => new DataShaper<Shared.DataTransferObjects.ProductHistory.ProductHistoryDto>(Shared.DataTransferObjects.ProductHistory.ProductHistoryDto.PropertyInfos));
@@ -37,7 +37,7 @@ namespace GarageManagementAPI.Service.DataShaping
         public IDataShaper<UserDto> User => _userShaper.Value;
 
         public IDataShaper<Shared.DataTransferObjects.Brand.BrandDto> Brand => _brandShaper.Value;
-        public IDataShaper<Shared.DataTransferObjects.Product.ProductDto> Product => _productShaper.Value;
+        public IDataShaper<Shared.DataTransferObjects.Product.ProductDtoWithPrice> Product => _productShaper.Value;
         public IDataShaper<Shared.DataTransferObjects.ProductHistory.ProductHistoryDto> ProductHistory => _productHistoryShaper.Value;
     }
 }

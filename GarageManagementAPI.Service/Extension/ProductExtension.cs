@@ -10,6 +10,9 @@ namespace GarageManagementAPI.Service.Extension
         public static Result<Product> OkResult(this Product product)
           => Result<Product>.Ok(product);
 
+        public static Result<ProductDtoWithPrice> OkResultWithPrice(this ProductDtoWithPrice product)
+  => Result<ProductDtoWithPrice>.Ok(product);
+
         public static Result<ProductDto> OkResult(this ProductDto productDto)
             => Result<ProductDto>.Ok(productDto);
 
@@ -18,6 +21,9 @@ namespace GarageManagementAPI.Service.Extension
 
         public static Result<Product> NotFoundId(this Product? product, Guid productId)
             => Result<Product>.NotFound([ProductErrors.GetProductNotFoundIdError(productId)]);
+
+        public static Result<ProductDtoWithPrice> NotFoundWithPriceId(this ProductDtoWithPrice? product, Guid productId)
+    => Result<ProductDtoWithPrice>.NotFound([ProductErrors.GetProductNotFoundIdError(productId)]);
 
         public static Result<Product> NotFoundBarCode(this Product? product, string barcode)
        => Result<Product>.NotFound([ProductErrors.GetProductByBarcodeNotFoundError(barcode)]);
