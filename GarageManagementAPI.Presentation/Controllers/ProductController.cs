@@ -3,8 +3,6 @@ using GarageManagementAPI.Shared.Extension;
 using GarageManagementAPI.Shared.DataTransferObjects.Product;
 using Microsoft.AspNetCore.Mvc;
 using GarageManagementAPI.Shared.RequestFeatures;
-using GarageManagementAPI.Shared.Enums;
-using Microsoft.AspNetCore.Authorization;
 using FluentValidation;
 using Microsoft.AspNetCore.JsonPatch;
 using GarageManagementAPI.Presentation.Extensions;
@@ -24,7 +22,8 @@ namespace GarageManagementAPI.Presentation.Controllers
         //[Authorize(Roles = $"{nameof(SystemRole.Administrator)},{nameof(SystemRole.Cashier)}")]
         public async Task<IActionResult> GetProductById(Guid productId, [FromQuery] ProductParameters productParameters)
         {
-            var productResult = await _service.ProductService.GetProductAsync(productId, productParameters, trackChanges: false);
+            var isInclude = "ProductHistories";
+            var productResult = await _service.ProductService.GetProductByIdAsync(productId, productParameters, trackChanges: false, isInclude);
 
             return productResult.Map(
                 onSuccess: Ok,
@@ -33,10 +32,11 @@ namespace GarageManagementAPI.Presentation.Controllers
         }
 
         [HttpGet("barcode/{barcode}", Name = "GetProductBarcode")]
-        [Authorize(Roles = $"{nameof(SystemRole.Administrator)},{nameof(SystemRole.Cashier)}")]
+        //[Authorize(Roles = $"{nameof(SystemRole.Administrator)},{nameof(SystemRole.Cashier)}")]
         public async Task<IActionResult> GetProductByBarcode(string barcode, [FromQuery] ProductParameters productParameters)
         {
-            var productResult = await _service.ProductService.GetProductByBarcode1Async(barcode, productParameters, trackChanges: false);
+            var isInclude = "ProductHistories";
+            var productResult = await _service.ProductService.GetProductByBarcodeAsync(barcode, productParameters, trackChanges: false, isInclude);
 
             return productResult.Map(
                 onSuccess: Ok,

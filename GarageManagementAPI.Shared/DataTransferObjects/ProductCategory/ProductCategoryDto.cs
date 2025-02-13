@@ -1,11 +1,12 @@
-﻿using GarageManagementAPI.Shared.Enums;
-using GarageManagementAPI.Shared.Enums.SystemStatuss;
+﻿using GarageManagementAPI.Shared.Enums.SystemStatuss;
 using System.ComponentModel.DataAnnotations;
 
-namespace GarageManagementAPI.Entities.Models
+namespace GarageManagementAPI.Shared.DataTransferObjects.ProductCategory
 {
-    public partial class ProductCategory : BaseEntity<ProductCategory>
+    // thay đổi giá trị của một đối tượng record by 'with'
+    public record ProductCategoryDto : BaseDto<ProductCategoryDto>
     {
+        public Guid Id { get; set; }
         public string Category { get; set; } = null!;
 
         [EnumDataType(typeof(ProductCategoryStatus))]
@@ -14,9 +15,5 @@ namespace GarageManagementAPI.Entities.Models
         public DateTimeOffset CreatedAt { get; set; }
 
         public DateTimeOffset UpdatedAt { get; set; }
-
-        public virtual ICollection<Product> Products { get; set; } = new List<Product>();
     }
-
 }
-

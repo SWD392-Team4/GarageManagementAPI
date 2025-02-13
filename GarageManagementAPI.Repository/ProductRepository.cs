@@ -19,23 +19,42 @@ namespace GarageManagementAPI.Repository
             await base.CreateAsync(product);
         }
 
-        public async Task<Product?> GetProductByBarCodeAsync(string barcode, bool trackChanges, string? include = null)
+        public async Task<ProductDtoWithPrice?> GetProductByBarCodeAsync(string barcode, bool trackChanges, string? include = null)
         {
             var product = include is null ?
            await FindByCondition(p => p.ProductBarcode.Equals(barcode), trackChanges).SingleOrDefaultAsync() :
            await FindByCondition(p => p.ProductBarcode.Equals(barcode), trackChanges).Include(include).SingleOrDefaultAsync();
+            Console.WriteLine(include);
+            Console.WriteLine(product);
+            var price = product?.ProductHistories
+                .Where(ph => ph.Status == ProductHistoryStatus.Active)
+                .OrderByDescending(ph => ph.CreatedAt)
+                .Select(ph => ph.ProductPrice)
+                .FirstOrDefault();
 
-            return product;
+            // Tạo và trả về DTO với thông tin về sản phẩm và giá
+            var productDtoWithPrice = new ProductDtoWithPrice
+            {
+                Id = product.Id,
+                ProductName = product.ProductName,
+                ProductPrice = price ?? 0,
+                Status = product.Status,
+                CreatedAt = product.CreatedAt,
+                UpdatedAt = product.UpdatedAt
+            };
+            return productDtoWithPrice;
         }
 
-        public async Task<ProductDtoWithPrice> GetProductByIdAsync(Guid productId, bool trackChanges, string? include = null)
+        public async Task<ProductDtoWithPrice?> GetProductByIdAsync(Guid productId, bool trackChanges, string? include = null)
         {
             var product = include is null ?
-           await FindByCondition(p => p.Id.Equals(productId), trackChanges).SingleOrDefaultAsync() :
-           await FindByCondition(p => p.Id.Equals(productId), trackChanges).IsInclude(include).SingleOrDefaultAsync();
-            var activeHistory = product?.ProductHistories
-                 .Where(ph => ph.Status == ProductHistoryStatus.Active && ph.ProductId ==productId) // Lọc ProductHistories với trạng thái Active
-                 .OrderByDescending(ph => ph.CreatedAt) // Sắp xếp theo CreatedAt giảm dần (lấy bản ghi mới nhất)
+            await FindByCondition(p => p.Id.Equals(productId), trackChanges).SingleOrDefaultAsync() :
+            await FindByCondition(p => p.Id.Equals(productId), trackChanges).IsInclude(include).SingleOrDefaultAsync();
+
+            var price = product?.ProductHistories
+                 .Where(ph => ph.Status == ProductHistoryStatus.Active && ph.ProductId == productId) 
+                 .OrderByDescending(ph => ph.CreatedAt)
+                 .Select(ph => ph.ProductPrice)
                  .FirstOrDefault();
 
             // Tạo và trả về DTO với thông tin về sản phẩm và giá
@@ -43,7 +62,7 @@ namespace GarageManagementAPI.Repository
             {
                 Id = product.Id,
                 ProductName = product.ProductName,
-                ProductPrice = activeHistory == null ? 0 : activeHistory.ProductPrice,
+                ProductPrice = price ?? 0,
                 Status = product.Status,
                 CreatedAt = product.CreatedAt,
                 UpdatedAt = product.UpdatedAt
@@ -72,12 +91,12 @@ namespace GarageManagementAPI.Repository
             var productsWithPrice = products
                 .Select(p => new ProductDtoWithPrice
                 {
-                    Id= p.Id,
+                    Id = p.Id,
                     ProductName = p.ProductName,
                     ProductBarcode = p.ProductBarcode,
                     Status = p.Status,
-                    CreatedAt= p.CreatedAt,
-                    UpdatedAt= p.UpdatedAt,
+                    CreatedAt = p.CreatedAt,
+                    UpdatedAt = p.UpdatedAt,
                     ProductPrice = p.ProductHistories
                         .Where(ph => ph.Status == ProductHistoryStatus.Active && p.Id == ph.ProductId)
                         .OrderByDescending(ph => ph.CreatedAt)

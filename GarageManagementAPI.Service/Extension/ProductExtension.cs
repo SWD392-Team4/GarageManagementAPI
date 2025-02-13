@@ -23,9 +23,9 @@ namespace GarageManagementAPI.Service.Extension
             => Result<Product>.NotFound([ProductErrors.GetProductNotFoundIdError(productId)]);
 
         public static Result<ProductDtoWithPrice> NotFoundWithPriceId(this ProductDtoWithPrice? product, Guid productId)
-    => Result<ProductDtoWithPrice>.NotFound([ProductErrors.GetProductNotFoundIdError(productId)]);
+        => Result<ProductDtoWithPrice>.NotFound([ProductErrors.GetProductNotFoundIdError(productId)]);
 
-        public static Result<Product> NotFoundBarCode(this Product? product, string barcode)
-       => Result<Product>.NotFound([ProductErrors.GetProductByBarcodeNotFoundError(barcode)]);
+        public static Result<ProductDtoWithPrice> NotFoundBarCode(this ProductDtoWithPrice? product, string barcode)
+        => Result<ProductDtoWithPrice>.NotFound([ProductErrors.GetProductByBarcodeNotFoundError(barcode)]);
     }
 }

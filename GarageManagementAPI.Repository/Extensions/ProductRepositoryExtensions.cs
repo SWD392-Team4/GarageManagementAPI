@@ -1,6 +1,5 @@
 ﻿using GarageManagementAPI.Entities.Models;
 using GarageManagementAPI.Repository.Extensions.Utility;
-using GarageManagementAPI.Shared.DataTransferObjects.Product;
 using GarageManagementAPI.Shared.Enums.SystemStatuss;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Dynamic.Core;
@@ -27,7 +26,7 @@ namespace GarageManagementAPI.Repository.Extensions
                 return products;
             }
 
-            return products.Where(p => p.Status == status);
+            return products.Where(p => p.Status.Equals(status));
         }
 
         //IQueryable xây dựng và thực thi các truy vấn động trên nguồn dữ liệu

@@ -14,5 +14,6 @@
         IBrandService BrandService { get; }
         IProductService ProductService { get; }
         IProductHistoryService ProductHistoryService { get; }
+        IProductCategoryService ProductCategoryService { get; }
     }
 }

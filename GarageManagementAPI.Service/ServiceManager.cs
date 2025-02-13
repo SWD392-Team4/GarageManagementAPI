@@ -19,6 +19,7 @@ namespace GarageManagementAPI.Service
         private readonly Lazy<IBrandService> _brandService;
         private readonly Lazy<IProductService> _productService;
         private readonly Lazy<IProductHistoryService> _productHistoryService;
+        private readonly Lazy<IProductCategoryService> _productCategoryService;
 
         public ServiceManager(
             IRepositoryManager repositoryManager,
@@ -77,6 +78,12 @@ namespace GarageManagementAPI.Service
              repositoryManager,
              mapper,
              dataShaper));
+
+            _productCategoryService = new Lazy<IProductCategoryService>(() =>
+          new ProductCategoryService(
+             repositoryManager,
+             mapper,
+             dataShaper));
         }
 
         public IAuthenticationService AuthenticationService => _authenticationService.Value;
@@ -92,5 +99,6 @@ namespace GarageManagementAPI.Service
         public IBrandService BrandService => _brandService.Value;
         public IProductService ProductService => _productService.Value;
         public IProductHistoryService ProductHistoryService => _productHistoryService.Value;
+        public IProductCategoryService ProductCategoryService => _productCategoryService.Value;
     }
 }

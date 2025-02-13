@@ -137,7 +137,5 @@ namespace GarageManagementAPI.Service
 
             return brand.OkResult();
         }
-
-       
     }
 }

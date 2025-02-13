@@ -11,8 +11,6 @@ using GarageManagementAPI.Shared.ResultModel;
 using Microsoft.EntityFrameworkCore;
 using System.Dynamic;
 using GarageManagementAPI.Shared.ErrorsConstant.ProductHistory;
-using GarageManagementAPI.Shared.ErrorModel;
-using System.Collections.Generic;
 
 namespace GarageManagementAPI.Service
 {
@@ -37,10 +35,8 @@ namespace GarageManagementAPI.Service
             if (checkPrice)
                 return Result<ProductHistoryDto>.BadRequest([ProductHistoryErrors.GetProductHistoryPriceAlreadyExistError(productHistoryDtoForCreation)]);
 
-            // Gọi UpdateStatusProductHistory và kiểm tra kết quả
-            var updateStatusResult = await UpdateStatusProductHistory(productHistoryDtoForCreation.ProductId);
-            if (!updateStatusResult.IsSuccess) 
-                return updateStatusResult;
+            // Gọi UpdateStatusProductHistory 
+            await UpdateStatusProductHistory(productHistoryDtoForCreation.ProductId);
 
             var productEntity = _mapper.Map<ProductHistory>(productHistoryDtoForCreation);
 
@@ -79,18 +75,16 @@ namespace GarageManagementAPI.Service
             return Result<IEnumerable<ExpandoObject>>.Ok(productsShaped, productsWithMetadata.MetaData);
         }
 
-        private async Task<Result> UpdateStatusProductHistory(Guid productId)
+        private async Task UpdateStatusProductHistory(Guid productId)
         {
-            var productResult = await GetHistoriesIsActiveAsync(productId);
-            if (productResult == null)
+            var pruductEntity = await GetHistoriesIsActiveAsync(productId);
+            if (pruductEntity != null)
             {
-                return Result<ProductHistoryDto>.NoContent();
+                pruductEntity.Status = ProductHistoryStatus.Inactive;
+                pruductEntity.UpdatedAt = DateTimeOffset.UtcNow;
+                _repoManager.ProductHistory.UpdateProductHistory(pruductEntity);
+                await _repoManager.SaveAsync();
             }
-            productResult.Status = ProductHistoryStatus.Inactive;
-            productResult.UpdatedAt = DateTimeOffset.UtcNow;
-            await _repoManager.SaveAsync();
-            var productsDto = _mapper.Map<IEnumerable<ProductHistoryDto>>(productResult);
-            return Result<ProductHistoryDto>.Ok(productsDto);
         }
 
         private async Task<bool> CheckIfProductHistoryByIdAndPrice(ProductHistoryDtoForCreation productHistoryDtoForCreation)
@@ -115,8 +109,8 @@ namespace GarageManagementAPI.Service
         {
             var productId = productHistoryDtoForCreation.ProductId;
 
-            var product = await _repoManager.ProductHistory
-                .FindByCondition(p => p.ProductId.Equals(productId), false)
+            var product = await _repoManager.Product
+                .FindByCondition(p => p.Id.Equals(productId), false)
                 .AnyAsync();
 
             return product;
@@ -126,7 +120,7 @@ namespace GarageManagementAPI.Service
         {
 
             var productHistories = await _repoManager.ProductHistory
-       .FindByCondition(p => p.Status == ProductHistoryStatus.Active && p.ProductId == productId, false)
+       .FindByCondition(p => p.Status == ProductHistoryStatus.Active && p.ProductId == productId, false).OrderByDescending(p => p.UpdatedAt)
        .FirstOrDefaultAsync();
 
             return productHistories;

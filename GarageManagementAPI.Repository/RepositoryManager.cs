@@ -12,6 +12,7 @@ namespace GarageManagementAPI.Repository
         private readonly Lazy<IBrandRepository> _brandRepository;
         private readonly Lazy<IProductRepository> _productRepository;
         private readonly Lazy<IProductHistoryRepository> _productHistoryRepository;
+        private readonly Lazy<IProductCategoryRepository> _productCategoryRepository;
 
         public RepositoryManager(RepositoryContext repositoryContext)
         {
@@ -34,6 +35,8 @@ namespace GarageManagementAPI.Repository
 
             _productHistoryRepository = new Lazy<IProductHistoryRepository>(() => new ProductHistoryRepository(repositoryContext));
 
+            _productCategoryRepository = new Lazy<IProductCategoryRepository>(() => new ProductCategoryRepository(repositoryContext));
+
         }
 
         public IWorkplaceRepository Workplace => _workplaceRepository.Value;
@@ -44,6 +47,7 @@ namespace GarageManagementAPI.Repository
         public IBrandRepository Brand => _brandRepository.Value;
         public IProductRepository Product => _productRepository.Value;
         public IProductHistoryRepository ProductHistory => _productHistoryRepository.Value;
+        public IProductCategoryRepository ProductCategory => _productCategoryRepository.Value;
 
         public async Task<IDbContextTransaction> BeginTransactionAsync()
         {
