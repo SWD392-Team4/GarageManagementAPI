@@ -4,11 +4,6 @@ using GarageManagementAPI.Shared.DataTransferObjects.ProductHistory;
 using GarageManagementAPI.Shared.ErrorsConstant.Product;
 using GarageManagementAPI.Shared.ErrorsConstant.ProductHistory;
 using GarageManagementAPI.Shared.ResultModel;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace GarageManagementAPI.Service.Extension
 {

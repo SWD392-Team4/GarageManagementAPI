@@ -3,11 +3,7 @@ using GarageManagementAPI.Repository.Contracts;
 using GarageManagementAPI.Repository.Extensions;
 using GarageManagementAPI.Shared.RequestFeatures;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
 
 namespace GarageManagementAPI.Repository
 {
@@ -22,17 +18,22 @@ namespace GarageManagementAPI.Repository
             await base.CreateAsync(productHisotry);
         }
 
-        public async Task<PagedList<ProductHistory>> GetProductByIdAsync(Guid productHistoryId, ProductHistoryParameters productHistoryParameters, bool trackChanges, string? include = null)
+        public void UpdateProductHistory(ProductHistory productHistory)
+        {
+            base.Update(productHistory);
+        }
+
+        public async Task<PagedList<ProductHistory>> GetProductHistoryByIdProductAsync(Guid productId, ProductHistoryParameters productHistoryParameters, bool trackChanges, string? include = null)
         {
             var productsQuery = FindByCondition(p =>
-                  p.ProductId.Equals(productHistoryId), trackChanges)
-                .SearchByPrice(productHistoryParameters.ProductPrice) // Tìm kiếm theo tên sản phẩm
+                  p.ProductId.Equals(productId), trackChanges)
+                .SearchByPrice(productHistoryParameters.ProductPrice)
                 .SearchByStatus(productHistoryParameters.Status)
                 .Sort(productHistoryParameters.OrderBy)
                 .IsInclude(include)
                 .AsQueryable();
 
-            var products = await productsQuery
+            var productHistories = await productsQuery
             .Skip((productHistoryParameters.PageNumber - 1) * productHistoryParameters.PageSize)
             .Take(productHistoryParameters.PageSize)
             .ToListAsync();
@@ -40,19 +41,17 @@ namespace GarageManagementAPI.Repository
             var count = await productsQuery.CountAsync();
 
             return new PagedList<ProductHistory>(
-                products,
+                productHistories,
                 count,
                 productHistoryParameters.PageNumber,
                 productHistoryParameters.PageSize
             );
         }
 
-        public async Task<PagedList<ProductHistory>> GetProductsAsync(ProductHistoryParameters productHistoryParameters, bool trackChanges, string? include = null)
+        public async Task<PagedList<ProductHistory>> GetProductHistoryAsync(ProductHistoryParameters productHistoryParameters, bool trackChanges, string? include = null)
         {
             // Lọc và sắp xếp danh sách products theo các điều kiện
-            var productsQuery = FindByCondition(p =>
-                   p.ProductPrice >= 0,
-                    trackChanges)
+            var productsQuery = FindAll(trackChanges)
                 .SearchByPrice(productHistoryParameters.ProductPrice) // Tìm kiếm theo tên sản phẩm
                 .SearchByStatus(productHistoryParameters.Status)
                 .Sort(productHistoryParameters.OrderBy)
@@ -75,11 +74,6 @@ namespace GarageManagementAPI.Repository
                 productHistoryParameters.PageNumber,
                 productHistoryParameters.PageSize
             );
-        }
-
-        public void UpdateProductHistory(ProductHistory productHistory)
-        {
-            base.Update(productHistory);
         }
     }
 }

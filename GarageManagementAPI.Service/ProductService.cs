@@ -58,9 +58,9 @@ namespace GarageManagementAPI.Service
 
             var productsDto = _mapper.Map<ProductDtoWithPrice>(productEntity);
 
-            var userShaped = _dataShaper.Product.ShapeData(productsDto, productParameters.Fields);
+            var productShaped = _dataShaper.ProductWithPrice.ShapeData(productsDto, productParameters.Fields);
 
-            return Result<ExpandoObject>.Ok(userShaped);
+            return Result<ExpandoObject>.Ok(productShaped);
         }
 
         public async Task<Result<ExpandoObject>> GetProductByBarcodeAsync(string barcode, ProductParameters productParameters, bool trackChanges, string? include = null)
@@ -74,7 +74,7 @@ namespace GarageManagementAPI.Service
 
             var productsDto = _mapper.Map<ProductDtoWithPrice>(productEntity);
 
-            var productShaped = _dataShaper.Product.ShapeData(productsDto, productParameters.Fields);
+            var productShaped = _dataShaper.ProductWithPrice.ShapeData(productsDto, productParameters.Fields);
 
             return Result<ExpandoObject>.Ok(productShaped);
         }
@@ -98,7 +98,7 @@ namespace GarageManagementAPI.Service
 
             var productsDto = _mapper.Map<IEnumerable<ProductDtoWithPrice>>(productsWithMetadata);
 
-            var productsShaped = _dataShaper.Product.ShapeData(productsDto, productParameters.Fields);
+            var productsShaped = _dataShaper.ProductWithPrice.ShapeData(productsDto, productParameters.Fields);
 
             return Result<IEnumerable<ExpandoObject>>.Ok(productsShaped, productsWithMetadata.MetaData);
         }

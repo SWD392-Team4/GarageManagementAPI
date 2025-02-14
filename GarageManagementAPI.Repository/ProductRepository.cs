@@ -24,8 +24,7 @@ namespace GarageManagementAPI.Repository
             var product = include is null ?
            await FindByCondition(p => p.ProductBarcode.Equals(barcode), trackChanges).SingleOrDefaultAsync() :
            await FindByCondition(p => p.ProductBarcode.Equals(barcode), trackChanges).Include(include).SingleOrDefaultAsync();
-            Console.WriteLine(include);
-            Console.WriteLine(product);
+
             var price = product?.ProductHistories
                 .Where(ph => ph.Status == ProductHistoryStatus.Active)
                 .OrderByDescending(ph => ph.CreatedAt)

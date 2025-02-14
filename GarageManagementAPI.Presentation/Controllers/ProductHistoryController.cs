@@ -7,13 +7,14 @@ using GarageManagementAPI.Shared.RequestFeatures;
 
 namespace GarageManagementAPI.Presentation.Controllers
 {
-    [Route("api/histories")]
+    [Route("api/product/histories")]
     [ApiController]
     public class ProductHistoryController : ApiControllerBase
     {
         public ProductHistoryController(IServiceManager service) : base(service)
         {
         }
+
         [HttpPost(Name = "CreateProductHistory")]
         public async Task<IActionResult> CreateProductHistory([FromBody] ProductHistoryDtoForCreation productHisotryDtoForCreation)
         {

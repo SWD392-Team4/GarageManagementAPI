@@ -1,13 +1,12 @@
-﻿using GarageManagementAPI.Shared.Enums;
-using GarageManagementAPI.Shared.Enums.SystemStatuss;
+﻿using GarageManagementAPI.Shared.Enums.SystemStatuss;
 using System.ComponentModel.DataAnnotations;
 
-namespace GarageManagementAPI.Entities.Models
+namespace GarageManagementAPI.Shared.DataTransferObjects.ProductImage
 {
-    public partial class ProductImage : BaseEntity<ProductImage>
+    public record class ProductImageDto : BaseDto<ProductImageDto>
     {
+        public Guid Id { get; set; }
         public Guid ProductId { get; set; }
-
         public string Link { get; set; } = null!;
 
         [EnumDataType(typeof(ProductImageStatus))]
@@ -16,9 +15,5 @@ namespace GarageManagementAPI.Entities.Models
         public DateTimeOffset CreatedAt { get; set; }
 
         public DateTimeOffset UpdatedAt { get; set; }
-
-        public virtual Product Product { get; set; } = null!;
     }
-
 }
-

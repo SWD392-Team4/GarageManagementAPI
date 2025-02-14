@@ -9,9 +9,11 @@ namespace GarageManagementAPI.Service.DataShaping
         private readonly Lazy<IDataShaper<WorkplaceDto>> _workplaceShaper;
         private readonly Lazy<IDataShaper<UserDto>> _userShaper;
         private readonly Lazy<IDataShaper<Shared.DataTransferObjects.Brand.BrandDto>> _brandShaper;
-        private readonly Lazy<IDataShaper<Shared.DataTransferObjects.Product.ProductDtoWithPrice>> _productShaper;
+        private readonly Lazy<IDataShaper<Shared.DataTransferObjects.Product.ProductDto>> _productShaper;
+        private readonly Lazy<IDataShaper<Shared.DataTransferObjects.Product.ProductDtoWithPrice>> _productWithPriceShaper;
         private readonly Lazy<IDataShaper<Shared.DataTransferObjects.ProductHistory.ProductHistoryDto>> _productHistoryShaper;
         private readonly Lazy<IDataShaper<Shared.DataTransferObjects.ProductCategory.ProductCategoryDto>> _productCategoryShaper;
+        private readonly Lazy<IDataShaper<Shared.DataTransferObjects.ProductImage.ProductImageDto>> _productImageShaper;
 
         public DataShaperManager()
         {
@@ -24,7 +26,10 @@ namespace GarageManagementAPI.Service.DataShaping
             _brandShaper = new Lazy<IDataShaper<Shared.DataTransferObjects.Brand.BrandDto>>(
                () => new DataShaper<Shared.DataTransferObjects.Brand.BrandDto>(Shared.DataTransferObjects.Brand.BrandDto.PropertyInfos));
 
-            _productShaper = new Lazy<IDataShaper<Shared.DataTransferObjects.Product.ProductDtoWithPrice>>(
+            _productShaper = new Lazy<IDataShaper<Shared.DataTransferObjects.Product.ProductDto>>(
+               () => new DataShaper<Shared.DataTransferObjects.Product.ProductDto>(Shared.DataTransferObjects.Product.ProductDto.PropertyInfos));
+
+            _productWithPriceShaper = new Lazy<IDataShaper<Shared.DataTransferObjects.Product.ProductDtoWithPrice>>(
               () => new DataShaper<Shared.DataTransferObjects.Product.ProductDtoWithPrice>(Shared.DataTransferObjects.Product.ProductDtoWithPrice.PropertyInfos));
 
             _productHistoryShaper = new Lazy<IDataShaper<Shared.DataTransferObjects.ProductHistory.ProductHistoryDto>>(
@@ -32,6 +37,9 @@ namespace GarageManagementAPI.Service.DataShaping
 
             _productCategoryShaper = new Lazy<IDataShaper<Shared.DataTransferObjects.ProductCategory.ProductCategoryDto>>(
               () => new DataShaper<Shared.DataTransferObjects.ProductCategory.ProductCategoryDto>(Shared.DataTransferObjects.ProductCategory.ProductCategoryDto.PropertyInfos));
+
+            _productImageShaper = new Lazy<IDataShaper<Shared.DataTransferObjects.ProductImage.ProductImageDto>>(
+            () => new DataShaper<Shared.DataTransferObjects.ProductImage.ProductImageDto>(Shared.DataTransferObjects.ProductImage.ProductImageDto.PropertyInfos));
         }
 
         public IDataShaper<WorkplaceDto> Workplace => _workplaceShaper.Value;
@@ -39,8 +47,10 @@ namespace GarageManagementAPI.Service.DataShaping
         public IDataShaper<UserDto> User => _userShaper.Value;
 
         public IDataShaper<Shared.DataTransferObjects.Brand.BrandDto> Brand => _brandShaper.Value;
-        public IDataShaper<Shared.DataTransferObjects.Product.ProductDtoWithPrice> Product => _productShaper.Value;
+        public IDataShaper<Shared.DataTransferObjects.Product.ProductDto> Product => _productShaper.Value;
+        public IDataShaper<Shared.DataTransferObjects.Product.ProductDtoWithPrice> ProductWithPrice => _productWithPriceShaper.Value;
         public IDataShaper<Shared.DataTransferObjects.ProductCategory.ProductCategoryDto> ProductCategory => _productCategoryShaper.Value;
         public IDataShaper<Shared.DataTransferObjects.ProductHistory.ProductHistoryDto> ProductHistory => _productHistoryShaper.Value;
+        public IDataShaper<Shared.DataTransferObjects.ProductImage.ProductImageDto> ProductImage => _productImageShaper.Value;
     }
 }

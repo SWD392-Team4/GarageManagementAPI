@@ -12,6 +12,7 @@ using GarageManagementAPI.Service.Extension;
 using GarageManagementAPI.Shared.Extension;
 using GarageManagementAPI.Shared.Enums.SystemStatuss;
 using GarageManagementAPI.Shared.DataTransferObjects.Brand;
+using GarageManagementAPI.Shared.DataTransferObjects.Product;
 
 namespace GarageManagementAPI.Service
 {
@@ -47,7 +48,36 @@ namespace GarageManagementAPI.Service
             return productDtoToReturn.CreatedResult();
         }
 
-        public async Task<Result<ExpandoObject>> GetProductCategoryAsync(Guid productCategoryId, ProductCategoryParameters productCategoryParameters, bool trackChanges, string? include = null)
+        public async Task<Result<ProductCategoryDtoForUpdate>> UpdateProductCategory(Guid productCategoryId, ProductCategoryDtoForUpdate productCategoryDtoForUpdate, bool trackChanges)
+        {
+            var productCategoryResult = await GetAndCheckIfProductCategoryExistById(productCategoryId, trackChanges);
+            if (!productCategoryResult.IsSuccess)
+                return Result<ProductCategoryDtoForUpdate>.Failure(productCategoryResult.StatusCode, productCategoryResult.Errors!);
+
+            var productEntity = productCategoryResult.GetValue<ProductCategory>();
+
+            var productDtoForUpdate = _mapper.Map<ProductCategoryDtoForUpdate>(productEntity);
+
+            return Result<ProductCategoryDtoForUpdate>.Ok(productDtoForUpdate);
+        }
+
+       public async Task<Result<IEnumerable<ExpandoObject>>> GetProductsByIdCategoryAsync(Guid productCategoryId, bool trackChanges, string? include = null)
+        {
+            var productCategoryResult = await GetAndCheckIfProductCategoryExistById(productCategoryId, trackChanges);
+
+            if (!productCategoryResult.IsSuccess)
+                return Result<IEnumerable<ExpandoObject>>.NotFound(productCategoryResult.Errors!);
+
+            var productsResult = await GetAndCheckIfProductExistById(productCategoryId, trackChanges, include);
+
+            var productsDto = _mapper.Map<IEnumerable<ProductDto>>(productsResult);
+
+            var productShaped = _dataShaper.Product.ShapeData(productsDto, null);
+
+            return Result<IEnumerable<ExpandoObject>>.Ok(productShaped, null);
+        }
+
+        public async Task<Result<ExpandoObject>> GetProductCategoryByIdAsync(Guid productCategoryId, ProductCategoryParameters productCategoryParameters, bool trackChanges, string? include = null)
         {
             var productCategoryResult = await GetAndCheckIfProductCategoryExistById(productCategoryId, trackChanges);
 
@@ -58,9 +88,9 @@ namespace GarageManagementAPI.Service
 
             var productCategoriesDto = _mapper.Map<ProductCategoryDto>(productEntity);
 
-            var brandShaped = _dataShaper.ProductCategory.ShapeData(productCategoriesDto, productCategoryParameters.Fields);
+            var productShaped = _dataShaper.ProductCategory.ShapeData(productCategoriesDto, productCategoryParameters.Fields);
 
-            return Result<ExpandoObject>.Ok(brandShaped);
+            return Result<ExpandoObject>.Ok(productShaped);
         }
 
         public async Task<Result<ProductCategoryDtoForUpdate>> GetProductCategoryForPartiallyUpdate(Guid productCategoryId, bool trackChanges)
@@ -87,38 +117,32 @@ namespace GarageManagementAPI.Service
             return Result<IEnumerable<ExpandoObject>>.Ok(productCategoriesShaped, productCategoriesWithMetadata.MetaData);
         }
 
-        public async Task<Result<ProductCategoryDtoForUpdate>> UpdateProductCategory(Guid productCategoryId, ProductCategoryDtoForUpdate productCategoryDtoForUpdate, bool trackChanges)
+        private async Task<bool> CheckIfProductCategoryExistByName(ProductCategoryDtoForCreation productCategoryDtoForCreation)
         {
-            var productCategoryResult = await GetAndCheckIfProductCategoryExistById(productCategoryId, trackChanges);
-            if (!productCategoryResult.IsSuccess)
-                return Result<ProductCategoryDtoForUpdate>.Failure(productCategoryResult.StatusCode, productCategoryResult.Errors!);
+            //! 도전한 안 null
+            var name = productCategoryDtoForCreation.Category!.Trim();
 
-            var productEntity = productCategoryResult.GetValue<ProductCategory>();
+            var exists = await _repoManager.ProductCategory.FindByCondition(x =>
+                x.Category.Trim().Equals(name),
+                false).AnyAsync();
 
-            var productDtoForUpdate = _mapper.Map<ProductCategoryDtoForUpdate>(productEntity);
-
-            return Result<ProductCategoryDtoForUpdate>.Ok(productDtoForUpdate);
+            return exists;
         }
 
-        private async Task<bool> CheckIfProductCategoryExistByName(ProductCategoryDtoForCreation productCategoryDtoForCreation)
-            {
-                //! 도전한 안 null
-                var name = productCategoryDtoForCreation.Category!.Trim();
+        private async Task<Result<ProductCategory>> GetAndCheckIfProductCategoryExistById(Guid productCategoryId, bool trackChanges)
+        {
+            var productcategory = await _repoManager.ProductCategory.GetProductCategoryByIdAsync(productCategoryId, trackChanges);
+            if (productcategory == null)
+                return productcategory.NotFound(productCategoryId);
 
-                var exists = await _repoManager.ProductCategory.FindByCondition(x =>
-                    x.Category.Trim().Equals(name),
-                    false).AnyAsync();
+            return productcategory.OkResult();
+        }
 
-                return exists;
-            }
-
-            private async Task<Result<ProductCategory>> GetAndCheckIfProductCategoryExistById(Guid productCategoryId, bool trackChanges)
-            {
-                var productcategory = await _repoManager.ProductCategory.GetProductCategoryByIdAsync(productCategoryId, trackChanges);
-                if (productcategory == null)
-                    return productcategory.NotFound(productCategoryId);
-
-                return productcategory.OkResult();
-            }
+        private async Task<IEnumerable<Product?>> GetAndCheckIfProductExistById(Guid productCategoryId, bool trackChanges, string? include = null)
+        {
+            var products = await _repoManager.ProductCategory.GetProductByIdAsync(productCategoryId, trackChanges, include);
+           
+            return products;
+        }
     }
 }

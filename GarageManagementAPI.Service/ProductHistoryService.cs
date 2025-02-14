@@ -28,7 +28,7 @@ namespace GarageManagementAPI.Service
 
         public async Task<Result<ProductHistoryDto>> CreateProductHistoryAsync(ProductHistoryDtoForCreation productHistoryDtoForCreation)
         {
-            var checkId = await CheckIfProductById(productHistoryDtoForCreation);
+            var checkId = await CheckIfProductByIdProduct(productHistoryDtoForCreation);
             var checkPrice = await CheckIfProductHistoryByIdAndPrice(productHistoryDtoForCreation);
             if (!checkId)
                 return Result<ProductHistoryDto>.BadRequest([ProductErrors.GetProductNotFoundIdError(productHistoryDtoForCreation.ProductId)]);
@@ -55,7 +55,7 @@ namespace GarageManagementAPI.Service
         public async Task<Result<IEnumerable<ExpandoObject>>> GetHistoryProductByIdProductAsync(Guid productId, ProductHistoryParameters productHistoryParameters, bool trackChanges, string? include = null)
         {
 
-            var productsWithMetadata = await _repoManager.ProductHistory.GetProductByIdAsync(productId, productHistoryParameters, trackChanges, include);
+            var productsWithMetadata = await _repoManager.ProductHistory.GetProductHistoryByIdProductAsync(productId, productHistoryParameters, trackChanges, include);
 
             var productsDto = _mapper.Map<IEnumerable<ProductHistoryDto>>(productsWithMetadata);
 
@@ -66,7 +66,7 @@ namespace GarageManagementAPI.Service
 
         public async Task<Result<IEnumerable<ExpandoObject>>> GetProductHistoriesAsync(ProductHistoryParameters productHistoryParameters, bool trackChanges, string? include = null)
         {
-            var productsWithMetadata = await _repoManager.ProductHistory.GetProductsAsync(productHistoryParameters, trackChanges, include);
+            var productsWithMetadata = await _repoManager.ProductHistory.GetProductHistoryAsync(productHistoryParameters, trackChanges, include);
 
             var productsDto = _mapper.Map<IEnumerable<ProductHistoryDto>>(productsWithMetadata);
 
@@ -105,7 +105,7 @@ namespace GarageManagementAPI.Service
             return false;
         }
 
-        private async Task<bool> CheckIfProductById(ProductHistoryDtoForCreation productHistoryDtoForCreation)
+        private async Task<bool> CheckIfProductByIdProduct(ProductHistoryDtoForCreation productHistoryDtoForCreation)
         {
             var productId = productHistoryDtoForCreation.ProductId;
 

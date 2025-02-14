@@ -11,6 +11,7 @@ using GarageManagementAPI.Shared.ErrorsConstant.Brand;
 using GarageManagementAPI.Service.Extension;
 using Microsoft.EntityFrameworkCore;
 using GarageManagementAPI.Shared.Enums;
+using GarageManagementAPI.Shared.Enums.SystemStatuss;
 
 namespace GarageManagementAPI.Service
 {
@@ -65,7 +66,7 @@ namespace GarageManagementAPI.Service
 
             brandEntity.CreatedAt = DateTimeOffset.UtcNow.SEAsiaStandardTime();
             brandEntity.UpdatedAt = DateTimeOffset.UtcNow.SEAsiaStandardTime();
-            brandEntity.Status = SystemStatus.Inactive;
+            brandEntity.Status = BrandStatus.Inactive;
 
             await _repoManager.Brand.CreateBrandAsync(brandEntity);
             await _repoManager.SaveAsync();

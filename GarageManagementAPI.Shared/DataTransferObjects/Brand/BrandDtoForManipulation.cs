@@ -10,9 +10,5 @@ namespace GarageManagementAPI.Shared.DataTransferObjects.Brand
         public string BrandName { get; set; } = null!;
 
         public string LinkLogo { get; set; } = null!;
-
-        [EnumDataType(typeof(SystemStatus), ErrorMessage = BrandErrors.BrandStatusInvalid)]
-        [Required(ErrorMessage = BrandErrors.BrandStatusRequired)]
-        public SystemStatus Status { get; set; }
     }
 }

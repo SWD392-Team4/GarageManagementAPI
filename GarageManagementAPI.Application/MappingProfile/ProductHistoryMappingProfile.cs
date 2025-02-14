@@ -9,8 +9,8 @@ namespace GarageManagementAPI.Application.MappingProfile
        public ProductHistoryMappingProfile() {
             CreateMap<ProductHistory, ProductHistoryDto>();
             CreateMap<ProductHistoryDtoForCreation, ProductHistory>();
-            CreateMap<ProductHistoryDtoForUpdate, Brand>().ReverseMap();
-            CreateMap<ProductHistoryDtoForManipulation, Brand>();
+            CreateMap<ProductHistoryDtoForUpdate, ProductHistory>().ReverseMap();
+            CreateMap<ProductHistoryDtoForManipulation, ProductHistory>();
         }
     }
 }

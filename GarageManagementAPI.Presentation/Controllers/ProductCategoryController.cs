@@ -9,7 +9,7 @@ using GarageManagementAPI.Presentation.Extensions;
 
 namespace GarageManagementAPI.Presentation.Controllers
 {
-    [Route("api/product-category")]
+    [Route("api/product/categories")]
     [ApiController]
     public class ProductCategoryController : ApiControllerBase
     {
@@ -32,9 +32,22 @@ namespace GarageManagementAPI.Presentation.Controllers
         //[Authorize(Roles = $"{nameof(SystemRole.Administrator)},{nameof(SystemRole.Cashier)}")]
         public async Task<IActionResult> GetProductCategoryById(Guid productCategoryId, [FromQuery] ProductCategoryParameters productCategoryParameters)
         {
-            var productCategoryResult = await _service.ProductCategoryService.GetProductCategoryAsync(productCategoryId, productCategoryParameters, trackChanges: false);
+            var productCategoryResult = await _service.ProductCategoryService.GetProductCategoryByIdAsync(productCategoryId, productCategoryParameters, trackChanges: false);
 
             return productCategoryResult.Map(
+                onSuccess: Ok,
+                onFailure: ProcessError
+                );
+        }
+
+        [HttpGet("products/{productCategoryId:guid}", Name = "GetProductByIdCategory")]
+        //[Authorize(Roles = $"{nameof(SystemRole.Administrator)},{nameof(SystemRole.Cashier)}")]
+        public async Task<IActionResult> GetProductByIdCategory(Guid productCategoryId)
+        {
+            var include = "Products";
+            var productsResult = await _service.ProductCategoryService.GetProductsByIdCategoryAsync(productCategoryId, trackChanges: false, include);
+
+            return productsResult.Map(
                 onSuccess: Ok,
                 onFailure: ProcessError
                 );
