@@ -105,7 +105,7 @@ namespace GarageManagementAPI.Service
 
         public async Task<Result> UpdateProduct(Guid productId, ProductDtoForUpdate productDtoForUpdate, bool trackChanges, string? include = null)
         {
-            var productResult = await GetAndCheckIfProductExist(productId, trackChanges, include);
+            var productResult = await GetAndCheckIfProductExist(productId, trackChanges);
             var check = await CheckIfProductExistByNameAndBrandOrBarCodeForUpdate(productDtoForUpdate, productId);
             if (check)
                 return Result<ProductDto>.BadRequest([ProductErrors.GetProductNameUpdateAlreadyExistError(productDtoForUpdate)]);
@@ -152,7 +152,7 @@ namespace GarageManagementAPI.Service
             return exists;
         }
 
-        private async Task<Result<ProductDtoWithPrice>> GetAndCheckIfProductExist(Guid productId, bool trackChanges, string include)
+        private async Task<Result<ProductDtoWithPrice>> GetAndCheckIfProductExist(Guid productId, bool trackChanges, string? include = null)
         {
             var product = await _repoManager.Product.GetProductByIdAsync(productId, trackChanges, include);
             if (product == null)

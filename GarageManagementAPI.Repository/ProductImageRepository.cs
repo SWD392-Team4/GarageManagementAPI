@@ -1,6 +1,4 @@
-﻿
-
-using GarageManagementAPI.Entities.Models;
+﻿using GarageManagementAPI.Entities.Models;
 using GarageManagementAPI.Repository.Contracts;
 using GarageManagementAPI.Repository.Extensions;
 using Microsoft.EntityFrameworkCore;

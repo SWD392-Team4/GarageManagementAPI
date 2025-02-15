@@ -11,6 +11,8 @@ using GarageManagementAPI.Shared.ResultModel;
 using Microsoft.EntityFrameworkCore;
 using System.Dynamic;
 using GarageManagementAPI.Shared.ErrorsConstant.ProductHistory;
+using GarageManagementAPI.Shared.DataTransferObjects.Product;
+using GarageManagementAPI.Shared.Extension;
 
 namespace GarageManagementAPI.Service
 {
@@ -74,6 +76,24 @@ namespace GarageManagementAPI.Service
 
             return Result<IEnumerable<ExpandoObject>>.Ok(productsShaped, productsWithMetadata.MetaData);
         }
+        private async Task UpdateDateProduct(Guid productId, DateTimeOffset updateAt, bool trackChanges)
+        {
+            var productResult = await GetAndCheckIfProductExist(productId, trackChanges);
+
+            var productDtoWithPrice = productResult.GetValue<ProductDtoWithPrice>();
+            Console.WriteLine(productDtoWithPrice);
+
+            var productEntity = _mapper.Map<Product>(productDtoWithPrice);   // Map the DTO to Product entity for update.
+
+            _mapper.Map(productDtoWithPrice, productEntity); // Apply the updates from the provided DTO.
+
+            productEntity.UpdatedAt = updateAt;
+
+            _repoManager.Product.UpdateProductAsync(productEntity);
+
+            await _repoManager.SaveAsync();
+        }
+
 
         private async Task UpdateStatusProductHistory(Guid productId)
         {
@@ -124,6 +144,15 @@ namespace GarageManagementAPI.Service
        .FirstOrDefaultAsync();
 
             return productHistories;
+        }
+
+        private async Task<Result<ProductDtoWithPrice>> GetAndCheckIfProductExist(Guid productId, bool trackChanges, string? include = null)
+        {
+            var product = await _repoManager.Product.GetProductByIdAsync(productId, trackChanges, include);
+            if (product == null)
+                return product.NotFoundWithPriceId(productId);
+
+            return product.OkResultWithPrice();
         }
     }
 }

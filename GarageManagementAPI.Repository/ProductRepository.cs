@@ -36,6 +36,8 @@ namespace GarageManagementAPI.Repository
             {
                 Id = product.Id,
                 ProductName = product.ProductName,
+                ProductBarcode = product.ProductBarcode,
+                ProductDescription = product.ProductDescription,
                 ProductPrice = price ?? 0,
                 Status = product.Status,
                 CreatedAt = product.CreatedAt,
@@ -61,6 +63,8 @@ namespace GarageManagementAPI.Repository
             {
                 Id = product.Id,
                 ProductName = product.ProductName,
+                ProductBarcode = product.ProductBarcode,
+                ProductDescription = product.ProductDescription,
                 ProductPrice = price ?? 0,
                 Status = product.Status,
                 CreatedAt = product.CreatedAt,
@@ -93,6 +97,7 @@ namespace GarageManagementAPI.Repository
                     Id = p.Id,
                     ProductName = p.ProductName,
                     ProductBarcode = p.ProductBarcode,
+                    ProductDescription = p.ProductDescription,
                     Status = p.Status,
                     CreatedAt = p.CreatedAt,
                     UpdatedAt = p.UpdatedAt,
