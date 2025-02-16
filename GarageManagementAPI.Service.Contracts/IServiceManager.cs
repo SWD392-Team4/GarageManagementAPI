@@ -2,19 +2,9 @@
 {
     public interface IServiceManager
     {
-        IWorkplaceService WorkplaceService { get; }
+        IGarageService GarageService { get; }
 
-        IAuthenticationService AuthenticationService { get; }
+        IEmployeeService EmployeeService { get; }
 
-        IEmployeeInfoService EmployeeInfoService { get; }
-
-        IUserService UserService { get; }
-
-        IMailService MailService { get; }
-        IBrandService BrandService { get; }
-        IProductService ProductService { get; }
-        IProductHistoryService ProductHistoryService { get; }
-        IProductCategoryService ProductCategoryService { get; }
-        IProductImageService ProductImageService { get; }
     }
 }
