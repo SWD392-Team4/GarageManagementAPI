@@ -37,7 +37,7 @@ namespace GarageManagementAPI.Service
             var productCategoryEntity = _mapper.Map<ProductCategory>(productCategoryDtoForCreation);
             productCategoryEntity.CreatedAt = DateTimeOffset.UtcNow.SEAsiaStandardTime();
             productCategoryEntity.UpdatedAt = DateTimeOffset.UtcNow.SEAsiaStandardTime();
-            productCategoryEntity.Status = ProductCategoryStatus.Inactive;
+            productCategoryEntity.Status = ProductCategoryStatus.None;
 
             await _repoManager.ProductCategory.CreateProductCategoryAsync(productCategoryEntity);
             await _repoManager.SaveAsync();

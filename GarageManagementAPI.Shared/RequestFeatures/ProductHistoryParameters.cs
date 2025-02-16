@@ -15,6 +15,6 @@ namespace GarageManagementAPI.Shared.RequestFeatures
         public decimal ProductPrice { get; set; }
 
         [EnumDataType(typeof(ProductHistoryStatus))]
-        public ProductHistoryStatus Status { get; set; }
+        public ProductHistoryStatus? Status { get; set; } = null;
     }
 }

@@ -21,11 +21,7 @@ namespace GarageManagementAPI.Repository.Extensions
 
         public static IQueryable<ProductCategory> SearchByStatus(this IQueryable<ProductCategory> productCategorys, ProductCategoryStatus? status)
         {
-            if (status is null || status.Equals(ProductCategoryStatus.None))
-            {
-                return productCategorys;
-            }
-
+            if (status is null)return productCategorys;
             return productCategorys.Where(p => p.Status.Equals(status));
         }
 

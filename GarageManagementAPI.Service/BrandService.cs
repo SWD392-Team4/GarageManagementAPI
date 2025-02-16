@@ -66,7 +66,7 @@ namespace GarageManagementAPI.Service
 
             brandEntity.CreatedAt = DateTimeOffset.UtcNow.SEAsiaStandardTime();
             brandEntity.UpdatedAt = DateTimeOffset.UtcNow.SEAsiaStandardTime();
-            brandEntity.Status = BrandStatus.Inactive;
+            brandEntity.Status = BrandStatus.None;
 
             await _repoManager.Brand.CreateBrandAsync(brandEntity);
             await _repoManager.SaveAsync();

@@ -22,11 +22,7 @@ namespace GarageManagementAPI.Repository.Extensions
 
         public static IQueryable<ProductHistory> SearchByStatus(this IQueryable<ProductHistory> products, ProductHistoryStatus? status)
         {
-            if (status is null || status.Equals(ProductHistoryStatus.None))
-            {
-                return products;
-            }
-
+            if (status is null) return products;
             return products.Where(p => p.Status == status);
         }
 

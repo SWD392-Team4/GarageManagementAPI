@@ -20,10 +20,10 @@ namespace GarageManagementAPI.Presentation.Controllers
 
         [HttpGet("product/{productId:guid}", Name = "GetProductById")]
         //[Authorize(Roles = $"{nameof(SystemRole.Administrator)},{nameof(SystemRole.Cashier)}")]
-        public async Task<IActionResult> GetProductById(Guid productId, [FromQuery] ProductParameters productParameters)
+        public async Task<IActionResult> GetProductById(Guid productId)
         {
-            var isInclude = "ProductHistories";
-            var productResult = await _service.ProductService.GetProductByIdAsync(productId, productParameters, trackChanges: false, isInclude);
+            var isInclude = "ProductHistories,ProductImages";
+            var productResult = await _service.ProductService.GetProductFullByIdAsync(productId, trackChanges: false, isInclude);
 
             return productResult.Map(
                 onSuccess: Ok,
@@ -35,8 +35,8 @@ namespace GarageManagementAPI.Presentation.Controllers
         //[Authorize(Roles = $"{nameof(SystemRole.Administrator)},{nameof(SystemRole.Cashier)}")]
         public async Task<IActionResult> GetProductByBarcode(string barcode, [FromQuery] ProductParameters productParameters)
         {
-            var isInclude = "ProductHistories";
-            var productResult = await _service.ProductService.GetProductByBarcodeAsync(barcode, productParameters, trackChanges: false, isInclude);
+            var isInclude = "ProductHistories,ProductImages";
+            var productResult = await _service.ProductService.GetProductFullByBarcodeAsync(barcode, productParameters, trackChanges: false, isInclude);
 
             return productResult.Map(
                 onSuccess: Ok,
@@ -48,7 +48,7 @@ namespace GarageManagementAPI.Presentation.Controllers
         //[Authorize(Roles = $"{nameof(SystemRole.Administrator)},{nameof(SystemRole.Cashier)}")]
         public async Task<IActionResult> GetProducts([FromQuery] ProductParameters productParameters)
         {
-            var isInclude = "ProductHistories"; 
+            var isInclude = "ProductHistories,ProductImages";
             var productResult = await _service.ProductService.GetProductsAsync(productParameters, trackChanges: false, isInclude);
 
             return productResult.Map(

@@ -7,10 +7,10 @@ namespace GarageManagementAPI.Shared.RequestFeatures
 
     public class ProductParameters : RequestParameters
     {
-        public ProductParameters() => OrderBy = "name";
+        public ProductParameters() => OrderBy = "ProductName";
         public string? ProductName { get; set; }
 
         [EnumDataType(typeof(SystemStatus))]
-        public ProductStatus Status { get; set; }
+        public ProductStatus? Status { get; set; } = null;
     }
 }

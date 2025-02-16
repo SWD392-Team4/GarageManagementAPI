@@ -1,5 +1,6 @@
 ﻿using GarageManagementAPI.Entities.Models;
 using GarageManagementAPI.Repository.Extensions.Utility;
+using GarageManagementAPI.Shared.Enums.SystemStatuss;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Dynamic.Core;
 
@@ -16,6 +17,12 @@ namespace GarageManagementAPI.Repository.Extensions
 
             var lowerCaseTerm = name.Trim().ToLower();
             return brand.Where(b => b.BrandName!.ToLower().Contains(name.Trim().ToLower()));
+        }
+
+        public static IQueryable<Brand> SearchByStatus(this IQueryable<Brand> brands, BrandStatus? status)
+        {
+            if (status is null) return brands;
+            return brands.Where(b => b.Status.Equals(status));
         }
 
         public static IQueryable<Brand> IsInclude(this IQueryable<Brand> brand, string? fieldsString)

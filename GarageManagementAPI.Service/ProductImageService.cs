@@ -84,12 +84,10 @@ namespace GarageManagementAPI.Service
         {
             var productResult = await GetAndCheckIfProductExist(productId, trackChanges);
 
-            var productDtoWithPrice = productResult.GetValue<ProductDtoWithPrice>();
-            Console.WriteLine(productDtoWithPrice);
+            var product = productResult.GetValue<Product>();
+            Console.WriteLine(product);
 
-            var productEntity = _mapper.Map<Product>(productDtoWithPrice);   // Map the DTO to Product entity for update.
-
-            _mapper.Map(productDtoWithPrice, productEntity); // Apply the updates from the provided DTO.
+            var productEntity = _mapper.Map<Product>(product);   // Map the DTO to Product entity for update.
 
             productEntity.UpdatedAt = updateAt;
 
@@ -148,13 +146,13 @@ namespace GarageManagementAPI.Service
             return productImage;
         }
 
-        private async Task<Result<ProductDtoWithPrice>> GetAndCheckIfProductExist(Guid productId, bool trackChanges, string? include = null)
+        private async Task<Result<Product>> GetAndCheckIfProductExist(Guid productId, bool trackChanges, string? include = null)
         {
             var product = await _repoManager.Product.GetProductByIdAsync(productId, trackChanges, include);
             if (product == null)
-                return product.NotFoundWithPriceId(productId);
+                return product.NotFoundId(productId);
 
-            return product.OkResultWithPrice();
+            return product.OkResult();
         }
     }
 }

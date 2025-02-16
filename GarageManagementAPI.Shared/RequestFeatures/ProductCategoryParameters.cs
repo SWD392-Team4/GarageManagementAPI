@@ -10,7 +10,7 @@ namespace GarageManagementAPI.Shared.RequestFeatures
         public string? Category { get; set; } = null!;
 
         [EnumDataType(typeof(ProductCategoryStatus))]
-        public ProductCategoryStatus Status { get; set; }
+        public ProductCategoryStatus? Status { get; set; } = null;
 
     }
 }

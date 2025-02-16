@@ -11,18 +11,14 @@ namespace GarageManagementAPI.Repository.Extensions
     {
         public static IQueryable<ProductImage> SearchByStatus(this IQueryable<ProductImage> products, ProductImageStatus? status)
         {
-            if (status is null || status.Equals(ProductImageStatus.None))
-            {
-                return products;
-            }
+            if (status is null) return products;
 
             return products.Where(p => p.Status == status);
         }
 
         public static IQueryable<ProductImage> IsInclude(this IQueryable<ProductImage> products, string? fieldsString)
         {
-            if (string.IsNullOrWhiteSpace(fieldsString))
-                return products;
+            if (string.IsNullOrWhiteSpace(fieldsString)) return products;
 
             var fields = fieldsString.Split(',', StringSplitOptions.RemoveEmptyEntries);
 

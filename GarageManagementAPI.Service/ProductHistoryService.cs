@@ -13,6 +13,8 @@ using System.Dynamic;
 using GarageManagementAPI.Shared.ErrorsConstant.ProductHistory;
 using GarageManagementAPI.Shared.DataTransferObjects.Product;
 using GarageManagementAPI.Shared.Extension;
+using GarageManagementAPI.Shared.DataTransferObjects.ProductImage;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace GarageManagementAPI.Service
 {
@@ -36,14 +38,15 @@ namespace GarageManagementAPI.Service
                 return Result<ProductHistoryDto>.BadRequest([ProductErrors.GetProductNotFoundIdError(productHistoryDtoForCreation.ProductId)]);
             if (checkPrice)
                 return Result<ProductHistoryDto>.BadRequest([ProductHistoryErrors.GetProductHistoryPriceAlreadyExistError(productHistoryDtoForCreation)]);
-
+            var date = DateTimeOffset.UtcNow.SEAsiaStandardTime();
             // Gọi UpdateStatusProductHistory 
             await UpdateStatusProductHistory(productHistoryDtoForCreation.ProductId);
+            await UpdateDateProduct(productHistoryDtoForCreation.ProductId, date, false);
 
             var productEntity = _mapper.Map<ProductHistory>(productHistoryDtoForCreation);
 
-            productEntity.CreatedAt = DateTimeOffset.UtcNow.SEAsiaStandardTime();
-            productEntity.UpdatedAt = DateTimeOffset.UtcNow.SEAsiaStandardTime();
+            productEntity.CreatedAt = date;
+            productEntity.UpdatedAt = date;
             productEntity.Status = ProductHistoryStatus.Active;
 
             await _repoManager.ProductHistory.CreateProductHisotoryAsync(productEntity);
@@ -80,12 +83,9 @@ namespace GarageManagementAPI.Service
         {
             var productResult = await GetAndCheckIfProductExist(productId, trackChanges);
 
-            var productDtoWithPrice = productResult.GetValue<ProductDtoWithPrice>();
-            Console.WriteLine(productDtoWithPrice);
+            var product = productResult.GetValue<Product>();
 
-            var productEntity = _mapper.Map<Product>(productDtoWithPrice);   // Map the DTO to Product entity for update.
-
-            _mapper.Map(productDtoWithPrice, productEntity); // Apply the updates from the provided DTO.
+            var productEntity = _mapper.Map<Product>(product);   // Map the DTO to Product entity for update.
 
             productEntity.UpdatedAt = updateAt;
 
@@ -93,6 +93,7 @@ namespace GarageManagementAPI.Service
 
             await _repoManager.SaveAsync();
         }
+
 
 
         private async Task UpdateStatusProductHistory(Guid productId)
@@ -146,13 +147,13 @@ namespace GarageManagementAPI.Service
             return productHistories;
         }
 
-        private async Task<Result<ProductDtoWithPrice>> GetAndCheckIfProductExist(Guid productId, bool trackChanges, string? include = null)
+        private async Task<Result<Product>> GetAndCheckIfProductExist(Guid productId, bool trackChanges, string? include = null)
         {
             var product = await _repoManager.Product.GetProductByIdAsync(productId, trackChanges, include);
             if (product == null)
-                return product.NotFoundWithPriceId(productId);
+                return product.NotFoundId(productId);
 
-            return product.OkResultWithPrice();
+            return product.OkResult();
         }
     }
 }

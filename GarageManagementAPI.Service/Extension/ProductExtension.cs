@@ -10,8 +10,8 @@ namespace GarageManagementAPI.Service.Extension
         public static Result<Product> OkResult(this Product product)
           => Result<Product>.Ok(product);
 
-        public static Result<ProductDtoWithPrice> OkResultWithPrice(this ProductDtoWithPrice product)
-  => Result<ProductDtoWithPrice>.Ok(product);
+        public static Result<ProductDtoFull> OkResultWithPrice(this ProductDtoFull product)
+  => Result<ProductDtoFull>.Ok(product);
 
         public static Result<ProductDto> OkResult(this ProductDto productDto)
             => Result<ProductDto>.Ok(productDto);
@@ -22,10 +22,10 @@ namespace GarageManagementAPI.Service.Extension
         public static Result<Product> NotFoundId(this Product? product, Guid productId)
             => Result<Product>.NotFound([ProductErrors.GetProductNotFoundIdError(productId)]);
 
-        public static Result<ProductDtoWithPrice> NotFoundWithPriceId(this ProductDtoWithPrice? product, Guid productId)
-        => Result<ProductDtoWithPrice>.NotFound([ProductErrors.GetProductNotFoundIdError(productId)]);
+        public static Result<ProductDtoFull> NotFoundWithPriceId(this ProductDtoFull? product, Guid productId)
+        => Result<ProductDtoFull>.NotFound([ProductErrors.GetProductNotFoundIdError(productId)]);
 
-        public static Result<ProductDtoWithPrice> NotFoundBarCode(this ProductDtoWithPrice? product, string barcode)
-        => Result<ProductDtoWithPrice>.NotFound([ProductErrors.GetProductByBarcodeNotFoundError(barcode)]);
+        public static Result<ProductDtoFull> NotFoundBarCode(this ProductDtoFull? product, string barcode)
+        => Result<ProductDtoFull>.NotFound([ProductErrors.GetProductByBarcodeNotFoundError(barcode)]);
     }
 }

@@ -3,12 +3,12 @@ using System.ComponentModel.DataAnnotations;
 
 namespace GarageManagementAPI.Shared.DataTransferObjects.Product
 {
-    public record class ProductDtoWithPrice : BaseDto<ProductDtoWithPrice>
+    public record class ProductDtoFull : BaseDto<ProductDtoFull>
     {
-        public required Guid? Id { get; set; }
-        public string? ProductName { get; set; }
-        public string? ProductBarcode { get; set; }
-        public string? ProductDescription { get; set; }
+        public required Guid Id { get; set; }
+        public required string ProductName { get; set; }
+        public required string ProductBarcode { get; set; }
+        public required string ProductDescription { get; set; }
 
         [EnumDataType(typeof(ProductStatus))]
         public ProductStatus Status { get; set; }
@@ -18,5 +18,7 @@ namespace GarageManagementAPI.Shared.DataTransferObjects.Product
         public DateTimeOffset UpdatedAt { get; set; }
 
         public decimal? ProductPrice { get; set; }
+
+        public string? ProductImg { get; set; }
     }
 }
