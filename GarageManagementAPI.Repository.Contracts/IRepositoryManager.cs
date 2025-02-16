@@ -1,25 +1,11 @@
-﻿using Microsoft.EntityFrameworkCore.Storage;
-
-namespace GarageManagementAPI.Repository.Contracts
+﻿namespace GarageManagementAPI.Repository.Contracts
 {
     public interface IRepositoryManager
     {
-        IWorkplaceRepository Workplace { get; }
+        IGarageRepository Garage { get; }
 
-        IUserRepository User { get; }
+        IEmployeeRepository Employee { get; }
 
-        IEmployeeInfoRepository EmployeeInfo { get; }
-
-        IBrandRepository Brand { get; }
-        IProductRepository Product { get; }
-        IProductHistoryRepository ProductHistory { get; }
-        IProductCategoryRepository ProductCategory { get; }
-        IProductImageRepository ProductImage { get; }
-
-        Task<IDbContextTransaction> BeginTransactionAsync();
-
-        IExecutionStrategy CreateExecutionStrategy();
-
-        Task SaveAsync();
+        void Save();
     }
 }
