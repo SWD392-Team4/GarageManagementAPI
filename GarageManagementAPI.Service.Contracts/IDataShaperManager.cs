@@ -1,6 +1,4 @@
-﻿using GarageManagementAPI.Shared.DataTransferObjects.Brand;
-using GarageManagementAPI.Shared.DataTransferObjects.Product;
-using GarageManagementAPI.Shared.DataTransferObjects.User;
+﻿using GarageManagementAPI.Shared.DataTransferObjects.User;
 using GarageManagementAPI.Shared.DataTransferObjects.Workplace;
 
 namespace GarageManagementAPI.Service.Contracts
@@ -10,7 +8,11 @@ namespace GarageManagementAPI.Service.Contracts
         IDataShaper<WorkplaceDto> Workplace { get; }
 
         IDataShaper<UserDto> User { get; }
-        IDataShaper<BrandDto> Brand { get; }
-        IDataShaper<ProductDto> Product { get; }
+        IDataShaper<Shared.DataTransferObjects.Brand.BrandDto> Brand { get; }
+        IDataShaper<Shared.DataTransferObjects.Product.ProductDto> Product { get; }
+        IDataShaper<Shared.DataTransferObjects.Product.ProductDtoFull> ProductWithPrice { get; }
+        IDataShaper<Shared.DataTransferObjects.ProductHistory.ProductHistoryDto> ProductHistory { get; }
+        IDataShaper<Shared.DataTransferObjects.ProductCategory.ProductCategoryDto> ProductCategory { get; }
+        IDataShaper<Shared.DataTransferObjects.ProductImage.ProductImageDto> ProductImage { get; }
     }
 }
