@@ -59,8 +59,18 @@ namespace GarageManagementAPI.Shared.Constant.Authentication
         public const string CitizenIdentificationRequied = "The employee citizen identification is requied.";
         public const string CitizenIdentificationInvalid = "The employee citizen identification is invalid. Ensure it is a valid Vietnamese citizen identification.";
 
+        //DateOfBirth errors
+        public const string DateOfBirthRequired = "Date of birth of an employee is required.";
+
+        //User status 
+        public const string UserStatusRequired = "User status is required.";
+        public const string UserStatusInvalid = "User status is invalid.";
+
         //employee existed
         public const string EmployeeExisted = "The employee with citizen identification {0} existed.";
+
+        //gender
+        public const string GenderRequired = "Gender is required.";
 
         //NotFoundErrors
         public const string UserNotFoundWithEmail = "Can not found user with email {0}.";

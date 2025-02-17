@@ -77,7 +77,7 @@ namespace GarageManagementAPI.Presentation.Validator.User
                 .WithErrorCode(nameof(UserErrors.CitizenIdentificationRequied))
                 .Matches(@"[0-9]+")
                 .WithMessage(UserErrors.CitizenIdentificationInvalid)
-                .WithErrorCode(nameof(UserErrors.CitizenIdentificationInvalid)); ;
+                .WithErrorCode(nameof(UserErrors.CitizenIdentificationInvalid));
         }
 
         private void AddWorkplaceIdRules()

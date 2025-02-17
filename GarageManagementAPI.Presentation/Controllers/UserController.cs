@@ -26,7 +26,7 @@ namespace GarageManagementAPI.Presentation.Controllers
         [Authorize]
         public async Task<IActionResult> GetUserInfo([FromQuery] UserParameters userParameters)
         {
-            var userId = HttpContext.User.FindFirstValue("userid");
+            var userId = HttpContext.User.FindFirstValue("UserId");
             var isCustomer = HttpContext.User.IsInRole(nameof(SystemRole.Customer));
             var include = isCustomer ? "Roles" : "EmployeeInfo,Roles";
 
@@ -60,6 +60,19 @@ namespace GarageManagementAPI.Presentation.Controllers
                 );
         }
 
+        [HttpPut]
+        [Authorize]
+        public async Task<IActionResult> UpdateUserInfo([FromBody] UserForUpdateDto userForUpdateDto)
+        {
+            var contextUserId = new Guid(HttpContext.User.FindFirstValue("UserId")!);
+            var updateResult = await _service.UserService.UpdateUserAsync(contextUserId, userForUpdateDto, true);
+
+            return updateResult.Map(
+                onSuccess: _ => NoContent(),
+                onFailure: ProcessError
+                );
+        }
+
         [HttpPut("{userId:guid}")]
         [Authorize(Roles = "Administrator")]
         public async Task<IActionResult> UpdateEmployeeInfo(Guid userId, [FromBody] UserForUpdateEmployeeDto userForUpdateEmployeeDto)
@@ -76,7 +89,7 @@ namespace GarageManagementAPI.Presentation.Controllers
         [Authorize]
         public async Task<IActionResult> UpdateUserImageAsync(Guid userId, [FromForm] IFormFile fileDto)
         {
-            var contextUserId = new Guid(HttpContext.User.FindFirstValue("userid")!);
+            var contextUserId = new Guid(HttpContext.User.FindFirstValue("UserId")!);
             var isAdmin = HttpContext.User.IsInRole(nameof(SystemRole.Administrator));
 
             if (contextUserId != userId && !isAdmin)

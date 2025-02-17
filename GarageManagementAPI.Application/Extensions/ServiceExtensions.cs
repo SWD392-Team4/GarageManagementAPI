@@ -170,7 +170,7 @@ namespace GarageManagementAPI.Application.Extensions
                 options.User.RequireUniqueEmail = true;
                 options.User.AllowedUserNameCharacters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
 
-                options.ClaimsIdentity.UserNameClaimType = "username";
+                options.ClaimsIdentity.UserNameClaimType = "UserName";
                 options.ClaimsIdentity.RoleClaimType = "Role";
 
                 options.SignIn.RequireConfirmedEmail = true;
@@ -215,7 +215,7 @@ namespace GarageManagementAPI.Application.Extensions
                     ValidIssuer = jwtConfiguration.ValidIssuer,
                     ValidAudience = jwtConfiguration.ValidAudience,
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey!)),
-                    NameClaimType = "username",
+                    NameClaimType = "UserName",
                     RoleClaimType = "Role",
                 };
             });

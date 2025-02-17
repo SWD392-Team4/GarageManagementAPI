@@ -18,6 +18,10 @@ namespace GarageManagementAPI.Shared.ResultModel
         [JsonIgnore]
         public bool IsSuccess => Errors is null;
 
+        public Result()
+        {
+        }
+
         protected Result(HttpStatusCode statusCode)
         {
             StatusCode = statusCode;

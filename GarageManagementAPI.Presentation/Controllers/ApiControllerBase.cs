@@ -14,6 +14,7 @@ namespace GarageManagementAPI.Presentation.Controllers
         }
 
         [ApiExplorerSettings(IgnoreApi = true)]
+        [NonAction]
         public IActionResult ProcessError(Result result)
         {
 

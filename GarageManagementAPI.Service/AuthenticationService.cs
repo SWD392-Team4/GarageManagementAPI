@@ -111,11 +111,11 @@ namespace GarageManagementAPI.Service
         {
             var claims = new List<Claim>
             {
-                new Claim("username", _user!.UserName!),
-                new Claim("userid", _user!.Id.ToString()!),
-                new Claim("image", _user!.ImageLink ?? "N/A"),
-                new Claim("firstname", _user!.FirstName!),
-                new Claim("lastname", _user!.LastName!),
+                new Claim("UserName", _user!.UserName!),
+                new Claim("UserId", _user!.Id.ToString()!),
+                new Claim("Image", _user!.ImageLink ?? "N/A"),
+                new Claim("FirstName", _user!.FirstName!),
+                new Claim("LastName", _user!.LastName!),
             };
 
             var roles = await _userManager.GetRolesAsync(_user);
@@ -156,7 +156,7 @@ namespace GarageManagementAPI.Service
                 IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Environment.GetEnvironmentVariable("SECRET")!)),
                 ValidIssuer = _jwtConfiguration.ValidIssuer,
                 ValidAudience = _jwtConfiguration.ValidAudience,
-                NameClaimType = "username",
+                NameClaimType = "UserName",
                 RoleClaimType = "Role",
                 ValidateLifetime = false
             };

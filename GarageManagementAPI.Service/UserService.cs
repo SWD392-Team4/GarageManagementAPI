@@ -80,7 +80,7 @@ namespace GarageManagementAPI.Service
         {
             var resultCheck = await GetAndCheckIfUserExist(id, trackChanges, "EmployeeInfo");
 
-            var resultWorkplaceCheck = await CheckIfWorkplaceExist(userForUpdateEmployeeDto.WorkplaceId);
+            var resultWorkplaceCheck = await CheckIfWorkplaceExist((Guid)userForUpdateEmployeeDto.WorkplaceId!);
 
             if (!resultCheck.IsSuccess || !resultWorkplaceCheck.IsSuccess) return Result.BadRequest(resultCheck.Errors ?? resultWorkplaceCheck.Errors!);
             var userEntity = resultCheck.GetValue<User>();
@@ -110,6 +110,23 @@ namespace GarageManagementAPI.Service
             await _repoManager.SaveAsync();
 
             return Result<string?>.Ok(oldImage);
+        }
+
+        public async Task<Result> UpdateUserAsync(Guid id, UserForUpdateDto userForUpdateEmployeeDto, bool trackChanges)
+        {
+            var resultCheck = await GetAndCheckIfUserExist(id, trackChanges);
+
+            if (!resultCheck.IsSuccess) return Result.BadRequest(resultCheck.Errors!);
+
+            var userEntity = resultCheck.GetValue<User>();
+
+
+            _mapper.Map(userForUpdateEmployeeDto, userEntity);
+
+            userEntity.UpdatedAt = DateTimeOffset.UtcNow.SEAsiaStandardTime();
+            await _repoManager.SaveAsync();
+
+            return Result.NoContent();
         }
     }
 }

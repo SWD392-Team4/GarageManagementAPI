@@ -1,5 +1,6 @@
 ﻿using GarageManagementAPI.Entities.Models;
 using GarageManagementAPI.Repository.Extensions.Utility;
+using GarageManagementAPI.Shared.Enums;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Dynamic.Core;
 using System.Reflection;
@@ -41,6 +42,15 @@ namespace GarageManagementAPI.Repository.Extensions
                 return user.OrderBy(e => e.FirstName);
 
             return user.OrderBy(orderQuery);
+
+        }
+
+        public static IQueryable<User> FilterByRole(this IQueryable<User> user, SystemRole? role)
+        {
+            if (role is null)
+                return user;
+
+            return user.Where(u => u.Roles.Any(r => r.Name!.Equals(role.Value.ToString())));
 
         }
 

@@ -27,6 +27,7 @@ namespace GarageManagementAPI.Repository
             var users = await FindByCondition(u => isEmployee ? u.EmployeeInfo != null && !u.Roles.Any(r => r.Name!.Equals(nameof(SystemRole.Administrator))) : u.EmployeeInfo == null, trackChanges)
                 .SearchByFirstName(userParameters.FirstName)
                 .SearchByLastName(userParameters.LastName)
+                .FilterByRole(userParameters.Role)
                 .Sort(userParameters.OrderBy)
                 .IsInclude(include)
                 .Skip((userParameters.PageNumber - 1) * userParameters.PageSize)
@@ -36,6 +37,7 @@ namespace GarageManagementAPI.Repository
             var count = await FindByCondition(u => isEmployee ? u.EmployeeInfo != null && !u.Roles.Any(r => r.Name!.Equals(nameof(SystemRole.Administrator))) : u.EmployeeInfo == null, trackChanges)
                 .SearchByFirstName(userParameters.FirstName)
                 .SearchByLastName(userParameters.LastName)
+                .FilterByRole(userParameters.Role)
                 .CountAsync();
 
 

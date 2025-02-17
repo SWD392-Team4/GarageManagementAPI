@@ -13,6 +13,8 @@ namespace GarageManagementAPI.Service.Contracts
 
         public Task<Result> UpdateEmployeeAsync(Guid id, UserForUpdateEmployeeDto userForUpdateEmployeeDto, bool trackChanges);
 
+        public Task<Result> UpdateUserAsync(Guid id, UserForUpdateDto userForUpdateEmployeeDto, bool trackChanges);
+
         public Task<Result<string?>> UpdateUserImageAsync(Guid id, bool trackChanges, string imgId, string imgUrl);
 
     }
