@@ -3,18 +3,15 @@ using GarageManagementAPI.Application.Security;
 using GarageManagementAPI.Entities.ConfigurationModels;
 using GarageManagementAPI.Entities.Models;
 using GarageManagementAPI.Presentation.ActionFilters;
-using GarageManagementAPI.Presentation.Validator;
 using GarageManagementAPI.Repository;
 using GarageManagementAPI.Repository.Contracts;
 using GarageManagementAPI.Service;
 using GarageManagementAPI.Service.Contracts;
 using GarageManagementAPI.Service.DataShaping;
 using GarageManagementAPI.Shared.Constant.Request;
-using GarageManagementAPI.Shared.DataTransferObjects.Workplace;
 using GarageManagementAPI.Shared.ResultModel;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.EntityFrameworkCore;
@@ -258,6 +255,11 @@ namespace GarageManagementAPI.Application.Extensions
                     }
                 });
             });
+        }
+
+        public static void ConfigureSignalR(this IServiceCollection services)
+        {
+            services.AddSignalR();
         }
 
         public static void ConfigureValidator(this IServiceCollection services)

@@ -1,6 +1,7 @@
 using GarageManagementAPI.Application;
 using GarageManagementAPI.Application.Extensions;
 using Microsoft.AspNetCore.HttpOverrides;
+using GarageManagementAPI.Service;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -24,6 +25,8 @@ builder.Services.AddJwtConfiguration(builder.Configuration);
 builder.Services.AddMailConfiguration(builder.Configuration);
 builder.Services.ConfigureSwagger();
 builder.Services.ConfigureValidator();
+builder.Services.ConfigureSignalR();
+builder.Services.ConfigureCommunicationHub(); 
 
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -48,6 +51,7 @@ app.UseResponseCaching();
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
+app.MapHub<CommunicationHub>("/Chat");
 
 app.Run();
 
