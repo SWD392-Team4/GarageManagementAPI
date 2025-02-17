@@ -16,7 +16,7 @@ namespace GarageManagementAPI.Entities.Models
 
         public string ProductDescription { get; set; } = null!;
 
-        [EnumDataType(typeof(SystemStatus))]
+        [EnumDataType(typeof(ProductStatus))]
         public ProductStatus Status { get; set; }
 
         public DateTimeOffset CreatedAt { get; set; }

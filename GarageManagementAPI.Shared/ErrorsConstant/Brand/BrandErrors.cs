@@ -25,21 +25,25 @@ namespace GarageManagementAPI.Shared.ErrorsConstant.Brand
         }
 
         public static ErrorsResult GetBrandNotFoundError(Guid brandId) =>
-    new()
-    {
-        Code = nameof(BrandNotFoundWithId),
-        Description = string.Format(BrandNotFoundWithId, brandId)
-    };
-
-        public static ErrorsResult GetBrandNameAlreadyExistError(BrandDtoForCreation brandDtoForCreation)
-        {
-
-            return new()
-            {
-                Code = nameof(BrandName),
-                Description = string.Format(BrandName, brandDtoForCreation.BrandName)
+            new()
+             {
+                Code = nameof(BrandNotFoundWithId),
+                Description = string.Format(BrandNotFoundWithId, brandId)
             };
-        }
+
+        public static ErrorsResult GetBrandNameAlreadyExistError(BrandDtoForCreation brandDtoForCreation) =>
+             new()
+             {
+                 Code = nameof(BrandName),
+                 Description = string.Format(BrandName, brandDtoForCreation.BrandName)
+             };
+        public static ErrorsResult GetBrandNameUpdateAlreadyExistError(BrandDtoForUpdate brandDtoForUpdate) =>
+             new()
+             {
+                 Code = nameof(BrandName),
+                 Description = string.Format(BrandName, brandDtoForUpdate.BrandName)
+             };
+
         #endregion
     }
 }

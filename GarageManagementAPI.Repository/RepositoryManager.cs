@@ -11,6 +11,9 @@ namespace GarageManagementAPI.Repository
         private readonly Lazy<IEmployeeInfoRepository> _employeeInfoRepository;
         private readonly Lazy<IBrandRepository> _brandRepository;
         private readonly Lazy<IProductRepository> _productRepository;
+        private readonly Lazy<IProductHistoryRepository> _productHistoryRepository;
+        private readonly Lazy<IProductCategoryRepository> _productCategoryRepository;
+        private readonly Lazy<IProductImageRepository> _productImageRepository;
 
         public RepositoryManager(RepositoryContext repositoryContext)
         {
@@ -31,15 +34,22 @@ namespace GarageManagementAPI.Repository
             _productRepository = new Lazy<IProductRepository>(() =>
             new ProductRepository(repositoryContext));
 
+            _productHistoryRepository = new Lazy<IProductHistoryRepository>(() => new ProductHistoryRepository(repositoryContext));
+
+            _productCategoryRepository = new Lazy<IProductCategoryRepository>(() => new ProductCategoryRepository(repositoryContext));
+
+            _productImageRepository = new Lazy<IProductImageRepository>(() => new ProductImageRepository(repositoryContext));
+
         }
 
         public IWorkplaceRepository Workplace => _workplaceRepository.Value;
-
         public IUserRepository User => _userRepository.Value;
-
         public IEmployeeInfoRepository EmployeeInfo => _employeeInfoRepository.Value;
         public IBrandRepository Brand => _brandRepository.Value;
         public IProductRepository Product => _productRepository.Value;
+        public IProductHistoryRepository ProductHistory => _productHistoryRepository.Value;
+        public IProductCategoryRepository ProductCategory => _productCategoryRepository.Value;
+        public IProductImageRepository ProductImage => _productImageRepository.Value;
 
         public async Task<IDbContextTransaction> BeginTransactionAsync()
         {

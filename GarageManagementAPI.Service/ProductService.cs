@@ -11,7 +11,6 @@ using GarageManagementAPI.Shared.RequestFeatures;
 using GarageManagementAPI.Shared.ResultModel;
 using System.Dynamic;
 using GarageManagementAPI.Shared.Enums.SystemStatuss;
-using GarageManagementAPI.Shared.DataTransferObjects.Workplace;
 
 namespace GarageManagementAPI.Service
 {
@@ -38,7 +37,7 @@ namespace GarageManagementAPI.Service
 
             productEntity.CreatedAt = DateTimeOffset.UtcNow.SEAsiaStandardTime();
             productEntity.UpdatedAt = DateTimeOffset.UtcNow.SEAsiaStandardTime();
-            productEntity.Status = ProductStatus.Inactive;
+            productEntity.Status = ProductStatus.None;
 
             await _repoManager.Product.CreateProductAsync(productEntity);
             await _repoManager.SaveAsync();
@@ -48,41 +47,39 @@ namespace GarageManagementAPI.Service
             return productDtoToReturn.CreatedResult();
         }
 
-        public async Task<Result<ExpandoObject>> GetProductAsync(Guid productId, ProductParameters productParameters, bool trackChanges, string? include = null)
+        public async Task<Result<ExpandoObject>> GetProductFullByIdAsync(Guid productId, bool trackChanges, string? include = null)
         {
-            var productResult = await GetAndCheckIfProductExist(productId, trackChanges);
+            var productResult = await GetAndCheckIfProductFullExist(productId, trackChanges, include);
 
             if (!productResult.IsSuccess)
                 return Result<ExpandoObject>.NotFound(productResult.Errors!);
 
-            var productEntity = productResult.GetValue<Product>();
+            var productsDto = productResult.GetValue<ProductDtoFull>();
 
-            var productsDto = _mapper.Map<ProductDto>(productEntity);
-
-            var userShaped = _dataShaper.Product.ShapeData(productsDto, productParameters.Fields);
-
-            return Result<ExpandoObject>.Ok(userShaped);
-        }
-
-        public async Task<Result<ExpandoObject>> GetProductByBarcode1Async(string barcode, ProductParameters productParameters, bool trackChanges, string? include = null)
-        {
-            var productResult = await GetAndCheckIfProductByBarCodeExist(barcode, trackChanges);
-
-            if (!productResult.IsSuccess)
-                return Result<ExpandoObject>.NotFound(productResult.Errors!);
-
-            var productEntity = productResult.GetValue<Product>();
-
-            var productsDto = _mapper.Map<ProductDto>(productEntity);
-
-            var productShaped = _dataShaper.Product.ShapeData(productsDto, productParameters.Fields);
+            var productShaped = _dataShaper.ProductWithPrice.ShapeData(productsDto, null);
 
             return Result<ExpandoObject>.Ok(productShaped);
         }
 
-        public async Task<Result<ProductDtoForUpdate>> GetProductForPartiallyUpdate(Guid productId, bool trackChanges)
+        public async Task<Result<ExpandoObject>> GetProductFullByBarcodeAsync(string barcode, ProductParameters productParameters, bool trackChanges, string? include = null)
         {
-            var productResult = await GetAndCheckIfProductExist(productId, trackChanges);
+            var productResult = await GetAndCheckIfProductByBarCodeExist(barcode, trackChanges, include);
+
+            if (!productResult.IsSuccess)
+                return Result<ExpandoObject>.NotFound(productResult.Errors!);
+
+            var productEntity = productResult.GetValue<ProductDtoFull>();
+
+            var productsDto = _mapper.Map<ProductDtoFull>(productEntity);
+
+            var productShaped = _dataShaper.ProductWithPrice.ShapeData(productsDto, productParameters.Fields);
+
+            return Result<ExpandoObject>.Ok(productShaped);
+        }
+
+        public async Task<Result<ProductDtoForUpdate>> GetProductForPartiallyUpdate(Guid productId, bool trackChanges, string? include =null)
+        {
+            var productResult = await GetAndCheckIfProductExist(productId, trackChanges, include);
             if (!productResult.IsSuccess)
                 return Result<ProductDtoForUpdate>.Failure(productResult.StatusCode, productResult.Errors!);
 
@@ -97,16 +94,19 @@ namespace GarageManagementAPI.Service
         {
             var productsWithMetadata = await _repoManager.Product.GetProductsAsync(productParameters, trackChanges, include);
 
-            var productsDto = _mapper.Map<IEnumerable<ProductDto>>(productsWithMetadata);
+            var productsDto = _mapper.Map<IEnumerable<ProductDtoFull>>(productsWithMetadata);
 
-            var productsShaped = _dataShaper.Product.ShapeData(productsDto, productParameters.Fields);
+            var productsShaped = _dataShaper.ProductWithPrice.ShapeData(productsDto, productParameters.Fields);
 
             return Result<IEnumerable<ExpandoObject>>.Ok(productsShaped, productsWithMetadata.MetaData);
         }
 
-        public async Task<Result> UpdateProduct(Guid productId, ProductDtoForUpdate productDtoForUpdate, bool trackChanges)
+        public async Task<Result> UpdateProduct(Guid productId, ProductDtoForUpdate productDtoForUpdate, bool trackChanges, string? include = null)
         {
             var productResult = await GetAndCheckIfProductExist(productId, trackChanges);
+            var check = await CheckIfProductExistByNameAndBrandOrBarCodeForUpdate(productDtoForUpdate, productId);
+            if (check)
+                return Result<ProductDto>.BadRequest([ProductErrors.GetProductNameUpdateAlreadyExistError(productDtoForUpdate)]);
             if (!productResult.IsSuccess)
                 return Result<ProductDto>.Failure(productResult.StatusCode, productResult.Errors!);
             var productEntity = productResult.GetValue<Product>();
@@ -134,22 +134,48 @@ namespace GarageManagementAPI.Service
             return exists;
         }
 
-        private async Task<Result<Product>> GetAndCheckIfProductExist(Guid productId, bool trackChanges)
+        private async Task<bool> CheckIfProductExistByNameAndBrandOrBarCodeForUpdate(ProductDtoForUpdate productDtoForUpdate, Guid productId)
         {
-            var product = await _repoManager.Product.GetProductByIdAsync(productId, trackChanges);
+            var brandId = productDtoForUpdate.BrandId;
+            var barcode = productDtoForUpdate.ProductBarcode!.Trim();
+            var name = productDtoForUpdate.ProductName!.Trim();
+
+            var exists = await _repoManager.Product.FindByCondition(p =>
+            !p.Id.Equals(productId) &&
+               (p.BrandId.Equals(brandId) &&
+                 p.ProductName.Trim().Equals(name) ||
+                 p.ProductBarcode.Trim().Equals(barcode)),
+                false).AnyAsync();
+
+            return exists;
+        }
+
+
+        private async Task<Result<Product>> GetAndCheckIfProductExist(Guid productId, bool trackChanges, string? include = null)
+        {
+            var product = await _repoManager.Product.GetProductByIdAsync(productId, trackChanges, include);
             if (product == null)
                 return product.NotFoundId(productId);
 
             return product.OkResult();
         }
 
-        private async Task<Result<Product>> GetAndCheckIfProductByBarCodeExist(string barcode, bool trackChanges)
+        private async Task<Result<ProductDtoFull>> GetAndCheckIfProductFullExist(Guid productId, bool trackChanges, string? include = null)
         {
-            var product = await _repoManager.Product.GetProductByBarCodeAsync(barcode, trackChanges);
+            var product = await _repoManager.Product.GetProductFullByIdAsync(productId, trackChanges, include);
+            if (product == null)
+                return product.NotFoundWithPriceId(productId);
+
+            return product.OkResultWithPrice();
+        }
+
+        private async Task<Result<ProductDtoFull>> GetAndCheckIfProductByBarCodeExist(string barcode, bool trackChanges, string? include)
+        {
+            var product = await _repoManager.Product.GetProductFulllByBarCodeAsync(barcode, trackChanges, include);
             if (product == null)
                 return product.NotFoundBarCode(barcode);
 
-            return product.OkResult();
+            return product.OkResultWithPrice();
         }
     }
 }

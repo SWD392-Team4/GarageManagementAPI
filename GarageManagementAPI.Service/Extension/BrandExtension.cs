@@ -16,7 +16,7 @@ namespace GarageManagementAPI.Service.Extension
         public static Result<BrandDto> CreatedResult(this BrandDto BrandDto)
             => Result<BrandDto>.Created(BrandDto);
 
-        public static Result<Brand> NotFound(this Brand? Brand, Guid BrandId)
+        public static Result<Brand> NotFound(this Brand? brand, Guid BrandId)
             => Result<Brand>.NotFound([BrandErrors.GetBrandNotFoundError(BrandId)]);
     }
 }

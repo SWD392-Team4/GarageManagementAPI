@@ -71,7 +71,15 @@ namespace GarageManagementAPI.Shared.ResultModel
 
 
         public override string ToString()
-         => JsonSerializer.Serialize(this);
+        {
+            var options = new JsonSerializerOptions
+            {
+                PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+                DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
+            };
+
+            return JsonSerializer.Serialize(this, options);
+        }
     }
     public class Result<T> : Result
     {

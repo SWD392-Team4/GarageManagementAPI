@@ -25,5 +25,6 @@ namespace GarageManagementAPI.Repository.Contracts
         void Delete(T entity);
 
         void Deletes(T[] entity);
+      
     }
 }

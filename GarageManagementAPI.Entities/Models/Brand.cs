@@ -1,4 +1,5 @@
 ﻿using GarageManagementAPI.Shared.Enums;
+using GarageManagementAPI.Shared.Enums.SystemStatuss;
 using GarageManagementAPI.Shared.ErrorsConstant.Brand;
 using GarageManagementAPI.Shared.ErrorsConstant.Workplace;
 using System.ComponentModel.DataAnnotations;
@@ -11,8 +12,8 @@ namespace GarageManagementAPI.Entities.Models
 
         public string LinkLogo { get; set; } = null!;
 
-        [EnumDataType(typeof(SystemStatus))]
-        public SystemStatus Status { get; set; }
+        [EnumDataType(typeof(BrandStatus))]
+        public BrandStatus Status { get; set; }
 
         public DateTimeOffset CreatedAt { get; set; }
 
