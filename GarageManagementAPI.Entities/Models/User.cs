@@ -17,7 +17,9 @@ namespace GarageManagementAPI.Entities.Models
 
         public DateTime? RefreshTokenExpiryTime { get; set; }
 
-        public string? Image { get; set; } = "N/A";
+        public string? ImageLink { get; set; } = "N/A";
+
+        public string? ImageId { get; set; } = "N/A";
 
         [EnumDataType(typeof(UserStatus))]
         public UserStatus Status { get; set; }

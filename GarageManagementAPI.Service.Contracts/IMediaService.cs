@@ -5,6 +5,8 @@ namespace GarageManagementAPI.Service.Contracts
 {
     public interface IMediaService
     {
-        Task<Result<string>> UploadImageAsync(IFormFile file);
+        Task<Result<(string? publicId, string? absoluteUrl)>> UploadUserImageAsync(IFormFile file);
+
+        Task<Result<string>> RemoveImage(string publicId);
     }
 }

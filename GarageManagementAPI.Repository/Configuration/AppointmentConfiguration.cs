@@ -26,7 +26,7 @@ namespace GarageManagementAPI.Repository.Configuration
             entity.Property(e => e.CustomerEmail).HasMaxLength(255);
             entity.Property(e => e.CustomerName).HasMaxLength(255);
             entity.Property(e => e.CustomerPhoneNumber).HasMaxLength(255);
-            entity.Property(e => e.ExpectedPrice).HasColumnType("decimal(18, 2)");
+            entity.Property(e => e.Price).HasColumnType("decimal(18, 2)");
             entity.Property(e => e.Status).HasMaxLength(255);
 
             entity.HasOne(d => d.ApproveByEmployee).WithMany(p => p.Appointments)

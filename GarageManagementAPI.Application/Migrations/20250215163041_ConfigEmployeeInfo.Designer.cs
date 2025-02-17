@@ -4,6 +4,7 @@ using GarageManagementAPI.Repository;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GarageManagementAPI.Application.Migrations
 {
     [DbContext(typeof(RepositoryContext))]
-    partial class RepositoryContextModelSnapshot : ModelSnapshot
+    [Migration("20250215163041_ConfigEmployeeInfo")]
+    partial class ConfigEmployeeInfo
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -80,14 +83,14 @@ namespace GarageManagementAPI.Application.Migrations
                     b.Property<DateTimeOffset>("EstimatedEndTime")
                         .HasColumnType("datetimeoffset");
 
+                    b.Property<decimal>("ExpectedPrice")
+                        .HasColumnType("decimal(18, 2)");
+
                     b.Property<Guid>("GarageId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<int>("Mileage")
                         .HasColumnType("int");
-
-                    b.Property<decimal>("Price")
-                        .HasColumnType("decimal(18, 2)");
 
                     b.Property<string>("Status")
                         .IsRequired()
@@ -1093,10 +1096,6 @@ namespace GarageManagementAPI.Application.Migrations
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
 
-                    b.Property<string>("Type")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<DateTimeOffset>("UpdatedAt")
                         .HasColumnType("datetimeoffset");
 
@@ -1717,10 +1716,6 @@ namespace GarageManagementAPI.Application.Migrations
                         .IsRequired()
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
-
-                    b.Property<string>("ServiceName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Status")
                         .IsRequired()

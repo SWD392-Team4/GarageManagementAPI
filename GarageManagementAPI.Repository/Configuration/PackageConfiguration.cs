@@ -27,6 +27,9 @@ namespace GarageManagementAPI.Repository.Configuration
 
             entity.Property(e => e.Status)
                 .HasConversion<string>();
+
+            entity.Property(e => e.Type)
+                .HasConversion<string>();
         }
     }
 }

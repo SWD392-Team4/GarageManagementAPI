@@ -34,20 +34,20 @@ namespace GarageManagementAPI.Application.MappingProfile
                 {
                     opt.PreCondition(src => src.EmployeeInfo != null);
                     opt.MapFrom(src => src.EmployeeInfo!.WorkplaceId);
-                })
-                .ForMember(dest => dest.UpdatedAt, opt =>
-                {
-                    opt.MapFrom(src =>
-                        src.EmployeeInfo != null && DateTimeOffset.Compare(src.EmployeeInfo.UpdatedAt, src.UpdatedAt) > 0
-                            ? src.EmployeeInfo.UpdatedAt
-                            : src.UpdatedAt);
-
                 });
 
-            CreateMap<UserForUpdateDto, User>();
+            CreateMap<UserForUpdateDto, User>()
+                .ForAllMembers(opt =>
+                {
+                    opt.Condition((src, dest, srcMember) => srcMember != null);
+                });
 
             CreateMap<UserForUpdateEmployeeDto, User>()
-                .IncludeBase<UserForUpdateDto, User>();
+                .IncludeBase<UserForUpdateDto, User>()
+                 .ForAllMembers(opt =>
+                 {
+                     opt.Condition((src, dest, srcMember) => srcMember != null);
+                 }); ;
         }
     }
 }

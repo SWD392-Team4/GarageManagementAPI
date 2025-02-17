@@ -1,5 +1,6 @@
 ﻿using GarageManagementAPI.Shared.DataTransferObjects.User;
 using GarageManagementAPI.Shared.ErrorModel;
+using System.Data;
 
 namespace GarageManagementAPI.Shared.Constant.Authentication
 {
@@ -46,7 +47,10 @@ namespace GarageManagementAPI.Shared.Constant.Authentication
         // Role Errors
         public const string RoleRequired = "The user role is required.";
         public const string RoleInvalid = "The provided user role is invalid.";
-        public const string DoNotHavePermission = "You are not authorized to create users with this role.";
+        public const string DoNotHavePermissionCreateUser = "You are not authorized to create users with this role.";
+
+        //Image Errors
+        public const string DoNotHavePermissionToUpdateImage = "You are not authorized to update another users image.";
 
         //WorkplaceId errors
         public const string WorkplaceIdRequired = " The user work place type required.";
@@ -78,8 +82,17 @@ namespace GarageManagementAPI.Shared.Constant.Authentication
         {
             return new()
             {
-                Code = nameof(DoNotHavePermission),
-                Description = DoNotHavePermission,
+                Code = nameof(DoNotHavePermissionCreateUser),
+                Description = DoNotHavePermissionCreateUser,
+            };
+        }
+
+        public static ErrorsResult GetUnAuthorizedToUpdateUserImageErrors()
+        {
+            return new()
+            {
+                Code = nameof(DoNotHavePermissionToUpdateImage),
+                Description = DoNotHavePermissionToUpdateImage,
             };
         }
 

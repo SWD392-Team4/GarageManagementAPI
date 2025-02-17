@@ -24,7 +24,6 @@ namespace GarageManagementAPI.Repository.Configuration
                 .HasMaxLength(255)
                 .IsUnicode(false);
             entity.Property(e => e.FirstName).HasMaxLength(50);
-            entity.Property(e => e.Image).HasMaxLength(255);
             entity.Property(e => e.LastName).HasMaxLength(50);
             entity.Property(e => e.NormalizedEmail)
                 .HasMaxLength(255)
@@ -61,7 +60,6 @@ namespace GarageManagementAPI.Repository.Configuration
                     Id = new Guid("1230a288-3e5e-4ee1-a75c-3fd7af6480a0"),
                     FirstName = "Hanh",
                     LastName = "Trần",
-                    Image = "N/A",
                     Status = UserStatus.Active,
                     CreatedAt = DateTimeOffset.Parse("2025-02-01 00:00:00.0000000 +07:00"),
                     UpdatedAt = DateTimeOffset.Parse("2025-02-01 00:00:00.0000000 +07:00"),
@@ -83,7 +81,6 @@ namespace GarageManagementAPI.Repository.Configuration
                     Id = new Guid("b78245a2-a2bf-45b4-8572-b2c3f1948629"),
                     FirstName = "Tân",
                     LastName = "Nguyễn",
-                    Image = "N/A",
                     Status = UserStatus.Active,
                     CreatedAt = DateTimeOffset.Parse("2025-02-01 00:00:00.0000000 +07:00"),
                     UpdatedAt = DateTimeOffset.Parse("2025-02-01 00:00:00.0000000 +07:00"),
@@ -105,7 +102,6 @@ namespace GarageManagementAPI.Repository.Configuration
                     Id = new Guid("f8a4e60d-3113-4f25-8477-be205b0860c9"),
                     FirstName = "Tân",
                     LastName = "Lê",
-                    Image = "N/A",
                     Status = UserStatus.Active,
                     CreatedAt = DateTimeOffset.Parse("2025-02-01 00:00:00.0000000 +07:00"),
                     UpdatedAt = DateTimeOffset.Parse("2025-02-01 00:00:00.0000000 +07:00"),
@@ -127,7 +123,6 @@ namespace GarageManagementAPI.Repository.Configuration
                     Id = new Guid("e2060ff5-5fb9-4b20-a11a-bf6ae4716ad5"),
                     FirstName = "Giang",
                     LastName = "Nguyễn",
-                    Image = "N/A",
                     Status = UserStatus.Active,
                     CreatedAt = DateTimeOffset.Parse("2025-02-01 00:00:00.0000000 +07:00"),
                     UpdatedAt = DateTimeOffset.Parse("2025-02-01 00:00:00.0000000 +07:00"),
@@ -149,7 +144,6 @@ namespace GarageManagementAPI.Repository.Configuration
                     Id = new Guid("de0d20e6-17e6-40e8-8274-c89a66e64fa5"),
                     FirstName = "Khánh",
                     LastName = "Bùi",
-                    Image = "N/A",
                     Status = UserStatus.Active,
                     CreatedAt = DateTimeOffset.Parse("2025-02-01 00:00:00.0000000 +07:00"),
                     UpdatedAt = DateTimeOffset.Parse("2025-02-01 00:00:00.0000000 +07:00"),

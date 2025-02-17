@@ -1,12 +1,15 @@
 ﻿
 using GarageManagementAPI.Service.Contracts;
+using GarageManagementAPI.Shared.Constant.Authentication;
 using GarageManagementAPI.Shared.DataTransferObjects.User;
 using GarageManagementAPI.Shared.Enums;
 using GarageManagementAPI.Shared.Extension;
 using GarageManagementAPI.Shared.RequestFeatures;
+using GarageManagementAPI.Shared.ResultModel;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Runtime.CompilerServices;
 using System.Security.Claims;
 
 namespace GarageManagementAPI.Presentation.Controllers
@@ -23,7 +26,7 @@ namespace GarageManagementAPI.Presentation.Controllers
         [Authorize]
         public async Task<IActionResult> GetUserInfo([FromQuery] UserParameters userParameters)
         {
-            var userId = HttpContext.User.FindFirstValue("UserId");
+            var userId = HttpContext.User.FindFirstValue("userid");
             var isCustomer = HttpContext.User.IsInRole(nameof(SystemRole.Customer));
             var include = isCustomer ? "Roles" : "EmployeeInfo,Roles";
 
@@ -58,24 +61,52 @@ namespace GarageManagementAPI.Presentation.Controllers
         }
 
         [HttpPut("{userId:guid}")]
-        [Authorize(Roles = $"{nameof(SystemRole.Administrator)}")]
-        public async Task<IActionResult> UpdateEmployeeInfo(Guid userId, [FromForm] IFormFile? file, [FromForm] UserForUpdateEmployeeDto userForUpdateEmployeeDto)
+        [Authorize(Roles = "Administrator")]
+        public async Task<IActionResult> UpdateEmployeeInfo(Guid userId, [FromBody] UserForUpdateEmployeeDto userForUpdateEmployeeDto)
         {
-            string? urlLink = null;
-            if (file != null)
-            {
-                var uploadFileResult = await _service.MediaService.UploadImageAsync(file);
-
-                if (!uploadFileResult.IsSuccess)
-                    return ProcessError(uploadFileResult);
-
-                urlLink = uploadFileResult.GetValue<string>();
-            }
-
-
-            var updateResult = await _service.UserService.UpdateEmployeeAsync(userId, userForUpdateEmployeeDto, true, urlLink);
+            var updateResult = await _service.UserService.UpdateEmployeeAsync(userId, userForUpdateEmployeeDto, true);
 
             return updateResult.Map(
+                onSuccess: _ => NoContent(),
+                onFailure: ProcessError
+                );
+        }
+
+        [HttpPost("{userId:guid}/image")]
+        [Authorize]
+        public async Task<IActionResult> UpdateUserImageAsync(Guid userId, [FromForm] IFormFile fileDto)
+        {
+            var contextUserId = new Guid(HttpContext.User.FindFirstValue("userid")!);
+            var isAdmin = HttpContext.User.IsInRole(nameof(SystemRole.Administrator));
+
+            if (contextUserId != userId && !isAdmin)
+                return new ObjectResult(
+                         Result.Forbidden(
+                         [UserErrors.GetUnAuthorizedToUpdateUserImageErrors()]))
+                {
+                    StatusCode = StatusCodes.Status403Forbidden
+                };
+
+            var uploadFileResult = await _service.MediaService.UploadUserImageAsync(fileDto);
+
+            if (!uploadFileResult.IsSuccess)
+                return ProcessError(uploadFileResult);
+
+            var imgTuple = uploadFileResult.GetValue<(string? publicId, string? absoluteUrl)>();
+
+            var updateResult = await _service.UserService.UpdateUserImageAsync(userId, true, imgTuple.publicId!, imgTuple.absoluteUrl!);
+
+            if (!updateResult.IsSuccess)
+                return ProcessError(updateResult);
+
+            var oldImageId = updateResult.GetValue<string?>();
+
+            if (oldImageId is null)
+                return NoContent();
+
+            var removeResult = await _service.MediaService.RemoveImage(oldImageId);
+
+            return removeResult.Map(
                 onSuccess: _ => NoContent(),
                 onFailure: ProcessError
                 );

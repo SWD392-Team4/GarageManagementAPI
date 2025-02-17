@@ -6,6 +6,7 @@ using GarageManagementAPI.Service.Extension;
 using GarageManagementAPI.Shared.Constant.Authentication;
 using GarageManagementAPI.Shared.DataTransferObjects.User;
 using GarageManagementAPI.Shared.DataTransferObjects.Workplace;
+using GarageManagementAPI.Shared.ErrorsConstant.Workplace;
 using GarageManagementAPI.Shared.Extension;
 using GarageManagementAPI.Shared.RequestFeatures;
 using GarageManagementAPI.Shared.ResultModel;
@@ -39,6 +40,15 @@ namespace GarageManagementAPI.Service
             return Result<User>.Ok(user);
         }
 
+        private async Task<Result> CheckIfWorkplaceExist(Guid workplaceId)
+        {
+            var workplace = await _repoManager.Workplace.GetWorkplaceByIdAsync(workplaceId, false);
+            if (workplace is null)
+                return Result.NotFound([WorkplaceErrors.GetWorkplaceNotFoundError(workplaceId)]);
+
+            return Result.Ok();
+        }
+
         public async Task<Result<ExpandoObject>> GetUserAsync(Guid userId, UserParameters userParameters, bool trackChanges, string? include = null)
         {
             var userResult = await GetAndCheckIfUserExist(userId, trackChanges, include);
@@ -66,22 +76,40 @@ namespace GarageManagementAPI.Service
             return Result<IEnumerable<ExpandoObject>>.Ok(usersShaped, usersWithMetadata.MetaData);
         }
 
-        public async Task<Result> UpdateEmployeeAsync(Guid id, UserForUpdateEmployeeDto userForUpdateEmployeeDto, bool trackChanges, string? imgUrl = null)
+        public async Task<Result> UpdateEmployeeAsync(Guid id, UserForUpdateEmployeeDto userForUpdateEmployeeDto, bool trackChanges)
         {
             var resultCheck = await GetAndCheckIfUserExist(id, trackChanges, "EmployeeInfo");
 
-            if (!resultCheck.IsSuccess) return Result.BadRequest(resultCheck.Errors!);
+            var resultWorkplaceCheck = await CheckIfWorkplaceExist(userForUpdateEmployeeDto.WorkplaceId);
+
+            if (!resultCheck.IsSuccess || !resultWorkplaceCheck.IsSuccess) return Result.BadRequest(resultCheck.Errors ?? resultWorkplaceCheck.Errors!);
             var userEntity = resultCheck.GetValue<User>();
+
 
             _mapper.Map(userForUpdateEmployeeDto, userEntity);
             _mapper.Map(userForUpdateEmployeeDto, userEntity.EmployeeInfo);
 
             userEntity.UpdatedAt = DateTimeOffset.UtcNow.SEAsiaStandardTime();
-            userEntity.EmployeeInfo!.UpdatedAt = DateTimeOffset.UtcNow.SEAsiaStandardTime();
             await _repoManager.SaveAsync();
 
             return Result.NoContent();
 
+        }
+
+        public async Task<Result<string?>> UpdateUserImageAsync(Guid id, bool trackChanges, string imgId, string imgUrl)
+        {
+            var resultCheck = await GetAndCheckIfUserExist(id, trackChanges);
+
+            if (!resultCheck.IsSuccess) return Result<string?>.BadRequest(resultCheck.Errors!);
+            var userEntity = resultCheck.GetValue<User>();
+            var oldImage = userEntity.ImageId;
+            userEntity.ImageId = imgId;
+            userEntity.ImageLink = imgUrl;
+
+            userEntity.UpdatedAt = DateTimeOffset.UtcNow.SEAsiaStandardTime();
+            await _repoManager.SaveAsync();
+
+            return Result<string?>.Ok(oldImage);
         }
     }
 }

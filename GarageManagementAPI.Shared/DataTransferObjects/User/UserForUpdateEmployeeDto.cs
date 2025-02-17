@@ -14,6 +14,6 @@ namespace GarageManagementAPI.Shared.DataTransferObjects.User
         [EnumDataType(typeof(UserStatus))]
         public UserStatus Status { get; set; }
 
-        public Guid? WorkplaceId { get; set; }
+        public Guid WorkplaceId { get; set; }
     }
 }

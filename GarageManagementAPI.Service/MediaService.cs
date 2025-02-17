@@ -7,6 +7,7 @@ using GarageManagementAPI.Entities.ConfigurationModels;
 using GarageManagementAPI.Shared.ResultModel;
 using GarageManagementAPI.Shared.Constant.Request;
 using System.Net;
+using System.Data;
 
 namespace GarageManagementAPI.Service
 {
@@ -19,6 +20,10 @@ namespace GarageManagementAPI.Service
         private static readonly string[] _permittedExtensions = { ".jpg", ".jpeg", ".png" };
         private static readonly string[] _permittedMimeTypes = { "image/jpg", "image/jpeg", "image/png" };
 
+        private const string _userFolder = "User";
+        private const string _productFolder = "Product";
+        private const string _errorCode = "CloudinaryError";
+
         public MediaService(IOptionsSnapshot<CloudinaryConfigurations> configuration)
         {
             _configuration = configuration.Value;
@@ -30,59 +35,81 @@ namespace GarageManagementAPI.Service
             _cloudinary = new Cloudinary(account);
         }
 
-        public async Task<Result<string>> UploadImageAsync(IFormFile file, string folderName, string fileName)
+        private async Task<Result<(string? publicId, string? absoluteUrl)>> UploadImageAsync(IFormFile file, string folderName)
         {
             if (file == null || file.Length == 0)
             {
-                return Result<string>.BadRequest([RequestErrors.GetFileNotFoundErrors()]);
+                return Result<(string? publicId, string? absoluteUrl)>.BadRequest([RequestErrors.GetFileNotFoundErrors()]);
             }
 
             if (file.Length > _maxFileSize)
             {
-                return Result<string>.BadRequest([RequestErrors.GetFileTooLargeErrors()]);
+                return Result<(string? publicId, string? absoluteUrl)>.BadRequest([RequestErrors.GetFileTooLargeErrors()]);
             }
 
             var extension = Path.GetExtension(file.FileName).ToLowerInvariant();
             if (string.IsNullOrEmpty(extension) || !_permittedExtensions.Contains(extension))
             {
-                return Result<string>.BadRequest([RequestErrors.GetFileExtensionInvalidErrors()]);
+                return Result<(string? publicId, string? absoluteUrl)>.BadRequest([RequestErrors.GetFileExtensionInvalidErrors()]);
             }
 
             if (!_permittedMimeTypes.Contains(file.ContentType.ToLowerInvariant()))
             {
-                return Result<string>.BadRequest([RequestErrors.GetFileTypeInvalidErrors()]);
+                return Result<(string? publicId, string? absoluteUrl)>.BadRequest([RequestErrors.GetFileTypeInvalidErrors()]);
             }
 
             await using var stream = file.OpenReadStream();
             var uploadParams = new ImageUploadParams()
             {
-                File = new FileDescription(fileName, stream),
-                UniqueFilename = false,
+                File = new FileDescription(file.FileName, stream),
+                UniqueFilename = true,
                 Overwrite = true,
-                AssetFolder = folderName
+                AssetFolder = folderName,
+                UseAssetFolderAsPublicIdPrefix = true
             };
 
             var uploadResult = await _cloudinary.UploadAsync(uploadParams);
 
             if (uploadResult.StatusCode == HttpStatusCode.OK)
             {
-                return Result<string>.Ok(uploadResult.SecureUrl.AbsoluteUri);
+                return Result<(string? publicId, string? absoluteUrl)>.Ok((publicId: uploadResult.PublicId, absoluteUrl: uploadResult.SecureUrl.AbsoluteUri));
             }
 
-
-            return Result<string>.Failure(HttpStatusCode.InternalServerError, [new()
+            return Result<(string? publicId, string? absoluteUrl)>.Failure(uploadResult.StatusCode, [new()
             {
-                Code = "UNKNOWN",
+                Code = _errorCode,
                 Description = uploadResult.Error.Message
             }]);
         }
 
-        public async Task<Result> RemoveImage()
+        public async Task<Result<(string? publicId, string? absoluteUrl)>> UploadUserImageAsync(IFormFile file)
+            => await UploadImageAsync(file, _userFolder);
+
+        public async Task<Result<(string? publicId, string? absoluteUrl)>> UploadProductImageAsync(IFormFile file)
+            => await UploadImageAsync(file, _productFolder);
+
+        public async Task<Result<string>> RemoveImage(string publicId)
         {
 
-            //var uploadResult = await _cloudinary.DeleteRelatedResourcesByAssetIds;
+            var deletionParams = new DeletionParams(publicId)
+            {
+                ResourceType = ResourceType.Image
 
-            return Result.Ok();
+            };
+
+            var result = await _cloudinary.DestroyAsync(deletionParams);
+
+            if (result.Error != null)
+            {
+                return Result<string>.Failure(result.StatusCode, [new()
+                {
+                    Code = _errorCode,
+                    Description = result.Error.Message
+                }]);
+            }
+
+            return Result<string>.Ok(result.Result);
         }
+
     }
 }

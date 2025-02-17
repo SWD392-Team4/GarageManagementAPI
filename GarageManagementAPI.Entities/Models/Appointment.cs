@@ -28,7 +28,7 @@ namespace GarageManagementAPI.Entities.Models
 
         public DateTimeOffset? ActualEndTime { get; set; }
 
-        public decimal ExpectedPrice { get; set; }
+        public decimal Price { get; set; }
 
         public string AppointmentType { get; set; } = null!;
 

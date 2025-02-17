@@ -10,10 +10,6 @@
 
         public DateOnly DateOfBirth { get; set; }
 
-        public DateTimeOffset CreatedAt { get; set; }
-
-        public DateTimeOffset UpdatedAt { get; set; }
-
         public virtual User User { get; set; } = null!;
 
         public virtual Workplace Workplace { get; set; } = null!;
