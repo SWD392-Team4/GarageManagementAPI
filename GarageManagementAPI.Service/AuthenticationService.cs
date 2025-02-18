@@ -377,7 +377,7 @@ namespace GarageManagementAPI.Service
             var baseUrl = _jwtConfiguration.ValidAudience;
             var builder = new UriBuilder(baseUrl!)
             {
-                Path = "reset-password",
+                Path = "authen/reset-password",
                 Query = $"email={email}&token={Uri.EscapeDataString(token)}"
             };
             var resetPasswordUrl = builder.ToString();
@@ -400,7 +400,7 @@ namespace GarageManagementAPI.Service
             var baseUrl = _jwtConfiguration.ValidAudience;
             var builder = new UriBuilder(baseUrl!)
             {
-                Path = "confirm-email",
+                Path = "authen/confirm-email",
                 Query = $"email={email}&token={Uri.EscapeDataString(token)}"
             };
             var resetPasswordUrl = builder.ToString();
