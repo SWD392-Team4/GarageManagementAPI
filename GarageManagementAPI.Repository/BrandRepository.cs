@@ -33,6 +33,7 @@ namespace GarageManagementAPI.Repository
                     (string.IsNullOrEmpty(brandParameters.BrandName) || b.BrandName.Contains(brandParameters.BrandName)),
                     trackChanges)
                 .SearchByName(brandParameters.BrandName) // Tìm kiếm theo tên sản phẩm
+                .SearchByDate(brandParameters.CreatedAt) //Tìm kiếm theo date
                 .SearchByStatus(brandParameters.Status)
                 .Sort(brandParameters.OrderBy) 
                 .IsInclude(include) 

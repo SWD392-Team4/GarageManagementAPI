@@ -6,6 +6,6 @@ namespace GarageManagementAPI.Shared.DataTransferObjects.ProductHistory
     public record ProductHistoryDtoForUpdate
     {
         [EnumDataType(typeof(ProductHistoryStatus))]
-        public ProductHistoryStatus Status { get; set; }
+        public ProductHistoryStatus? Status { get; set; } = ProductHistoryStatus.None;
     }
 }

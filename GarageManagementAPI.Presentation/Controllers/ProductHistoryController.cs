@@ -15,22 +15,6 @@ namespace GarageManagementAPI.Presentation.Controllers
         {
         }
 
-        [HttpPost(Name = "CreateProductHistory")]
-        public async Task<IActionResult> CreateProductHistory([FromBody] ProductHistoryDtoForCreation productHisotryDtoForCreation)
-        {
-            var result = await _service.ProductHistoryService.CreateProductHistoryAsync(productHisotryDtoForCreation);
-
-            return result.Map(
-                onSuccess: result =>
-                {
-                    var createdProduct = result.GetValue<ProductHistoryDto>();
-
-                    return CreatedAtRoute("GetProductById", new { productId = createdProduct.Id }, result);
-                },
-                onFailure: ProcessError
-                );
-        }
-
         [HttpGet("{productId:guid}", Name = "GetProductHistoryById")]
         //[Authorize(Roles = $"{nameof(SystemRole.Administrator)},{nameof(SystemRole.Cashier)}")]
         public async Task<IActionResult> GetProductById(Guid productId, [FromQuery] ProductHistoryParameters productHisotryParameters)

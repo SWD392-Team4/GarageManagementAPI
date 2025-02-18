@@ -1,5 +1,4 @@
-﻿using GarageManagementAPI.Shared.Enums;
-using GarageManagementAPI.Shared.Enums.SystemStatuss;
+﻿using GarageManagementAPI.Shared.Enums.SystemStatuss;
 using System.ComponentModel.DataAnnotations;
 
 namespace GarageManagementAPI.Shared.RequestFeatures
@@ -8,6 +7,7 @@ namespace GarageManagementAPI.Shared.RequestFeatures
     {
         public ProductCategoryParameters() => OrderBy = "category";
         public string? Category { get; set; } = null!;
+        public DateTimeOffset CreatedAt { get; set; }
 
         [EnumDataType(typeof(ProductCategoryStatus))]
         public ProductCategoryStatus? Status { get; set; } = null;

@@ -7,7 +7,7 @@ namespace GarageManagementAPI.Shared.ErrorsConstant.Product
     {
         #region Product const errors
         public const string ProductNotFound = "Product with id {0} doesn't exist.";
-        public const string ProductName = "Product with name already existed.";
+        public const string ProductNameOrBarCode = "Product with name or barcode already existed.";
         public const string NameRequired = "The product name is required.";
         public const string ProductStatusRequired = "The product status is required";
         public const string ProductStatusInvalid = "Invalid product status.";
@@ -42,15 +42,15 @@ namespace GarageManagementAPI.Shared.ErrorsConstant.Product
         public static ErrorsResult GetProductNameAlreadyExistError(ProductDtoForCreation productDtoForCreation) =>
              new()
              {
-                 Code = nameof(ProductName),
-                 Description = string.Format(ProductName, productDtoForCreation.ProductName)
+                 Code = nameof(ProductNameOrBarCode),
+                 Description = string.Format(ProductNameOrBarCode, productDtoForCreation.ProductName)
              };
 
         public static ErrorsResult GetProductNameUpdateAlreadyExistError(ProductDtoForUpdate productDtoForUpdate) =>
             new()
             {
-                Code = nameof(ProductName),
-                Description = string.Format(ProductName, productDtoForUpdate.ProductName)
+                Code = nameof(ProductNameOrBarCode),
+                Description = string.Format(ProductNameOrBarCode, productDtoForUpdate.ProductBarcode)
             };
         #endregion
     }

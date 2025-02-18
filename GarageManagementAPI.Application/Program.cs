@@ -25,6 +25,7 @@ builder.Services.AddMailConfiguration(builder.Configuration);
 builder.Services.AddCloudinaryConfiguration(builder.Configuration);
 builder.Services.ConfigureSwagger();
 builder.Services.ConfigureValidator();
+builder.Services.AddSignalR(); 
 
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

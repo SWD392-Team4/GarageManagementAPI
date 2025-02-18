@@ -1,12 +1,4 @@
-﻿using GarageManagementAPI.Shared.Enums;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace GarageManagementAPI.Shared.DataTransferObjects.ProductImage
+﻿namespace GarageManagementAPI.Shared.DataTransferObjects.ProductImage
 {
     public record class ProductImageDtoForManipulation
     {

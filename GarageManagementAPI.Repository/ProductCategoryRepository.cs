@@ -43,7 +43,7 @@ namespace GarageManagementAPI.Repository
                     .AsQueryable();
 
                 var productCategory = await productCategoryQuery.SingleOrDefaultAsync();
-                Console.WriteLine(include);
+               
                 if (productCategory == null) {
                     return new PagedList<Product>(new List<Product>(), 0, 1, 1);
                 }
@@ -59,14 +59,7 @@ namespace GarageManagementAPI.Repository
                         UpdatedAt = p.UpdatedAt
                     }).ToList();
 
-                foreach(var product in products)
-                {
-                    Console.WriteLine("product: " + product);
-                }
-
                 var count = products.Count();
-
-                Console.WriteLine(count);
 
                 // Trả về kết quả dưới dạng PagedList
                 return new PagedList<Product>(
@@ -85,6 +78,8 @@ namespace GarageManagementAPI.Repository
                     (string.IsNullOrEmpty(productCategoryParameters.Category) || b.Category.Contains(productCategoryParameters.Category)),
                     trackChanges)
                 .SearchByName(productCategoryParameters.Category) // Tìm kiếm theo tên sản phẩm
+                .SearchByDate(productCategoryParameters.CreatedAt)
+                .SearchByStatus(productCategoryParameters.Status)
                 .Sort(productCategoryParameters.OrderBy)
                 .IsInclude(include)
                 .AsQueryable();

@@ -28,11 +28,11 @@ namespace GarageManagementAPI.Shared.ErrorsConstant.ProductImg
                 Description = string.Format(ProductImageNotFoundWithId, productImgId)
               };
 
-        public static ErrorsResult GetProductImageLinkAlreadyExistError(ProductImageDtoForCreation productDtoForCreation) =>
+        public static ErrorsResult GetProductImageLinkAlreadyExistError(string link) =>
              new()
              {
                  Code = nameof(ProductImageLink),
-                 Description = string.Format(ProductImageLink, productDtoForCreation.Link)
+                 Description = string.Format(ProductImageLink, link)
              };
         #endregion
     }

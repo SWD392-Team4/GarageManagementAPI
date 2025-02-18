@@ -8,6 +8,28 @@ namespace GarageManagementAPI.Repository.Extensions
 {
     public static class ProductCategoryExtensions
     {
+        public static IQueryable<ProductCategory> SearchByDate(this IQueryable<ProductCategory> productCategory, DateTimeOffset? createdAt)
+        {
+            if (!createdAt.HasValue || createdAt.Value == DateTimeOffset.MinValue)
+            {
+                return productCategory;  // Skip filtering by date if createdAt is not provided or is MinValue
+            }
+
+            DateTimeOffset startDate = createdAt.Value.Date;
+            DateTimeOffset endDate = startDate.AddDays(1).AddTicks(-1); // End of day calculation
+
+            // Check for out-of-range values before querying
+            if (startDate > DateTimeOffset.MaxValue || endDate > DateTimeOffset.MaxValue)
+            {
+                throw new ArgumentOutOfRangeException("The specified date range is outside the valid range.");
+            }
+
+            return productCategory.Where(b =>
+                b.CreatedAt >= startDate &&
+                b.CreatedAt <= endDate
+            );
+        }
+
         public static IQueryable<ProductCategory> SearchByName(this IQueryable<ProductCategory> productCategory, string? name)
         {
             if (string.IsNullOrWhiteSpace(name))
@@ -22,7 +44,7 @@ namespace GarageManagementAPI.Repository.Extensions
         public static IQueryable<ProductCategory> SearchByStatus(this IQueryable<ProductCategory> productCategorys, ProductCategoryStatus? status)
         {
             if (status is null)return productCategorys;
-            return productCategorys.Where(p => p.Status.Equals(status));
+            return productCategorys.Where(p => p.Status.ToString().Equals(status.ToString()));
         }
 
         //IQueryable xây dựng và thực thi các truy vấn động trên nguồn dữ liệu

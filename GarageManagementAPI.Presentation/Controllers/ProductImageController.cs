@@ -16,22 +16,6 @@ namespace GarageManagementAPI.Presentation.Controllers
         {
         }
 
-        [HttpPost(Name = "CreateProductImage")]
-        public async Task<IActionResult> CreateProductImage([FromBody] ProductImageDtoForCreation productHisotryDtoForCreation)
-        {
-            var result = await _service.ProductImageService.CreateProductImageAsync(productHisotryDtoForCreation);
-
-            return result.Map(
-                onSuccess: result =>
-                {
-                    var createdProduct = result.GetValue<ProductImageDto>();
-
-                    return CreatedAtRoute("GetProductImageById", new { productId = createdProduct.Id }, result);
-                },
-                onFailure: ProcessError
-                );
-        }
-
         [HttpGet("{productId:guid}", Name = "GetProductImageById")]
         //[Authorize(Roles = $"{nameof(SystemRole.Administrator)},{nameof(SystemRole.Cashier)}")]
         public async Task<IActionResult> GetProductByIdImage(Guid productId, [FromQuery] ProductImageParameters productImageParameters)

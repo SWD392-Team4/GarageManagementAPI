@@ -69,7 +69,7 @@ namespace GarageManagementAPI.Presentation.Controllers
                 );
         }
 
-        [HttpPut("{ProductCategoryId:guid}")]
+        [HttpPut("{productCategoryId:guid}")]
         public async Task<IActionResult> UpdateProductCategory(Guid productCategoryId, [FromBody] ProductCategoryDtoForUpdate productCategoryDtoForUpdate)
         {
             var result = await _service.ProductCategoryService
@@ -85,14 +85,14 @@ namespace GarageManagementAPI.Presentation.Controllers
                  );
         }
 
-        [HttpPatch("{ProductCategoryId:guid}")]
+        [HttpPatch("{productCategoryId:guid}")]
         public async Task<IActionResult> PartiallyUpdateProductCategory(
-    Guid ProductCategoryId,
-    [FromBody] JsonPatchDocument<ProductCategoryDtoForUpdate> jsonPatchDocumentDto,
-    [FromServices] IValidator<ProductCategoryDtoForUpdate> validator)
+                                                                   Guid productCategoryId,
+                                                                  [FromBody] JsonPatchDocument<ProductCategoryDtoForUpdate> jsonPatchDocumentDto,
+                                                                  [FromServices] IValidator<ProductCategoryDtoForUpdate> validator)
         {
             // Retrieve the existing ProductCategory data
-            var productCategoryDtoForUpdateToPatchResult = await _service.ProductCategoryService.GetProductCategoryForPartiallyUpdate(ProductCategoryId, trackChanges: false);
+            var productCategoryDtoForUpdateToPatchResult = await _service.ProductCategoryService.GetProductCategoryForPartiallyUpdate(productCategoryId, trackChanges: false);
             if (!productCategoryDtoForUpdateToPatchResult.IsSuccess)
                 return ProcessError(productCategoryDtoForUpdateToPatchResult);
 
@@ -111,7 +111,7 @@ namespace GarageManagementAPI.Presentation.Controllers
                 return await validationResult.InvalidResult();
 
             // Update the ProductCategory
-            var result = await _service.ProductCategoryService.UpdateProductCategory(ProductCategoryId, productCategoryDtoForUpdateToPatch, trackChanges: true);
+            var result = await _service.ProductCategoryService.UpdateProductCategory(productCategoryId, productCategoryDtoForUpdateToPatch, trackChanges: true);
 
             return result.Map(
                 onSuccess: result => NoContent(),

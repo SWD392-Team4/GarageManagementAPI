@@ -22,8 +22,33 @@ namespace GarageManagementAPI.Repository.Extensions
         public static IQueryable<Brand> SearchByStatus(this IQueryable<Brand> brands, BrandStatus? status)
         {
             if (status is null) return brands;
-            return brands.Where(b => b.Status.Equals(status));
+            return brands.Where(b => b.Status.ToString().Equals(status.ToString()));
         }
+
+        public static IQueryable<Brand> SearchByDate(this IQueryable<Brand> brand, DateTimeOffset? createdAt)
+        {
+            if (!createdAt.HasValue || createdAt.Value == DateTimeOffset.MinValue)
+            {
+                return brand;  // Skip filtering by date if createdAt is not provided or is MinValue
+            }
+
+            DateTimeOffset startDate = createdAt.Value.Date;
+            DateTimeOffset endDate = startDate.AddDays(1).AddTicks(-1); // End of day calculation
+
+            // Check for out-of-range values before querying
+            if (startDate > DateTimeOffset.MaxValue || endDate > DateTimeOffset.MaxValue)
+            {
+                throw new ArgumentOutOfRangeException("The specified date range is outside the valid range.");
+            }
+
+            return brand.Where(b =>
+                b.CreatedAt >= startDate &&
+                b.CreatedAt <= endDate
+            );
+        }
+
+
+
 
         public static IQueryable<Brand> IsInclude(this IQueryable<Brand> brand, string? fieldsString)
         {
@@ -59,7 +84,7 @@ namespace GarageManagementAPI.Repository.Extensions
                 return brands.OrderBy(p => p.BrandName);  // Nếu không có chuỗi sắp xếp hợp lệ, sắp xếp theo BrandName
 
             // Áp dụng sắp xếp động với biểu thức đã tạo
-            return brands.OrderBy(orderQuery);  
+            return brands.OrderBy(orderQuery);
         }
     }
 }

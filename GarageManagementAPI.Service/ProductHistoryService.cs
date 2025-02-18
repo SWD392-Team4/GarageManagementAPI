@@ -30,32 +30,7 @@ namespace GarageManagementAPI.Service
             _dataShaper = dataShaper;
         }
 
-        public async Task<Result<ProductHistoryDto>> CreateProductHistoryAsync(ProductHistoryDtoForCreation productHistoryDtoForCreation)
-        {
-            var checkId = await CheckIfProductByIdProduct(productHistoryDtoForCreation);
-            var checkPrice = await CheckIfProductHistoryByIdAndPrice(productHistoryDtoForCreation);
-            if (!checkId)
-                return Result<ProductHistoryDto>.BadRequest([ProductErrors.GetProductNotFoundIdError(productHistoryDtoForCreation.ProductId)]);
-            if (checkPrice)
-                return Result<ProductHistoryDto>.BadRequest([ProductHistoryErrors.GetProductHistoryPriceAlreadyExistError(productHistoryDtoForCreation)]);
-            var date = DateTimeOffset.UtcNow.SEAsiaStandardTime();
-            // Gọi UpdateStatusProductHistory 
-            await UpdateStatusProductHistory(productHistoryDtoForCreation.ProductId);
-            await UpdateDateProduct(productHistoryDtoForCreation.ProductId, date, false);
 
-            var productEntity = _mapper.Map<ProductHistory>(productHistoryDtoForCreation);
-
-            productEntity.CreatedAt = date;
-            productEntity.UpdatedAt = date;
-            productEntity.Status = ProductHistoryStatus.Active;
-
-            await _repoManager.ProductHistory.CreateProductHisotoryAsync(productEntity);
-            await _repoManager.SaveAsync();
-
-            var productDtoToReturn = _mapper.Map<ProductHistoryDto>(productEntity);
-
-            return productDtoToReturn.CreatedResult();
-        }
 
         public async Task<Result<IEnumerable<ExpandoObject>>> GetHistoryProductByIdProductAsync(Guid productId, ProductHistoryParameters productHistoryParameters, bool trackChanges, string? include = null)
         {
@@ -96,35 +71,7 @@ namespace GarageManagementAPI.Service
 
 
 
-        private async Task UpdateStatusProductHistory(Guid productId)
-        {
-            var pruductEntity = await GetHistoriesIsActiveAsync(productId);
-            if (pruductEntity != null)
-            {
-                pruductEntity.Status = ProductHistoryStatus.Inactive;
-                pruductEntity.UpdatedAt = DateTimeOffset.UtcNow;
-                _repoManager.ProductHistory.UpdateProductHistory(pruductEntity);
-                await _repoManager.SaveAsync();
-            }
-        }
-
-        private async Task<bool> CheckIfProductHistoryByIdAndPrice(ProductHistoryDtoForCreation productHistoryDtoForCreation)
-        {
-            var productId = productHistoryDtoForCreation.ProductId;
-            var productPrice = productHistoryDtoForCreation.ProductPrice;
-
-            // Lấy bản ghi ProductHistory có UpdatedAt lớn nhất cho ProductId
-            var latestProductHistory = await _repoManager.ProductHistory
-                .FindByCondition(p => p.ProductId.Equals(productId), false)
-                .OrderByDescending(p => p.UpdatedAt)
-                .FirstOrDefaultAsync();
-
-            if (latestProductHistory != null && latestProductHistory.ProductPrice.Equals(productPrice))
-            {
-                return true;
-            }
-            return false;
-        }
+       
 
         private async Task<bool> CheckIfProductByIdProduct(ProductHistoryDtoForCreation productHistoryDtoForCreation)
         {
@@ -136,17 +83,6 @@ namespace GarageManagementAPI.Service
 
             return product;
         }
-
-        private async Task<ProductHistory?> GetHistoriesIsActiveAsync(Guid productId)
-        {
-
-            var productHistories = await _repoManager.ProductHistory
-       .FindByCondition(p => p.Status == ProductHistoryStatus.Active && p.ProductId == productId, false).OrderByDescending(p => p.UpdatedAt)
-       .FirstOrDefaultAsync();
-
-            return productHistories;
-        }
-
         private async Task<Result<Product>> GetAndCheckIfProductExist(Guid productId, bool trackChanges, string? include = null)
         {
             var product = await _repoManager.Product.GetProductByIdAsync(productId, trackChanges, include);
