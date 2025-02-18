@@ -26,7 +26,7 @@ namespace GarageManagementAPI.Repository.Extensions
                 return products;
             }
 
-            return products.Where(p => p.Status.Equals(status));
+            return products.Where(p => p.Status.ToString().Equals(status.ToString()));
         }
 
         //IQueryable xây dựng và thực thi các truy vấn động trên nguồn dữ liệu

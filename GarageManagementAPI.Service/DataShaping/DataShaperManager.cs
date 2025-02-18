@@ -10,7 +10,6 @@ namespace GarageManagementAPI.Service.DataShaping
         private readonly Lazy<IDataShaper<UserDto>> _userShaper;
         private readonly Lazy<IDataShaper<Shared.DataTransferObjects.Brand.BrandDto>> _brandShaper;
         private readonly Lazy<IDataShaper<Shared.DataTransferObjects.Product.ProductDto>> _productShaper;
-        private readonly Lazy<IDataShaper<Shared.DataTransferObjects.Product.ProductDtoFull>> _productWithPriceShaper;
         private readonly Lazy<IDataShaper<Shared.DataTransferObjects.ProductHistory.ProductHistoryDto>> _productHistoryShaper;
         private readonly Lazy<IDataShaper<Shared.DataTransferObjects.ProductCategory.ProductCategoryDto>> _productCategoryShaper;
         private readonly Lazy<IDataShaper<Shared.DataTransferObjects.ProductImage.ProductImageDto>> _productImageShaper;
@@ -29,9 +28,6 @@ namespace GarageManagementAPI.Service.DataShaping
             _productShaper = new Lazy<IDataShaper<Shared.DataTransferObjects.Product.ProductDto>>(
                () => new DataShaper<Shared.DataTransferObjects.Product.ProductDto>(Shared.DataTransferObjects.Product.ProductDto.PropertyInfos));
 
-            _productWithPriceShaper = new Lazy<IDataShaper<Shared.DataTransferObjects.Product.ProductDtoFull>>(
-              () => new DataShaper<Shared.DataTransferObjects.Product.ProductDtoFull>(Shared.DataTransferObjects.Product.ProductDtoFull.PropertyInfos));
-
             _productHistoryShaper = new Lazy<IDataShaper<Shared.DataTransferObjects.ProductHistory.ProductHistoryDto>>(
               () => new DataShaper<Shared.DataTransferObjects.ProductHistory.ProductHistoryDto>(Shared.DataTransferObjects.ProductHistory.ProductHistoryDto.PropertyInfos));
 
@@ -48,7 +44,6 @@ namespace GarageManagementAPI.Service.DataShaping
 
         public IDataShaper<Shared.DataTransferObjects.Brand.BrandDto> Brand => _brandShaper.Value;
         public IDataShaper<Shared.DataTransferObjects.Product.ProductDto> Product => _productShaper.Value;
-        public IDataShaper<Shared.DataTransferObjects.Product.ProductDtoFull> ProductWithPrice => _productWithPriceShaper.Value;
         public IDataShaper<Shared.DataTransferObjects.ProductCategory.ProductCategoryDto> ProductCategory => _productCategoryShaper.Value;
         public IDataShaper<Shared.DataTransferObjects.ProductHistory.ProductHistoryDto> ProductHistory => _productHistoryShaper.Value;
         public IDataShaper<Shared.DataTransferObjects.ProductImage.ProductImageDto> ProductImage => _productImageShaper.Value;

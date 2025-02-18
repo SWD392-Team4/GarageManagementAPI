@@ -5,11 +5,14 @@ namespace GarageManagementAPI.Shared.DataTransferObjects.Product
 {
     public record class ProductDto : BaseDto<ProductDto>
     {
-        public Guid Id {get; set; }
+        public required Guid Id { get; set; }
         public required string ProductName { get; set; }
         public required string ProductBarcode { get; set; }
-        public required string ProductDescription { get; set; }
-        public Guid BrandId { get; set; }
+        public string Category { get; set; } = null!;
+        public string BrandName { get; set; } = null!;
+        public decimal? ProductPrice { get; set; }
+        public string? ProductImg { get; set; }
+        public string? ProductDescription { get; set; }
 
         [EnumDataType(typeof(ProductStatus))]
         public ProductStatus Status { get; set; }

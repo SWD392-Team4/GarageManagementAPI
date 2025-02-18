@@ -2,6 +2,7 @@
 using GarageManagementAPI.Shared.DataTransferObjects.Product;
 using GarageManagementAPI.Shared.ErrorsConstant.Product;
 using GarageManagementAPI.Shared.Enums;
+using GarageManagementAPI.Shared.Enums.SystemStatuss;
 
 namespace GarageManagementAPI.Presentation.Validator.Product
 {
@@ -19,7 +20,7 @@ namespace GarageManagementAPI.Presentation.Validator.Product
                .NotEmpty()
                .WithMessage(ProductErrors.ProductStatusRequired)
                .WithErrorCode(nameof(ProductErrors.ProductStatusRequired))
-               .Must(status => Enum.IsDefined(typeof(SystemStatus), status))
+               .Must(status => Enum.IsDefined(typeof(ProductStatus), status))
                 .WithMessage(ProductErrors.ProductStatusInvalid)
                 .WithErrorCode(nameof(ProductErrors.ProductStatusInvalid));
         }

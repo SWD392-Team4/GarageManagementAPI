@@ -24,75 +24,25 @@ namespace GarageManagementAPI.Repository
             base.Update(product);
         }
 
-        public async Task<ProductDtoFull?> GetProductFulllByBarCodeAsync(string barcode, bool trackChanges, string? include = null)
+        public async Task<Product?> GetProductByBarCodeAsync(string barcode, bool trackChanges, string? include = null)
         {
             var product = include is null ?
            await FindByCondition(p => p.ProductBarcode.Equals(barcode), trackChanges).SingleOrDefaultAsync() :
            await FindByCondition(p => p.ProductBarcode.Equals(barcode), trackChanges).IsInclude(include).SingleOrDefaultAsync();
-
-            var price = product?.ProductHistories
-                .Where(ph => ph.Status == ProductHistoryStatus.Active)
-                .OrderByDescending(ph => ph.CreatedAt)
-                .Select(ph => ph.ProductPrice)
-                .FirstOrDefault();
-
-            var img = product?.ProductImages
-                 .Where(pm => pm.Status == ProductImageStatus.Active)
-                 .OrderByDescending(pm => pm.CreatedAt)
-                 .Select(pm => pm.Link)
-                 .FirstOrDefault();
-
-            // Tạo và trả về DTO với thông tin về sản phẩm và giá
-            var productDtoFull = new ProductDtoFull
-            {
-                Id = product.Id,
-                ProductName = product.ProductName,
-                ProductBarcode = product.ProductBarcode,
-                ProductDescription = product.ProductDescription,
-                ProductPrice = price ?? 0,
-                ProductImg = img ?? "none",
-                Status = product.Status,
-                CreatedAt = product.CreatedAt,
-                UpdatedAt = product.UpdatedAt
-            };
-            return productDtoFull;
+ 
+            return product;
         }
 
-        public async Task<ProductDtoFull?> GetProductFullByIdAsync(Guid productId, bool trackChanges, string? include = null)
+        public async Task<Product?> GetProductByIdAsync(Guid productId, bool trackChanges, string? include = null)
         {
             var product = include is null ?
             await FindByCondition(p => p.Id.Equals(productId), trackChanges).SingleOrDefaultAsync() :
             await FindByCondition(p => p.Id.Equals(productId), trackChanges).IsInclude(include).SingleOrDefaultAsync();
 
-            var price = product?.ProductHistories
-                 .Where(ph => ph.Status == ProductHistoryStatus.Active)
-                 .OrderByDescending(ph => ph.CreatedAt)
-                 .Select(ph => ph.ProductPrice)
-                 .FirstOrDefault();
-
-            var img = product?.ProductImages
-                 .Where(pm => pm.Status == ProductImageStatus.Active)
-                 .OrderByDescending(pm => pm.CreatedAt)
-                 .Select(pm => pm.Link)
-                 .FirstOrDefault();
-
-            // Tạo và trả về DTO với thông tin về sản phẩm và giá
-            var productDtoFull = new ProductDtoFull
-            {
-                Id = product.Id,
-                ProductName = product.ProductName,
-                ProductBarcode = product.ProductBarcode,
-                ProductDescription = product.ProductDescription,
-                ProductPrice = price ?? 0,
-                ProductImg = img ?? "none",
-                Status = product.Status,
-                CreatedAt = product.CreatedAt,
-                UpdatedAt = product.UpdatedAt
-            };
-            return productDtoFull;
+            return product;
         }
 
-        public async Task<PagedList<ProductDtoFull>> GetProductsAsync(ProductParameters productParameters, bool trackChanges, string? include = null)
+        public async Task<PagedList<Product>> GetProductsAsync(ProductParameters productParameters, bool trackChanges, string? include = null)
         {
             // Lọc và sắp xếp danh sách sản phẩm theo các điều kiện từ productParameters
             var productsQuery = FindByCondition(p =>
@@ -110,50 +60,16 @@ namespace GarageManagementAPI.Repository
                 .Take(productParameters.PageSize)
                 .ToListAsync();
 
-            // Lọc ra ProductHistories có trạng thái Active và lấy giá ProductPrice mới nhất cho mỗi sản phẩm
-            var productsDto = products
-                .Select(p => new ProductDtoFull
-                {
-                    Id = p.Id,
-                    ProductName = p.ProductName,
-                    ProductBarcode = p.ProductBarcode,
-                    ProductDescription = p.ProductDescription,
-                    Status = p.Status,
-                    CreatedAt = p.CreatedAt,
-                    UpdatedAt = p.UpdatedAt,
-                    ProductPrice = p.ProductHistories
-                        .Where(ph => ph.Status == ProductHistoryStatus.Active && p.Id == ph.ProductId)
-                        .OrderByDescending(ph => ph.CreatedAt)
-                        .Select(ph => ph.ProductPrice)
-                        .FirstOrDefault(),
-                    ProductImg = p.ProductImages
-                        .Where(pm => pm.Status == ProductImageStatus.Active && p.Id == pm.ProductId)
-                        .OrderByDescending(pm => pm.CreatedAt)
-                        .Select(ph => ph.Link)
-                        .FirstOrDefault()
-                }).ToList();
-
-
             // Lấy tổng số bản ghi để tính toán tổng số trang
             var count = await productsQuery.CountAsync();
 
             // Trả về kết quả dưới dạng PagedList
-            return new PagedList<ProductDtoFull>(
-                productsDto,
+            return new PagedList<Product>(
+                products,
                 count,
                 productParameters.PageNumber,
                 productParameters.PageSize
             );
-        }
-
-
-        public async Task<Product?> GetProductByIdAsync(Guid productId, bool trackChanges, string? include = null)
-        {
-            var product = include is null ?
-          await FindByCondition(p => p.Id.Equals(productId), trackChanges).SingleOrDefaultAsync() :
-          await FindByCondition(p => p.Id.Equals(productId), trackChanges).IsInclude(include).SingleOrDefaultAsync();
-
-            return product;
         }
     }
 }

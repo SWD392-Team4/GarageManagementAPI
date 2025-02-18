@@ -21,7 +21,7 @@ namespace GarageManagementAPI.Presentation.Validator.Brand
                .NotEmpty()
                .WithMessage(BrandErrors.BrandStatusRequired)
                .WithErrorCode(nameof(BrandErrors.BrandStatusRequired))
-               .Must(status => Enum.IsDefined(typeof(SystemStatus), status))
+               .Must(status => Enum.IsDefined(typeof(BrandStatus), status))
                 .WithMessage(BrandErrors.BrandStatusInvalid)
                 .WithErrorCode(nameof(BrandErrors.BrandStatusInvalid));
         }

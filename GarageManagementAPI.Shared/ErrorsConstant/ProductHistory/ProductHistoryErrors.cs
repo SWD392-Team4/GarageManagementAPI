@@ -29,11 +29,11 @@ namespace GarageManagementAPI.Shared.ErrorsConstant.ProductHistory
              };
 
 
-        public static ErrorsResult GetProductHistoryPriceAlreadyExistError(ProductHistoryDtoForCreation productDtoForCreation) =>
+        public static ErrorsResult GetProductHistoryPriceAlreadyExistError(decimal? price) =>
              new()
              {
                  Code = nameof(ProductHistoryPrice),
-                 Description = string.Format(ProductHistoryPrice, productDtoForCreation.ProductPrice)
+                 Description = string.Format(ProductHistoryPrice, price)
              };
         #endregion
     }

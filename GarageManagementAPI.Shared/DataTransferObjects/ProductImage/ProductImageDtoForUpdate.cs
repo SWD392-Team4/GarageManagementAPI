@@ -6,6 +6,6 @@ namespace GarageManagementAPI.Shared.DataTransferObjects.ProductImage
     public record class ProductImageDtoForUpdate : ProductImageDtoForManipulation
     {
         [EnumDataType(typeof(ProductImageStatus))]
-        public ProductImageStatus Status { get; set; }
+        public ProductImageStatus? Status { get; set; } = ProductImageStatus.None;
     }
 }

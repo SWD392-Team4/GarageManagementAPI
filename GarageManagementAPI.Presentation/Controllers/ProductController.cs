@@ -22,8 +22,8 @@ namespace GarageManagementAPI.Presentation.Controllers
         //[Authorize(Roles = $"{nameof(SystemRole.Administrator)},{nameof(SystemRole.Cashier)}")]
         public async Task<IActionResult> GetProductById(Guid productId)
         {
-            var isInclude = "ProductHistories,ProductImages";
-            var productResult = await _service.ProductService.GetProductFullByIdAsync(productId, trackChanges: false, isInclude);
+            var isInclude = "Brand,ProductCategory,ProductHistories,ProductImages";
+            var productResult = await _service.ProductService.GetProductByIdAsync(productId, trackChanges: false, isInclude);
 
             return productResult.Map(
                 onSuccess: Ok,
@@ -35,8 +35,8 @@ namespace GarageManagementAPI.Presentation.Controllers
         //[Authorize(Roles = $"{nameof(SystemRole.Administrator)},{nameof(SystemRole.Cashier)}")]
         public async Task<IActionResult> GetProductByBarcode(string barcode, [FromQuery] ProductParameters productParameters)
         {
-            var isInclude = "ProductHistories,ProductImages";
-            var productResult = await _service.ProductService.GetProductFullByBarcodeAsync(barcode, productParameters, trackChanges: false, isInclude);
+            var isInclude = "Brand,ProductCategory,ProductHistories,ProductImages";
+            var productResult = await _service.ProductService.GetProductByBarcodeAsync(barcode, productParameters, trackChanges: false, isInclude);
 
             return productResult.Map(
                 onSuccess: Ok,
@@ -48,7 +48,7 @@ namespace GarageManagementAPI.Presentation.Controllers
         //[Authorize(Roles = $"{nameof(SystemRole.Administrator)},{nameof(SystemRole.Cashier)}")]
         public async Task<IActionResult> GetProducts([FromQuery] ProductParameters productParameters)
         {
-            var isInclude = "ProductHistories,ProductImages";
+            var isInclude = "Brand,ProductCategory,ProductHistories,ProductImages";
             var productResult = await _service.ProductService.GetProductsAsync(productParameters, trackChanges: false, isInclude);
 
             return productResult.Map(
@@ -74,12 +74,12 @@ namespace GarageManagementAPI.Presentation.Controllers
         }
 
         [HttpPut("{productId:guid}")]
-        public async Task<IActionResult> UpdateProduct(Guid productId, [FromBody] ProductDtoForUpdate prductDtoForUpdate)
+        public async Task<IActionResult> UpdateProduct(Guid productId, [FromBody] ProductDtoForUpdate productDtoForUpdate)
         {
             var result = await _service.ProductService
                 .UpdateProduct(
                 productId,
-                prductDtoForUpdate,
+                productDtoForUpdate,
                 trackChanges: true
                 );
 

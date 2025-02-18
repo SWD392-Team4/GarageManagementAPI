@@ -11,8 +11,8 @@ using GarageManagementAPI.Entities.Models;
 using GarageManagementAPI.Service.Extension;
 using GarageManagementAPI.Shared.Extension;
 using GarageManagementAPI.Shared.Enums.SystemStatuss;
-using GarageManagementAPI.Shared.DataTransferObjects.Brand;
 using GarageManagementAPI.Shared.DataTransferObjects.Product;
+using GarageManagementAPI.Shared.DataTransferObjects.Workplace;
 
 namespace GarageManagementAPI.Service
 {
@@ -37,7 +37,7 @@ namespace GarageManagementAPI.Service
             var productCategoryEntity = _mapper.Map<ProductCategory>(productCategoryDtoForCreation);
             productCategoryEntity.CreatedAt = DateTimeOffset.UtcNow.SEAsiaStandardTime();
             productCategoryEntity.UpdatedAt = DateTimeOffset.UtcNow.SEAsiaStandardTime();
-            productCategoryEntity.Status = ProductCategoryStatus.None;
+            productCategoryEntity.Status = ProductCategoryStatus.Inactive;
 
             await _repoManager.ProductCategory.CreateProductCategoryAsync(productCategoryEntity);
             await _repoManager.SaveAsync();
@@ -48,17 +48,20 @@ namespace GarageManagementAPI.Service
             return productDtoToReturn.CreatedResult();
         }
 
-        public async Task<Result<ProductCategoryDtoForUpdate>> UpdateProductCategory(Guid productCategoryId, ProductCategoryDtoForUpdate productCategoryDtoForUpdate, bool trackChanges)
+        public async Task<Result> UpdateProductCategory(Guid productCategoryId, ProductCategoryDtoForUpdate productCategoryDtoForUpdate, bool trackChanges)
         {
             var productCategoryResult = await GetAndCheckIfProductCategoryExistById(productCategoryId, trackChanges);
+            Console.WriteLine(productCategoryResult);
             if (!productCategoryResult.IsSuccess)
                 return Result<ProductCategoryDtoForUpdate>.Failure(productCategoryResult.StatusCode, productCategoryResult.Errors!);
 
             var productEntity = productCategoryResult.GetValue<ProductCategory>();
 
-            var productDtoForUpdate = _mapper.Map<ProductCategoryDtoForUpdate>(productEntity);
+            _mapper.Map(productCategoryDtoForUpdate, productEntity);
 
-            return Result<ProductCategoryDtoForUpdate>.Ok(productDtoForUpdate);
+            await _repoManager.SaveAsync();
+
+            return Result.Success(productCategoryResult.StatusCode);
         }
 
        public async Task<Result<IEnumerable<ExpandoObject>>> GetProductsByIdCategoryAsync(Guid productCategoryId, bool trackChanges, string? include = null)

@@ -7,8 +7,8 @@ namespace GarageManagementAPI.Service.Contracts
 {
     public interface IProductService
     {
-        public Task<Result<ExpandoObject>> GetProductFullByIdAsync(Guid productId, bool trackChanges, string? include = null);
-        public Task<Result<ExpandoObject>> GetProductFullByBarcodeAsync(string productId, ProductParameters productParameters, bool trackChanges, string? include = null);
+        public Task<Result<ExpandoObject>> GetProductByIdAsync(Guid productId, bool trackChanges, string? include = null);
+        public Task<Result<ExpandoObject>> GetProductByBarcodeAsync(string productId, ProductParameters productParameters, bool trackChanges, string? include = null);
         public Task<Result<IEnumerable<ExpandoObject>>> GetProductsAsync(ProductParameters productParameters, bool trackChanges, string? include = null);
         public Task<Result<ProductDtoForUpdate>> GetProductForPartiallyUpdate(Guid productId, bool trackChanges, string? include = null);
         public Task<Result<ProductDto>> CreateProductAsync(ProductDtoForCreation productDtoForCreation);
