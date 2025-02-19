@@ -49,7 +49,10 @@ namespace GarageManagementAPI.Repository
                     (string.IsNullOrEmpty(productParameters.ProductName) || p.ProductName.Contains(productParameters.ProductName)),
                     trackChanges)
                 .SearchByName(productParameters.ProductName) // Tìm kiếm theo tên sản phẩm
-                .SearchByStatus(productParameters.Status)
+                .SearchByStatus(productParameters.ProductStatus)
+                .SearchByPrice(productParameters.ProductPrice)
+                .SearchByCategory(productParameters.ProductCategory)
+                .SearchByBrand(productParameters.ProductBrandName)
                 .Sort(productParameters.OrderBy)
                 .IsInclude(include)
                 .AsQueryable();

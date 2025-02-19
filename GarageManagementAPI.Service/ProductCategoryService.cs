@@ -64,25 +64,9 @@ namespace GarageManagementAPI.Service
             return Result.Success(productCategoryResult.StatusCode);
         }
 
-       public async Task<Result<IEnumerable<ExpandoObject>>> GetProductsByIdCategoryAsync(Guid productCategoryId, bool trackChanges, string? include = null)
+        public async Task<Result<ExpandoObject>> GetProductCategoryByIdAsync(Guid productCategoryId, bool trackChanges, string? include = null)
         {
-            var productCategoryResult = await GetAndCheckIfProductCategoryExistById(productCategoryId, trackChanges);
-
-            if (!productCategoryResult.IsSuccess)
-                return Result<IEnumerable<ExpandoObject>>.NotFound(productCategoryResult.Errors!);
-
-            var productsResult = await GetAndCheckIfProductExistById(productCategoryId, trackChanges, include);
-
-            var productsDto = _mapper.Map<IEnumerable<ProductDto>>(productsResult);
-
-            var productShaped = _dataShaper.Product.ShapeData(productsDto, null);
-
-            return Result<IEnumerable<ExpandoObject>>.Ok(productShaped, null);
-        }
-
-        public async Task<Result<ExpandoObject>> GetProductCategoryByIdAsync(Guid productCategoryId, ProductCategoryParameters productCategoryParameters, bool trackChanges, string? include = null)
-        {
-            var productCategoryResult = await GetAndCheckIfProductCategoryExistById(productCategoryId, trackChanges);
+            var productCategoryResult = await GetAndCheckIfProductCategoryExistById(productCategoryId, trackChanges, include);
 
             if (!productCategoryResult.IsSuccess)
                 return Result<ExpandoObject>.NotFound(productCategoryResult.Errors!);
@@ -91,7 +75,7 @@ namespace GarageManagementAPI.Service
 
             var productCategoriesDto = _mapper.Map<ProductCategoryDto>(productEntity);
 
-            var productShaped = _dataShaper.ProductCategory.ShapeData(productCategoriesDto, productCategoryParameters.Fields);
+            var productShaped = _dataShaper.ProductCategory.ShapeData(productCategoriesDto, null);
 
             return Result<ExpandoObject>.Ok(productShaped);
         }
@@ -128,24 +112,16 @@ namespace GarageManagementAPI.Service
             var exists = await _repoManager.ProductCategory.FindByCondition(x =>
                 x.Category.Trim().Equals(name),
                 false).AnyAsync();
-
             return exists;
         }
 
-        private async Task<Result<ProductCategory>> GetAndCheckIfProductCategoryExistById(Guid productCategoryId, bool trackChanges)
+        private async Task<Result<ProductCategory>> GetAndCheckIfProductCategoryExistById(Guid productCategoryId, bool trackChanges, string? include = null)
         {
-            var productcategory = await _repoManager.ProductCategory.GetProductCategoryByIdAsync(productCategoryId, trackChanges);
+            var productcategory = await _repoManager.ProductCategory.GetProductCategoryByIdAsync(productCategoryId, trackChanges, include);
             if (productcategory == null)
                 return productcategory.NotFound(productCategoryId);
 
             return productcategory.OkResult();
-        }
-
-        private async Task<IEnumerable<Product?>> GetAndCheckIfProductExistById(Guid productCategoryId, bool trackChanges, string? include = null)
-        {
-            var products = await _repoManager.ProductCategory.GetProductByIdAsync(productCategoryId, trackChanges, include);
-           
-            return products;
         }
     }
 }

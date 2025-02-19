@@ -9,6 +9,7 @@ namespace GarageManagementAPI.Shared.RequestFeatures
         public string BrandName { get; set; } = null!;
 
         public DateTimeOffset CreatedAt { get; set; }
+        public DateTimeOffset UpdateAt { get; set; }
 
         [EnumDataType(typeof(BrandStatus))]
         public BrandStatus? Status { get; set; } = null;

@@ -13,7 +13,6 @@ using System.Dynamic;
 using GarageManagementAPI.Shared.Enums.SystemStatuss;
 using GarageManagementAPI.Shared.DataTransferObjects.ProductImage;
 using GarageManagementAPI.Shared.ErrorsConstant.ProductImg;
-using System.ComponentModel.DataAnnotations;
 using GarageManagementAPI.Shared.DataTransferObjects.ProductHistory;
 using GarageManagementAPI.Shared.ErrorsConstant.ProductHistory;
 

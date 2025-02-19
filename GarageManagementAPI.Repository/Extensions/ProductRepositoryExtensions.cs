@@ -1,4 +1,5 @@
-﻿using GarageManagementAPI.Entities.Models;
+﻿using Bogus.DataSets;
+using GarageManagementAPI.Entities.Models;
 using GarageManagementAPI.Repository.Extensions.Utility;
 using GarageManagementAPI.Shared.Enums.SystemStatuss;
 using Microsoft.EntityFrameworkCore;
@@ -18,6 +19,39 @@ namespace GarageManagementAPI.Repository.Extensions
             var lowerCaseTerm = name.Trim().ToLower();
             return product.Where(p => p.ProductName!.ToLower().Contains(name.Trim().ToLower()));
         }
+
+        public static IQueryable<Product> SearchByPrice(this IQueryable<Product> products, decimal? price)
+        {
+            if (!price.HasValue)
+            {
+                return products;
+            }
+            // Thực hiện truy vấn
+            return products.Where(p => p.ProductHistories != null &&
+                                       p.ProductHistories.Any(ph => ph.Status.ToString().Equals(ProductHistoryStatus.Active.ToString()) && ph.ProductPrice == price));
+        }
+        public static IQueryable<Product> SearchByCategory(this IQueryable<Product> products, string? category)
+        {
+            if (string.IsNullOrWhiteSpace(category))
+            {
+                return products;
+            }
+            // Thực hiện truy vấn
+            return products.Where(p => p.ProductCategory != null &&
+                                      p.ProductCategory.Category.ToLower().Equals(category.ToLower()));
+
+        }
+        public static IQueryable<Product> SearchByBrand(this IQueryable<Product> products, string? brand)
+        {
+            if (string.IsNullOrWhiteSpace(brand))
+            {
+                return products;
+            }
+            // Thực hiện truy vấn
+            return products.Where(p => p.Brand != null &&
+                                      p.Brand.BrandName.ToLower().Equals(brand.ToLower()));
+        }
+
 
         public static IQueryable<Product> SearchByStatus(this IQueryable<Product> products, ProductStatus? status)
         {
@@ -43,7 +77,7 @@ namespace GarageManagementAPI.Repository.Extensions
                 var property = Product.PropertyInfos
                     .FirstOrDefault(pi => pi.Name.Equals(field.Trim(), StringComparison.InvariantCultureIgnoreCase));
 
-                
+
                 // Nếu thuộc tính hợp lệ, thực hiện Include
                 if (property != null)
                 {
