@@ -32,7 +32,7 @@ namespace GarageManagementAPI.Presentation.Controllers
         //[Authorize(Roles = $"{nameof(SystemRole.Administrator)},{nameof(SystemRole.Cashier)}")]
         public async Task<IActionResult> GetProductCategoryById(Guid productCategoryId, [FromQuery] ProductCategoryParameters productCategoryParameters)
         {
-            var productCategoryResult = await _service.ProductCategoryService.GetProductCategoryByIdAsync(productCategoryId, productCategoryParameters, trackChanges: false);
+            var productCategoryResult = await _service.ProductCategoryService.GetProductCategoryByIdAsync(productCategoryId, trackChanges: false);
 
             return productCategoryResult.Map(
                 onSuccess: Ok,
@@ -45,7 +45,7 @@ namespace GarageManagementAPI.Presentation.Controllers
         public async Task<IActionResult> GetProductByIdCategory(Guid productCategoryId)
         {
             var include = "Products";
-            var productsResult = await _service.ProductCategoryService.GetProductsByIdCategoryAsync(productCategoryId, trackChanges: false, include);
+            var productsResult = await _service.ProductCategoryService.GetProductCategoryByIdAsync(productCategoryId, trackChanges: false, include);
 
             return productsResult.Map(
                 onSuccess: Ok,

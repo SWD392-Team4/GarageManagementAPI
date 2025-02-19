@@ -1,4 +1,5 @@
-﻿using GarageManagementAPI.Shared.Enums.SystemStatuss;
+﻿using GarageManagementAPI.Shared.DataTransferObjects.Product;
+using GarageManagementAPI.Shared.Enums.SystemStatuss;
 using System.ComponentModel.DataAnnotations;
 
 namespace GarageManagementAPI.Shared.DataTransferObjects.ProductCategory
@@ -15,5 +16,7 @@ namespace GarageManagementAPI.Shared.DataTransferObjects.ProductCategory
         public DateTimeOffset CreatedAt { get; set; }
 
         public DateTimeOffset UpdatedAt { get; set; }
+
+        public List<ProductDto> ProductInfo { get; set; } = null!;
     }
 }

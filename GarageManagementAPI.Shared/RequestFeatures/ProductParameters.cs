@@ -9,8 +9,11 @@ namespace GarageManagementAPI.Shared.RequestFeatures
     {
         public ProductParameters() => OrderBy = "ProductName";
         public string? ProductName { get; set; }
+        public string? ProductCategory{ get; set; }
+        public string? ProductBrandName { get; set; }
+        public decimal? ProductPrice { get; set; } = null!;
 
         [EnumDataType(typeof(SystemStatus))]
-        public ProductStatus? Status { get; set; } = null;
+        public ProductStatus? ProductStatus { get; set; } = null;
     }
 }
