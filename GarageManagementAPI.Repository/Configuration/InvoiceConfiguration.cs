@@ -18,7 +18,7 @@ namespace GarageManagementAPI.Repository.Configuration
             entity.Property(e => e.CustomerPhoneNumber).HasMaxLength(255);
             entity.Property(e => e.InvoiceType).HasMaxLength(255);
             entity.Property(e => e.Status).HasMaxLength(255);
-            entity.Property(e => e.TotalPrice).HasColumnType("decimal(8, 2)");
+            entity.Property(e => e.TotalPrice).HasColumnType("decimal(18, 2)");
 
             entity.HasOne(d => d.Appointment).WithOne(p => p.Invoice)
                 .HasForeignKey<Invoice>(d => d.Id)
