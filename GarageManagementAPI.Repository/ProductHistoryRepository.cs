@@ -1,6 +1,7 @@
 ﻿using GarageManagementAPI.Entities.Models;
 using GarageManagementAPI.Repository.Contracts;
 using GarageManagementAPI.Repository.Extensions;
+using GarageManagementAPI.Shared.Enums.SystemStatuss;
 using GarageManagementAPI.Shared.RequestFeatures;
 using Microsoft.EntityFrameworkCore;
 
@@ -74,6 +75,21 @@ namespace GarageManagementAPI.Repository
                 productHistoryParameters.PageNumber,
                 productHistoryParameters.PageSize
             );
+        }
+
+        public Task<ProductHistory?> GetProductHistoryByPriceAndIdProductAsync(Guid productId, decimal price, bool trackChanges, string? include = null)
+        {
+         var productHistory = FindByCondition(p => p.ProductId.Equals(productId) && p.ProductPrice == price, false)
+                .OrderByDescending(p => p.UpdatedAt)
+                .FirstOrDefaultAsync();
+            return productHistory;
+        }
+
+        public Task<ProductHistory?> GetProductHistoryByStatusAndIdProductAsync(Guid productId, bool trackChanges, string? include = null)
+        {
+            var productHistory = FindByCondition(p => p.Status == ProductHistoryStatus.Active && p.ProductId == productId, false).OrderByDescending(p => p.UpdatedAt)
+                                   .FirstOrDefaultAsync();
+            return productHistory;
         }
     }
 }

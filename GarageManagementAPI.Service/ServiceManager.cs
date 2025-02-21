@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using CloudinaryDotNet;
 using GarageManagementAPI.Entities.ConfigurationModels;
 using GarageManagementAPI.Entities.Models;
 using GarageManagementAPI.Repository.Contracts;
@@ -23,6 +22,7 @@ namespace GarageManagementAPI.Service
         private readonly Lazy<IProductCategoryService> _productCategoryService;
         private readonly Lazy<IProductImageService> _productImageService;
         private readonly Lazy<IMediaService> _mediaService;
+        private readonly Lazy<IServiceService> _serviceService;
 
         public ServiceManager(
             IRepositoryManager repositoryManager,
@@ -95,6 +95,13 @@ namespace GarageManagementAPI.Service
              mapper,
              dataShaper));
 
+
+            _serviceService = new Lazy<IServiceService>(() =>
+          new ServiceService(
+             repositoryManager,
+             mapper,
+             dataShaper));
+
             _mediaService = new Lazy<IMediaService>(() =>
             new MediaService(cloudinaryConfiguration));
         }
@@ -114,8 +121,7 @@ namespace GarageManagementAPI.Service
         public IProductHistoryService ProductHistoryService => _productHistoryService.Value;
         public IProductCategoryService ProductCategoryService => _productCategoryService.Value;
         public IProductImageService ProductImageService => _productImageService.Value;
-
-
+        public IServiceService ServiceService => _serviceService.Value;
         public IMediaService MediaService => _mediaService.Value;
     }
 }

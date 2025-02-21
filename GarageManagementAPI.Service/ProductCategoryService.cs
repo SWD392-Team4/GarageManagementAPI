@@ -11,8 +11,10 @@ using GarageManagementAPI.Entities.Models;
 using GarageManagementAPI.Service.Extension;
 using GarageManagementAPI.Shared.Extension;
 using GarageManagementAPI.Shared.Enums.SystemStatuss;
-using GarageManagementAPI.Shared.DataTransferObjects.Product;
-using GarageManagementAPI.Shared.DataTransferObjects.Workplace;
+using StackExchange.Redis;
+using System.Xml.Linq;
+using GarageManagementAPI.Shared.DataTransferObjects.Brand;
+using GarageManagementAPI.Shared.ErrorsConstant.Brand;
 
 namespace GarageManagementAPI.Service
 {
@@ -30,7 +32,7 @@ namespace GarageManagementAPI.Service
         }
         public async Task<Result<ProductCategoryDto>> CreateProductCategoryAsync(ProductCategoryDtoForCreation productCategoryDtoForCreation)
         {
-            var check = await CheckIfProductCategoryExistByName(productCategoryDtoForCreation);
+            var check = await GetAndCheckIfProductCategoryExistByName(productCategoryDtoForCreation.Category);
             if (check)
                 return Result<ProductCategoryDto>.BadRequest([ProductCategoryErrors.GetProductCategoryNameAlreadyExistError(productCategoryDtoForCreation)]);
 
@@ -51,9 +53,11 @@ namespace GarageManagementAPI.Service
         public async Task<Result> UpdateProductCategory(Guid productCategoryId, ProductCategoryDtoForUpdate productCategoryDtoForUpdate, bool trackChanges)
         {
             var productCategoryResult = await GetAndCheckIfProductCategoryExistById(productCategoryId, trackChanges);
-            Console.WriteLine(productCategoryResult);
             if (!productCategoryResult.IsSuccess)
                 return Result<ProductCategoryDtoForUpdate>.Failure(productCategoryResult.StatusCode, productCategoryResult.Errors!);
+            var checkCategoryNameIsEXistResult = await GetAndCheckIfProductCategoryExistByName(productCategoryDtoForUpdate.Category, productCategoryId);
+            if (checkCategoryNameIsEXistResult)
+                return Result<ProductCategoryDto>.BadRequest([ProductCategoryErrors.GetProductCategoryNameUpdateAlreadyExistError(productCategoryDtoForUpdate)]);
 
             var productEntity = productCategoryResult.GetValue<ProductCategory>();
 
@@ -104,15 +108,13 @@ namespace GarageManagementAPI.Service
             return Result<IEnumerable<ExpandoObject>>.Ok(productCategoriesShaped, productCategoriesWithMetadata.MetaData);
         }
 
-        private async Task<bool> CheckIfProductCategoryExistByName(ProductCategoryDtoForCreation productCategoryDtoForCreation)
+        private async Task<bool> GetAndCheckIfProductCategoryExistByName(string name, Guid? id = null)
         {
-            //! 도전한 안 null
-            var name = productCategoryDtoForCreation.Category!.Trim();
+            var productcategory = await _repoManager.ProductCategory.GetProductByIdAndNameAsync(name, id, false);
+            if (productcategory == null)
+                return false;
 
-            var exists = await _repoManager.ProductCategory.FindByCondition(x =>
-                x.Category.Trim().Equals(name),
-                false).AnyAsync();
-            return exists;
+            return true;
         }
 
         private async Task<Result<ProductCategory>> GetAndCheckIfProductCategoryExistById(Guid productCategoryId, bool trackChanges, string? include = null)

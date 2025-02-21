@@ -17,7 +17,7 @@ namespace GarageManagementAPI.Repository.Configuration
             entity.HasIndex(e => new { e.PackageId, e.PackagePrice, e.ValidityPeriod, e.TimeUnit, e.UsageLimit }, "packagehistory_packageid_packageprice_validityperiod_timeunit_usagelimit_unique").IsUnique();
 
             entity.Property(e => e.Id).ValueGeneratedOnAdd().HasDefaultValueSql("NEWID()");
-            entity.Property(e => e.PackagePrice).HasColumnType("decimal(8, 2)");
+            entity.Property(e => e.PackagePrice).HasColumnType("decimal(18, 2)");
             entity.Property(e => e.Status).HasMaxLength(255);
             entity.Property(e => e.TimeUnit).HasMaxLength(255);
 

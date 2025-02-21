@@ -105,6 +105,5 @@ namespace GarageManagementAPI.Presentation.Controllers
                 onFailure: result => ProcessError(result)
             );
         }
-
     }
 }

@@ -1,4 +1,5 @@
 ﻿using GarageManagementAPI.Service.Contracts;
+using GarageManagementAPI.Shared.DataTransferObjects.Service;
 using GarageManagementAPI.Shared.DataTransferObjects.User;
 using GarageManagementAPI.Shared.DataTransferObjects.Workplace;
 
@@ -13,6 +14,7 @@ namespace GarageManagementAPI.Service.DataShaping
         private readonly Lazy<IDataShaper<Shared.DataTransferObjects.ProductHistory.ProductHistoryDto>> _productHistoryShaper;
         private readonly Lazy<IDataShaper<Shared.DataTransferObjects.ProductCategory.ProductCategoryDto>> _productCategoryShaper;
         private readonly Lazy<IDataShaper<Shared.DataTransferObjects.ProductImage.ProductImageDto>> _productImageShaper;
+        private readonly Lazy<IDataShaper<Shared.DataTransferObjects.Service.ServiceDto>> _serviceShaper;
 
         public DataShaperManager()
         {
@@ -36,6 +38,10 @@ namespace GarageManagementAPI.Service.DataShaping
 
             _productImageShaper = new Lazy<IDataShaper<Shared.DataTransferObjects.ProductImage.ProductImageDto>>(
             () => new DataShaper<Shared.DataTransferObjects.ProductImage.ProductImageDto>(Shared.DataTransferObjects.ProductImage.ProductImageDto.PropertyInfos));
+
+            _serviceShaper = new Lazy<IDataShaper<Shared.DataTransferObjects.Service.ServiceDto>>(
+            () => new DataShaper<Shared.DataTransferObjects.Service.ServiceDto>(Shared.DataTransferObjects.Service.ServiceDto.PropertyInfos));
+
         }
 
         public IDataShaper<WorkplaceDto> Workplace => _workplaceShaper.Value;
@@ -47,5 +53,7 @@ namespace GarageManagementAPI.Service.DataShaping
         public IDataShaper<Shared.DataTransferObjects.ProductCategory.ProductCategoryDto> ProductCategory => _productCategoryShaper.Value;
         public IDataShaper<Shared.DataTransferObjects.ProductHistory.ProductHistoryDto> ProductHistory => _productHistoryShaper.Value;
         public IDataShaper<Shared.DataTransferObjects.ProductImage.ProductImageDto> ProductImage => _productImageShaper.Value;
+        public IDataShaper<Shared.DataTransferObjects.Service.ServiceDto> Service => _serviceShaper.Value;
+
     }
 }
