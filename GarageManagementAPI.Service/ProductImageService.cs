@@ -8,8 +8,6 @@ using GarageManagementAPI.Service.Extension;
 using GarageManagementAPI.Shared.DataTransferObjects.ProductImage;
 using GarageManagementAPI.Shared.RequestFeatures;
 using GarageManagementAPI.Shared.ResultModel;
-using GarageManagementAPI.Shared.Extension;
-using Microsoft.EntityFrameworkCore;
 using System.Dynamic;
 
 namespace GarageManagementAPI.Service
@@ -47,22 +45,6 @@ namespace GarageManagementAPI.Service
             var productsShaped = _dataShaper.ProductImage.ShapeData(productsDto, productImageParameters.Fields);
 
             return Result<IEnumerable<ExpandoObject>>.Ok(productsShaped, productsWithMetadata.MetaData);
-        }
-
-        private async Task UpdateDateProduct(Guid productId, DateTimeOffset updateAt, bool trackChanges)
-        {
-            var productResult = await GetAndCheckIfProductExist(productId, trackChanges);
-
-            var product = productResult.GetValue<Product>();
-            Console.WriteLine(product);
-
-            var productEntity = _mapper.Map<Product>(product);   // Map the DTO to Product entity for update.
-
-            productEntity.UpdatedAt = updateAt;
-
-            _repoManager.Product.UpdateProductAsync(productEntity);
-
-            await _repoManager.SaveAsync();
         }
 
         private async Task<Result<Product>> GetAndCheckIfProductExist(Guid productId, bool trackChanges, string? include = null)

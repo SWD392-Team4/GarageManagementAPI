@@ -19,23 +19,37 @@ namespace GarageManagementAPI.Repository.Extensions
             return product.Where(p => p.ProductName!.ToLower().Contains(name.Trim().ToLower()));
         }
 
-        public static IQueryable<Product> SearchByPrice(this IQueryable<Product> products, decimal? price)
+        public static IQueryable<Product> SearchByPrice(this IQueryable<Product> products, decimal? minPrice, decimal? maxPrice)
         {
-            if (!price.HasValue)
+            if (!minPrice.HasValue && !maxPrice.HasValue)
             {
                 return products;
             }
-            // Thực hiện truy vấn
+
+            // Find the max price available in the database
+            var maxDbPrice = products
+                             .Where(p => p.ProductHistories != null)
+                             .SelectMany(p => p.ProductHistories)
+                             .Where(ph => ph.Status.ToString().Equals(ProductHistoryStatus.Active.ToString()))
+                             .Max(ph => (decimal?)ph.ProductPrice) ?? 0;
+
+            // Filter by price range
             return products.Where(p => p.ProductHistories != null &&
-                                       p.ProductHistories.Any(ph => ph.Status.ToString().Equals(ProductHistoryStatus.Active.ToString()) && ph.ProductPrice == price));
+                                       p.ProductHistories.Any(ph =>
+                                           ph.Status.ToString().Equals(ProductHistoryStatus.Active.ToString()) &&
+                                           (!minPrice.HasValue || ph.ProductPrice >= minPrice) &&  // Filter by minPrice if it exists
+                                           (maxPrice.HasValue ? ph.ProductPrice <= maxPrice : ph.ProductPrice <= maxDbPrice) // Use maxDbPrice if maxPrice is null
+                                       ));
         }
+
+
         public static IQueryable<Product> SearchByCategory(this IQueryable<Product> products, string? category)
         {
             if (string.IsNullOrWhiteSpace(category))
             {
                 return products;
             }
-            // Thực hiện truy vấn
+
             return products.Where(p => p.ProductCategory != null &&
                                       p.ProductCategory.Category.ToLower().Equals(category.ToLower()));
 
@@ -46,11 +60,10 @@ namespace GarageManagementAPI.Repository.Extensions
             {
                 return products;
             }
-            // Thực hiện truy vấn
+
             return products.Where(p => p.Brand != null &&
                                       p.Brand.BrandName.ToLower().Equals(brand.ToLower()));
         }
-
 
         public static IQueryable<Product> SearchByStatus(this IQueryable<Product> products, ProductStatus? status)
         {
@@ -99,7 +112,6 @@ namespace GarageManagementAPI.Repository.Extensions
             if (string.IsNullOrWhiteSpace(orderQuery))
                 return products.OrderBy(p => p.ProductName);  // Nếu không có chuỗi sắp xếp hợp lệ, sắp xếp theo ProductName
 
-            // Áp dụng sắp xếp động với biểu thức đã tạo
             return products.OrderBy(orderQuery);
         }
     }

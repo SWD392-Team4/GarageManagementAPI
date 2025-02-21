@@ -47,7 +47,7 @@ namespace GarageManagementAPI.Repository.Extensions
                 return services;
             }
             // Thực hiện truy vấn
-            return services.Where(e => e.EstimatedHours == estimatedHours);
+            return services.Where(s => s.EstimatedHours == estimatedHours);
         }
 
 

@@ -17,6 +17,15 @@ namespace GarageManagementAPI.Repository
             await base.CreateAsync(brand);
         }
 
+        public async Task<Brand?> GetBrandByIdAndNameAsync(string name, Guid? brandId, bool trackChanges)
+        {
+            var brand = brandId is null ?
+            await FindByCondition(b => b.BrandName.Equals(name), trackChanges).SingleOrDefaultAsync() :
+            await FindByCondition(b => b.Id.Equals(brandId) && b.BrandName.ToLower().Equals(name.ToLower()), trackChanges).SingleOrDefaultAsync();
+
+            return brand;
+        }
+
         public async Task<Brand?> GetBrandByIdAsync(Guid brandId, bool trackChanges, string? include = null)
         {
             var brand = include is null ?

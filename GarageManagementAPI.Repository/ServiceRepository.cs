@@ -31,9 +31,18 @@ namespace GarageManagementAPI.Repository
             return service;
         }
 
+        public async Task<Service?> GetServiceByIdAndNameAsync(string name, Guid? serviceId, bool trackChanges)
+        {
+            var service = serviceId is null ?
+            await FindByCondition(s => s.ServiceName.Equals(name), trackChanges).SingleOrDefaultAsync() :
+            await FindByCondition(s => s.Id.Equals(serviceId) && s.ServiceName.ToLower().Equals(name.ToLower()), trackChanges).SingleOrDefaultAsync();
+
+            return service;
+        }
+
         public async Task<PagedList<Service>> GetServicesAsync(ServiceParameters serviceParameters, bool trackChanges, string? include = null)
         {
-            // Lọc và sắp xếp danh sách brands theo các điều kiện
+            // Lọc và sắp xếp danh sách Services theo các điều kiện
             var servicesQuery = FindByCondition(s =>
                     (string.IsNullOrEmpty(serviceParameters.ServiceName) || s.ServiceName.Contains(serviceParameters.ServiceName)),
                     trackChanges)

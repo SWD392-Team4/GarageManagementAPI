@@ -5,6 +5,7 @@ namespace GarageManagementAPI.Shared.DataTransferObjects.Service
 {
     public record class ServiceDto : BaseDto<ServiceDto>
     {
+        public Guid Id { get; set; }
         public string ServiceCategory { get; set; } = null!;
 
         public string ServiceName { get; set; } = null!;

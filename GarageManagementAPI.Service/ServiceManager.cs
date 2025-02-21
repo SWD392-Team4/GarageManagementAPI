@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using CloudinaryDotNet;
 using GarageManagementAPI.Entities.ConfigurationModels;
 using GarageManagementAPI.Entities.Models;
 using GarageManagementAPI.Repository.Contracts;
@@ -124,7 +123,5 @@ namespace GarageManagementAPI.Service
         public IProductImageService ProductImageService => _productImageService.Value;
         public IServiceService ServiceService => _serviceService.Value;
         public IMediaService MediaService => _mediaService.Value;
-
-
     }
 }
