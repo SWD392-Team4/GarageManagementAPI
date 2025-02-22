@@ -1,5 +1,4 @@
 ﻿using GarageManagementAPI.Service.Contracts;
-using GarageManagementAPI.Shared.DataTransferObjects.Service;
 using GarageManagementAPI.Shared.DataTransferObjects.User;
 using GarageManagementAPI.Shared.DataTransferObjects.Workplace;
 
@@ -15,6 +14,7 @@ namespace GarageManagementAPI.Service.DataShaping
         private readonly Lazy<IDataShaper<Shared.DataTransferObjects.ProductCategory.ProductCategoryDto>> _productCategoryShaper;
         private readonly Lazy<IDataShaper<Shared.DataTransferObjects.ProductImage.ProductImageDto>> _productImageShaper;
         private readonly Lazy<IDataShaper<Shared.DataTransferObjects.Service.ServiceDto>> _serviceShaper;
+        private readonly Lazy<IDataShaper<Shared.DataTransferObjects.CarPart.CarPartDto>> _carPartShaper;
 
         public DataShaperManager()
         {
@@ -42,6 +42,9 @@ namespace GarageManagementAPI.Service.DataShaping
             _serviceShaper = new Lazy<IDataShaper<Shared.DataTransferObjects.Service.ServiceDto>>(
             () => new DataShaper<Shared.DataTransferObjects.Service.ServiceDto>(Shared.DataTransferObjects.Service.ServiceDto.PropertyInfos));
 
+            _carPartShaper = new Lazy<IDataShaper<Shared.DataTransferObjects.CarPart.CarPartDto>>(
+            () => new DataShaper<Shared.DataTransferObjects.CarPart.CarPartDto>(Shared.DataTransferObjects.CarPart.CarPartDto.PropertyInfos));
+
         }
 
         public IDataShaper<WorkplaceDto> Workplace => _workplaceShaper.Value;
@@ -54,6 +57,7 @@ namespace GarageManagementAPI.Service.DataShaping
         public IDataShaper<Shared.DataTransferObjects.ProductHistory.ProductHistoryDto> ProductHistory => _productHistoryShaper.Value;
         public IDataShaper<Shared.DataTransferObjects.ProductImage.ProductImageDto> ProductImage => _productImageShaper.Value;
         public IDataShaper<Shared.DataTransferObjects.Service.ServiceDto> Service => _serviceShaper.Value;
+        public IDataShaper<Shared.DataTransferObjects.CarPart.CarPartDto> CartPart => _carPartShaper.Value;
 
     }
 }

@@ -5,32 +5,27 @@ namespace GarageManagementAPI.Shared.ErrorsConstant.Brand
 {
     public class BrandErrors
     {
-        #region Brandconst errors
-        public const string BrandNotFound = "Work place with id {0} doesn't exist.";
+        #region Brand const errors
+        public const string BrandNotFound = "Brand with id {0} doesn't exist.";
         public const string BrandName = "Brand with name already existed.";
-        public const string NameRequired = "The work place name is required.";
+        public const string NameRequired = "The brand name is required.";
         public const string BrandStatusRequired = "The brand status is required";
         public const string BrandStatusInvalid = "Invalid brand status.";
-        public const string BrandNotFoundWithId = "Can not found brand with id {0}.";
         #endregion
 
         #region static method
-        public static ErrorsResult GetBrandNotFoundWithIdError()
-        {
-            return new()
+        public static ErrorsResult GetBrandNotFoundError() =>
+            new()
             {
-                Code = nameof(BrandNotFoundWithId),
-                Description = BrandNotFoundWithId
+                Code = nameof(BrandNotFound),
+                Description = BrandNotFound
             };
-        }
-
-        public static ErrorsResult GetBrandNotFoundError(Guid brandId) =>
+        public static ErrorsResult GetBrandNotFoundWithIdError(Guid brandId) =>
             new()
              {
-                Code = nameof(BrandNotFoundWithId),
-                Description = string.Format(BrandNotFoundWithId, brandId)
+                Code = nameof(BrandNotFound),
+                Description = string.Format(BrandNotFound, brandId)
             };
-
         public static ErrorsResult GetBrandNameAlreadyExistError(BrandDtoForCreation brandDtoForCreation) =>
              new()
              {
@@ -43,7 +38,6 @@ namespace GarageManagementAPI.Shared.ErrorsConstant.Brand
                  Code = nameof(BrandName),
                  Description = string.Format(BrandName, brandDtoForUpdate.BrandName)
              };
-
         #endregion
     }
 }
