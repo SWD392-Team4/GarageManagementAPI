@@ -9,14 +9,14 @@ namespace GarageManagementAPI.Repository.Contracts
         IUserRepository User { get; }
 
         IEmployeeInfoRepository EmployeeInfo { get; }
-
         IBrandRepository Brand { get; }
         IProductRepository Product { get; }
         IProductHistoryRepository ProductHistory { get; }
         IProductCategoryRepository ProductCategory { get; }
         IProductImageRepository ProductImage { get; }
-
         IServiceRepository Service { get; }
+        ICarPartRepository CarPart { get; }
+        ICarPartCategoryRepository CarPartCategory { get; }
         Task<IDbContextTransaction> BeginTransactionAsync();
 
         IExecutionStrategy CreateExecutionStrategy();

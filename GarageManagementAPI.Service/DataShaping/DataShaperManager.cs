@@ -1,7 +1,14 @@
 ﻿using GarageManagementAPI.Service.Contracts;
-using GarageManagementAPI.Shared.DataTransferObjects.Service;
 using GarageManagementAPI.Shared.DataTransferObjects.User;
 using GarageManagementAPI.Shared.DataTransferObjects.Workplace;
+using GarageManagementAPI.Shared.DataTransferObjects.Brand;
+using GarageManagementAPI.Shared.DataTransferObjects.Product;
+using GarageManagementAPI.Shared.DataTransferObjects.ProductHistory;
+using GarageManagementAPI.Shared.DataTransferObjects.ProductCategory;
+using GarageManagementAPI.Shared.DataTransferObjects.ProductImage;
+using GarageManagementAPI.Shared.DataTransferObjects.Service;
+using GarageManagementAPI.Shared.DataTransferObjects.CarPart;
+using GarageManagementAPI.Shared.DataTransferObjects.CarPartCategory;
 
 namespace GarageManagementAPI.Service.DataShaping
 {
@@ -9,12 +16,14 @@ namespace GarageManagementAPI.Service.DataShaping
     {
         private readonly Lazy<IDataShaper<WorkplaceDto>> _workplaceShaper;
         private readonly Lazy<IDataShaper<UserDto>> _userShaper;
-        private readonly Lazy<IDataShaper<Shared.DataTransferObjects.Brand.BrandDto>> _brandShaper;
-        private readonly Lazy<IDataShaper<Shared.DataTransferObjects.Product.ProductDto>> _productShaper;
-        private readonly Lazy<IDataShaper<Shared.DataTransferObjects.ProductHistory.ProductHistoryDto>> _productHistoryShaper;
-        private readonly Lazy<IDataShaper<Shared.DataTransferObjects.ProductCategory.ProductCategoryDto>> _productCategoryShaper;
-        private readonly Lazy<IDataShaper<Shared.DataTransferObjects.ProductImage.ProductImageDto>> _productImageShaper;
-        private readonly Lazy<IDataShaper<Shared.DataTransferObjects.Service.ServiceDto>> _serviceShaper;
+        private readonly Lazy<IDataShaper<BrandDto>> _brandShaper;
+        private readonly Lazy<IDataShaper<ProductDto>> _productShaper;
+        private readonly Lazy<IDataShaper<ProductHistoryDto>> _productHistoryShaper;
+        private readonly Lazy<IDataShaper<ProductCategoryDto>> _productCategoryShaper;
+        private readonly Lazy<IDataShaper<ProductImageDto>> _productImageShaper;
+        private readonly Lazy<IDataShaper<ServiceDto>> _serviceShaper;
+        private readonly Lazy<IDataShaper<CarPartDto>> _carPartShaper;
+        private readonly Lazy<IDataShaper<CarPartCategoryDto>> _carPartCategoryShaper;
 
         public DataShaperManager()
         {
@@ -24,36 +33,41 @@ namespace GarageManagementAPI.Service.DataShaping
             _userShaper = new Lazy<IDataShaper<UserDto>>(
                () => new DataShaper<UserDto>(UserDto.PropertyInfos));
 
-            _brandShaper = new Lazy<IDataShaper<Shared.DataTransferObjects.Brand.BrandDto>>(
-               () => new DataShaper<Shared.DataTransferObjects.Brand.BrandDto>(Shared.DataTransferObjects.Brand.BrandDto.PropertyInfos));
+            _brandShaper = new Lazy<IDataShaper<BrandDto>>(
+               () => new DataShaper<BrandDto>(BrandDto.PropertyInfos));
 
-            _productShaper = new Lazy<IDataShaper<Shared.DataTransferObjects.Product.ProductDto>>(
-               () => new DataShaper<Shared.DataTransferObjects.Product.ProductDto>(Shared.DataTransferObjects.Product.ProductDto.PropertyInfos));
+            _productShaper = new Lazy<IDataShaper<ProductDto>>(
+               () => new DataShaper<ProductDto>(ProductDto.PropertyInfos));
 
-            _productHistoryShaper = new Lazy<IDataShaper<Shared.DataTransferObjects.ProductHistory.ProductHistoryDto>>(
-              () => new DataShaper<Shared.DataTransferObjects.ProductHistory.ProductHistoryDto>(Shared.DataTransferObjects.ProductHistory.ProductHistoryDto.PropertyInfos));
+            _productHistoryShaper = new Lazy<IDataShaper<ProductHistoryDto>>(
+              () => new DataShaper<ProductHistoryDto>(ProductHistoryDto.PropertyInfos));
 
-            _productCategoryShaper = new Lazy<IDataShaper<Shared.DataTransferObjects.ProductCategory.ProductCategoryDto>>(
-              () => new DataShaper<Shared.DataTransferObjects.ProductCategory.ProductCategoryDto>(Shared.DataTransferObjects.ProductCategory.ProductCategoryDto.PropertyInfos));
+            _productCategoryShaper = new Lazy<IDataShaper<ProductCategoryDto>>(
+              () => new DataShaper<ProductCategoryDto>(ProductCategoryDto.PropertyInfos));
 
-            _productImageShaper = new Lazy<IDataShaper<Shared.DataTransferObjects.ProductImage.ProductImageDto>>(
-            () => new DataShaper<Shared.DataTransferObjects.ProductImage.ProductImageDto>(Shared.DataTransferObjects.ProductImage.ProductImageDto.PropertyInfos));
+            _productImageShaper = new Lazy<IDataShaper<ProductImageDto>>(
+            () => new DataShaper<ProductImageDto>(ProductImageDto.PropertyInfos));
 
-            _serviceShaper = new Lazy<IDataShaper<Shared.DataTransferObjects.Service.ServiceDto>>(
-            () => new DataShaper<Shared.DataTransferObjects.Service.ServiceDto>(Shared.DataTransferObjects.Service.ServiceDto.PropertyInfos));
+            _serviceShaper = new Lazy<IDataShaper<ServiceDto>>(
+            () => new DataShaper<ServiceDto>(ServiceDto.PropertyInfos));
+
+            _carPartShaper = new Lazy<IDataShaper<CarPartDto>>(
+            () => new DataShaper<CarPartDto>(CarPartDto.PropertyInfos));
+
+            _carPartCategoryShaper = new Lazy<IDataShaper<CarPartCategoryDto>>(
+            () => new DataShaper<CarPartCategoryDto>(CarPartCategoryDto.PropertyInfos));
 
         }
-
+        //.Value là thuộc tính của Lazy<T>, nó sẽ kích hoạt việc khởi tạo đối tượng nếu đối tượng đó chưa được khởi tạo trước đó. Nếu đối tượng đã được khởi tạo, thuộc tính .Value sẽ trả về đối tượng đó.
         public IDataShaper<WorkplaceDto> Workplace => _workplaceShaper.Value;
-
         public IDataShaper<UserDto> User => _userShaper.Value;
-
-        public IDataShaper<Shared.DataTransferObjects.Brand.BrandDto> Brand => _brandShaper.Value;
-        public IDataShaper<Shared.DataTransferObjects.Product.ProductDto> Product => _productShaper.Value;
-        public IDataShaper<Shared.DataTransferObjects.ProductCategory.ProductCategoryDto> ProductCategory => _productCategoryShaper.Value;
-        public IDataShaper<Shared.DataTransferObjects.ProductHistory.ProductHistoryDto> ProductHistory => _productHistoryShaper.Value;
-        public IDataShaper<Shared.DataTransferObjects.ProductImage.ProductImageDto> ProductImage => _productImageShaper.Value;
-        public IDataShaper<Shared.DataTransferObjects.Service.ServiceDto> Service => _serviceShaper.Value;
-
+        public IDataShaper<BrandDto> Brand => _brandShaper.Value;
+        public IDataShaper<ProductDto> Product => _productShaper.Value;
+        public IDataShaper<ProductCategoryDto> ProductCategory => _productCategoryShaper.Value;
+        public IDataShaper<ProductHistoryDto> ProductHistory => _productHistoryShaper.Value;
+        public IDataShaper<ProductImageDto> ProductImage => _productImageShaper.Value;
+        public IDataShaper<ServiceDto> Service => _serviceShaper.Value;
+        public IDataShaper<CarPartDto> CarPart => _carPartShaper.Value;
+        public IDataShaper<CarPartCategoryDto> CarPartCategory => _carPartCategoryShaper.Value;
     }
 }

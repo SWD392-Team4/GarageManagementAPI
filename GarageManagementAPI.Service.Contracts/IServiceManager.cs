@@ -19,7 +19,8 @@
         IProductCategoryService ProductCategoryService { get; }
         IProductImageService ProductImageService { get; }
         IServiceService ServiceService { get; }
-
+        ICarPartService CarPartService { get; }
+        ICarPartCategoryService CarPartCategoryService { get; }
         IMediaService MediaService { get; }
     }
 }

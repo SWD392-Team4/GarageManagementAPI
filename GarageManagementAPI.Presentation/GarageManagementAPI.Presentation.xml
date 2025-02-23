@@ -4,5 +4,274 @@
         <name>GarageManagementAPI.Presentation</name>
     </assembly>
     <members>
+        <member name="M:GarageManagementAPI.Presentation.Controllers.BrandController.GetBrands(GarageManagementAPI.Shared.RequestFeatures.BrandParameters)">
+            <summary>
+            Get all brands
+            </summary>
+            <param name="brandParameters"></param>
+            <returns></returns>
+        </member>
+        <member name="M:GarageManagementAPI.Presentation.Controllers.BrandController.GetBrandById(System.Guid,GarageManagementAPI.Shared.RequestFeatures.BrandParameters)">
+            <summary>
+            Get brand by id
+            </summary>
+            <param name="brandId"></param>
+            <param name="brandParameters"></param>
+            <returns></returns>
+        </member>
+        <member name="M:GarageManagementAPI.Presentation.Controllers.BrandController.CreateBrand(GarageManagementAPI.Shared.DataTransferObjects.Brand.BrandDtoForCreation)">
+            <summary>
+            Create brand
+            </summary>
+            <param name="brandDtoForCreation"></param>
+            <returns></returns>
+        </member>
+        <member name="M:GarageManagementAPI.Presentation.Controllers.BrandController.UpdateBrand(System.Guid,GarageManagementAPI.Shared.DataTransferObjects.Brand.BrandDtoForUpdate)">
+            <summary>
+            Update brand
+            </summary>
+            <param name="brandId"></param>
+            <param name="brandDtoForUpdate"></param>
+            <returns></returns>
+        </member>
+        <member name="M:GarageManagementAPI.Presentation.Controllers.BrandController.PartiallyUpdateBrand(System.Guid,Microsoft.AspNetCore.JsonPatch.JsonPatchDocument{GarageManagementAPI.Shared.DataTransferObjects.Brand.BrandDtoForUpdate},FluentValidation.IValidator{GarageManagementAPI.Shared.DataTransferObjects.Brand.BrandDtoForUpdate})">
+            <summary>
+            Update date brand by field
+            </summary>
+            <param name="brandId"></param>
+            <param name="jsonPatchDocumentDto"></param>
+            <param name="validator"></param>
+            <returns></returns>
+        </member>
+        <member name="M:GarageManagementAPI.Presentation.Controllers.CarPartCategoryController.GetCarPartCategoriess(GarageManagementAPI.Shared.RequestFeatures.CarPartCategoryParameters)">
+            <summary>
+            Get all car part caterory
+            </summary>
+            <param name="carPartCategoryParameters"></param>
+            <returns></returns>
+        </member>
+        <member name="M:GarageManagementAPI.Presentation.Controllers.CarPartCategoryController.GetCarPartCategoryById(System.Guid)">
+            <summary>
+            Get car part caterogy by id
+            </summary>
+            <param name="carPartCategoryId"></param>
+            <returns></returns>
+        </member>
+        <member name="M:GarageManagementAPI.Presentation.Controllers.CarPartCategoryController.CreateCarPartCategory(GarageManagementAPI.Shared.DataTransferObjects.CarPartCategory.CarPartCategoryDtoForCreation)">
+            <summary>
+            Create car part category
+            </summary>
+            <param name="carPartCategoryDtoForCreation"></param>
+            <returns></returns>
+        </member>
+        <member name="M:GarageManagementAPI.Presentation.Controllers.CarPartCategoryController.UpdateCarPartCategory(System.Guid,GarageManagementAPI.Shared.DataTransferObjects.CarPartCategory.CarPartCategoryDtoForUpdate)">
+            <summary>
+            Update car part category
+            </summary>
+            <param name="carPartCategoryId"></param>
+            <param name="carPartCategoryDtoForUpdate"></param>
+            <returns></returns>
+        </member>
+        <member name="M:GarageManagementAPI.Presentation.Controllers.CarPartCategoryController.PartiallyUpdateCarPartCategory(System.Guid,Microsoft.AspNetCore.JsonPatch.JsonPatchDocument{GarageManagementAPI.Shared.DataTransferObjects.CarPartCategory.CarPartCategoryDtoForUpdate},FluentValidation.IValidator{GarageManagementAPI.Shared.DataTransferObjects.CarPartCategory.CarPartCategoryDtoForUpdate})">
+            <summary>
+            Update car part category by field
+            </summary>
+            <param name="carPartCategoryId"></param>
+            <param name="jsonPatchDocumentDto"></param>
+            <param name="validator"></param>
+            <returns></returns>
+        </member>
+        <member name="M:GarageManagementAPI.Presentation.Controllers.CarPartController.GetCarParts(GarageManagementAPI.Shared.RequestFeatures.CarPartParameters)">
+            <summary>
+            Get all car part
+            </summary>
+            <param name="carPartParameters"></param>
+            <returns></returns>
+        </member>
+        <member name="M:GarageManagementAPI.Presentation.Controllers.CarPartController.GetCarPartById(System.Guid,GarageManagementAPI.Shared.RequestFeatures.CarPartParameters)">
+            <summary>
+            Get car part by id
+            </summary>
+            <param name="carPartId"></param>
+            <returns></returns>
+        </member>
+        <member name="M:GarageManagementAPI.Presentation.Controllers.CarPartController.CreateCarPart(GarageManagementAPI.Shared.DataTransferObjects.CarPart.CarPartDtoForCreation)">
+            <summary>
+            Create car part
+            </summary>
+            <param name="carPartDtoForCreation"></param>
+            <returns></returns>
+        </member>
+        <member name="M:GarageManagementAPI.Presentation.Controllers.CarPartController.UpdateCarPart(System.Guid,GarageManagementAPI.Shared.DataTransferObjects.CarPart.CarPartDtoForUpdate)">
+            <summary>
+            Update car part
+            </summary>
+            <param name="carPartId"></param>
+            <param name="carPartDtoForUpdate"></param>
+            <returns></returns>
+        </member>
+        <member name="M:GarageManagementAPI.Presentation.Controllers.CarPartController.PartiallyUpdateCarPart(System.Guid,Microsoft.AspNetCore.JsonPatch.JsonPatchDocument{GarageManagementAPI.Shared.DataTransferObjects.CarPart.CarPartDtoForUpdate},FluentValidation.IValidator{GarageManagementAPI.Shared.DataTransferObjects.CarPart.CarPartDtoForUpdate})">
+            <summary>
+            Update car part by field
+            </summary>
+            <param name="carPartId"></param>
+            <param name="jsonPatchDocumentDto"></param>
+            <param name="validator"></param>
+            <returns></returns>
+        </member>
+        <member name="M:GarageManagementAPI.Presentation.Controllers.ProductCategoryController.GetProductCategories(GarageManagementAPI.Shared.RequestFeatures.ProductCategoryParameters)">
+            <summary>
+            Get all product category
+            </summary>
+            <param name="productCategoryParameters"></param>
+            <returns></returns>
+        </member>
+        <member name="M:GarageManagementAPI.Presentation.Controllers.ProductCategoryController.GetProductCategoryById(System.Guid,GarageManagementAPI.Shared.RequestFeatures.ProductCategoryParameters)">
+            <summary>
+            Get product category by id
+            </summary>
+            <param name="productCategoryId"></param>
+            <param name="productCategoryParameters"></param>
+            <returns></returns>
+        </member>
+        <member name="M:GarageManagementAPI.Presentation.Controllers.ProductCategoryController.CreateProductCategory(GarageManagementAPI.Shared.DataTransferObjects.ProductCategory.ProductCategoryDtoForCreation)">
+            <summary>
+            Create prodcut category
+            </summary>
+            <param name="productCategoryDtoForCreation"></param>
+            <returns></returns>
+        </member>
+        <member name="M:GarageManagementAPI.Presentation.Controllers.ProductCategoryController.UpdateProductCategory(System.Guid,GarageManagementAPI.Shared.DataTransferObjects.ProductCategory.ProductCategoryDtoForUpdate)">
+            <summary>
+            Update product category
+            </summary>
+            <param name="productCategoryId"></param>
+            <param name="productCategoryDtoForUpdate"></param>
+            <returns></returns>
+        </member>
+        <member name="M:GarageManagementAPI.Presentation.Controllers.ProductCategoryController.PartiallyUpdateProductCategory(System.Guid,Microsoft.AspNetCore.JsonPatch.JsonPatchDocument{GarageManagementAPI.Shared.DataTransferObjects.ProductCategory.ProductCategoryDtoForUpdate},FluentValidation.IValidator{GarageManagementAPI.Shared.DataTransferObjects.ProductCategory.ProductCategoryDtoForUpdate})">
+            <summary>
+            Update product category by field
+            </summary>
+            <param name="productCategoryId"></param>
+            <param name="jsonPatchDocumentDto"></param>
+            <param name="validator"></param>
+            <returns></returns>
+        </member>
+        <member name="M:GarageManagementAPI.Presentation.Controllers.ProductController.GetProductById(System.Guid)">
+            <summary>
+            Get product by id 
+            </summary>
+            <param name="productId"></param>
+            <returns></returns>
+        </member>
+        <member name="M:GarageManagementAPI.Presentation.Controllers.ProductController.GetProductByBarcode(System.String,GarageManagementAPI.Shared.RequestFeatures.ProductParameters)">
+            <summary>
+            Get product by barcode
+            </summary>
+            <param name="barcode"></param>
+            <param name="productParameters"></param>
+            <returns></returns>
+        </member>
+        <member name="M:GarageManagementAPI.Presentation.Controllers.ProductController.GetProducts(GarageManagementAPI.Shared.RequestFeatures.ProductParameters)">
+            <summary>
+            Get all products
+            </summary>
+            <param name="productParameters"></param>
+            <returns></returns>
+        </member>
+        <member name="M:GarageManagementAPI.Presentation.Controllers.ProductController.CreateProduct(GarageManagementAPI.Shared.DataTransferObjects.Product.ProductDtoForCreation)">
+            <summary>
+            Create product
+            </summary>
+            <param name="productDtoForCreation"></param>
+            <returns></returns>
+        </member>
+        <member name="M:GarageManagementAPI.Presentation.Controllers.ProductController.UpdateProduct(System.Guid,GarageManagementAPI.Shared.DataTransferObjects.Product.ProductDtoForUpdate)">
+            <summary>
+            Update product
+            </summary>
+            <param name="productId"></param>
+            <param name="productDtoForUpdate"></param>
+            <returns></returns>
+        </member>
+        <member name="M:GarageManagementAPI.Presentation.Controllers.ProductController.PartiallyUpdateProduct(System.Guid,Microsoft.AspNetCore.JsonPatch.JsonPatchDocument{GarageManagementAPI.Shared.DataTransferObjects.Product.ProductDtoForUpdate},FluentValidation.IValidator{GarageManagementAPI.Shared.DataTransferObjects.Product.ProductDtoForUpdate})">
+            <summary>
+            Update product by field
+            </summary>
+            <param name="productId"></param>
+            <param name="jsonPatchDocumentDto"></param>
+            <param name="validator"></param>
+            <returns></returns>
+        </member>
+        <member name="M:GarageManagementAPI.Presentation.Controllers.ProductHistoryController.GetProductById(System.Guid,GarageManagementAPI.Shared.RequestFeatures.ProductHistoryParameters)">
+            <summary>
+            Get product history by id
+            </summary>
+            <param name="productId"></param>
+            <param name="productHisotryParameters"></param>
+            <returns></returns>
+        </member>
+        <member name="M:GarageManagementAPI.Presentation.Controllers.ProductHistoryController.GetProductHistories(GarageManagementAPI.Shared.RequestFeatures.ProductHistoryParameters)">
+            <summary>
+            Get all product history
+            </summary>
+            <param name="productParameters"></param>
+            <returns></returns>
+        </member>
+        <member name="M:GarageManagementAPI.Presentation.Controllers.ProductImageController.GetProductByIdImage(System.Guid,GarageManagementAPI.Shared.RequestFeatures.ProductImageParameters)">
+            <summary>
+            Get img product by id
+            </summary>
+            <param name="productId"></param>
+            <param name="productImageParameters"></param>
+            <returns></returns>
+        </member>
+        <member name="M:GarageManagementAPI.Presentation.Controllers.ProductImageController.GetProductImages(GarageManagementAPI.Shared.RequestFeatures.ProductImageParameters)">
+            <summary>
+            Get all img product
+            </summary>
+            <param name="productParameters"></param>
+            <returns></returns>
+        </member>
+        <member name="M:GarageManagementAPI.Presentation.Controllers.ServiceController.GetServices(GarageManagementAPI.Shared.RequestFeatures.ServiceParameters)">
+            <summary>
+            Get all service
+            </summary>
+            <param name="serviceParameters"></param>
+            <returns></returns>
+        </member>
+        <member name="M:GarageManagementAPI.Presentation.Controllers.ServiceController.GetServiceById(System.Guid,GarageManagementAPI.Shared.RequestFeatures.ServiceParameters)">
+            <summary>
+            Get service by id
+            </summary>
+            <param name="serviceId"></param>
+            <param name="serviceParameters"></param>
+            <returns></returns>
+        </member>
+        <member name="M:GarageManagementAPI.Presentation.Controllers.ServiceController.CreateService(GarageManagementAPI.Shared.DataTransferObjects.Service.ServiceDtoForCreation)">
+            <summary>
+            Create service
+            </summary>
+            <param name="serviceDtoForCreation"></param>
+            <returns></returns>
+        </member>
+        <member name="M:GarageManagementAPI.Presentation.Controllers.ServiceController.UpdateBrand(System.Guid,GarageManagementAPI.Shared.DataTransferObjects.Service.ServiceDtoForUpdate)">
+            <summary>
+            Update service
+            </summary>
+            <param name="serviceId"></param>
+            <param name="serviceDtoForUpdate"></param>
+            <returns></returns>
+        </member>
+        <member name="M:GarageManagementAPI.Presentation.Controllers.ServiceController.PartiallyUpdateService(System.Guid,Microsoft.AspNetCore.JsonPatch.JsonPatchDocument{GarageManagementAPI.Shared.DataTransferObjects.Service.ServiceDtoForUpdate},FluentValidation.IValidator{GarageManagementAPI.Shared.DataTransferObjects.Service.ServiceDtoForUpdate})">
+            <summary>
+            Update service by field
+            </summary>
+            <param name="serviceId"></param>
+            <param name="jsonPatchDocumentDto"></param>
+            <param name="validator"></param>
+            <returns></returns>
+        </member>
     </members>
 </doc>

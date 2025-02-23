@@ -15,30 +15,22 @@ namespace GarageManagementAPI.Repository
         private readonly Lazy<IProductCategoryRepository> _productCategoryRepository;
         private readonly Lazy<IProductImageRepository> _productImageRepository;
         private readonly Lazy<IServiceRepository> _serviceRepository;
+        private readonly Lazy<ICarPartRepository> _carPartRepository;
+        private readonly Lazy<ICarPartCategoryRepository> _carPartCategoryRepository;
 
         public RepositoryManager(RepositoryContext repositoryContext)
         {
             _repositoryContext = repositoryContext;
 
-            _workplaceRepository = new Lazy<IWorkplaceRepository>(() =>
-            new WorkplaceRepository(repositoryContext));
-
-            _userRepository = new Lazy<IUserRepository>(() =>
-            new UserRepository(repositoryContext));
-
-            _employeeInfoRepository = new Lazy<IEmployeeInfoRepository>(() =>
-            new EmployeeInfoRepository(repositoryContext));
-
-            _brandRepository = new Lazy<IBrandRepository>(() =>
-            new BrandRepository(repositoryContext));
-
-            _productRepository = new Lazy<IProductRepository>(() =>
-            new ProductRepository(repositoryContext));
-
+            _workplaceRepository = new Lazy<IWorkplaceRepository>(() => new WorkplaceRepository(repositoryContext));
+            _userRepository = new Lazy<IUserRepository>(() => new UserRepository(repositoryContext));
+            _employeeInfoRepository = new Lazy<IEmployeeInfoRepository>(() => new EmployeeInfoRepository(repositoryContext));
+            _brandRepository = new Lazy<IBrandRepository>(() => new BrandRepository(repositoryContext));
+            _productRepository = new Lazy<IProductRepository>(() => new ProductRepository(repositoryContext));
             _productHistoryRepository = new Lazy<IProductHistoryRepository>(() => new ProductHistoryRepository(repositoryContext));
-
             _productCategoryRepository = new Lazy<IProductCategoryRepository>(() => new ProductCategoryRepository(repositoryContext));
-
+            _carPartRepository = new Lazy<ICarPartRepository>(() => new CarPartRepository(repositoryContext));
+            _carPartCategoryRepository = new Lazy<ICarPartCategoryRepository>(() => new CarPartCategoryRepository(repositoryContext));
             _productImageRepository = new Lazy<IProductImageRepository>(() => new ProductImageRepository(repositoryContext));
             _serviceRepository = new Lazy<IServiceRepository>(() => new ServiceRepository(repositoryContext));
 
@@ -53,6 +45,8 @@ namespace GarageManagementAPI.Repository
         public IProductCategoryRepository ProductCategory => _productCategoryRepository.Value;
         public IProductImageRepository ProductImage => _productImageRepository.Value;
         public IServiceRepository Service => _serviceRepository.Value;
+        public ICarPartRepository CarPart => _carPartRepository.Value;
+        public ICarPartCategoryRepository CarPartCategory => _carPartCategoryRepository.Value;
 
         public async Task<IDbContextTransaction> BeginTransactionAsync()
         {
@@ -63,7 +57,6 @@ namespace GarageManagementAPI.Repository
         {
             return _repositoryContext.Database.CreateExecutionStrategy();
         }
-
         public async Task SaveAsync() => await _repositoryContext.SaveChangesAsync();
     }
 }
