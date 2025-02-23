@@ -19,20 +19,20 @@ namespace GarageManagementAPI.Repository.Extensions
             return brand.Where(b => b.BrandName!.Contains(name, StringComparison.OrdinalIgnoreCase));
         }
 
-        public static IQueryable<Brand> SearchByStatus(this IQueryable<Brand> brands, BrandStatus? status)
+        public static IQueryable<Brand> SearchByStatus(this IQueryable<Brand> brand, BrandStatus? status)
         {
-            if (status is null) return brands;
-            return brands.Where(b => b.Status.ToString().Equals(status.ToString()));
+            if (status is null) return brand;
+            return brand.Where(b => b.Status.ToString().Equals(status.ToString()));
         }
 
-        public static IQueryable<Brand> SearchByDate(this IQueryable<Brand> brand, DateTimeOffset? createdAt)
+        public static IQueryable<Brand> SearchByDate(this IQueryable<Brand> brand, DateTimeOffset? date)
         {
-            if (!createdAt.HasValue || createdAt.Value == DateTimeOffset.MinValue)
+            if (!date.HasValue || date.Value == DateTimeOffset.MinValue)
             {
                 return brand;  
             }
 
-            DateTimeOffset startDate = createdAt.Value.Date;
+            DateTimeOffset startDate = date.Value.Date;
             DateTimeOffset endDate = startDate.AddDays(1).AddTicks(-1); 
 
             // Check for out-of-range values before querying

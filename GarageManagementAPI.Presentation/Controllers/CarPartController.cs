@@ -16,6 +16,11 @@ namespace GarageManagementAPI.Presentation.Controllers
         public CarPartController(IServiceManager service) : base(service)
         {
         }
+        /// <summary>
+        /// Get all car part
+        /// </summary>
+        /// <param name="carPartParameters"></param>
+        /// <returns></returns>
         [HttpGet]
         //[Authorize(Roles = $"{nameof(SystemRole.Administrator)},{nameof(SystemRole.Cashier)}")]
         public async Task<IActionResult> GetCarParts([FromQuery] CarPartParameters carPartParameters)
@@ -27,11 +32,16 @@ namespace GarageManagementAPI.Presentation.Controllers
                 onFailure: ProcessError
                 );
         }
+        /// <summary>
+        /// Get car part by id
+        /// </summary>
+        /// <param name="carPartId"></param>
+        /// <returns></returns>
         [HttpGet("{carPartId:guid}", Name = "GetCarPartById")]
         //[Authorize(Roles = $"{nameof(SystemRole.Administrator)},{nameof(SystemRole.Cashier)}")]
-        public async Task<IActionResult> GetCarPartById(Guid carPartId, [FromQuery] CarPartParameters CarPartParameters)
+        public async Task<IActionResult> GetCarPartById(Guid carPartId, [FromQuery] CarPartParameters carPartParameters)
         {
-            var CarPartResult = await _service.CarPartService.GetCarPartAsync(carPartId, CarPartParameters, trackChanges: false);
+            var CarPartResult = await _service.CarPartService.GetCarPartAsync(carPartId, carPartParameters, trackChanges: false);
 
             return CarPartResult.Map(
                 onSuccess: Ok,
@@ -39,6 +49,11 @@ namespace GarageManagementAPI.Presentation.Controllers
                 );
         }
 
+        /// <summary>
+        /// Create car part
+        /// </summary>
+        /// <param name="carPartDtoForCreation"></param>
+        /// <returns></returns>
         [HttpPost(Name = "CreateCarPart")]
         public async Task<IActionResult> CreateCarPart([FromBody] CarPartDtoForCreation carPartDtoForCreation)
         {
@@ -55,6 +70,12 @@ namespace GarageManagementAPI.Presentation.Controllers
                 );
         }
 
+        /// <summary>
+        /// Update car part
+        /// </summary>
+        /// <param name="carPartId"></param>
+        /// <param name="carPartDtoForUpdate"></param>
+        /// <returns></returns>
         [HttpPut("{carPartId:guid}")]
         public async Task<IActionResult> UpdateCarPart(Guid carPartId, [FromBody] CarPartDtoForUpdate carPartDtoForUpdate)
         {
@@ -70,7 +91,13 @@ namespace GarageManagementAPI.Presentation.Controllers
                  onFailure: ProcessError
                  );
         }
-
+        /// <summary>
+        /// Update car part by field
+        /// </summary>
+        /// <param name="carPartId"></param>
+        /// <param name="jsonPatchDocumentDto"></param>
+        /// <param name="validator"></param>
+        /// <returns></returns>
         [HttpPatch("{carPartId:guid}")]
         public async Task<IActionResult> PartiallyUpdateCarPart(
                                              Guid carPartId,

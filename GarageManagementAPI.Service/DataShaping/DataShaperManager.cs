@@ -8,6 +8,7 @@ using GarageManagementAPI.Shared.DataTransferObjects.ProductCategory;
 using GarageManagementAPI.Shared.DataTransferObjects.ProductImage;
 using GarageManagementAPI.Shared.DataTransferObjects.Service;
 using GarageManagementAPI.Shared.DataTransferObjects.CarPart;
+using GarageManagementAPI.Shared.DataTransferObjects.CarPartCategory;
 
 namespace GarageManagementAPI.Service.DataShaping
 {
@@ -22,6 +23,7 @@ namespace GarageManagementAPI.Service.DataShaping
         private readonly Lazy<IDataShaper<ProductImageDto>> _productImageShaper;
         private readonly Lazy<IDataShaper<ServiceDto>> _serviceShaper;
         private readonly Lazy<IDataShaper<CarPartDto>> _carPartShaper;
+        private readonly Lazy<IDataShaper<CarPartCategoryDto>> _carPartCategoryShaper;
 
         public DataShaperManager()
         {
@@ -52,6 +54,9 @@ namespace GarageManagementAPI.Service.DataShaping
             _carPartShaper = new Lazy<IDataShaper<CarPartDto>>(
             () => new DataShaper<CarPartDto>(CarPartDto.PropertyInfos));
 
+            _carPartCategoryShaper = new Lazy<IDataShaper<CarPartCategoryDto>>(
+            () => new DataShaper<CarPartCategoryDto>(CarPartCategoryDto.PropertyInfos));
+
         }
         //.Value là thuộc tính của Lazy<T>, nó sẽ kích hoạt việc khởi tạo đối tượng nếu đối tượng đó chưa được khởi tạo trước đó. Nếu đối tượng đã được khởi tạo, thuộc tính .Value sẽ trả về đối tượng đó.
         public IDataShaper<WorkplaceDto> Workplace => _workplaceShaper.Value;
@@ -63,6 +68,6 @@ namespace GarageManagementAPI.Service.DataShaping
         public IDataShaper<ProductImageDto> ProductImage => _productImageShaper.Value;
         public IDataShaper<ServiceDto> Service => _serviceShaper.Value;
         public IDataShaper<CarPartDto> CarPart => _carPartShaper.Value;
-
+        public IDataShaper<CarPartCategoryDto> CarPartCategory => _carPartCategoryShaper.Value;
     }
 }

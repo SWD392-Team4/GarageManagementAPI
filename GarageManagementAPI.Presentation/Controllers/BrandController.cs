@@ -16,9 +16,13 @@ namespace GarageManagementAPI.Presentation.Controllers
         public BrandController(IServiceManager service) : base(service)
         {
         }
-
+        /// <summary>
+        /// Get all brands
+        /// </summary>
+        /// <param name="brandParameters"></param>
+        /// <returns></returns>
         [HttpGet]
-       //[Authorize(Roles = $"{nameof(SystemRole.Administrator)},{nameof(SystemRole.Cashier)}")]
+        //[Authorize(Roles = $"{nameof(SystemRole.Administrator)},{nameof(SystemRole.Cashier)}")]
         public async Task<IActionResult> GetBrands([FromQuery] BrandParameters brandParameters)
         {
             var brandResult = await _service.BrandService.GetBrandsAsync(brandParameters, trackChanges: false);
@@ -28,6 +32,12 @@ namespace GarageManagementAPI.Presentation.Controllers
                 onFailure: ProcessError
                 );
         }
+        /// <summary>
+        /// Get brand by id
+        /// </summary>
+        /// <param name="brandId"></param>
+        /// <param name="brandParameters"></param>
+        /// <returns></returns>
         [HttpGet("{brandId:guid}", Name = "GetBrandById")]
         //[Authorize(Roles = $"{nameof(SystemRole.Administrator)},{nameof(SystemRole.Cashier)}")]
         public async Task<IActionResult> GetBrandById(Guid brandId, [FromQuery] BrandParameters brandParameters)
@@ -40,6 +50,11 @@ namespace GarageManagementAPI.Presentation.Controllers
                 );
         }
 
+        /// <summary>
+        /// Create brand
+        /// </summary>
+        /// <param name="brandDtoForCreation"></param>
+        /// <returns></returns>
         [HttpPost(Name = "CreateBrand")]
         public async Task<IActionResult> CreateBrand([FromBody] BrandDtoForCreation brandDtoForCreation)
         {
@@ -56,6 +71,12 @@ namespace GarageManagementAPI.Presentation.Controllers
                 );
         }
 
+        /// <summary>
+        /// Update brand
+        /// </summary>
+        /// <param name="brandId"></param>
+        /// <param name="brandDtoForUpdate"></param>
+        /// <returns></returns>
         [HttpPut("{brandId:guid}")]
         public async Task<IActionResult> UpdateBrand(Guid brandId, [FromBody] BrandDtoForUpdate brandDtoForUpdate)
         {
@@ -72,6 +93,13 @@ namespace GarageManagementAPI.Presentation.Controllers
                  );
         }
 
+        /// <summary>
+        /// Update date brand by field
+        /// </summary>
+        /// <param name="brandId"></param>
+        /// <param name="jsonPatchDocumentDto"></param>
+        /// <param name="validator"></param>
+        /// <returns></returns>
         [HttpPatch("{brandId:guid}")]
         public async Task<IActionResult> PartiallyUpdateBrand(
     Guid brandId,

@@ -17,7 +17,7 @@ namespace GarageManagementAPI.Presentation.Controllers
         {
         }
         /// <summary>
-        /// Get All service
+        /// Get all service
         /// </summary>
         /// <param name="serviceParameters"></param>
         /// <returns></returns>
@@ -93,7 +93,13 @@ namespace GarageManagementAPI.Presentation.Controllers
                  onFailure: ProcessError
                  );
         }
-
+        /// <summary>
+        /// Update service by field
+        /// </summary>
+        /// <param name="serviceId"></param>
+        /// <param name="jsonPatchDocumentDto"></param>
+        /// <param name="validator"></param>
+        /// <returns></returns>
         [HttpPatch("{serviceId:guid}")]
         public async Task<IActionResult> PartiallyUpdateService(
                                                 Guid serviceId,

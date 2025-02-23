@@ -6,7 +6,7 @@ using GarageManagementAPI.Repository.Extensions;
 
 namespace GarageManagementAPI.Repository
 {
-    public class CarPartRepository: RepositoryBase<CarPart>, ICarPartRepository
+    public class CarPartRepository : RepositoryBase<CarPart>, ICarPartRepository
     {
         public CarPartRepository(RepositoryContext repositoryContext) : base(repositoryContext)
         {
@@ -30,7 +30,7 @@ namespace GarageManagementAPI.Repository
         {
             var CarPart = include is null ?
              await FindByCondition(u => u.Id.Equals(CarPartId), trackChanges).SingleOrDefaultAsync() :
-             await FindByCondition(u => u.Id.Equals(CarPartId), trackChanges).Include(include).SingleOrDefaultAsync();
+             await FindByCondition(u => u.Id.Equals(CarPartId), trackChanges).IsInclude(include).SingleOrDefaultAsync();
 
             return CarPart;
         }
