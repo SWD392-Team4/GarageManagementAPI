@@ -5,10 +5,10 @@ namespace GarageManagementAPI.Shared.RequestFeatures
 {
     public class ProductCategoryParameters : RequestParameters
     {
-        public ProductCategoryParameters() => OrderBy = "category";
+        public ProductCategoryParameters() => OrderBy = "ServiceName";
         public string? Category { get; set; } = null!;
         public DateTimeOffset CreatedAt { get; set; }
-
+        public DateTimeOffset UpdatedAt { get; set; }
         [EnumDataType(typeof(ProductCategoryStatus))]
         public ProductCategoryStatus? Status { get; set; } = null;
 

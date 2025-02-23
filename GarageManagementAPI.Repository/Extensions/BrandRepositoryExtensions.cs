@@ -47,9 +47,6 @@ namespace GarageManagementAPI.Repository.Extensions
             );
         }
 
-
-
-
         public static IQueryable<Brand> IsInclude(this IQueryable<Brand> brand, string? fieldsString)
         {
             if (string.IsNullOrWhiteSpace(fieldsString))

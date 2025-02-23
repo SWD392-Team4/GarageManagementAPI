@@ -13,5 +13,6 @@ namespace GarageManagementAPI.Service.Contracts
         IDataShaper<Shared.DataTransferObjects.ProductHistory.ProductHistoryDto> ProductHistory { get; }
         IDataShaper<Shared.DataTransferObjects.ProductCategory.ProductCategoryDto> ProductCategory { get; }
         IDataShaper<Shared.DataTransferObjects.ProductImage.ProductImageDto> ProductImage { get; }
+        IDataShaper<Shared.DataTransferObjects.Service.ServiceDto> Service { get; }
     }
 }
