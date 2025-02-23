@@ -4,5 +4,35 @@
         <name>GarageManagementAPI.Presentation</name>
     </assembly>
     <members>
+        <member name="M:GarageManagementAPI.Presentation.Controllers.ServiceController.GetServices(GarageManagementAPI.Shared.RequestFeatures.ServiceParameters)">
+            <summary>
+            Get All service
+            </summary>
+            <param name="serviceParameters"></param>
+            <returns></returns>
+        </member>
+        <member name="M:GarageManagementAPI.Presentation.Controllers.ServiceController.GetServiceById(System.Guid,GarageManagementAPI.Shared.RequestFeatures.ServiceParameters)">
+            <summary>
+            Get service by id
+            </summary>
+            <param name="serviceId"></param>
+            <param name="serviceParameters"></param>
+            <returns></returns>
+        </member>
+        <member name="M:GarageManagementAPI.Presentation.Controllers.ServiceController.CreateService(GarageManagementAPI.Shared.DataTransferObjects.Service.ServiceDtoForCreation)">
+            <summary>
+            Create service
+            </summary>
+            <param name="serviceDtoForCreation"></param>
+            <returns></returns>
+        </member>
+        <member name="M:GarageManagementAPI.Presentation.Controllers.ServiceController.UpdateBrand(System.Guid,GarageManagementAPI.Shared.DataTransferObjects.Service.ServiceDtoForUpdate)">
+            <summary>
+            Update service
+            </summary>
+            <param name="serviceId"></param>
+            <param name="serviceDtoForUpdate"></param>
+            <returns></returns>
+        </member>
     </members>
 </doc>

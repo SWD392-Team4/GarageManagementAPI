@@ -23,6 +23,7 @@ namespace GarageManagementAPI.Service
         private readonly Lazy<IProductImageService> _productImageService;
         private readonly Lazy<IMediaService> _mediaService;
         private readonly Lazy<IServiceService> _serviceService;
+        private readonly Lazy<ICarPartService> _carPartService;
 
         public ServiceManager(
             IRepositoryManager repositoryManager,
@@ -66,38 +67,44 @@ namespace GarageManagementAPI.Service
                 dataShaper));
 
             _brandService = new Lazy<IBrandService>(() =>
-           new BrandService(
+            new BrandService(
                repositoryManager,
                mapper,
                dataShaper));
 
             _productService = new Lazy<IProductService>(() =>
-           new ProductService(
+            new ProductService(
               repositoryManager,
               mapper,
               dataShaper));
 
             _productHistoryService = new Lazy<IProductHistoryService>(() =>
-          new ProductHistoryService(
+            new ProductHistoryService(
              repositoryManager,
              mapper,
              dataShaper));
 
             _productCategoryService = new Lazy<IProductCategoryService>(() =>
-          new ProductCategoryService(
+            new ProductCategoryService(
              repositoryManager,
              mapper,
              dataShaper));
 
             _productImageService = new Lazy<IProductImageService>(() =>
-          new ProductImageService(
+            new ProductImageService(
              repositoryManager,
              mapper,
              dataShaper));
 
 
             _serviceService = new Lazy<IServiceService>(() =>
-          new ServiceService(
+            new ServiceService(
+             repositoryManager,
+             mapper,
+             dataShaper));
+
+            _carPartService = new Lazy<ICarPartService>(() =>
+            new CarPartService(
              repositoryManager,
              mapper,
              dataShaper));
@@ -122,6 +129,7 @@ namespace GarageManagementAPI.Service
         public IProductCategoryService ProductCategoryService => _productCategoryService.Value;
         public IProductImageService ProductImageService => _productImageService.Value;
         public IServiceService ServiceService => _serviceService.Value;
+        public ICarPartService CarPartService => _carPartService.Value;
         public IMediaService MediaService => _mediaService.Value;
     }
 }

@@ -13,7 +13,7 @@ namespace GarageManagementAPI.Service.Extension
             => Result<CarPartDto>.Ok(carPartDto);
         public static Result<CarPartDto> CreatedResult(this CarPartDto carPartDto)
             => Result<CarPartDto>.Created(carPartDto);
-        public static Result<CarPart> NotFound(Guid carPartId)
+        public static Result<CarPart> NotFound(this CarPart? carPart, Guid carPartId)
             => Result<CarPart>.NotFound([CarPartErrors.GetCarPartNotFoundWithIdError(carPartId)]);
     }
 }

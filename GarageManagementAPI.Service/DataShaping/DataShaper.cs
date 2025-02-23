@@ -5,9 +5,11 @@ using System.Reflection;
 
 namespace GarageManagementAPI.Service.DataShaping
 {
+    //where T : class chỉ định rằng tham số kiểu T phải là một kiểu tham chiếu (reference type), tức là T phải là một lớp (class), không phải kiểu giá trị (struct, int, double, v.v...).
     public class DataShaper<T> : IDataShaper<T> where T : class
     {
         public PropertyInfo[] Properties { get; set; }
+        //PropertyInfo: System.Reflection
         public DataShaper(PropertyInfo[] propertyInfo)
         {
             Properties = propertyInfo;
@@ -42,6 +44,7 @@ namespace GarageManagementAPI.Service.DataShaping
                     field.Trim(),
                     StringComparison.InvariantCultureIgnoreCase));
 
+                // Nếu không tìm thấy thuộc tính, tiếp tục với thuộc tính tiếp theo
                 if (property == null)
                     continue;
 
@@ -77,8 +80,6 @@ namespace GarageManagementAPI.Service.DataShaping
 
             return shapedObject;
         }
-
-
     }
 }
 

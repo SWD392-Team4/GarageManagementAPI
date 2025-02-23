@@ -5,6 +5,7 @@ namespace GarageManagementAPI.Shared.DataTransferObjects.CarPart
 {
     public record class CarPartDto : BaseDto<CarPartDto>
     {
+        public Guid Id { get; set; }
         public string PartName { get; set; } = null!;
 
         [EnumDataType(typeof(CarPartStatus))]

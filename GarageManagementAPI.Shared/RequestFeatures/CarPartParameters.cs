@@ -3,9 +3,10 @@ using System.ComponentModel.DataAnnotations;
 
 namespace GarageManagementAPI.Shared.RequestFeatures
 {
-    public class CarPartParameters
+    public class CarPartParameters : RequestParameters
     {
-        public string PartName { get; set; } = null!;
+        public CarPartParameters() => OrderBy = "PartName";
+        public string CarPartName { get; set; } = null!;
         [EnumDataType(typeof(CarPartStatus))]
         public CarPartStatus Status { get; set; }
         public DateTimeOffset CreatedAt { get; set; }

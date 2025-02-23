@@ -16,7 +16,7 @@ namespace GarageManagementAPI.Repository.Extensions
             }
 
             var lowerCaseTerm = name.Trim().ToLower();
-            return brand.Where(b => b.BrandName!.ToLower().Contains(name.Trim().ToLower()));
+            return brand.Where(b => b.BrandName!.Contains(name, StringComparison.OrdinalIgnoreCase));
         }
 
         public static IQueryable<Brand> SearchByStatus(this IQueryable<Brand> brands, BrandStatus? status)
@@ -29,11 +29,11 @@ namespace GarageManagementAPI.Repository.Extensions
         {
             if (!createdAt.HasValue || createdAt.Value == DateTimeOffset.MinValue)
             {
-                return brand;  // Skip filtering by date if createdAt is not provided or is MinValue
+                return brand;  
             }
 
             DateTimeOffset startDate = createdAt.Value.Date;
-            DateTimeOffset endDate = startDate.AddDays(1).AddTicks(-1); // End of day calculation
+            DateTimeOffset endDate = startDate.AddDays(1).AddTicks(-1); 
 
             // Check for out-of-range values before querying
             if (startDate > DateTimeOffset.MaxValue || endDate > DateTimeOffset.MaxValue)
@@ -72,15 +72,14 @@ namespace GarageManagementAPI.Repository.Extensions
         public static IQueryable<Brand> Sort(this IQueryable<Brand> brands, string? orderByQueryString)
         {
             if (string.IsNullOrWhiteSpace(orderByQueryString))
-                return brands.OrderBy(p => p.BrandName);  // Sắp xếp mặc định theo BrandName
+                return brands.OrderBy(p => p.BrandName); 
 
             // Tạo biểu thức sắp xếp động từ query string
             var orderQuery = QueryBuilder.CreateOrderQuery<Brand>(orderByQueryString, Brand.PropertyInfos);
 
             if (string.IsNullOrWhiteSpace(orderQuery))
-                return brands.OrderBy(p => p.BrandName);  // Nếu không có chuỗi sắp xếp hợp lệ, sắp xếp theo BrandName
+                return brands.OrderBy(p => p.BrandName); 
 
-            // Áp dụng sắp xếp động với biểu thức đã tạo
             return brands.OrderBy(orderQuery);
         }
     }

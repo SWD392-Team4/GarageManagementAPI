@@ -16,7 +16,7 @@ namespace GarageManagementAPI.Repository.Extensions
                 return service;
             }
 
-            return service.Where(s => s.ServiceName!.ToLower().Contains(name.Trim().ToLower()));
+            return service.Where(s => s.ServiceName!.Contains(name.Trim(), StringComparison.OrdinalIgnoreCase));
         }
 
         public static IQueryable<Service> SearchByWorkNature(this IQueryable<Service> service, string? workNature)
@@ -26,7 +26,7 @@ namespace GarageManagementAPI.Repository.Extensions
                 return service;
             }
 
-            return service.Where(s => s.WorkNature!.ToLower().Contains(workNature.Trim().ToLower()));
+            return service.Where(s => s.WorkNature!.Contains(workNature.Trim(), StringComparison.OrdinalIgnoreCase));
         }
 
         public static IQueryable<Service> SearchByAction(this IQueryable<Service> service, string? action)
@@ -36,7 +36,7 @@ namespace GarageManagementAPI.Repository.Extensions
                 return service;
             }
 
-            return service.Where(s => s.Action!.ToLower().Contains(action.Trim().ToLower()));
+            return service.Where(s => s.Action!.Contains(action.Trim(), StringComparison.OrdinalIgnoreCase));
         }
 
 
@@ -69,9 +69,11 @@ namespace GarageManagementAPI.Repository.Extensions
             }
 
             DateTimeOffset startDate = createdAt.Value.Date;
-            DateTimeOffset endDate = startDate.AddDays(1).AddTicks(-1); // End of day calculation
-
             // Check for out-of-range values before querying
+            //1 tick = 100 nano giây
+            //AddTick(-1) - 0.0000000009s
+            DateTimeOffset endDate = startDate.AddDays(1).AddTicks(-1);
+
             if (startDate > DateTimeOffset.MaxValue || endDate > DateTimeOffset.MaxValue)
             {
                 throw new ArgumentOutOfRangeException("The specified date range is outside the valid range.");
@@ -87,11 +89,12 @@ namespace GarageManagementAPI.Repository.Extensions
         {
             if (!updatedAt.HasValue || updatedAt.Value == DateTimeOffset.MinValue)
             {
-                return service;  // Skip filtering by date if createdAt is not provided or is MinValue
+                return service; 
             }
 
             DateTimeOffset startDate = updatedAt.Value.Date;
-            DateTimeOffset endDate = startDate.AddDays(1).AddTicks(-1); // End of day calculation
+            // End of day calculation
+            DateTimeOffset endDate = startDate.AddDays(1).AddTicks(-1); 
 
             // Check for out-of-range values before querying
             if (startDate > DateTimeOffset.MaxValue || endDate > DateTimeOffset.MaxValue)
@@ -134,15 +137,14 @@ namespace GarageManagementAPI.Repository.Extensions
         public static IQueryable<Service> Sort(this IQueryable<Service> Services, string? orderByQueryString)
         {
             if (string.IsNullOrWhiteSpace(orderByQueryString))
-                return Services.OrderBy(p => p.ServiceName);  // Sắp xếp mặc định theo ServiceName
+                return Services.OrderBy(p => p.ServiceName);  
 
             // Tạo biểu thức sắp xếp động từ query string
             var orderQuery = QueryBuilder.CreateOrderQuery<Service>(orderByQueryString, Service.PropertyInfos);
 
             if (string.IsNullOrWhiteSpace(orderQuery))
-                return Services.OrderBy(p => p.ServiceName);  // Nếu không có chuỗi sắp xếp hợp lệ, sắp xếp theo ServiceName
+                return Services.OrderBy(p => p.ServiceName); 
 
-            // Áp dụng sắp xếp động với biểu thức đã tạo
             return Services.OrderBy(orderQuery);
         }
     }

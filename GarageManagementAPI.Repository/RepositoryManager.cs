@@ -15,6 +15,7 @@ namespace GarageManagementAPI.Repository
         private readonly Lazy<IProductCategoryRepository> _productCategoryRepository;
         private readonly Lazy<IProductImageRepository> _productImageRepository;
         private readonly Lazy<IServiceRepository> _serviceRepository;
+        private readonly Lazy<ICarPartRepository> _carPartRepository;
 
         public RepositoryManager(RepositoryContext repositoryContext)
         {
@@ -32,12 +33,13 @@ namespace GarageManagementAPI.Repository
             _brandRepository = new Lazy<IBrandRepository>(() =>
             new BrandRepository(repositoryContext));
 
-            _productRepository = new Lazy<IProductRepository>(() =>
-            new ProductRepository(repositoryContext));
+            _productRepository = new Lazy<IProductRepository>(() => new ProductRepository(repositoryContext));
 
             _productHistoryRepository = new Lazy<IProductHistoryRepository>(() => new ProductHistoryRepository(repositoryContext));
 
             _productCategoryRepository = new Lazy<IProductCategoryRepository>(() => new ProductCategoryRepository(repositoryContext));
+
+            _carPartRepository = new Lazy<ICarPartRepository>(() => new CarPartRepository(repositoryContext));
 
             _productImageRepository = new Lazy<IProductImageRepository>(() => new ProductImageRepository(repositoryContext));
             _serviceRepository = new Lazy<IServiceRepository>(() => new ServiceRepository(repositoryContext));
@@ -53,6 +55,7 @@ namespace GarageManagementAPI.Repository
         public IProductCategoryRepository ProductCategory => _productCategoryRepository.Value;
         public IProductImageRepository ProductImage => _productImageRepository.Value;
         public IServiceRepository Service => _serviceRepository.Value;
+        public ICarPartRepository CarPart => _carPartRepository.Value;
 
         public async Task<IDbContextTransaction> BeginTransactionAsync()
         {
@@ -63,7 +66,6 @@ namespace GarageManagementAPI.Repository
         {
             return _repositoryContext.Database.CreateExecutionStrategy();
         }
-
         public async Task SaveAsync() => await _repositoryContext.SaveChangesAsync();
     }
 }
