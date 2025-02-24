@@ -1,8 +1,8 @@
 ﻿using System.Linq.Dynamic.Core;
 using Microsoft.EntityFrameworkCore;
 using GarageManagementAPI.Entities.Models;
-using GarageManagementAPI.Repository.Extensions.Utility;
 using GarageManagementAPI.Shared.Enums.SystemStatuss;
+using GarageManagementAPI.Repository.Extensions.Utility;
 
 namespace GarageManagementAPI.Repository.Extensions
 {
@@ -21,6 +21,16 @@ namespace GarageManagementAPI.Repository.Extensions
         {
             if (status is null) return carParts;
             return carParts.Where(b => b.Status.ToString().Equals(status.ToString()));
+        }
+        public static IQueryable<CarPart> SearchByCarPartCategory(this IQueryable<CarPart> carParts, string? category)
+        {
+            if (string.IsNullOrWhiteSpace(category))
+            {
+                return carParts;
+            }
+
+            return carParts.Where(c => c.CarPartCategory != null &&
+                                      c.CarPartCategory.PartCategory.ToLower().Equals(category.ToLower()));
         }
 
         public static IQueryable<CarPart> SearchByDate(this IQueryable<CarPart> carPart, DateTimeOffset? date)

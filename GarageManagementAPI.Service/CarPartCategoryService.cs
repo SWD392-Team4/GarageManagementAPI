@@ -1,18 +1,16 @@
 ﻿using AutoMapper;
 using System.Dynamic;
 using GarageManagementAPI.Entities.Models;
-using GarageManagementAPI.Service.Extension;
+using GarageManagementAPI.Shared.Extension;
 using GarageManagementAPI.Service.Contracts;
+using GarageManagementAPI.Service.Extension;
 using GarageManagementAPI.Shared.ResultModel;
 using GarageManagementAPI.Repository.Contracts;
 using GarageManagementAPI.Shared.RequestFeatures;
-using GarageManagementAPI.Shared.DataTransferObjects.CarPartCategory;
-using GarageManagementAPI.Shared.Extension;
 using GarageManagementAPI.Shared.Enums.SystemStatuss;
-using GarageManagementAPI.Shared.ErrorsConstant.CarPartCategoryCategory;
 using GarageManagementAPI.Shared.DataTransferObjects.CarPart;
-using GarageManagementAPI.Shared.DataTransferObjects.Product;
 using GarageManagementAPI.Shared.DataTransferObjects.CarPartCategory;
+using GarageManagementAPI.Shared.ErrorsConstant.CarPartCategoryCategory;
 
 namespace GarageManagementAPI.Service
 {

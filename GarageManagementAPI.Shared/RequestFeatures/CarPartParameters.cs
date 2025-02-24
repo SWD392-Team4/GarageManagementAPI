@@ -7,6 +7,7 @@ namespace GarageManagementAPI.Shared.RequestFeatures
     {
         public CarPartParameters() => OrderBy = "PartName";
         public string CarPartName { get; set; } = null!;
+        public string CarPartCategory { get; set; } = null!;
         [EnumDataType(typeof(CarPartStatus))]
         public CarPartStatus? Status { get; set; } = null;
         public DateTimeOffset CreatedAt { get; set; }

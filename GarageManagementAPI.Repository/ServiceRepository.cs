@@ -23,7 +23,6 @@ namespace GarageManagementAPI.Repository
 
         public async Task<Service?> GetServiceByIdAsync(Guid serviceId, bool trackChanges, string? include = null)
         {
-
             var service = include is null ?
             await FindByCondition(u => u.Id.Equals(serviceId), trackChanges).SingleOrDefaultAsync() :
             await FindByCondition(u => u.Id.Equals(serviceId), trackChanges).Include(include).SingleOrDefaultAsync();
@@ -54,6 +53,8 @@ namespace GarageManagementAPI.Repository
                 .SearchByStatus(serviceParameters.Status)
                 .Sort(serviceParameters.OrderBy)
                 .IsInclude(include)
+                .SearchByCarCategory(serviceParameters.CarCategoryName)
+                .SearchByCarPart(serviceParameters.CarPartName)
                 .AsQueryable();
 
             // Lấy danh sách sản phẩm sau khi phân trang

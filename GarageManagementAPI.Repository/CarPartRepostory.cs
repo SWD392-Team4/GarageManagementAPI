@@ -47,6 +47,7 @@ namespace GarageManagementAPI.Repository
                 .SearchByStatus(carPartParameters.Status)
                 .Sort(carPartParameters.OrderBy)
                 .IsInclude(include)
+                .SearchByCarPartCategory(carPartParameters.CarPartCategory)
                 .ToListAsync();
 
             // Trả về kết quả dưới dạng PagedList

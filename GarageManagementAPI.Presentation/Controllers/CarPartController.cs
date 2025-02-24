@@ -25,9 +25,10 @@ namespace GarageManagementAPI.Presentation.Controllers
         //[Authorize(Roles = $"{nameof(SystemRole.Administrator)},{nameof(SystemRole.Cashier)}")]
         public async Task<IActionResult> GetCarParts([FromQuery] CarPartParameters carPartParameters)
         {
-            var CarPartResult = await _service.CarPartService.GetCarPartsAsync(carPartParameters, trackChanges: false);
+            var include = "CarPartCategory";
+            var carPartResult = await _service.CarPartService.GetCarPartsAsync(carPartParameters, trackChanges: false, include);
 
-            return CarPartResult.Map(
+            return carPartResult.Map(
                 onSuccess: Ok,
                 onFailure: ProcessError
                 );
@@ -39,11 +40,12 @@ namespace GarageManagementAPI.Presentation.Controllers
         /// <returns></returns>
         [HttpGet("{carPartId:guid}", Name = "GetCarPartById")]
         //[Authorize(Roles = $"{nameof(SystemRole.Administrator)},{nameof(SystemRole.Cashier)}")]
-        public async Task<IActionResult> GetCarPartById(Guid carPartId, [FromQuery] CarPartParameters carPartParameters)
+        public async Task<IActionResult> GetCarPartById(Guid carPartId)
         {
-            var CarPartResult = await _service.CarPartService.GetCarPartAsync(carPartId, carPartParameters, trackChanges: false);
+            var include = "CarPartCategory";
+            var carPartResult = await _service.CarPartService.GetCarPartAsync(carPartId, trackChanges: false);
 
-            return CarPartResult.Map(
+            return carPartResult.Map(
                 onSuccess: Ok,
                 onFailure: ProcessError
                 );
