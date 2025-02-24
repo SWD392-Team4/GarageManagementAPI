@@ -30,16 +30,16 @@ namespace GarageManagementAPI.Entities.Models
 
         public decimal Price { get; set; }
 
-        public string AppointmentType { get; set; } = null!;
+        public AppointmentType AppointmentType { get; set; }
 
         public string? CarLicensePlateNumber { get; set; }
 
-        public string? CarCondition { get; set; }
+        public string? CarCondition { get; set; } = "None";
 
-        public string? CanceledReason { get; set; }
+        public string? CanceledReason { get; set; } = "None";
 
-        [EnumDataType(typeof(SystemStatus))]
-        public SystemStatus Status { get; set; }
+        [EnumDataType(typeof(AppointmentStatus))]
+        public AppointmentStatus Status { get; set; }
 
         public DateTimeOffset CreatedAt { get; set; }
 
