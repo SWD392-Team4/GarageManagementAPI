@@ -11,8 +11,6 @@ using GarageManagementAPI.Shared.Extension;
 using GarageManagementAPI.Shared.Enums.SystemStatuss;
 using GarageManagementAPI.Shared.ErrorsConstant.CarPartCategoryCategory;
 using GarageManagementAPI.Shared.DataTransferObjects.CarPart;
-using GarageManagementAPI.Shared.DataTransferObjects.Product;
-using GarageManagementAPI.Shared.DataTransferObjects.CarPartCategory;
 
 namespace GarageManagementAPI.Service
 {

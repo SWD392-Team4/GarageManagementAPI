@@ -7,7 +7,9 @@ namespace GarageManagementAPI.Entities.Models
     {
         public string BrandName { get; set; } = null!;
 
-        public string LinkLogo { get; set; } = null!;
+        public string LogoLink { get; set; } = null!;
+
+        public string LogoId { get; set; } = null!;
 
         [EnumDataType(typeof(BrandStatus))]
         public BrandStatus Status { get; set; }

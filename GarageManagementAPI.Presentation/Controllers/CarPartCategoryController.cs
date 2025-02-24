@@ -9,7 +9,7 @@ using GarageManagementAPI.Shared.DataTransferObjects.CarPartCategory;
 
 namespace GarageManagementAPI.Presentation.Controllers
 {
-    [Route("api/carpart/category")]
+    [Route("api/car-parts/category")]
     [ApiController]
     public class CarPartCategoryController : ApiControllerBase
     {
@@ -128,7 +128,7 @@ namespace GarageManagementAPI.Presentation.Controllers
                 return await validationResult.InvalidResult();
 
             // Update the CarPartCategory
-            var result = await _service.CarPartCategoryService.UpdateCarPartCategory(carPartCategoryId, carPartCategoryDtoForUpdateToPatch,  true);
+            var result = await _service.CarPartCategoryService.UpdateCarPartCategory(carPartCategoryId, carPartCategoryDtoForUpdateToPatch, true);
 
             return result.Map(
                 onSuccess: result => NoContent(),

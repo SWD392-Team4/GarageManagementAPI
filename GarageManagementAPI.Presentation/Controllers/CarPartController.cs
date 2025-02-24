@@ -9,7 +9,7 @@ using GarageManagementAPI.Shared.DataTransferObjects.CarPart;
 
 namespace GarageManagementAPI.Presentation.Controllers
 {
-    [Route("api/carparts")]
+    [Route("api/car-parts")]
     [ApiController]
     public class CarPartController : ApiControllerBase
     {
