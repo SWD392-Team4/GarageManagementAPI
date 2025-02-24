@@ -113,7 +113,7 @@ namespace GarageManagementAPI.Service
             {
                 new Claim("UserName", _user!.UserName!),
                 new Claim("UserId", _user!.Id.ToString()!),
-                new Claim("Image", _user!.ImageLink ?? "N/A"),
+                new Claim("ImageLink", _user!.ImageLink ?? "N/A"),
                 new Claim("FirstName", _user!.FirstName!),
                 new Claim("LastName", _user!.LastName!),
             };

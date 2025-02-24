@@ -20,7 +20,7 @@ namespace GarageManagementAPI.Shared.DataTransferObjects.User
 
         public bool PhoneNumberConfirmed { get; set; }
 
-        public string? Image { get; set; }
+        public string? ImageLink { get; set; }
 
         [EnumDataType(typeof(UserStatus))]
         public UserStatus Status { get; set; }

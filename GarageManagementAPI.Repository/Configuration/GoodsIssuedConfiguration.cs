@@ -16,7 +16,7 @@ namespace GarageManagementAPI.Repository.Configuration
             entity.Property(e => e.InvoiceCode).HasMaxLength(255);
             entity.Property(e => e.ReferenceNumber).HasMaxLength(255);
             entity.Property(e => e.Status).HasMaxLength(255);
-            entity.Property(e => e.TotalCost).HasColumnType("decimal(8, 2)");
+            entity.Property(e => e.TotalCost).HasColumnType("decimal(18, 2)");
 
             entity.HasOne(d => d.CreatedWareHouseManager).WithMany(p => p.GoodsIssueds)
                 .HasForeignKey(d => d.CreatedWareHouseManagerId)

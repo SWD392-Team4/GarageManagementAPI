@@ -17,7 +17,7 @@ namespace GarageManagementAPI.Repository.Configuration
             entity.HasIndex(e => new { e.InvoiceDetailId, e.ProductHistoryId, e.ProductAtGarageId }, "replacementpart_invoiceappointmentdetailid_producthistoryid_productatgarageid_unique").IsUnique();
 
             entity.Property(e => e.Id).ValueGeneratedOnAdd().HasDefaultValueSql("NEWID()");
-            entity.Property(e => e.TotalPrice).HasColumnType("decimal(8, 2)");
+            entity.Property(e => e.TotalPrice).HasColumnType("decimal(18, 2)");
 
             entity.HasOne(d => d.InvoiceDetail).WithMany(p => p.ReplacementParts)
                 .HasForeignKey(d => d.InvoiceDetailId)
