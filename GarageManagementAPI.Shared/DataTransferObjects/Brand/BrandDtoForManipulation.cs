@@ -9,6 +9,6 @@ namespace GarageManagementAPI.Shared.DataTransferObjects.Brand
         [Required(ErrorMessage = BrandErrors.NameRequired)]
         public string BrandName { get; set; } = null!;
 
-        public string LinkLogo { get; set; } = null!;
+        public string LogoLink { get; set; } = null!;
     }
 }
