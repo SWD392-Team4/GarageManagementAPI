@@ -27,29 +27,29 @@ namespace GarageManagementAPI.Service
         }
 
 
-        public async Task<Result<IEnumerable<ExpandoObject>>> GetCarPartsAsync(CarPartParameters CarPartParameters, bool trackChanges, string? include = null)
+        public async Task<Result<IEnumerable<ExpandoObject>>> GetCarPartsAsync(CarPartParameters carPartParameters, bool trackChanges, string? include = null)
         {
-            var carPartsWithMetadata = await _repoManager.CarPart.GetCarPartsAsync(CarPartParameters, trackChanges, include);
+            var carPartsWithMetadata = await _repoManager.CarPart.GetCarPartsAsync(carPartParameters, trackChanges, include);
 
             var carPartsDto = _mapper.Map<IEnumerable<CarPartDto>>(carPartsWithMetadata);
 
-            var carPartsShaped = _dataShaper.CarPart.ShapeData(carPartsDto, CarPartParameters.Fields);
+            var carPartsShaped = _dataShaper.CarPart.ShapeData(carPartsDto, carPartParameters.Fields);
 
             return Result<IEnumerable<ExpandoObject>>.Ok(carPartsShaped, carPartsWithMetadata.MetaData);
         }
 
-        public async Task<Result<ExpandoObject>> GetCarPartAsync(Guid CarPartId, CarPartParameters CarPartParameters, bool trackChanges, string? include = null)
+        public async Task<Result<ExpandoObject>> GetCarPartAsync(Guid carPartId, bool trackChanges, string? include = null)
         {
-            var CarPartResult = await GetAndCheckIfCarPartExist(CarPartId, trackChanges);
+            var carPartResult = await GetAndCheckIfCarPartExist(carPartId, trackChanges);
 
-            if (!CarPartResult.IsSuccess)
-                return Result<ExpandoObject>.NotFound(CarPartResult.Errors!);
+            if (!carPartResult.IsSuccess)
+                return Result<ExpandoObject>.NotFound(carPartResult.Errors!);
 
-            var CarPartEntity = CarPartResult.GetValue<CarPart>();
+            var carPartEntity = carPartResult.GetValue<CarPart>();
 
-            var CarPartsDto = _mapper.Map<CarPartDto>(CarPartEntity);
+            var carPartsDto = _mapper.Map<CarPartDto>(carPartEntity);
 
-            var CarPartShaped = _dataShaper.CarPart.ShapeData(CarPartsDto, CarPartParameters.Fields);
+            var CarPartShaped = _dataShaper.CarPart.ShapeData(carPartsDto, null);
 
             return Result<ExpandoObject>.Ok(CarPartShaped);
         }

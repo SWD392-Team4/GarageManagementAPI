@@ -7,7 +7,7 @@ namespace GarageManagementAPI.Service.Contracts
 {
     public interface ICarPartService
     {
-        public Task<Result<ExpandoObject>> GetCarPartAsync(Guid carPartId, CarPartParameters carPartParameters, bool trackChanges, string? include = null);
+        public Task<Result<ExpandoObject>> GetCarPartAsync(Guid carPartId, bool trackChanges, string? include = null);
         public Task<Result<IEnumerable<ExpandoObject>>> GetCarPartsAsync(CarPartParameters carPartParameters, bool trackChanges, string? include = null);
         public Task<Result<CarPartDtoForUpdate>> GetCarPartForPartiallyUpdate(Guid carPartId, bool trackChanges);
         public Task<Result<CarPartDto>> CreateCarPartAsync(CarPartDtoForCreation carPartDtoForCreation);
