@@ -97,11 +97,11 @@ namespace GarageManagementAPI.Service
             if (!carPartResult.IsSuccess)
                 return Result<CarPartDtoForUpdate>.Failure(carPartResult.StatusCode, carPartResult.Errors!);
 
-            var CarPartEntity = carPartResult.GetValue<CarPart>();
+            var carPartEntity = carPartResult.GetValue<CarPart>();
 
-            var CarPartDtoForUpdate = _mapper.Map<CarPartDtoForUpdate>(CarPartEntity);
+            var carPartDtoForUpdate = _mapper.Map<CarPartDtoForUpdate>(carPartEntity);
 
-            return Result<CarPartDtoForUpdate>.Ok(CarPartDtoForUpdate);
+            return Result<CarPartDtoForUpdate>.Ok(carPartDtoForUpdate);
         }
 
         private async Task<bool> GetAndCheckIfCarPartExistByName(string name, Guid? carPartId = null)
