@@ -1,7 +1,4 @@
-﻿using GarageManagementAPI.Shared.Enums.SystemStatuss;
-using System.ComponentModel.DataAnnotations;
-
-namespace GarageManagementAPI.Shared.DataTransferObjects.Service
+﻿namespace GarageManagementAPI.Shared.DataTransferObjects.Service
 {
     public record class ServiceDtoForManipulation
     {

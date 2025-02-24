@@ -1,14 +1,14 @@
 ﻿using AutoMapper;
 using System.Dynamic;
-using GarageManagementAPI.Repository.Contracts;
-using GarageManagementAPI.Service.Contracts;
-using GarageManagementAPI.Shared.RequestFeatures;
-using GarageManagementAPI.Shared.DataTransferObjects.Service;
-using GarageManagementAPI.Shared.ResultModel;
 using GarageManagementAPI.Shared.Extension;
 using GarageManagementAPI.Service.Extension;
+using GarageManagementAPI.Service.Contracts;
+using GarageManagementAPI.Shared.ResultModel;
+using GarageManagementAPI.Repository.Contracts;
+using GarageManagementAPI.Shared.RequestFeatures;
 using GarageManagementAPI.Shared.Enums.SystemStatuss;
 using GarageManagementAPI.Shared.ErrorsConstant.Service;
+using GarageManagementAPI.Shared.DataTransferObjects.Service;
 
 namespace GarageManagementAPI.Service
 {
@@ -64,7 +64,7 @@ namespace GarageManagementAPI.Service
         }
 
 
-        public async Task<Result<ExpandoObject>> GetServiceAsync(Guid serviceId, ServiceParameters serviceParameters, bool trackChanges, string? include = null)
+        public async Task<Result<ExpandoObject>> GetServiceAsync(Guid serviceId, bool trackChanges, string? include = null)
         {
             var serviceResult = await GetAndCheckIfServiceExist(serviceId, trackChanges);
 
@@ -75,7 +75,7 @@ namespace GarageManagementAPI.Service
 
             var servicesDto = _mapper.Map<ServiceDto>(serviceEntity);
 
-            var serviceShaped = _dataShaper.Service.ShapeData(servicesDto, serviceParameters.Fields);
+            var serviceShaped = _dataShaper.Service.ShapeData(servicesDto, null);
 
             return Result<ExpandoObject>.Ok(serviceShaped);
         }

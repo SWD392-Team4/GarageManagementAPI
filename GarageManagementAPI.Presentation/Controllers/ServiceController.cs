@@ -1,11 +1,11 @@
 ﻿using FluentValidation;
-using GarageManagementAPI.Service.Contracts;
-using GarageManagementAPI.Shared.Extension;
-using GarageManagementAPI.Shared.DataTransferObjects.Service;
-using GarageManagementAPI.Shared.RequestFeatures;
-using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.JsonPatch;
+using GarageManagementAPI.Shared.Extension;
+using GarageManagementAPI.Service.Contracts;
+using GarageManagementAPI.Shared.RequestFeatures;
 using GarageManagementAPI.Presentation.Extensions;
+using GarageManagementAPI.Shared.DataTransferObjects.Service;
 
 namespace GarageManagementAPI.Presentation.Controllers
 {
@@ -25,9 +25,10 @@ namespace GarageManagementAPI.Presentation.Controllers
         //[Authorize(Roles = $"{nameof(SystemRole.Administrator)},{nameof(SystemRole.Cashier)}")]
         public async Task<IActionResult> GetServices([FromQuery] ServiceParameters serviceParameters)
         {
-            var ServiceResult = await _service.ServiceService.GetServicesAsync(serviceParameters, trackChanges: false);
+            var include = "CarCategory, CarPart";
+            var serviceResult = await _service.ServiceService.GetServicesAsync(serviceParameters, trackChanges: false, include);
 
-            return ServiceResult.Map(
+            return serviceResult.Map(
                 onSuccess: Ok,
                 onFailure: ProcessError
                 );
@@ -37,13 +38,13 @@ namespace GarageManagementAPI.Presentation.Controllers
         /// Get service by id
         /// </summary>
         /// <param name="serviceId"></param>
-        /// <param name="serviceParameters"></param>
         /// <returns></returns>
         [HttpGet("{serviceId:guid}", Name = "GetServiceById")]
         //[Authorize(Roles = $"{nameof(SystemRole.Administrator)},{nameof(SystemRole.Cashier)}")]
-        public async Task<IActionResult> GetServiceById(Guid serviceId, [FromQuery] ServiceParameters serviceParameters)
+        public async Task<IActionResult> GetServiceById(Guid serviceId)
         {
-            var setviceResult = await _service.ServiceService.GetServiceAsync(serviceId, serviceParameters, trackChanges: false);
+            var include = "CarCategory, CarPart";
+            var setviceResult = await _service.ServiceService.GetServiceAsync(serviceId, trackChanges: false);
 
             return setviceResult.Map(
                 onSuccess: Ok,

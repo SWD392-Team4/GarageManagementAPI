@@ -88,7 +88,7 @@
             <param name="carPartParameters"></param>
             <returns></returns>
         </member>
-        <member name="M:GarageManagementAPI.Presentation.Controllers.CarPartController.GetCarPartById(System.Guid,GarageManagementAPI.Shared.RequestFeatures.CarPartParameters)">
+        <member name="M:GarageManagementAPI.Presentation.Controllers.CarPartController.GetCarPartById(System.Guid)">
             <summary>
             Get car part by id
             </summary>
@@ -241,12 +241,11 @@
             <param name="serviceParameters"></param>
             <returns></returns>
         </member>
-        <member name="M:GarageManagementAPI.Presentation.Controllers.ServiceController.GetServiceById(System.Guid,GarageManagementAPI.Shared.RequestFeatures.ServiceParameters)">
+        <member name="M:GarageManagementAPI.Presentation.Controllers.ServiceController.GetServiceById(System.Guid)">
             <summary>
             Get service by id
             </summary>
             <param name="serviceId"></param>
-            <param name="serviceParameters"></param>
             <returns></returns>
         </member>
         <member name="M:GarageManagementAPI.Presentation.Controllers.ServiceController.CreateService(GarageManagementAPI.Shared.DataTransferObjects.Service.ServiceDtoForCreation)">

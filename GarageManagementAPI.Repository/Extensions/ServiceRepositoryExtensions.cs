@@ -7,7 +7,7 @@ using System.Linq.Dynamic.Core;
 
 namespace GarageManagementAPI.Repository.Extensions
 {
-    public static class ServiceExtensions
+    public static class ServiceRepositoryExtensions
     {
         public static IQueryable<Service> SearchByName(this IQueryable<Service> service, string? name)
         {
@@ -106,6 +106,28 @@ namespace GarageManagementAPI.Repository.Extensions
                 s.UpdatedAt >= startDate &&
                 s.UpdatedAt <= endDate
             );
+        }
+
+        public static IQueryable<Service> SearchByCarCategory(this IQueryable<Service> carParts, string? carCategory)
+        {
+            if (string.IsNullOrWhiteSpace(carCategory))
+            {
+                return carParts;
+            }
+
+            return carParts.Where(s => s.CarCategory != null &&
+                                      s.CarCategory.Category.ToLower().Equals(carCategory.ToLower()));
+        }
+
+        public static IQueryable<Service> SearchByCarPart(this IQueryable<Service> carParts, string? carPart)
+        {
+            if (string.IsNullOrWhiteSpace(carPart))
+            {
+                return carParts;
+            }
+
+            return carParts.Where(s => s.CarPart != null &&
+                                      s.CarPart.PartName.ToLower().Equals(carPart.ToLower()));
         }
 
         //IQueryable xây dựng và thực thi các truy vấn động trên nguồn dữ liệu

@@ -1,16 +1,16 @@
 ﻿using AutoMapper;
 using System.Dynamic;
 using GarageManagementAPI.Entities.Models;
-using GarageManagementAPI.Service.Extension;
+using GarageManagementAPI.Shared.Extension;
 using GarageManagementAPI.Service.Contracts;
+using GarageManagementAPI.Service.Extension;
 using GarageManagementAPI.Shared.ResultModel;
 using GarageManagementAPI.Repository.Contracts;
 using GarageManagementAPI.Shared.RequestFeatures;
-using GarageManagementAPI.Shared.DataTransferObjects.CarPartCategory;
-using GarageManagementAPI.Shared.Extension;
 using GarageManagementAPI.Shared.Enums.SystemStatuss;
-using GarageManagementAPI.Shared.ErrorsConstant.CarPartCategoryCategory;
 using GarageManagementAPI.Shared.DataTransferObjects.CarPart;
+using GarageManagementAPI.Shared.DataTransferObjects.CarPartCategory;
+using GarageManagementAPI.Shared.ErrorsConstant.CarPartCategoryCategory;
 
 namespace GarageManagementAPI.Service
 {
@@ -41,9 +41,9 @@ namespace GarageManagementAPI.Service
             await _repoManager.CarPartCategory.CreateCarPartCategoryAsync(carPartCategoryEntity);
             await _repoManager.SaveAsync();
 
-            var CarPartCategoryDtoToReturn = _mapper.Map<CarPartCategoryDto>(carPartCategoryEntity);
+            var carPartCategoryDtoToReturn = _mapper.Map<CarPartCategoryDto>(carPartCategoryEntity);
 
-            return CarPartCategoryDtoToReturn.CreatedResult();
+            return carPartCategoryDtoToReturn.CreatedResult();
         }
 
         public async Task<Result> UpdateCarPartCategory(Guid carPartCategoryId, CarPartCategoryDtoForUpdate carPartCategoryDtoForUpdate, bool trackChanges)
@@ -66,21 +66,24 @@ namespace GarageManagementAPI.Service
 
         public async Task<Result<IEnumerable<ExpandoObject>>> GetCarPartCategoriesAsync(CarPartCategoryParameters carPartCategproParameters, bool trackChanges, string? include = null)
         {
-            var CarPartCategorysWithMetadata = await _repoManager.CarPartCategory.GetCarPartCategoriesAsync(carPartCategproParameters, trackChanges, include);
+            var carPartCategorysWithMetadata = await _repoManager.CarPartCategory.GetCarPartCategoriesAsync(carPartCategproParameters, trackChanges, include);
 
-            var CarPartCategorysDto = _mapper.Map<IEnumerable<CarPartCategoryDto>>(CarPartCategorysWithMetadata);
+            var carPartCategoriesDto = _mapper.Map<IEnumerable<CarPartCategoryDto>>(carPartCategorysWithMetadata);
 
-            var CarPartCategorysShaped = _dataShaper.CarPartCategory.ShapeData(CarPartCategorysDto, carPartCategproParameters.Fields);
+            var carPartCategoriesShaped = _dataShaper.CarPartCategory.ShapeData(carPartCategoriesDto, carPartCategproParameters.Fields);
 
-            return Result<IEnumerable<ExpandoObject>>.Ok(CarPartCategorysShaped, CarPartCategorysWithMetadata.MetaData);
+            return Result<IEnumerable<ExpandoObject>>.Ok(carPartCategoriesShaped, carPartCategorysWithMetadata.MetaData);
         }
 
         public async Task<Result<ExpandoObject>> GetCarPartCategoryAsync(Guid Id, bool trackChanges, string? include)
         {
             var carPartCategoryResult = await this.GetAndCheckCarpartCategoryById(Id, trackChanges);
             if (!carPartCategoryResult.IsSuccess) return Result<ExpandoObject>.NotFound(carPartCategoryResult.Errors!);
-            var carPartCategoryEntity = carPartCategoryResult.GetValue<CarPartCategory>;
+
+            var carPartCategoryEntity = carPartCategoryResult.GetValue<CarPartCategory>();
+
             var carPartCategoryDto = _mapper.Map<CarPartCategoryDto>(carPartCategoryEntity);
+
             var productShaped = _dataShaper.CarPartCategory.ShapeData(carPartCategoryDto, null);
 
             return Result<ExpandoObject>.Ok(productShaped);
