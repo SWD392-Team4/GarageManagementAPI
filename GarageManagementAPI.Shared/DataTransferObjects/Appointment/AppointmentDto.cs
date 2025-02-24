@@ -1,6 +1,8 @@
 ﻿using GarageManagementAPI.Shared.Enums;
+using GarageManagementAPI.Shared.Enums.SystemStatuss;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -12,6 +14,8 @@ namespace GarageManagementAPI.Shared.DataTransferObjects.Appointment
         public Guid Id { get; set; }
         public string EmployeeName { get; set; } = "None";
         public string GarageName { get; set; } = "None";
+
+        [EnumDataType(typeof(AppointmentStatus))]
         public AppointmentStatus Status { get; set; }
 
         public string CustomerName { get; set; } = "None";
@@ -45,5 +49,4 @@ namespace GarageManagementAPI.Shared.DataTransferObjects.Appointment
 
         public AppointmentType AppointmentType { get; set; }
     }
-
 }
