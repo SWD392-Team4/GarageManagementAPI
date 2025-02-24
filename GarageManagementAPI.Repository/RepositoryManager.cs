@@ -17,6 +17,8 @@ namespace GarageManagementAPI.Repository
         private readonly Lazy<IServiceRepository> _serviceRepository;
         private readonly Lazy<ICarPartRepository> _carPartRepository;
         private readonly Lazy<ICarPartCategoryRepository> _carPartCategoryRepository;
+        private readonly Lazy<ICarCategoryRepository> _carCategoryRepository;
+        private readonly Lazy<ICarModelRepository> _carModelRepository;
 
         public RepositoryManager(RepositoryContext repositoryContext)
         {
@@ -33,6 +35,8 @@ namespace GarageManagementAPI.Repository
             _carPartCategoryRepository = new Lazy<ICarPartCategoryRepository>(() => new CarPartCategoryRepository(repositoryContext));
             _productImageRepository = new Lazy<IProductImageRepository>(() => new ProductImageRepository(repositoryContext));
             _serviceRepository = new Lazy<IServiceRepository>(() => new ServiceRepository(repositoryContext));
+            _carCategoryRepository = new Lazy<ICarCategoryRepository>(() => new CarCategoryRepository(repositoryContext));
+            _carModelRepository = new Lazy<ICarModelRepository>(() => new CarModelRepository(repositoryContext));
 
         }
 
@@ -47,6 +51,10 @@ namespace GarageManagementAPI.Repository
         public IServiceRepository Service => _serviceRepository.Value;
         public ICarPartRepository CarPart => _carPartRepository.Value;
         public ICarPartCategoryRepository CarPartCategory => _carPartCategoryRepository.Value;
+
+        public ICarCategoryRepository CarCategory => _carCategoryRepository.Value;
+
+        public ICarModelRepository CarModel => _carModelRepository.Value;
 
         public async Task<IDbContextTransaction> BeginTransactionAsync()
         {

@@ -7,8 +7,8 @@ namespace GarageManagementAPI.Entities.Models
     {
         public required string Category { get; set; }
         public required string Description { get; set; }
-        [EnumDataType(typeof(CarPartCategoryStatus))]
-        public CarPartCategoryStatus Status { get; set; }
+        [EnumDataType(typeof(CarCategoryStatus))]
+        public CarCategoryStatus Status { get; set; }
         public DateTimeOffset CreatedAt { get; set; }
         public DateTimeOffset UpdatedAt { get; set; }
         public virtual ICollection<CarModel> CarModels { get; set; } = new List<CarModel>();

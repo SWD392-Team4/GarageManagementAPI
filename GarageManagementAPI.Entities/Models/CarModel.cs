@@ -1,4 +1,5 @@
 ﻿using GarageManagementAPI.Shared.Enums;
+using GarageManagementAPI.Shared.Enums.SystemStatuss;
 using System.ComponentModel.DataAnnotations;
 
 namespace GarageManagementAPI.Entities.Models
@@ -11,10 +12,10 @@ namespace GarageManagementAPI.Entities.Models
 
         public string ModelName { get; set; } = null!;
 
-        public string ModelYear { get; set; } = null!;
+        public DateOnly ModelYear { get; set; }
 
-        [EnumDataType(typeof(SystemStatus))]
-        public SystemStatus Status { get; set; }
+        [EnumDataType(typeof(CarModelStatus))]
+        public CarModelStatus Status { get; set; }
 
         public DateTimeOffset CreatedAt { get; set; }
 

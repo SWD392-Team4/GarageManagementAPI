@@ -25,6 +25,8 @@ namespace GarageManagementAPI.Service
         private readonly Lazy<IServiceService> _serviceService;
         private readonly Lazy<ICarPartService> _carPartService;
         private readonly Lazy<ICarPartCategoryService> _carPartCategoryService;
+        private readonly Lazy<ICarCategoryService> _carCategoryService;
+        private readonly Lazy<ICarModelService> _carModelService;
 
         public ServiceManager(
             IRepositoryManager repositoryManager,
@@ -116,24 +118,52 @@ namespace GarageManagementAPI.Service
             mapper,
             dataShaper));
 
+            _carCategoryService = new Lazy<ICarCategoryService>(() =>
+           new CarCategoryService(
+            repositoryManager,
+            mapper,
+            dataShaper));
+
+            _carModelService = new Lazy<ICarModelService>(() =>
+           new CarModelService(
+            repositoryManager,
+            mapper,
+            dataShaper));
+
             _mediaService = new Lazy<IMediaService>(() =>
             new MediaService(cloudinaryConfiguration));
         }
 
         public IAuthenticationService AuthenticationService => _authenticationService.Value;
+
         public IWorkplaceService WorkplaceService => _workplaceService.Value;
+
         public IMailService MailService => _mailService.Value;
+
         public IEmployeeInfoService EmployeeInfoService => _employeeInfoService.Value;
+
         public IUserService UserService => _userService.Value;
 
         public IBrandService BrandService => _brandService.Value;
+
         public IProductService ProductService => _productService.Value;
+
         public IProductHistoryService ProductHistoryService => _productHistoryService.Value;
+
         public IProductCategoryService ProductCategoryService => _productCategoryService.Value;
+
         public IProductImageService ProductImageService => _productImageService.Value;
+
         public IServiceService ServiceService => _serviceService.Value;
+
         public ICarPartService CarPartService => _carPartService.Value;
+
         public ICarPartCategoryService CarPartCategoryService => _carPartCategoryService.Value;
+
         public IMediaService MediaService => _mediaService.Value;
+
+        public ICarModelService CarModelService => _carModelService.Value;
+
+        public ICarCategoryService CarCategoryService => _carCategoryService.Value;
     }
 }
