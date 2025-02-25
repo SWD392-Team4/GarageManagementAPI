@@ -4,6 +4,7 @@ using GarageManagementAPI.Repository;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GarageManagementAPI.Application.Migrations
 {
     [DbContext(typeof(RepositoryContext))]
-    partial class RepositoryContextModelSnapshot : ModelSnapshot
+    [Migration("20250225194526_SeedDataProductCategory")]
+    partial class SeedDataProductCategory
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -3676,71 +3679,6 @@ namespace GarageManagementAPI.Application.Migrations
                     b.HasIndex(new[] { "ProductId" }, "producthistory_productid_index");
 
                     b.ToTable("ProductHistory", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            Id = new Guid("e9a0d0d3-3a43-406a-b465-b630c5d93f6f"),
-                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 0, 36, 40, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
-                            ProductId = new Guid("f5fd6ee3-a8b6-452c-9042-146e8afc875f"),
-                            ProductPrice = 500m,
-                            Status = "None",
-                            UpdatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0))
-                        },
-                        new
-                        {
-                            Id = new Guid("22d61e55-50e5-4dcd-bf40-209fc2fcae12"),
-                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 0, 36, 40, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
-                            ProductId = new Guid("cee5a4d8-de84-4482-9da9-302e2290cb0f"),
-                            ProductPrice = 520m,
-                            Status = "None",
-                            UpdatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0))
-                        },
-                        new
-                        {
-                            Id = new Guid("72d247fb-5249-4ce1-a400-fce2559e7db0"),
-                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 0, 36, 40, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
-                            ProductId = new Guid("ac103ccc-bd82-44ca-adb7-5b478b95965a"),
-                            ProductPrice = 1200m,
-                            Status = "None",
-                            UpdatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0))
-                        },
-                        new
-                        {
-                            Id = new Guid("e5e319f9-ef2a-4ab7-a847-5f0d3c7a1caf"),
-                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 0, 36, 40, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
-                            ProductId = new Guid("1c1ffd05-3b06-48bf-b78c-86b6ef2d3cef"),
-                            ProductPrice = 150m,
-                            Status = "None",
-                            UpdatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0))
-                        },
-                        new
-                        {
-                            Id = new Guid("537c1813-334d-41c0-987b-0ed1509475f7"),
-                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 0, 36, 40, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
-                            ProductId = new Guid("e9a7beda-ff63-4ac5-92cb-b7fa152c41c2"),
-                            ProductPrice = 200m,
-                            Status = "None",
-                            UpdatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0))
-                        },
-                        new
-                        {
-                            Id = new Guid("2254581b-c244-4c41-b5e4-c353629c2105"),
-                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 0, 36, 40, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
-                            ProductId = new Guid("1c1ffd05-3b06-48bf-b78c-86b6ef2d3cef"),
-                            ProductPrice = 300m,
-                            Status = "None",
-                            UpdatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0))
-                        },
-                        new
-                        {
-                            Id = new Guid("97b8ca2f-9784-4262-a57e-5695f3f0f642"),
-                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 0, 36, 40, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
-                            ProductId = new Guid("ac103ccc-bd82-44ca-adb7-5b478b95965a"),
-                            ProductPrice = 450m,
-                            Status = "None",
-                            UpdatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0))
-                        });
                 });
 
             modelBuilder.Entity("GarageManagementAPI.Entities.Models.ProductImage", b =>
@@ -3777,58 +3715,6 @@ namespace GarageManagementAPI.Application.Migrations
                     b.HasIndex(new[] { "ProductId" }, "productimage_productid_index");
 
                     b.ToTable("ProductImage", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            Id = new Guid("71bd8b35-0d22-4783-8638-78eb48bd5629"),
-                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 0, 36, 40, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
-                            ImageId = "N/A",
-                            ImageLink = "https://example.com/images/1.jpg",
-                            ProductId = new Guid("f5fd6ee3-a8b6-452c-9042-146e8afc875f"),
-                            Status = "0",
-                            UpdatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 0, 36, 40, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0))
-                        },
-                        new
-                        {
-                            Id = new Guid("91f09ff2-24ed-4d60-b3c5-5e76204a90ff"),
-                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 0, 36, 40, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
-                            ImageId = "N/A",
-                            ImageLink = "https://example.com/images/2.jpg",
-                            ProductId = new Guid("cee5a4d8-de84-4482-9da9-302e2290cb0f"),
-                            Status = "0",
-                            UpdatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 0, 36, 40, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0))
-                        },
-                        new
-                        {
-                            Id = new Guid("867a1f57-a7dc-4d8a-95f0-9b1e1b086809"),
-                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 0, 36, 40, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
-                            ImageId = "N/A",
-                            ImageLink = "https://example.com/images/3.jpg",
-                            ProductId = new Guid("ac103ccc-bd82-44ca-adb7-5b478b95965a"),
-                            Status = "0",
-                            UpdatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 0, 36, 40, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0))
-                        },
-                        new
-                        {
-                            Id = new Guid("b3126c73-0e1e-40fd-8dec-f7c4d2789dd9"),
-                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 0, 36, 40, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
-                            ImageId = "N/A",
-                            ImageLink = "https://example.com/images/4.jpg",
-                            ProductId = new Guid("1c1ffd05-3b06-48bf-b78c-86b6ef2d3cef"),
-                            Status = "0",
-                            UpdatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 0, 36, 40, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0))
-                        },
-                        new
-                        {
-                            Id = new Guid("306fd99b-7914-4c4d-a92b-f3d998f3b772"),
-                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 0, 36, 40, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
-                            ImageId = "N/A",
-                            ImageLink = "https://example.com/images/5.jpg",
-                            ProductId = new Guid("e9a7beda-ff63-4ac5-92cb-b7fa152c41c2"),
-                            Status = "0",
-                            UpdatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 0, 36, 40, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0))
-                        });
                 });
 
             modelBuilder.Entity("GarageManagementAPI.Entities.Models.ReplacementPart", b =>
@@ -3992,113 +3878,6 @@ namespace GarageManagementAPI.Application.Migrations
                         .IsUnique();
 
                     b.ToTable("Service", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            Id = new Guid("7d0e4fb5-6e8e-48fc-ba2b-daa570f5f96f"),
-                            Action = "Replace",
-                            CarCategoryId = new Guid("89bd23de-98f2-4de2-a753-403789911119"),
-                            CarPartId = new Guid("82b56cc1-7122-46ec-817e-b06cd0747f55"),
-                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 19, 52, 13, 892, DateTimeKind.Unspecified).AddTicks(6446), new TimeSpan(0, 0, 0, 0, 0)),
-                            Description = "Replace engine oil and oil filter",
-                            EstimatedHours = 1,
-                            ServiceCategory = "Maintenance",
-                            ServiceName = "Oil Change",
-                            Status = "0",
-                            UpdatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 19, 52, 13, 892, DateTimeKind.Unspecified).AddTicks(6604), new TimeSpan(0, 0, 0, 0, 0)),
-                            WorkNature = "Routine"
-                        },
-                        new
-                        {
-                            Id = new Guid("fa7fab24-c298-43cf-b990-341b29a02996"),
-                            Action = "Replace",
-                            CarCategoryId = new Guid("1d25e83b-925e-472a-89d9-38c499dbfdea"),
-                            CarPartId = new Guid("45cdfef2-2b7d-48aa-b8fa-f95c0aa194ad"),
-                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 19, 52, 13, 892, DateTimeKind.Unspecified).AddTicks(6756), new TimeSpan(0, 0, 0, 0, 0)),
-                            Description = "Replace worn-out brake pads",
-                            EstimatedHours = 2,
-                            ServiceCategory = "Repair",
-                            ServiceName = "Brake Pad Replacement",
-                            Status = "0",
-                            UpdatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 19, 52, 13, 892, DateTimeKind.Unspecified).AddTicks(6756), new TimeSpan(0, 0, 0, 0, 0)),
-                            WorkNature = "Safety"
-                        },
-                        new
-                        {
-                            Id = new Guid("6a927f4f-cc77-4d6d-963f-96a14a6a4fa9"),
-                            Action = "Replace",
-                            CarCategoryId = new Guid("f5bf5757-92b6-4cc2-b86b-1995f28d3fb6"),
-                            CarPartId = new Guid("82b56cc1-7122-46ec-817e-b06cd0747f55"),
-                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 19, 52, 13, 892, DateTimeKind.Unspecified).AddTicks(6765), new TimeSpan(0, 0, 0, 0, 0)),
-                            Description = "Replace faulty shock absorbers",
-                            EstimatedHours = 3,
-                            ServiceCategory = "Repair",
-                            ServiceName = "Shock Absorber Replacement",
-                            Status = "0",
-                            UpdatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 19, 52, 13, 892, DateTimeKind.Unspecified).AddTicks(6765), new TimeSpan(0, 0, 0, 0, 0)),
-                            WorkNature = "Performance"
-                        },
-                        new
-                        {
-                            Id = new Guid("6ebc86c7-82e2-4ce4-b613-ebaac626bd18"),
-                            Action = "Replace",
-                            CarCategoryId = new Guid("506b4f2f-68f7-4b69-ab81-1242de996a18"),
-                            CarPartId = new Guid("82b56cc1-7122-46ec-817e-b06cd0747f55"),
-                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 19, 52, 13, 892, DateTimeKind.Unspecified).AddTicks(6770), new TimeSpan(0, 0, 0, 0, 0)),
-                            Description = "Replace worn-out clutch kit",
-                            EstimatedHours = 4,
-                            ServiceCategory = "Repair",
-                            ServiceName = "Clutch Replacement",
-                            Status = "0",
-                            UpdatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 19, 52, 13, 892, DateTimeKind.Unspecified).AddTicks(6771), new TimeSpan(0, 0, 0, 0, 0)),
-                            WorkNature = "Performance"
-                        },
-                        new
-                        {
-                            Id = new Guid("0be257e7-856d-48d6-ab5a-f984a75b67d5"),
-                            Action = "Replace",
-                            CarCategoryId = new Guid("b8e9b4d0-8b60-451a-9810-1132482a0d92"),
-                            CarPartId = new Guid("45cdfef2-2b7d-48aa-b8fa-f95c0aa194ad"),
-                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 19, 52, 13, 892, DateTimeKind.Unspecified).AddTicks(6776), new TimeSpan(0, 0, 0, 0, 0)),
-                            Description = "Replace old battery with a new one",
-                            EstimatedHours = 1,
-                            ServiceCategory = "Maintenance",
-                            ServiceName = "Battery Replacement",
-                            Status = "0",
-                            UpdatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 19, 52, 13, 892, DateTimeKind.Unspecified).AddTicks(6777), new TimeSpan(0, 0, 0, 0, 0)),
-                            WorkNature = "Safety"
-                        },
-                        new
-                        {
-                            Id = new Guid("ff884ca0-1e63-4bc1-84a1-4048a6eb627e"),
-                            Action = "Replace",
-                            CarCategoryId = new Guid("61a22ffb-c41d-4365-b067-11213e5579f9"),
-                            CarPartId = new Guid("45cdfef2-2b7d-48aa-b8fa-f95c0aa194ad"),
-                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 19, 52, 13, 892, DateTimeKind.Unspecified).AddTicks(6782), new TimeSpan(0, 0, 0, 0, 0)),
-                            Description = "Replace damaged muffler",
-                            EstimatedHours = 2,
-                            ServiceCategory = "Repair",
-                            ServiceName = "Muffler Replacement",
-                            Status = "0",
-                            UpdatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 19, 52, 13, 892, DateTimeKind.Unspecified).AddTicks(6782), new TimeSpan(0, 0, 0, 0, 0)),
-                            WorkNature = "Performance"
-                        },
-                        new
-                        {
-                            Id = new Guid("8d86d786-c02d-43a6-9b3f-3ef15761ba71"),
-                            Action = "Replace",
-                            CarCategoryId = new Guid("6f9e4206-d0a0-4366-a997-094827005006"),
-                            CarPartId = new Guid("82b56cc1-7122-46ec-817e-b06cd0747f55"),
-                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 19, 52, 13, 892, DateTimeKind.Unspecified).AddTicks(6788), new TimeSpan(0, 0, 0, 0, 0)),
-                            Description = "Replace leaking radiator",
-                            EstimatedHours = 3,
-                            ServiceCategory = "Repair",
-                            ServiceName = "Radiator Replacement",
-                            Status = "0",
-                            UpdatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 19, 52, 13, 892, DateTimeKind.Unspecified).AddTicks(6788), new TimeSpan(0, 0, 0, 0, 0)),
-                            WorkNature = "Performance"
-                        });
                 });
 
             modelBuilder.Entity("GarageManagementAPI.Entities.Models.ServiceFeedBack", b =>
