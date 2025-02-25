@@ -15,7 +15,12 @@ namespace GarageManagementAPI.Presentation.Controllers
         public ProductImageController(IServiceManager service) : base(service)
         {
         }
-
+        /// <summary>
+        /// Get img product by id
+        /// </summary>
+        /// <param name="productId"></param>
+        /// <param name="productImageParameters"></param>
+        /// <returns></returns>
         [HttpGet("{productId:guid}", Name = "GetProductImageById")]
         //[Authorize(Roles = $"{nameof(SystemRole.Administrator)},{nameof(SystemRole.Cashier)}")]
         public async Task<IActionResult> GetProductByIdImage(Guid productId, [FromQuery] ProductImageParameters productImageParameters)
@@ -27,7 +32,11 @@ namespace GarageManagementAPI.Presentation.Controllers
                 onFailure: ProcessError
                 );
         }
-
+        /// <summary>
+        /// Get all img product
+        /// </summary>
+        /// <param name="productParameters"></param>
+        /// <returns></returns>
         [HttpGet]
         //[Authorize(Roles = $"{nameof(SystemRole.Administrator)},{nameof(SystemRole.Cashier)}")]
         public async Task<IActionResult> GetProductImages([FromQuery] ProductImageParameters productParameters)

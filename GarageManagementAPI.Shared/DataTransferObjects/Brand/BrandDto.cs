@@ -10,8 +10,7 @@ namespace GarageManagementAPI.Shared.DataTransferObjects.Brand
     {
         public Guid Id { get; set; }
         public string BrandName { get; set; } = null!;
-
-        public string LinkLogo { get; set; } = null!;
+        public string LogoLink { get; set; } = null!;
 
         [EnumDataType(typeof(BrandStatus))]
         public BrandStatus Status { get; set; }

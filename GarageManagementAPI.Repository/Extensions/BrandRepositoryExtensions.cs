@@ -14,30 +14,24 @@ namespace GarageManagementAPI.Repository.Extensions
             {
                 return brand;
             }
-<<<<<<< Updated upstream
-
-            var lowerCaseTerm = name.Trim().ToLower();
-            return brand.Where(b => b.BrandName!.ToLower().Contains(name.Trim().ToLower()));
-=======
             return brand.Where(b => EF.Functions.Like(b.BrandName, $"%{name}%"));
->>>>>>> Stashed changes
         }
 
-        public static IQueryable<Brand> SearchByStatus(this IQueryable<Brand> brands, BrandStatus? status)
+        public static IQueryable<Brand> SearchByStatus(this IQueryable<Brand> brand, BrandStatus? status)
         {
-            if (status is null) return brands;
-            return brands.Where(b => b.Status.ToString().Equals(status.ToString()));
+            if (status is null) return brand;
+            return brand.Where(b => b.Status.ToString().Equals(status.ToString()));
         }
 
-        public static IQueryable<Brand> SearchByDate(this IQueryable<Brand> brand, DateTimeOffset? createdAt)
+        public static IQueryable<Brand> SearchByDate(this IQueryable<Brand> brand, DateTimeOffset? date)
         {
-            if (!createdAt.HasValue || createdAt.Value == DateTimeOffset.MinValue)
+            if (!date.HasValue || date.Value == DateTimeOffset.MinValue)
             {
-                return brand;  // Skip filtering by date if createdAt is not provided or is MinValue
+                return brand;  
             }
 
-            DateTimeOffset startDate = createdAt.Value.Date;
-            DateTimeOffset endDate = startDate.AddDays(1).AddTicks(-1); // End of day calculation
+            DateTimeOffset startDate = date.Value.Date;
+            DateTimeOffset endDate = startDate.AddDays(1).AddTicks(-1); 
 
             // Check for out-of-range values before querying
             if (startDate > DateTimeOffset.MaxValue || endDate > DateTimeOffset.MaxValue)
@@ -50,9 +44,6 @@ namespace GarageManagementAPI.Repository.Extensions
                 b.CreatedAt <= endDate
             );
         }
-
-
-
 
         public static IQueryable<Brand> IsInclude(this IQueryable<Brand> brand, string? fieldsString)
         {
@@ -79,15 +70,14 @@ namespace GarageManagementAPI.Repository.Extensions
         public static IQueryable<Brand> Sort(this IQueryable<Brand> brands, string? orderByQueryString)
         {
             if (string.IsNullOrWhiteSpace(orderByQueryString))
-                return brands.OrderBy(p => p.BrandName);  // Sắp xếp mặc định theo BrandName
+                return brands.OrderBy(p => p.BrandName); 
 
             // Tạo biểu thức sắp xếp động từ query string
             var orderQuery = QueryBuilder.CreateOrderQuery<Brand>(orderByQueryString, Brand.PropertyInfos);
 
             if (string.IsNullOrWhiteSpace(orderQuery))
-                return brands.OrderBy(p => p.BrandName);  // Nếu không có chuỗi sắp xếp hợp lệ, sắp xếp theo BrandName
+                return brands.OrderBy(p => p.BrandName); 
 
-            // Áp dụng sắp xếp động với biểu thức đã tạo
             return brands.OrderBy(orderQuery);
         }
     }

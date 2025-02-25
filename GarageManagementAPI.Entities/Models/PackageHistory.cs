@@ -1,4 +1,5 @@
 ﻿using GarageManagementAPI.Shared.Enums;
+using GarageManagementAPI.Shared.Enums.SystemStatuss;
 using System.ComponentModel.DataAnnotations;
 
 namespace GarageManagementAPI.Entities.Models
@@ -16,12 +17,10 @@ namespace GarageManagementAPI.Entities.Models
 
         public int UsageLimit { get; set; }
 
-        [EnumDataType(typeof(SystemStatus))]
-        public SystemStatus Status { get; set; }
+        [EnumDataType(typeof(PackageHistoryStatus))]
+        public PackageHistoryStatus Status { get; set; }
 
         public DateTimeOffset CreatedAt { get; set; }
-
-        public DateTimeOffset UpdatedAt { get; set; }
 
         public virtual ICollection<AppointmentDetailPackage> AppointmentDetailPackages { get; set; } = new List<AppointmentDetailPackage>();
 

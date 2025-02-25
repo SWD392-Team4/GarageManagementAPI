@@ -24,16 +24,12 @@ namespace GarageManagementAPI.Repository
 
         public async Task<ProductCategory?> GetProductCategoryByIdAsync(Guid productCategoryId, bool trackChanges, string? include = null)
         {
-            Console.WriteLine(include);
             var productCategory = include is null ?
             await FindByCondition(u => u.Id.Equals(productCategoryId), trackChanges).SingleOrDefaultAsync() :
             await FindByCondition(u => u.Id.Equals(productCategoryId), trackChanges).IsInclude(include).SingleOrDefaultAsync();
 
             return productCategory;
         }
-
-<<<<<<< Updated upstream
-=======
         public async Task<ProductCategory?> GetProductByIdAndNameAsync(string name, Guid? productCatrgoryId, bool trackChanges)
         {
             var productCatrgory = productCatrgoryId is null ?
@@ -41,8 +37,6 @@ namespace GarageManagementAPI.Repository
             await FindByCondition(p => !p.Id.Equals(productCatrgoryId) && p.Category.ToLower().Equals(name.ToLower()), trackChanges).SingleOrDefaultAsync();
             return productCatrgory;
         }
-            
->>>>>>> Stashed changes
         public async Task<PagedList<ProductCategory>> GetProductCategoriesAsync(ProductCategoryParameters productCategoryParameters, bool trackChanges, string? include = null)
         {
             // Lọc và sắp xếp danh sách ProductCategorys theo các điều kiện
@@ -74,6 +68,5 @@ namespace GarageManagementAPI.Repository
                 productCategoryParameters.PageSize
             );
         }
-
     }
 }

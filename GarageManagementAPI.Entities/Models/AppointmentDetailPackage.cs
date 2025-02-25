@@ -1,4 +1,5 @@
 ﻿using GarageManagementAPI.Shared.Enums;
+using GarageManagementAPI.Shared.Enums.SystemStatuss;
 using System.ComponentModel.DataAnnotations;
 
 namespace GarageManagementAPI.Entities.Models
@@ -13,8 +14,8 @@ namespace GarageManagementAPI.Entities.Models
 
         public Guid? UpdateByCustomerId { get; set; }
 
-        [EnumDataType(typeof(SystemStatus))]
-        public SystemStatus Status { get; set; }
+        [EnumDataType(typeof(AppointmentDetailStatus))]
+        public AppointmentDetailStatus Status { get; set; }
 
         public DateTimeOffset CreatedAt { get; set; }
 

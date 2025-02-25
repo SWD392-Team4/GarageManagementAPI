@@ -15,7 +15,7 @@ namespace GarageManagementAPI.Repository.Configuration
             entity.HasIndex(e => e.ProductId, "producthistory_productid_index");
 
             entity.Property(e => e.Id).ValueGeneratedOnAdd().HasDefaultValueSql("NEWID()");
-            entity.Property(e => e.ProductPrice).HasColumnType("decimal(8, 2)");
+            entity.Property(e => e.ProductPrice).HasColumnType("decimal(18, 2)");
             entity.Property(e => e.Status).HasMaxLength(255);
 
             entity.HasOne(d => d.Product).WithMany(p => p.ProductHistories)

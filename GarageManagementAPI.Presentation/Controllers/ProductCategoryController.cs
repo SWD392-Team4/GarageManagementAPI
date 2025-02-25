@@ -16,7 +16,11 @@ namespace GarageManagementAPI.Presentation.Controllers
         public ProductCategoryController(IServiceManager service) : base(service)
         {
         }
-
+        /// <summary>
+        /// Get all product category
+        /// </summary>
+        /// <param name="productCategoryParameters"></param>
+        /// <returns></returns>
         [HttpGet]
         //[Authorize(Roles = $"{nameof(SystemRole.Administrator)},{nameof(SystemRole.Cashier)}")]
         public async Task<IActionResult> GetProductCategories([FromQuery] ProductCategoryParameters productCategoryParameters)
@@ -28,6 +32,12 @@ namespace GarageManagementAPI.Presentation.Controllers
                 onFailure: ProcessError
                 );
         }
+        /// <summary>
+        /// Get product category by id
+        /// </summary>
+        /// <param name="productCategoryId"></param>
+        /// <param name="productCategoryParameters"></param>
+        /// <returns></returns>
         [HttpGet("{productCategoryId:guid}", Name = "GetProductCategoryById")]
         //[Authorize(Roles = $"{nameof(SystemRole.Administrator)},{nameof(SystemRole.Cashier)}")]
         public async Task<IActionResult> GetProductCategoryById(Guid productCategoryId, [FromQuery] ProductCategoryParameters productCategoryParameters)
@@ -40,19 +50,12 @@ namespace GarageManagementAPI.Presentation.Controllers
                 );
         }
 
-        [HttpGet("products/{productCategoryId:guid}", Name = "GetProductByIdCategory")]
-        //[Authorize(Roles = $"{nameof(SystemRole.Administrator)},{nameof(SystemRole.Cashier)}")]
-        public async Task<IActionResult> GetProductByIdCategory(Guid productCategoryId)
-        {
-            var include = "Products";
-            var productsResult = await _service.ProductCategoryService.GetProductCategoryByIdAsync(productCategoryId, trackChanges: false, include);
 
-            return productsResult.Map(
-                onSuccess: Ok,
-                onFailure: ProcessError
-                );
-        }
-
+        /// <summary>
+        /// Create prodcut category
+        /// </summary>
+        /// <param name="productCategoryDtoForCreation"></param>
+        /// <returns></returns>
         [HttpPost(Name = "CreateProductCategory")]
         public async Task<IActionResult> CreateProductCategory([FromBody] ProductCategoryDtoForCreation productCategoryDtoForCreation)
         {
@@ -69,6 +72,12 @@ namespace GarageManagementAPI.Presentation.Controllers
                 );
         }
 
+        /// <summary>
+        /// Update product category
+        /// </summary>
+        /// <param name="productCategoryId"></param>
+        /// <param name="productCategoryDtoForUpdate"></param>
+        /// <returns></returns>
         [HttpPut("{productCategoryId:guid}")]
         public async Task<IActionResult> UpdateProductCategory(Guid productCategoryId, [FromBody] ProductCategoryDtoForUpdate productCategoryDtoForUpdate)
         {
@@ -85,6 +94,13 @@ namespace GarageManagementAPI.Presentation.Controllers
                  );
         }
 
+        /// <summary>
+        /// Update product category by field
+        /// </summary>
+        /// <param name="productCategoryId"></param>
+        /// <param name="jsonPatchDocumentDto"></param>
+        /// <param name="validator"></param>
+        /// <returns></returns>
         [HttpPatch("{productCategoryId:guid}")]
         public async Task<IActionResult> PartiallyUpdateProductCategory(
                                                                    Guid productCategoryId,

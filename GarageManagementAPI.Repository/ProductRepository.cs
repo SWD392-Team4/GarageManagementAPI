@@ -3,8 +3,6 @@ using GarageManagementAPI.Repository.Contracts;
 using GarageManagementAPI.Shared.RequestFeatures;
 using Microsoft.EntityFrameworkCore;
 using GarageManagementAPI.Repository.Extensions;
-using GarageManagementAPI.Shared.Enums.SystemStatuss;
-using GarageManagementAPI.Shared.DataTransferObjects.Product;
 
 namespace GarageManagementAPI.Repository
 {
@@ -27,8 +25,8 @@ namespace GarageManagementAPI.Repository
         public async Task<Product?> GetProductByBarCodeAsync(string barcode, bool trackChanges, string? include = null)
         {
             var product = include is null ?
-           await FindByCondition(p => p.ProductBarcode.Equals(barcode), trackChanges).SingleOrDefaultAsync() :
-           await FindByCondition(p => p.ProductBarcode.Equals(barcode), trackChanges).IsInclude(include).SingleOrDefaultAsync();
+            await FindByCondition(p => p.ProductBarcode.Equals(barcode), trackChanges).SingleOrDefaultAsync() :
+            await FindByCondition(p => p.ProductBarcode.Equals(barcode), trackChanges).IsInclude(include).SingleOrDefaultAsync();
  
             return product;
         }
@@ -50,7 +48,7 @@ namespace GarageManagementAPI.Repository
                     trackChanges)
                 .SearchByName(productParameters.ProductName) // Tìm kiếm theo tên sản phẩm
                 .SearchByStatus(productParameters.ProductStatus)
-                .SearchByPrice(productParameters.ProductPrice)
+                .SearchByPrice(productParameters.MinPrice, productParameters.MaxPrice)
                 .SearchByCategory(productParameters.ProductCategory)
                 .SearchByBrand(productParameters.ProductBrandName)
                 .Sort(productParameters.OrderBy)

@@ -17,7 +17,11 @@ namespace GarageManagementAPI.Presentation.Controllers
         public ProductController(IServiceManager service) : base(service)
         {
         }
-
+        /// <summary>
+        /// Get product by id 
+        /// </summary>
+        /// <param name="productId"></param>
+        /// <returns></returns>
         [HttpGet("product/{productId:guid}", Name = "GetProductById")]
         //[Authorize(Roles = $"{nameof(SystemRole.Administrator)},{nameof(SystemRole.Cashier)}")]
         public async Task<IActionResult> GetProductById(Guid productId)
@@ -30,7 +34,12 @@ namespace GarageManagementAPI.Presentation.Controllers
                 onFailure: ProcessError
                 );
         }
-
+        /// <summary>
+        /// Get product by barcode
+        /// </summary>
+        /// <param name="barcode"></param>
+        /// <param name="productParameters"></param>
+        /// <returns></returns>
         [HttpGet("barcode/{barcode}", Name = "GetProductBarcode")]
         //[Authorize(Roles = $"{nameof(SystemRole.Administrator)},{nameof(SystemRole.Cashier)}")]
         public async Task<IActionResult> GetProductByBarcode(string barcode, [FromQuery] ProductParameters productParameters)
@@ -43,7 +52,11 @@ namespace GarageManagementAPI.Presentation.Controllers
                 onFailure: ProcessError
                 );
         }
-
+        /// <summary>
+        /// Get all products
+        /// </summary>
+        /// <param name="productParameters"></param>
+        /// <returns></returns>
         [HttpGet]
         //[Authorize(Roles = $"{nameof(SystemRole.Administrator)},{nameof(SystemRole.Cashier)}")]
         public async Task<IActionResult> GetProducts([FromQuery] ProductParameters productParameters)
@@ -56,7 +69,11 @@ namespace GarageManagementAPI.Presentation.Controllers
                 onFailure: ProcessError
                 );
         }
-
+        /// <summary>
+        /// Create product
+        /// </summary>
+        /// <param name="productDtoForCreation"></param>
+        /// <returns></returns>
         [HttpPost(Name = "CreateProduct")]
         public async Task<IActionResult> CreateProduct([FromBody] ProductDtoForCreation productDtoForCreation)
         {
@@ -72,7 +89,12 @@ namespace GarageManagementAPI.Presentation.Controllers
                 onFailure: ProcessError
                 );
         }
-
+        /// <summary>
+        /// Update product
+        /// </summary>
+        /// <param name="productId"></param>
+        /// <param name="productDtoForUpdate"></param>
+        /// <returns></returns>
         [HttpPut("{productId:guid}")]
         public async Task<IActionResult> UpdateProduct(Guid productId, [FromBody] ProductDtoForUpdate productDtoForUpdate)
         {
@@ -88,7 +110,13 @@ namespace GarageManagementAPI.Presentation.Controllers
                  onFailure: ProcessError
                  );
         }
-
+        /// <summary>
+        /// Update product by field
+        /// </summary>
+        /// <param name="productId"></param>
+        /// <param name="jsonPatchDocumentDto"></param>
+        /// <param name="validator"></param>
+        /// <returns></returns>
         [HttpPatch("{productId:guid}")]
         public async Task<IActionResult> PartiallyUpdateProduct(Guid productId, [FromBody] JsonPatchDocument<ProductDtoForUpdate> jsonPatchDocumentDto, IValidator<ProductDtoForUpdate> validator)
         {

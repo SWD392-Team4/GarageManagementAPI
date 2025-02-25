@@ -3,6 +3,7 @@ using GarageManagementAPI.Entities.Models;
 using GarageManagementAPI.Repository.Contracts;
 using GarageManagementAPI.Repository.Extensions;
 using GarageManagementAPI.Shared.RequestFeatures;
+using GarageManagementAPI.Shared.Enums.SystemStatuss;
 
 namespace GarageManagementAPI.Repository
 {
@@ -43,6 +44,21 @@ namespace GarageManagementAPI.Repository
                productImageParameters.PageNumber,
                productImageParameters.PageSize
            );
+        }
+
+        public async Task<ProductImage?> GetProductImgByStatusAndIdProductAsync(Guid productId, bool trackChanges, string? include = null)
+        {
+            var productImg = await FindByCondition(p => p.Status == ProductImageStatus.Active && p.ProductId == productId, false).OrderByDescending(p => p.UpdatedAt)
+                                      .FirstOrDefaultAsync();
+            return productImg;
+        }
+
+        public Task<ProductImage?> GetProductImgByLinkAndIdProductAsync(Guid productId, bool trackChanges, string? include = null)
+        {
+            var productImg = FindByCondition(p => p.ProductId.Equals(productId), false)
+                             .OrderByDescending(p => p.UpdatedAt)
+                             .FirstOrDefaultAsync();
+            return productImg;
         }
 
         public async Task<PagedList<ProductImage>> GetProductImgsAsync(ProductImageParameters productImageParameters, bool trackChanges, string? include = null)

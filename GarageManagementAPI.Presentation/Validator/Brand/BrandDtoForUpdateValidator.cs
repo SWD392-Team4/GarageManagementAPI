@@ -25,6 +25,5 @@ namespace GarageManagementAPI.Presentation.Validator.Brand
                 .WithMessage(BrandErrors.BrandStatusInvalid)
                 .WithErrorCode(nameof(BrandErrors.BrandStatusInvalid));
         }
-
     }
 }

@@ -223,7 +223,7 @@ namespace GarageManagementAPI.Service
 
         public async Task<Result<ProductHistoryDto>> CreateProductHistoryAsync(Guid productId, decimal price)
         {
-            var checkPrice = await CheckIfProductHistoryByIdAndPrice(productId, price);
+            var checkPrice = await GetAndCheckIfProductHistoryByIdAndPrice(productId, price);
             if (checkPrice)
                 return Result<ProductHistoryDto>.BadRequest([ProductHistoryErrors.GetProductHistoryPriceAlreadyExistError(price)]);
             var date = DateTimeOffset.UtcNow.SEAsiaStandardTime();
@@ -250,9 +250,8 @@ namespace GarageManagementAPI.Service
 
         private async Task UpdateStatusProductImage(Guid productId)
         {
-            var productEntity = await _repoManager.ProductImage
-                                      .FindByCondition(p => p.Status == ProductImageStatus.Active && p.ProductId == productId, false).OrderByDescending(p => p.UpdatedAt)
-                                      .FirstOrDefaultAsync();
+            var productEntity = await _repoManager.ProductImage.GetProductImgByStatusAndIdProductAsync(productId, false);
+                                      
             if (productEntity != null)
             {
                 productEntity.Status = ProductImageStatus.Inactive;
@@ -265,9 +264,8 @@ namespace GarageManagementAPI.Service
 
         private async Task UpdateStatusProductHistory(Guid productId)
         {
-            var productEntity = await _repoManager.ProductHistory
-     .FindByCondition(p => p.Status == ProductHistoryStatus.Active && p.ProductId == productId, false).OrderByDescending(p => p.UpdatedAt)
-     .FirstOrDefaultAsync();
+            var productEntity = await _repoManager.ProductHistory.GetProductHistoryByStatusAndIdProductAsync(productId, false);
+                                      
             if (productEntity != null)
             {
                 productEntity.Status = ProductHistoryStatus.Inactive;
@@ -280,11 +278,7 @@ namespace GarageManagementAPI.Service
 
         private async Task<bool> GetAndCheckIfProductImgByIdAndLink(Guid productId, string link)
         {
-            // Lấy bản ghi Product Img có UpdatedAt lớn nhất cho ProductId
-            var latestProductImg = await _repoManager.ProductImage
-                .FindByCondition(p => p.ProductId.Equals(productId), false)
-                .OrderByDescending(p => p.UpdatedAt)
-                .FirstOrDefaultAsync();
+            var latestProductImg = await _repoManager.ProductImage.GetProductImgByLinkAndIdProductAsync(productId, false);
 
             if (latestProductImg != null && latestProductImg.Link.Equals(link))
             {
@@ -293,16 +287,12 @@ namespace GarageManagementAPI.Service
             return false;
         }
 
-        private async Task<bool> CheckIfProductHistoryByIdAndPrice(Guid productId, decimal price)
+        private async Task<bool> GetAndCheckIfProductHistoryByIdAndPrice(Guid productId, decimal price)
         {
-
             // Lấy bản ghi ProductHistory có UpdatedAt lớn nhất cho ProductId
-            var latestProductHistory = await _repoManager.ProductHistory
-                .FindByCondition(p => p.ProductId.Equals(productId), false)
-                .OrderByDescending(p => p.UpdatedAt)
-                .FirstOrDefaultAsync();
+            var latestProductHistory = await _repoManager.ProductHistory.GetProductHistoryByPriceAndIdProductAsync(productId, price, false);
 
-            if (latestProductHistory != null && latestProductHistory.ProductPrice.Equals(price))
+            if (latestProductHistory != null)
             {
                 return true;
             }

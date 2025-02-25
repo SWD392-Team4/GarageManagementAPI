@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using CloudinaryDotNet;
 using GarageManagementAPI.Entities.ConfigurationModels;
 using GarageManagementAPI.Entities.Models;
 using GarageManagementAPI.Repository.Contracts;
@@ -23,6 +22,11 @@ namespace GarageManagementAPI.Service
         private readonly Lazy<IProductCategoryService> _productCategoryService;
         private readonly Lazy<IProductImageService> _productImageService;
         private readonly Lazy<IMediaService> _mediaService;
+        private readonly Lazy<IServiceService> _serviceService;
+        private readonly Lazy<ICarPartService> _carPartService;
+        private readonly Lazy<ICarPartCategoryService> _carPartCategoryService;
+        private readonly Lazy<ICarCategoryService> _carCategoryService;
+        private readonly Lazy<ICarModelService> _carModelService;
 
         public ServiceManager(
             IRepositoryManager repositoryManager,
@@ -66,34 +70,65 @@ namespace GarageManagementAPI.Service
                 dataShaper));
 
             _brandService = new Lazy<IBrandService>(() =>
-           new BrandService(
+            new BrandService(
                repositoryManager,
                mapper,
                dataShaper));
 
             _productService = new Lazy<IProductService>(() =>
-           new ProductService(
+            new ProductService(
               repositoryManager,
               mapper,
               dataShaper));
 
             _productHistoryService = new Lazy<IProductHistoryService>(() =>
-          new ProductHistoryService(
+            new ProductHistoryService(
              repositoryManager,
              mapper,
              dataShaper));
 
             _productCategoryService = new Lazy<IProductCategoryService>(() =>
-          new ProductCategoryService(
+            new ProductCategoryService(
              repositoryManager,
              mapper,
              dataShaper));
 
             _productImageService = new Lazy<IProductImageService>(() =>
-          new ProductImageService(
+            new ProductImageService(
              repositoryManager,
              mapper,
              dataShaper));
+
+
+            _serviceService = new Lazy<IServiceService>(() =>
+            new ServiceService(
+             repositoryManager,
+             mapper,
+             dataShaper));
+
+            _carPartService = new Lazy<ICarPartService>(() =>
+            new CarPartService(
+             repositoryManager,
+             mapper,
+             dataShaper));
+
+            _carPartCategoryService = new Lazy<ICarPartCategoryService>(() =>
+           new CarPartCategoryService(
+            repositoryManager,
+            mapper,
+            dataShaper));
+
+            _carCategoryService = new Lazy<ICarCategoryService>(() =>
+           new CarCategoryService(
+            repositoryManager,
+            mapper,
+            dataShaper));
+
+            _carModelService = new Lazy<ICarModelService>(() =>
+           new CarModelService(
+            repositoryManager,
+            mapper,
+            dataShaper));
 
             _mediaService = new Lazy<IMediaService>(() =>
             new MediaService(cloudinaryConfiguration));
@@ -110,12 +145,25 @@ namespace GarageManagementAPI.Service
         public IUserService UserService => _userService.Value;
 
         public IBrandService BrandService => _brandService.Value;
+
         public IProductService ProductService => _productService.Value;
+
         public IProductHistoryService ProductHistoryService => _productHistoryService.Value;
+
         public IProductCategoryService ProductCategoryService => _productCategoryService.Value;
+
         public IProductImageService ProductImageService => _productImageService.Value;
 
+        public IServiceService ServiceService => _serviceService.Value;
+
+        public ICarPartService CarPartService => _carPartService.Value;
+
+        public ICarPartCategoryService CarPartCategoryService => _carPartCategoryService.Value;
 
         public IMediaService MediaService => _mediaService.Value;
+
+        public ICarModelService CarModelService => _carModelService.Value;
+
+        public ICarCategoryService CarCategoryService => _carCategoryService.Value;
     }
 }

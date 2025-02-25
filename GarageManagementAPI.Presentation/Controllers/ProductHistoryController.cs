@@ -14,7 +14,12 @@ namespace GarageManagementAPI.Presentation.Controllers
         public ProductHistoryController(IServiceManager service) : base(service)
         {
         }
-
+        /// <summary>
+        /// Get product history by id
+        /// </summary>
+        /// <param name="productId"></param>
+        /// <param name="productHisotryParameters"></param>
+        /// <returns></returns>
         [HttpGet("{productId:guid}", Name = "GetProductHistoryById")]
         //[Authorize(Roles = $"{nameof(SystemRole.Administrator)},{nameof(SystemRole.Cashier)}")]
         public async Task<IActionResult> GetProductById(Guid productId, [FromQuery] ProductHistoryParameters productHisotryParameters)
@@ -26,7 +31,11 @@ namespace GarageManagementAPI.Presentation.Controllers
                 onFailure: ProcessError
                 );
         }
-
+        /// <summary>
+        /// Get all product history
+        /// </summary>
+        /// <param name="productParameters"></param>
+        /// <returns></returns>
         [HttpGet]
         //[Authorize(Roles = $"{nameof(SystemRole.Administrator)},{nameof(SystemRole.Cashier)}")]
         public async Task<IActionResult> GetProductHistories([FromQuery] ProductHistoryParameters productParameters)

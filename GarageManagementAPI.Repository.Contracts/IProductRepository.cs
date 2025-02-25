@@ -1,5 +1,4 @@
 ﻿using GarageManagementAPI.Entities.Models;
-using GarageManagementAPI.Shared.DataTransferObjects.Product;
 using GarageManagementAPI.Shared.RequestFeatures;
 
 namespace GarageManagementAPI.Repository.Contracts

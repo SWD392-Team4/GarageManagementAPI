@@ -7,21 +7,15 @@ using GarageManagementAPI.Service.Contracts;
 using GarageManagementAPI.Shared.ResultModel;
 using GarageManagementAPI.Repository.Contracts;
 using GarageManagementAPI.Shared.RequestFeatures;
-<<<<<<< Updated upstream
 using GarageManagementAPI.Shared.ResultModel;
 using GarageManagementAPI.Shared.DataTransferObjects.Brand;
 using AutoMapper;
 using System.Dynamic;
-using GarageManagementAPI.Shared.Extension;
 using GarageManagementAPI.Shared.ErrorsConstant.Brand;
-using GarageManagementAPI.Service.Extension;
 using Microsoft.EntityFrameworkCore;
 using GarageManagementAPI.Shared.Enums;
-=======
->>>>>>> Stashed changes
 using GarageManagementAPI.Shared.Enums.SystemStatuss;
 using GarageManagementAPI.Shared.ErrorsConstant.Brand;
-using GarageManagementAPI.Shared.DataTransferObjects.Brand;
 
 namespace GarageManagementAPI.Service
 {
@@ -35,10 +29,10 @@ namespace GarageManagementAPI.Service
         {
             _repoManager = repoManager;
             _mapper = mapper;
-            _dataShaper= dataShaper;
+            _dataShaper = dataShaper;
         }
 
-    
+
         public async Task<Result<IEnumerable<ExpandoObject>>> GetBrandsAsync(BrandParameters brandParameters, bool trackChanges, string? include = null)
         {
             var brandsWithMetadata = await _repoManager.Brand.GetBrandsAsync(brandParameters, trackChanges, include);
@@ -68,7 +62,7 @@ namespace GarageManagementAPI.Service
 
         public async Task<Result<BrandDto>> CreateBrandAsync(BrandDtoForCreation brandDtoForCreation)
         {
-            var check = await CheckIfBrandExistByName(brandDtoForCreation);
+            var check = await GetAndCheckIfBrandExistByName(brandDtoForCreation.BrandName);
             if (check)
                 return Result<BrandDto>.BadRequest([BrandErrors.GetBrandNameAlreadyExistError(brandDtoForCreation)]);
 
@@ -88,13 +82,13 @@ namespace GarageManagementAPI.Service
 
         public async Task<Result> UpdateBrand(Guid brandId, BrandDtoForUpdate brandDtoForUpdate, bool trackChanges)
         {
-            var brandResult = await GetAndCheckIfBrandExist(brandId, trackChanges);
-            var check = await CheckIfBrandUpdateExistByName(brandDtoForUpdate, brandId);
-            if (check)
+            var checkBrandIsExistResult = await GetAndCheckIfBrandExist(brandId, trackChanges);
+            var checkBrandNameIsEXist = await GetAndCheckIfBrandExistByName(brandDtoForUpdate.BrandName, brandId);
+            if (checkBrandNameIsEXist)
                 return Result<BrandDto>.BadRequest([BrandErrors.GetBrandNameUpdateAlreadyExistError(brandDtoForUpdate)]);
-            if (!brandResult.IsSuccess)
-                return Result<BrandDto>.Failure(brandResult.StatusCode, brandResult.Errors!);
-            var brandEntity = brandResult.GetValue<Brand>();
+            if (!checkBrandIsExistResult.IsSuccess)
+                return Result<BrandDto>.Failure(checkBrandIsExistResult.StatusCode, checkBrandIsExistResult.Errors!);
+            var brandEntity = checkBrandIsExistResult.GetValue<Brand>();
 
             _mapper.Map(brandDtoForUpdate, brandEntity);
 
@@ -116,29 +110,11 @@ namespace GarageManagementAPI.Service
             return Result<BrandDtoForUpdate>.Ok(brandDtoForUpdate);
         }
 
-
-        private async Task<bool> CheckIfBrandExistByName(BrandDtoForCreation brandDtoForCreation)
+        private async Task<bool> GetAndCheckIfBrandExistByName(string name, Guid? brandId = null)
         {
-
-            var name = brandDtoForCreation.BrandName!.Trim();
-
-            var exists = await _repoManager.Brand.FindByCondition(x =>
-                x.BrandName.Trim().Equals(name),
-                false).AnyAsync();
-
-            return exists;
-        }
-
-        private async Task<bool> CheckIfBrandUpdateExistByName(BrandDtoForUpdate brandDtoForUpdate, Guid brandId)
-        {
-
-            var name = brandDtoForUpdate.BrandName!.Trim();
-
-            var exists = await _repoManager.Brand.FindByCondition(x =>
-                !x.Id.Equals(brandId) && x.BrandName.Trim().Equals(name),
-                false).AnyAsync();
-
-            return exists;
+            var brand = await _repoManager.Brand.GetBrandByIdAndNameAsync(name, brandId, false);
+            if (brand == null) return false;
+            return true;
         }
         private async Task<Result<Brand>> GetAndCheckIfBrandExist(Guid brandId, bool trackChanges)
         {
