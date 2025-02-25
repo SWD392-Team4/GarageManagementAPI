@@ -5,6 +5,7 @@ using GarageManagementAPI.Shared.DataTransferObjects.ProductImage;
 using GarageManagementAPI.Shared.RequestFeatures;
 using Microsoft.AspNetCore.Mvc;
 using GarageManagementAPI.Shared.Extension;
+using GarageManagementAPI.Shared.DataTransferObjects.Product;
 
 namespace GarageManagementAPI.Presentation.Controllers
 {
@@ -47,6 +48,22 @@ namespace GarageManagementAPI.Presentation.Controllers
                 onSuccess: Ok,
                 onFailure: ProcessError
                 );
+        }
+
+        [HttpPut("{productImageId:guid}")]
+        public async Task<IActionResult> UpdateProduct(Guid productImageId, [FromBody] ProductImageDtoForUpdate productImageDtoForUpdate)
+        {
+            var result = await _service.ProductImageService
+                .UpdateProductImageAsync(
+                productImageId,
+                productImageDtoForUpdate,
+                trackChanges: true
+                );
+
+            return result.Map(
+                 onSuccess: Ok,
+                 onFailure: ProcessError
+                 );
         }
     }
 }

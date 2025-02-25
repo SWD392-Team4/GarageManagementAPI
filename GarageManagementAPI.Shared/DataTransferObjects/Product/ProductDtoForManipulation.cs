@@ -10,7 +10,6 @@ namespace GarageManagementAPI.Shared.DataTransferObjects.Product
         public string ProductDescription { get; set; } = null!;
         public Guid ProductCategoryId { get; set; } 
         public Guid BrandId { get; set; }
-        public string? Link { get; set; } = null!;
         public required decimal ProductPrice { get; set; }
     }
 }

@@ -10,10 +10,8 @@ using GarageManagementAPI.Repository.Contracts;
 using GarageManagementAPI.Shared.RequestFeatures;
 using GarageManagementAPI.Shared.Enums.SystemStatuss;
 using GarageManagementAPI.Shared.ErrorsConstant.Product;
-using GarageManagementAPI.Shared.ErrorsConstant.ProductImg;
 using GarageManagementAPI.Shared.DataTransferObjects.Product;
 using GarageManagementAPI.Shared.ErrorsConstant.ProductHistory;
-using GarageManagementAPI.Shared.DataTransferObjects.ProductImage;
 using GarageManagementAPI.Shared.DataTransferObjects.ProductHistory;
 
 namespace GarageManagementAPI.Service
@@ -49,12 +47,7 @@ namespace GarageManagementAPI.Service
 
             //Create Product History
             await CreateProductHistoryAsync(productEntity.Id, productDtoForCreation.ProductPrice);
-            //Create Product Image
-            if (productDtoForCreation.Link != null)
-            {
-                await CreateProductImageAsync(productEntity.Id, productDtoForCreation.Link);
-            }
-
+           
             var productDtoToReturn = _mapper.Map<ProductDto>(productEntity);
 
             return productDtoToReturn.CreatedResult();
@@ -75,11 +68,6 @@ namespace GarageManagementAPI.Service
             productEntity.UpdatedAt = DateTimeOffset.UtcNow.SEAsiaStandardTime();
             //Create Product History
             await CreateProductHistoryAsync(productId, productDtoForUpdate.ProductPrice);
-            //Create Product Image
-            if (productDtoForUpdate.Link != null)
-            {
-                await CreateProductImageAsync(productId, productDtoForUpdate.Link);
-            }
 
             await _repoManager.SaveAsync();
 
@@ -175,13 +163,11 @@ namespace GarageManagementAPI.Service
             return exists;
         }
 
-
         private async Task<Result<Product>> GetAndCheckIfProductExist(Guid productId, bool trackChanges, string? include = null)
         {
             var product = await _repoManager.Product.GetProductByIdAsync(productId, trackChanges, include);
             if (product == null)
                 return product.NotFoundId(productId);
-
             return product.OkResult();
         }
 
@@ -194,33 +180,6 @@ namespace GarageManagementAPI.Service
 
             return product.OkResult();
         }
-
-        private async Task<Result<ProductImageDto>> CreateProductImageAsync(Guid productId, string link)
-        {
-            var checkLink = await GetAndCheckIfProductImgByIdAndLink(productId, link);
-
-            if (checkLink)
-                return Result<ProductImageDto>.BadRequest([ProductImgErrors.GetProductImageLinkAlreadyExistError(link)]);
-            // Gọi UpdateStatusImage 
-            await UpdateStatusProductImage(productId);
-
-            var productImgEntity = new ProductImage
-            {
-                ProductId = productId,
-                Link = link,
-                Status = ProductImageStatus.Active,
-                CreatedAt = DateTimeOffset.UtcNow.SEAsiaStandardTime(),
-                UpdatedAt = DateTimeOffset.UtcNow.SEAsiaStandardTime()
-            };
-
-            await _repoManager.ProductImage.CreateProductImgAsync(productImgEntity);
-            await _repoManager.SaveAsync();
-
-            var productImgDtoToReturn = _mapper.Map<ProductImageDto>(productImgEntity);
-
-            return productImgDtoToReturn.CreatedResult();
-        }
-
         public async Task<Result<ProductHistoryDto>> CreateProductHistoryAsync(Guid productId, decimal price)
         {
             var checkPrice = await GetAndCheckIfProductHistoryByIdAndPrice(productId, price);
@@ -273,18 +232,6 @@ namespace GarageManagementAPI.Service
                 _repoManager.ProductHistory.UpdateProductHistory(productEntity);
                 await _repoManager.SaveAsync();
             }
-        }
-
-
-        private async Task<bool> GetAndCheckIfProductImgByIdAndLink(Guid productId, string link)
-        {
-            var latestProductImg = await _repoManager.ProductImage.GetProductImgByLinkAndIdProductAsync(productId, false);
-
-            if (latestProductImg != null && latestProductImg.Link.Equals(link))
-            {
-                return true;
-            }
-            return false;
         }
 
         private async Task<bool> GetAndCheckIfProductHistoryByIdAndPrice(Guid productId, decimal price)

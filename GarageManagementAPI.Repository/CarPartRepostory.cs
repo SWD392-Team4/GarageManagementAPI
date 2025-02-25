@@ -21,7 +21,7 @@ namespace GarageManagementAPI.Repository
         {
             var carPart = carPartId is null ?
             await FindByCondition(c => c.PartName.Equals(name), trackChanges).SingleOrDefaultAsync() :
-            await FindByCondition(c => c.Id.Equals(carPartId) && c.PartName.ToLower().Equals(name.ToLower()), trackChanges).SingleOrDefaultAsync();
+            await FindByCondition(c => !c.Id.Equals(carPartId) && c.PartName.ToLower().Equals(name.ToLower()), trackChanges).SingleOrDefaultAsync();
 
             return carPart;
         }
