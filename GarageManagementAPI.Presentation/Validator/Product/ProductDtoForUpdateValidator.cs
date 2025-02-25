@@ -1,7 +1,6 @@
 ﻿using FluentValidation;
 using GarageManagementAPI.Shared.DataTransferObjects.Product;
 using GarageManagementAPI.Shared.ErrorsConstant.Product;
-using GarageManagementAPI.Shared.Enums;
 using GarageManagementAPI.Shared.Enums.SystemStatuss;
 
 namespace GarageManagementAPI.Presentation.Validator.Product

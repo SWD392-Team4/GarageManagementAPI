@@ -95,7 +95,7 @@ namespace GarageManagementAPI.Presentation.Controllers
             var productDtoForUpdateToPatchResult = await _service.ProductService.GetProductForPartiallyUpdate(productId, false);
 
             if (!productDtoForUpdateToPatchResult.IsSuccess)
-                return ProcessError(productDtoForUpdateToPatchResult);
+                return ProcessError(productDtoForUpdateToPatchResult); 
 
             var productDtoForUpdateToPatch = productDtoForUpdateToPatchResult.GetValue<ProductDtoForUpdate>();
 

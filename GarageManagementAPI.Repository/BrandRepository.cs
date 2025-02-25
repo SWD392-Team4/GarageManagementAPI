@@ -1,8 +1,8 @@
-﻿using GarageManagementAPI.Entities.Models;
+﻿using Microsoft.EntityFrameworkCore;
+using GarageManagementAPI.Entities.Models;
 using GarageManagementAPI.Repository.Contracts;
 using GarageManagementAPI.Repository.Extensions;
 using GarageManagementAPI.Shared.RequestFeatures;
-using Microsoft.EntityFrameworkCore;
 
 namespace GarageManagementAPI.Repository
 {
@@ -17,6 +17,18 @@ namespace GarageManagementAPI.Repository
             await base.CreateAsync(brand);
         }
 
+<<<<<<< Updated upstream
+=======
+        public async Task<Brand?> GetBrandByIdAndNameAsync(string name, Guid? brandId, bool trackChanges)
+        {
+            var brand = brandId is null ?
+            await FindByCondition(b => b.BrandName.Equals(name), trackChanges).SingleOrDefaultAsync() :
+            await FindByCondition(b => !b.Id.Equals(brandId) && b.BrandName.ToLower().Equals(name.ToLower()), trackChanges).SingleOrDefaultAsync();
+
+            return brand;
+        }
+
+>>>>>>> Stashed changes
         public async Task<Brand?> GetBrandByIdAsync(Guid brandId, bool trackChanges, string? include = null)
         {
             var brand = include is null ?

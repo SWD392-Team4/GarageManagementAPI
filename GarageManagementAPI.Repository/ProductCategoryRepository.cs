@@ -32,6 +32,17 @@ namespace GarageManagementAPI.Repository
             return productCategory;
         }
 
+<<<<<<< Updated upstream
+=======
+        public async Task<ProductCategory?> GetProductByIdAndNameAsync(string name, Guid? productCatrgoryId, bool trackChanges)
+        {
+            var productCatrgory = productCatrgoryId is null ?
+            await FindByCondition(p => p.Id.Equals(productCatrgoryId), trackChanges).SingleOrDefaultAsync() :
+            await FindByCondition(p => !p.Id.Equals(productCatrgoryId) && p.Category.ToLower().Equals(name.ToLower()), trackChanges).SingleOrDefaultAsync();
+            return productCatrgory;
+        }
+            
+>>>>>>> Stashed changes
         public async Task<PagedList<ProductCategory>> GetProductCategoriesAsync(ProductCategoryParameters productCategoryParameters, bool trackChanges, string? include = null)
         {
             // Lọc và sắp xếp danh sách ProductCategorys theo các điều kiện

@@ -1,0 +1,7 @@
+﻿                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          namespace GarageManagementAPI.Shared.DataTransferObjects.ServiceImage
+{
+    public record class ServiceImageDtoForCreation : ServiceImageDtoForManipulation
+    {
+       
+    }
+}

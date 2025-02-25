@@ -1,7 +1,7 @@
-﻿using GarageManagementAPI.Entities.Models;
+﻿using Microsoft.EntityFrameworkCore;
+using GarageManagementAPI.Entities.Models;
 using GarageManagementAPI.Repository.Contracts;
 using GarageManagementAPI.Repository.Extensions;
-using Microsoft.EntityFrameworkCore;
 using GarageManagementAPI.Shared.RequestFeatures;
 
 namespace GarageManagementAPI.Repository
@@ -10,9 +10,7 @@ namespace GarageManagementAPI.Repository
     {
         public ProductImageRepository(RepositoryContext repositoryContext) : base(repositoryContext)
         {
-
         }
-
         public async Task CreateProductImgAsync(ProductImage productImage)
         {
             await base.CreateAsync(productImage);
@@ -31,7 +29,6 @@ namespace GarageManagementAPI.Repository
                       .IsInclude(include)
                       .AsQueryable();
             //AsQueryable() sử dụng để chuyển một tập hợp dữ liệu (như danh sách hoặc mảng) sang kiểu IQueryable<T>
-
 
             var productImgs = await imgsQuery
             .Skip((productImageParameters.PageNumber - 1) * productImageParameters.PageSize)
