@@ -7,17 +7,14 @@ namespace GarageManagementAPI.Service.Extension
 {
     public static class ProductImgageExtension
     {
-        public static Result<ProductImageDto> OkResult(ProductImageDto productDto)
-            => Result<ProductImageDto>.Ok(productDto);
+        public static Result<ProductImage> OkResult(this ProductImage productImg)
+            => Result<ProductImage>.Ok(productImg);
 
-        public static Result<ProductImageDto> CreatedResult(this ProductImageDto productDto)
-            => Result<ProductImageDto>.Created(productDto);
+        public static Result<ProductImageDto> CreatedResult(this ProductImageDto productImageDto)
+            => Result<ProductImageDto>.Created(productImageDto);
 
-        public static Result<ProductImage> NotFoundId(this ProductImage? product, Guid productId)
+        public static Result<ProductImage> NotFoundId(this ProductImage? productImage, Guid productId)
             => Result<ProductImage>.NotFound([ProductImgErrors.GetProductImageNotFoundWithIdError(productId)]);
-
-        public static Result<ProductImageDto> NotFoundId(Guid productId)
-     => Result<ProductImageDto>.NotFound([ProductImgErrors.GetProductImageNotFoundWithIdError(productId)]);
 
         public static Result<ProductImage> NotFoundError()
           => Result<ProductImage>.NotFound([ProductImgErrors.GetProductImageNotFoundError()]);

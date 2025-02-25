@@ -21,6 +21,12 @@ namespace GarageManagementAPI.Repository
         {
             base.Update(productImage);
         }
+        public async Task<ProductImage?> GetProductImgAsync(Guid productImgId, bool trackChanges, string? include = null)
+        {
+            var productImg = await FindByCondition(p => p.Id == productImgId, false)
+                                      .FirstOrDefaultAsync();
+            return productImg;
+        }
 
         public async Task<PagedList<ProductImage>> GetProductImgByIdProductAsync(Guid productId, ProductImageParameters productImageParameters, bool trackChanges, string? include = null)
         {
@@ -82,5 +88,7 @@ namespace GarageManagementAPI.Repository
                productImageParameters.PageSize
            );
         }
+
+
     }
 }

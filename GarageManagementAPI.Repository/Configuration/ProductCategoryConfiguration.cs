@@ -1,6 +1,7 @@
-﻿using GarageManagementAPI.Entities.Models;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
+using GarageManagementAPI.Entities.Models;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using System;
 
 namespace GarageManagementAPI.Repository.Configuration
 {
@@ -21,6 +22,33 @@ namespace GarageManagementAPI.Repository.Configuration
 
             entity.Property(e => e.Status)
                 .HasConversion<string>();
+        }
+
+        protected override void SeedData(EntityTypeBuilder<ProductCategory> entity)
+        {
+            entity.HasData(
+               new ProductCategory()
+               {
+                   Id = new Guid("cee5a4d8-de84-4482-9da9-302e2290cb0f"),
+                   Category = "Electronics",
+                   CreatedAt = DateTimeOffset.Parse("2025-02-25T00:36:40Z"),
+                   UpdatedAt = DateTimeOffset.Parse("2025-02-25T00:36:40Z")
+               },
+               new ProductCategory()
+               {
+                   Id = new Guid("e9a7beda-ff63-4ac5-92cb-b7fa152c41c2"),
+                   Category = "Clothing",
+                   CreatedAt = DateTimeOffset.Parse("2025-02-25T00:36:40Z"),
+                   UpdatedAt = DateTimeOffset.Parse("2025-02-25T00:36:40Z")
+               },
+               new ProductCategory()
+               {
+                   Id = new Guid("f5fd6ee3-a8b6-452c-9042-146e8afc875f"),
+                   Category = "Home & Kitchen",
+                   CreatedAt = DateTimeOffset.Parse("2025-02-25T00:36:40Z"),
+                   UpdatedAt = DateTimeOffset.Parse("2025-02-25T00:36:40Z")
+               }
+         );
         }
     }
 }

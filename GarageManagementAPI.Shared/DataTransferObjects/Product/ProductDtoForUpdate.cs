@@ -7,5 +7,6 @@ namespace GarageManagementAPI.Shared.DataTransferObjects.Product
     {
         [EnumDataType(typeof(ProductStatus))]
         public ProductStatus? Status { get; set; } = ProductStatus.Inactive;
+        public List<string>? Link { get; set; } = null!;
     }
 }

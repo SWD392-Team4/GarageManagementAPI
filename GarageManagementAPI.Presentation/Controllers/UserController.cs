@@ -9,7 +9,6 @@ using GarageManagementAPI.Shared.ResultModel;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using System.Runtime.CompilerServices;
 using System.Security.Claims;
 
 namespace GarageManagementAPI.Presentation.Controllers

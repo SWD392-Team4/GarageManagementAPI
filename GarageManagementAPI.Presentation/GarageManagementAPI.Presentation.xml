@@ -180,9 +180,17 @@
             <param name="productParameters"></param>
             <returns></returns>
         </member>
-        <member name="M:GarageManagementAPI.Presentation.Controllers.ProductController.CreateProduct(GarageManagementAPI.Shared.DataTransferObjects.Product.ProductDtoForCreation)">
+        <member name="M:GarageManagementAPI.Presentation.Controllers.ProductController.CreateProductImage(System.Guid,System.Collections.Generic.List{Microsoft.AspNetCore.Http.IFormFile})">
             <summary>
             Create product
+            </summary>
+            <param name="productId"></param>
+            <param name="fileDtos">The list of files to be uploaded with the product.</param>
+            <returns></returns>
+        </member>
+        <member name="M:GarageManagementAPI.Presentation.Controllers.ProductController.CreateProduct(GarageManagementAPI.Shared.DataTransferObjects.Product.ProductDtoForCreation)">
+            <summary>
+            Create Product
             </summary>
             <param name="productDtoForCreation"></param>
             <returns></returns>

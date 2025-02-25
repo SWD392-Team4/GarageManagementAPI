@@ -5,9 +5,7 @@ namespace GarageManagementAPI.Repository.Contracts
     public interface IRepositoryManager
     {
         IWorkplaceRepository Workplace { get; }
-
         IUserRepository User { get; }
-
         IEmployeeInfoRepository EmployeeInfo { get; }
         IBrandRepository Brand { get; }
         IProductRepository Product { get; }
@@ -20,9 +18,7 @@ namespace GarageManagementAPI.Repository.Contracts
         ICarCategoryRepository CarCategory { get; }
         ICarModelRepository CarModel { get; }
         Task<IDbContextTransaction> BeginTransactionAsync();
-
         IExecutionStrategy CreateExecutionStrategy();
-
         Task SaveAsync();
     }
 }

@@ -93,6 +93,7 @@ namespace GarageManagementAPI.Service
             _mapper.Map(brandDtoForUpdate, brandEntity);
 
             brandEntity.UpdatedAt = DateTimeOffset.UtcNow.SEAsiaStandardTime();
+
             await _repoManager.SaveAsync();
 
             return Result.NoContent();

@@ -1,12 +1,13 @@
-﻿using GarageManagementAPI.Service.Contracts;
-using GarageManagementAPI.Shared.Extension;
-using GarageManagementAPI.Shared.DataTransferObjects.Product;
+﻿using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
-using GarageManagementAPI.Shared.RequestFeatures;
-using FluentValidation;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.JsonPatch;
+using GarageManagementAPI.Shared.Extension;
+using GarageManagementAPI.Service.Contracts;
+using GarageManagementAPI.Shared.RequestFeatures;
 using GarageManagementAPI.Presentation.Extensions;
-
+using GarageManagementAPI.Shared.DataTransferObjects.Product;
+using Microsoft.AspNetCore.Authorization;
 
 namespace GarageManagementAPI.Presentation.Controllers
 {
@@ -72,23 +73,61 @@ namespace GarageManagementAPI.Presentation.Controllers
         /// <summary>
         /// Create product
         /// </summary>
+        /// <param name="productId"></param>
+        /// <param name="fileDtos">The list of files to be uploaded with the product.</param>
+        /// <returns></returns>
+        [HttpPost("images/{productId:guid}", Name = "CreateProductImage")]
+        public async Task<IActionResult> CreateProductImage(Guid productId, [FromForm] List<IFormFile> fileDtos)
+        {
+            var productExists = await _service.ProductService.GetProductByIdAsync(productId, false);
+            if (!productExists.IsSuccess)
+            {
+                return NotFound($"Product with ID {productId} not found.");
+            }
+
+            if (fileDtos == null || !fileDtos.Any())
+            {
+                return BadRequest("No files were uploaded.");
+            }
+            // Upload images and associate them with the product
+            foreach (var fileDto in fileDtos)
+            {
+                var uploadFileResult = await _service.MediaService.UploadProductImageAsync(fileDto);
+                if (!uploadFileResult.IsSuccess)
+                {
+                    return ProcessError(uploadFileResult);
+                }
+
+                var imgTuple = uploadFileResult.GetValue<(string? publicId, string? absoluteUrl)>();
+
+                // Associate the image with the product
+                var updateResult = await _service.ProductImageService.CreateProductImageAsync(productId, imgTuple.publicId!, imgTuple.absoluteUrl!);
+                if (!updateResult.IsSuccess)
+                {
+                    return ProcessError(updateResult);
+                }
+            }
+            return Ok("Images uploaded and associated with the product successfully.");
+        }
+        /// <summary>
+        /// Create Product
+        /// </summary>
         /// <param name="productDtoForCreation"></param>
         /// <returns></returns>
         [HttpPost(Name = "CreateProduct")]
         public async Task<IActionResult> CreateProduct([FromBody] ProductDtoForCreation productDtoForCreation)
         {
-            var result = await _service.ProductService.CreateProductAsync(productDtoForCreation);
+            var createProductResult = await _service.ProductService.CreateProductAsync(productDtoForCreation);
+            if (!createProductResult.IsSuccess)
+            {
+                return ProcessError(createProductResult);
+            }
 
-            return result.Map(
-                onSuccess: result =>
-                {
-                    var createdProduct = result.GetValue<ProductDto>();
+            var createdProduct = createProductResult.GetValue<ProductDto>();
 
-                    return CreatedAtRoute("GetProductById", new { productId = createdProduct.Id }, result);
-                },
-                onFailure: ProcessError
-                );
+            return CreatedAtRoute("GetProductById", new { productId = createdProduct.Id }, createdProduct);
         }
+
         /// <summary>
         /// Update product
         /// </summary>
@@ -110,6 +149,7 @@ namespace GarageManagementAPI.Presentation.Controllers
                  onFailure: ProcessError
                  );
         }
+
         /// <summary>
         /// Update product by field
         /// </summary>
@@ -123,7 +163,7 @@ namespace GarageManagementAPI.Presentation.Controllers
             var productDtoForUpdateToPatchResult = await _service.ProductService.GetProductForPartiallyUpdate(productId, false);
 
             if (!productDtoForUpdateToPatchResult.IsSuccess)
-                return ProcessError(productDtoForUpdateToPatchResult); 
+                return ProcessError(productDtoForUpdateToPatchResult);
 
             var productDtoForUpdateToPatch = productDtoForUpdateToPatchResult.GetValue<ProductDtoForUpdate>();
 
