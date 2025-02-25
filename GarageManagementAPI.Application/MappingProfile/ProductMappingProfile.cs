@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
 using GarageManagementAPI.Entities.Models;
 using GarageManagementAPI.Shared.DataTransferObjects.Product;
-using GarageManagementAPI.Shared.DataTransferObjects.User;
 
 namespace GarageManagementAPI.Application.MappingProfile
 {
@@ -20,14 +19,10 @@ namespace GarageManagementAPI.Application.MappingProfile
                        opts.PreCondition(src => src.ProductCategory != null);
                        opts.MapFrom(src => src.ProductCategory!.Category);
                    })
-                 .ForMember(dest => dest.ProductImg, otp =>
+                 .ForMember(dest => dest.ImageLink, otp =>
                  {
                      otp.PreCondition(src => src.ProductImages != null && src.ProductImages.Any());
-                     otp.MapFrom(src => src.ProductImages
-                     .OrderByDescending(i => i.CreatedAt)
-                     .First()
-                     .Link
-                     );
+                     otp.MapFrom(src => src.ProductImages.Select(e => e.ImageLink).ToList());
                  })
                 .ForMember(dest => dest.ProductPrice, opt =>
                 {
