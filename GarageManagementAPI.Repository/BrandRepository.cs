@@ -1,8 +1,8 @@
-﻿using GarageManagementAPI.Entities.Models;
+﻿using Microsoft.EntityFrameworkCore;
+using GarageManagementAPI.Entities.Models;
 using GarageManagementAPI.Repository.Contracts;
 using GarageManagementAPI.Repository.Extensions;
 using GarageManagementAPI.Shared.RequestFeatures;
-using Microsoft.EntityFrameworkCore;
 
 namespace GarageManagementAPI.Repository
 {
@@ -21,8 +21,7 @@ namespace GarageManagementAPI.Repository
         {
             var brand = brandId is null ?
             await FindByCondition(b => b.BrandName.Equals(name), trackChanges).SingleOrDefaultAsync() :
-            await FindByCondition(b => b.Id.Equals(brandId) && b.BrandName.ToLower().Equals(name.ToLower()), trackChanges).SingleOrDefaultAsync();
-
+            await FindByCondition(b => !b.Id.Equals(brandId) && b.BrandName.ToLower().Equals(name.ToLower()), trackChanges).SingleOrDefaultAsync();
             return brand;
         }
 

@@ -14,9 +14,7 @@ namespace GarageManagementAPI.Repository.Extensions
             {
                 return carPartCategory;
             }
-
-            var lowerCaseTerm = name.Trim().ToLower();
-            return carPartCategory.Where(b => b.PartCategory!.Contains(name, StringComparison.OrdinalIgnoreCase));
+            return carPartCategory.Where(c => EF.Functions.Like(c.PartCategory, $"%{name}%"));
         }
 
         public static IQueryable<CarPartCategory> SearchByStatus(this IQueryable<CarPartCategory> carPartCategory, CarPartCategoryStatus? status)

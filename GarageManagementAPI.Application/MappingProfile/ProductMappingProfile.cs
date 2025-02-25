@@ -42,19 +42,12 @@ namespace GarageManagementAPI.Application.MappingProfile
 
 
             CreateMap<ProductDtoForCreation, Product>();
-            CreateMap<ProductDtoForManipulation, Product>().ReverseMap();
 
-            CreateMap<ProductDtoForUpdate, Product>()
+            CreateMap<ProductDtoForUpdate, Product>().ReverseMap()
                .ForAllMembers(opt =>
                {
                    opt.Condition((src, dest, srcMember) => srcMember != null);
                });
-
-            CreateMap<ProductDtoForUpdate, Product>()
-             .ForAllMembers(opt =>
-             {
-                 opt.Condition((src, dest, srcMember) => srcMember != null);
-             }); ;
         }
     }
 }

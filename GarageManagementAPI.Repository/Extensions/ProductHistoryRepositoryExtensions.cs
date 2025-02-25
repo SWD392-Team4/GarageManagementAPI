@@ -14,9 +14,7 @@ namespace GarageManagementAPI.Repository.Extensions
             if (price == 0 || price < 0)
             {
                 return product;
-            }
-
-           
+            }      
             return product.Where(p => p.ProductPrice == price);
         }
 

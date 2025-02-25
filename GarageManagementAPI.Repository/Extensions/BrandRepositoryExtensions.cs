@@ -14,9 +14,7 @@ namespace GarageManagementAPI.Repository.Extensions
             {
                 return brand;
             }
-
-            var lowerCaseTerm = name.Trim().ToLower();
-            return brand.Where(b => b.BrandName!.Contains(name, StringComparison.OrdinalIgnoreCase));
+            return brand.Where(b => EF.Functions.Like(b.BrandName, $"%{name}%"));
         }
 
         public static IQueryable<Brand> SearchByStatus(this IQueryable<Brand> brand, BrandStatus? status)

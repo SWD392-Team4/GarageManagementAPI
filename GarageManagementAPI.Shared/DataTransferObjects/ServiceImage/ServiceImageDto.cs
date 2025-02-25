@@ -1,9 +1,9 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using GarageManagementAPI.Shared.Enums.SystemStatuss;
 
-namespace GarageManagementAPI.Entities.Models
+namespace GarageManagementAPI.Shared.DataTransferObjects.ServiceImage
 {
-    public partial class ServiceImage : BaseEntity<ServiceImage>
+    public record class ServiceImageDto
     {
         public Guid ServiceId { get; set; }
         public string Link { get; set; } = null!;
@@ -11,8 +11,5 @@ namespace GarageManagementAPI.Entities.Models
         public ServiceImageStatus Status { get; set; }
         public DateTimeOffset CreatedAt { get; set; }
         public DateTimeOffset UpdatedAt { get; set; }
-        public virtual Service IdNavigation { get; set; } = null!;
     }
-
 }
-

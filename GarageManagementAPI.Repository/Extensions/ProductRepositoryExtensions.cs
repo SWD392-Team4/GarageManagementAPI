@@ -16,7 +16,7 @@ namespace GarageManagementAPI.Repository.Extensions
             }
 
             var lowerCaseTerm = name.Trim().ToLower();
-            return product.Where(p => p.ProductName!.ToLower().Contains(name.Trim().ToLower()));
+            return product.Where(p => EF.Functions.Like(p.ProductName, $"%{name}%"));
         }
 
         public static IQueryable<Product> SearchByPrice(this IQueryable<Product> products, decimal? minPrice, decimal? maxPrice)

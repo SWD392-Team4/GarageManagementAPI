@@ -14,7 +14,7 @@ namespace GarageManagementAPI.Repository.Extensions
             {
                 return carPart;
             }
-            return carPart.Where(b => b.PartName!.Contains(name, StringComparison.OrdinalIgnoreCase));
+            return carPart.Where(c => EF.Functions.Like(c.PartName, $"%{name}%"));
         }
 
         public static IQueryable<CarPart> SearchByStatus(this IQueryable<CarPart> carParts, CarPartStatus? status)

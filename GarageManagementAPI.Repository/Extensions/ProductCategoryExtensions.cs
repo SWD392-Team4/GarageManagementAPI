@@ -38,7 +38,7 @@ namespace GarageManagementAPI.Repository.Extensions
             }
 
             var lowerCaseTerm = name.Trim().ToLower();
-            return productCategory.Where(p => p.Category!.ToLower().Contains(name.Trim().ToLower()));
+            return productCategory.Where(p => EF.Functions.Like(p.Category, $"%{name}%"));
         }
 
         public static IQueryable<ProductCategory> SearchByStatus(this IQueryable<ProductCategory> productCategorys, ProductCategoryStatus? status)
