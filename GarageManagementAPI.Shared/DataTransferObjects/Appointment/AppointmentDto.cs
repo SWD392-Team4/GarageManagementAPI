@@ -47,6 +47,7 @@ namespace GarageManagementAPI.Shared.DataTransferObjects.Appointment
 
         public DateTimeOffset? UpdatedAt { get; set; }
 
+        [EnumDataType(typeof(AppointmentType))]
         public AppointmentType AppointmentType { get; set; }
     }
 }

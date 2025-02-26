@@ -19,6 +19,7 @@ namespace GarageManagementAPI.Repository
         private readonly Lazy<ICarPartCategoryRepository> _carPartCategoryRepository;
         private readonly Lazy<ICarCategoryRepository> _carCategoryRepository;
         private readonly Lazy<ICarModelRepository> _carModelRepository;
+        private readonly Lazy<IAppointmentRepository> _appointmentRepository;
 
         public RepositoryManager(RepositoryContext repositoryContext)
         {
@@ -37,24 +38,37 @@ namespace GarageManagementAPI.Repository
             _serviceRepository = new Lazy<IServiceRepository>(() => new ServiceRepository(repositoryContext));
             _carCategoryRepository = new Lazy<ICarCategoryRepository>(() => new CarCategoryRepository(repositoryContext));
             _carModelRepository = new Lazy<ICarModelRepository>(() => new CarModelRepository(repositoryContext));
+            _appointmentRepository = new Lazy<IAppointmentRepository>(() => new AppointmentRepository(repositoryContext));
 
         }
 
         public IWorkplaceRepository Workplace => _workplaceRepository.Value;
+
         public IUserRepository User => _userRepository.Value;
+
         public IEmployeeInfoRepository EmployeeInfo => _employeeInfoRepository.Value;
+
         public IBrandRepository Brand => _brandRepository.Value;
+
         public IProductRepository Product => _productRepository.Value;
+
         public IProductHistoryRepository ProductHistory => _productHistoryRepository.Value;
+
         public IProductCategoryRepository ProductCategory => _productCategoryRepository.Value;
+
         public IProductImageRepository ProductImage => _productImageRepository.Value;
+
         public IServiceRepository Service => _serviceRepository.Value;
+
         public ICarPartRepository CarPart => _carPartRepository.Value;
+
         public ICarPartCategoryRepository CarPartCategory => _carPartCategoryRepository.Value;
 
         public ICarCategoryRepository CarCategory => _carCategoryRepository.Value;
 
         public ICarModelRepository CarModel => _carModelRepository.Value;
+
+        public IAppointmentRepository Appointment => _appointmentRepository.Value;
 
         public async Task<IDbContextTransaction> BeginTransactionAsync()
         {

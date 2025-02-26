@@ -33,5 +33,8 @@
         ICarModelService CarModelService { get; }
 
         ICarCategoryService CarCategoryService { get; }
+
+        IAppointmentService AppointmentService { get; }
     }
+
 }

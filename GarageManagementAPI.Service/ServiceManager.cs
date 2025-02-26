@@ -27,6 +27,7 @@ namespace GarageManagementAPI.Service
         private readonly Lazy<ICarPartCategoryService> _carPartCategoryService;
         private readonly Lazy<ICarCategoryService> _carCategoryService;
         private readonly Lazy<ICarModelService> _carModelService;
+        private readonly Lazy<IAppointmentService> _appointmentService;
 
         public ServiceManager(
             IRepositoryManager repositoryManager,
@@ -130,6 +131,12 @@ namespace GarageManagementAPI.Service
             mapper,
             dataShaper));
 
+            _appointmentService = new Lazy<IAppointmentService>(() =>
+           new AppointmentService(
+            repositoryManager,
+            mapper,
+            dataShaper));
+
             _mediaService = new Lazy<IMediaService>(() =>
             new MediaService(cloudinaryConfiguration));
         }
@@ -165,5 +172,7 @@ namespace GarageManagementAPI.Service
         public ICarModelService CarModelService => _carModelService.Value;
 
         public ICarCategoryService CarCategoryService => _carCategoryService.Value;
+
+        public IAppointmentService AppointmentService => _appointmentService.Value;
     }
 }
