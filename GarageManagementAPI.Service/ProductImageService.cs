@@ -11,8 +11,6 @@ using GarageManagementAPI.Repository.Contracts;
 using GarageManagementAPI.Shared.RequestFeatures;
 using GarageManagementAPI.Shared.Enums.SystemStatuss;
 using GarageManagementAPI.Shared.DataTransferObjects.ProductImage;
-using GarageManagementAPI.Shared.DataTransferObjects.Product;
-using GarageManagementAPI.Shared.DataTransferObjects.Brand;
 
 namespace GarageManagementAPI.Service
 {
@@ -44,6 +42,7 @@ namespace GarageManagementAPI.Service
             };
 
             await _repoManager.ProductImage.CreateProductImgAsync(productImgEntity);
+            await _repoManager.SaveAsync();
 
             var productImgDtoToReturn = _mapper.Map<ProductImageDto>(productImgEntity);
 

@@ -76,38 +76,33 @@ namespace GarageManagementAPI.Presentation.Controllers
         /// <param name="productId"></param>
         /// <param name="fileDtos">The list of files to be uploaded with the product.</param>
         /// <returns></returns>
-        [HttpPost("images/{productId:guid}", Name = "CreateProductImage")]
+        [HttpPost("{productId:guid}/images", Name = "CreateProductImage")]
         public async Task<IActionResult> CreateProductImage(Guid productId, [FromForm] List<IFormFile> fileDtos)
         {
             var productExists = await _service.ProductService.GetProductByIdAsync(productId, false);
-            if (!productExists.IsSuccess)
-            {
-                return NotFound($"Product with ID {productId} not found.");
-            }
-
+            if (!productExists.IsSuccess) return productExists.Map(onSuccess: Ok,
+                                                                   onFailure: ProcessError);
             if (fileDtos == null || !fileDtos.Any())
             {
                 return BadRequest("No files were uploaded.");
             }
-            // Upload images and associate them with the product
+            var createdProductImages = new List<object>();
             foreach (var fileDto in fileDtos)
             {
                 var uploadFileResult = await _service.MediaService.UploadProductImageAsync(fileDto);
-                if (!uploadFileResult.IsSuccess)
-                {
-                    return ProcessError(uploadFileResult);
-                }
+
+                if (!uploadFileResult.IsSuccess) return ProcessError(uploadFileResult);
 
                 var imgTuple = uploadFileResult.GetValue<(string? publicId, string? absoluteUrl)>();
 
-                // Associate the image with the product
                 var updateResult = await _service.ProductImageService.CreateProductImageAsync(productId, imgTuple.publicId!, imgTuple.absoluteUrl!);
-                if (!updateResult.IsSuccess)
-                {
-                    return ProcessError(updateResult);
-                }
+
+                if (!updateResult.IsSuccess) return ProcessError(updateResult);
+                
+                createdProductImages.Add(updateResult.Value!.ImageLink);
             }
-            return Ok("Images uploaded and associated with the product successfully.");
+
+            return Ok(createdProductImages);
         }
         /// <summary>
         /// Create Product

@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GarageManagementAPI.Application.Migrations
 {
     [DbContext(typeof(RepositoryContext))]
-    [Migration("20250225193509_SeedDataCarPart")]
+    [Migration("20250226171452_SeedDataCarPart")]
     partial class SeedDataCarPart
     {
         /// <inheritdoc />
@@ -2337,6 +2337,15 @@ namespace GarageManagementAPI.Application.Migrations
                             PartName = "Exhaust Pipe",
                             Status = "Inactive",
                             UpdatedAt = new DateTimeOffset(new DateTime(2025, 2, 26, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0))
+                        },
+                        new
+                        {
+                            Id = new Guid("d263567a-41b2-407d-b40d-6bad18eb32ca"),
+                            CarPartCategoryId = new Guid("47cc8b19-70ce-46f3-aef9-eb933eea2182"),
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 26, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            PartName = "Engine Oill",
+                            Status = "Active",
+                            UpdatedAt = new DateTimeOffset(new DateTime(2025, 2, 26, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0))
                         });
                 });
 
@@ -3480,6 +3489,56 @@ namespace GarageManagementAPI.Application.Migrations
                     b.HasIndex(new[] { "ProductCategoryId" }, "product_productcategoryid_index");
 
                     b.ToTable("Product", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("1c1ffd05-3b06-48bf-b78c-86b6ef2d3cef"),
+                            BrandId = new Guid("abadc9e1-c8e6-4f40-b078-47f609d1cf79"),
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 0, 36, 40, 0, DateTimeKind.Unspecified), new TimeSpan(0, 7, 0, 0, 0)),
+                            ProductBarcode = "6291041500213",
+                            ProductCategoryId = new Guid("c29a6297-20cd-449d-8ca8-6353e7cd4505"),
+                            ProductDescription = "The Smartphone XYZ Pro is a premium device featuring a 6.7-inch AMOLED display with 4K resolution and HDR10+ technology. Powered by the Snapdragon 888 chipset, 12GB of RAM, and 256GB of internal storage, this phone delivers smooth performance for all tasks. The 108MP main camera supports 8K video recording, and the 5000mAh battery supports 65W fast charging.",
+                            ProductName = "Toyota Camry",
+                            Status = "Active",
+                            UpdatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 0, 36, 40, 0, DateTimeKind.Unspecified), new TimeSpan(0, 7, 0, 0, 0))
+                        },
+                        new
+                        {
+                            Id = new Guid("cee5a4d8-de84-4482-9da9-302e2290cb0f"),
+                            BrandId = new Guid("855f8a55-c9d0-4532-81ee-6da2bd0db1f6"),
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 0, 36, 40, 0, DateTimeKind.Unspecified), new TimeSpan(0, 7, 0, 0, 0)),
+                            ProductBarcode = "5901234123457",
+                            ProductCategoryId = new Guid("40c29595-cbfe-4226-bbd4-61ac6874ffbc"),
+                            ProductDescription = "The UltraBook 2023 is an ultra-thin and lightweight laptop, weighing just 1.2kg, with a 14-inch 2.5K resolution display. It is equipped with a 12th Gen Intel Core i7 processor, 16GB of RAM, and a 512GB SSD. With up to 12 hours of battery life and Thunderbolt 4 connectivity, it is perfect for mobile work and entertainment.",
+                            ProductName = "Ford Mustang",
+                            Status = "Active",
+                            UpdatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 0, 36, 40, 0, DateTimeKind.Unspecified), new TimeSpan(0, 7, 0, 0, 0))
+                        },
+                        new
+                        {
+                            Id = new Guid("e9a7beda-ff63-4ac5-92cb-b7fa152c41c2"),
+                            BrandId = new Guid("350b60f4-40fb-499b-9358-3a06ee2ff5f7"),
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 0, 36, 40, 0, DateTimeKind.Unspecified), new TimeSpan(0, 7, 0, 0, 0)),
+                            ProductBarcode = "4006381333931",
+                            ProductCategoryId = new Guid("6e8f9461-9115-4847-83b9-60067db961ab"),
+                            ProductDescription = "The Mirrorless Alpha Z9 is the perfect choice for professional photographers. With a 45MP full-frame sensor, 6K video recording, and 5-axis image stabilization, this camera delivers sharp and true-to-life image quality. It also offers a continuous shooting speed of up to 20 frames per second.",
+                            ProductName = "Volkswagen Golf",
+                            Status = "Active",
+                            UpdatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 0, 36, 40, 0, DateTimeKind.Unspecified), new TimeSpan(0, 7, 0, 0, 0))
+                        },
+                        new
+                        {
+                            Id = new Guid("f5fd6ee3-a8b6-452c-9042-146e8afc875f"),
+                            BrandId = new Guid("abadc9e1-c8e6-4f40-b078-47f609d1cf79"),
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 0, 36, 40, 0, DateTimeKind.Unspecified), new TimeSpan(0, 7, 0, 0, 0)),
+                            ProductBarcode = "9780201379624",
+                            ProductCategoryId = new Guid("4584997b-918a-4422-90d9-434bf2315458"),
+                            ProductDescription = "The SoundWave 360 Smart Speaker features an integrated AI virtual assistant and supports voice control. With 360-degree surround sound and 50W of power, it delivers an immersive audio experience. It connects wirelessly via Bluetooth 5.0 and Wi-Fi, and is compatible with smart home devices.",
+                            ProductName = "Honda Civic",
+                            Status = "Active",
+                            UpdatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 0, 36, 40, 0, DateTimeKind.Unspecified), new TimeSpan(0, 7, 0, 0, 0))
+                        });
                 });
 
             modelBuilder.Entity("GarageManagementAPI.Entities.Models.ProductAtGarage", b =>
@@ -3571,6 +3630,32 @@ namespace GarageManagementAPI.Application.Migrations
                         .IsUnique();
 
                     b.ToTable("ProductCategory", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("cee5a4d8-de84-4482-9da9-302e2290cb0f"),
+                            Category = "Electronics",
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 0, 36, 40, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            Status = "0",
+                            UpdatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 0, 36, 40, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0))
+                        },
+                        new
+                        {
+                            Id = new Guid("e9a7beda-ff63-4ac5-92cb-b7fa152c41c2"),
+                            Category = "Clothing",
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 0, 36, 40, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            Status = "0",
+                            UpdatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 0, 36, 40, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0))
+                        },
+                        new
+                        {
+                            Id = new Guid("f5fd6ee3-a8b6-452c-9042-146e8afc875f"),
+                            Category = "Home & Kitchen",
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 0, 36, 40, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            Status = "0",
+                            UpdatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 0, 36, 40, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0))
+                        });
                 });
 
             modelBuilder.Entity("GarageManagementAPI.Entities.Models.ProductHistory", b =>
@@ -3603,6 +3688,71 @@ namespace GarageManagementAPI.Application.Migrations
                     b.HasIndex(new[] { "ProductId" }, "producthistory_productid_index");
 
                     b.ToTable("ProductHistory", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("e9a0d0d3-3a43-406a-b465-b630c5d93f6f"),
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 0, 36, 40, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            ProductId = new Guid("f5fd6ee3-a8b6-452c-9042-146e8afc875f"),
+                            ProductPrice = 500m,
+                            Status = "None",
+                            UpdatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0))
+                        },
+                        new
+                        {
+                            Id = new Guid("22d61e55-50e5-4dcd-bf40-209fc2fcae12"),
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 0, 36, 40, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            ProductId = new Guid("cee5a4d8-de84-4482-9da9-302e2290cb0f"),
+                            ProductPrice = 520m,
+                            Status = "None",
+                            UpdatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0))
+                        },
+                        new
+                        {
+                            Id = new Guid("72d247fb-5249-4ce1-a400-fce2559e7db0"),
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 0, 36, 40, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            ProductId = new Guid("ac103ccc-bd82-44ca-adb7-5b478b95965a"),
+                            ProductPrice = 1200m,
+                            Status = "None",
+                            UpdatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0))
+                        },
+                        new
+                        {
+                            Id = new Guid("e5e319f9-ef2a-4ab7-a847-5f0d3c7a1caf"),
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 0, 36, 40, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            ProductId = new Guid("1c1ffd05-3b06-48bf-b78c-86b6ef2d3cef"),
+                            ProductPrice = 150m,
+                            Status = "None",
+                            UpdatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0))
+                        },
+                        new
+                        {
+                            Id = new Guid("537c1813-334d-41c0-987b-0ed1509475f7"),
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 0, 36, 40, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            ProductId = new Guid("e9a7beda-ff63-4ac5-92cb-b7fa152c41c2"),
+                            ProductPrice = 200m,
+                            Status = "None",
+                            UpdatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0))
+                        },
+                        new
+                        {
+                            Id = new Guid("2254581b-c244-4c41-b5e4-c353629c2105"),
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 0, 36, 40, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            ProductId = new Guid("1c1ffd05-3b06-48bf-b78c-86b6ef2d3cef"),
+                            ProductPrice = 300m,
+                            Status = "None",
+                            UpdatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0))
+                        },
+                        new
+                        {
+                            Id = new Guid("97b8ca2f-9784-4262-a57e-5695f3f0f642"),
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 0, 36, 40, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            ProductId = new Guid("ac103ccc-bd82-44ca-adb7-5b478b95965a"),
+                            ProductPrice = 450m,
+                            Status = "None",
+                            UpdatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0))
+                        });
                 });
 
             modelBuilder.Entity("GarageManagementAPI.Entities.Models.ProductImage", b =>
@@ -3639,6 +3789,58 @@ namespace GarageManagementAPI.Application.Migrations
                     b.HasIndex(new[] { "ProductId" }, "productimage_productid_index");
 
                     b.ToTable("ProductImage", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("71bd8b35-0d22-4783-8638-78eb48bd5629"),
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 0, 36, 40, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            ImageId = "N/A",
+                            ImageLink = "https://example.com/images/1.jpg",
+                            ProductId = new Guid("f5fd6ee3-a8b6-452c-9042-146e8afc875f"),
+                            Status = "0",
+                            UpdatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 0, 36, 40, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0))
+                        },
+                        new
+                        {
+                            Id = new Guid("91f09ff2-24ed-4d60-b3c5-5e76204a90ff"),
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 0, 36, 40, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            ImageId = "N/A",
+                            ImageLink = "https://example.com/images/2.jpg",
+                            ProductId = new Guid("cee5a4d8-de84-4482-9da9-302e2290cb0f"),
+                            Status = "0",
+                            UpdatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 0, 36, 40, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0))
+                        },
+                        new
+                        {
+                            Id = new Guid("867a1f57-a7dc-4d8a-95f0-9b1e1b086809"),
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 0, 36, 40, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            ImageId = "N/A",
+                            ImageLink = "https://example.com/images/3.jpg",
+                            ProductId = new Guid("ac103ccc-bd82-44ca-adb7-5b478b95965a"),
+                            Status = "0",
+                            UpdatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 0, 36, 40, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0))
+                        },
+                        new
+                        {
+                            Id = new Guid("b3126c73-0e1e-40fd-8dec-f7c4d2789dd9"),
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 0, 36, 40, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            ImageId = "N/A",
+                            ImageLink = "https://example.com/images/4.jpg",
+                            ProductId = new Guid("1c1ffd05-3b06-48bf-b78c-86b6ef2d3cef"),
+                            Status = "0",
+                            UpdatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 0, 36, 40, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0))
+                        },
+                        new
+                        {
+                            Id = new Guid("306fd99b-7914-4c4d-a92b-f3d998f3b772"),
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 0, 36, 40, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            ImageId = "N/A",
+                            ImageLink = "https://example.com/images/5.jpg",
+                            ProductId = new Guid("e9a7beda-ff63-4ac5-92cb-b7fa152c41c2"),
+                            Status = "0",
+                            UpdatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 0, 36, 40, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0))
+                        });
                 });
 
             modelBuilder.Entity("GarageManagementAPI.Entities.Models.ReplacementPart", b =>

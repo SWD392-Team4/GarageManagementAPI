@@ -13,6 +13,7 @@ namespace GarageManagementAPI.Repository.Contracts
         IProductCategoryRepository ProductCategory { get; }
         IProductImageRepository ProductImage { get; }
         IServiceRepository Service { get; }
+        IServiceImageRepository ServiceImage { get; }
         ICarPartRepository CarPart { get; }
         ICarPartCategoryRepository CarPartCategory { get; }
         ICarCategoryRepository CarCategory { get; }

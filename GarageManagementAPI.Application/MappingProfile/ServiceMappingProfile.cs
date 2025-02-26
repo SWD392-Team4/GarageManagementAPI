@@ -19,7 +19,13 @@ namespace GarageManagementAPI.Application.MappingProfile
                            {
                                otps.PreCondition(s => s.CarPart.PartName != null);
                                otps.MapFrom(s => s.CarPart!.PartName);
-                           });
+                           })
+                .ForMember(dest => dest.ImageLink, otp =>
+                {
+                    otp.PreCondition(src => src.ServiceImage != null && src.ServiceImage.Any());
+                    otp.MapFrom(src => src.ServiceImage.Select(e => e.ImageLink).ToList());
+                })
+                ;
             CreateMap<ServiceDtoForCreation, Entities.Models.Service>();
             CreateMap<ServiceDtoForUpdate, Entities.Models.Service>().ReverseMap();
             CreateMap<ServiceDtoForManipulation, Entities.Models.Service>();

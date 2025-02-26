@@ -6,6 +6,7 @@ using GarageManagementAPI.Service.Contracts;
 using GarageManagementAPI.Shared.RequestFeatures;
 using GarageManagementAPI.Presentation.Extensions;
 using GarageManagementAPI.Shared.DataTransferObjects.Service;
+using Microsoft.AspNetCore.Http;
 
 namespace GarageManagementAPI.Presentation.Controllers
 {
@@ -44,7 +45,7 @@ namespace GarageManagementAPI.Presentation.Controllers
         public async Task<IActionResult> GetServiceById(Guid serviceId)
         {
             var include = "CarCategory, CarPart";
-            var setviceResult = await _service.ServiceService.GetServiceAsync(serviceId, trackChanges: false);
+            var setviceResult = await _service.ServiceService.GetServiceAsync(serviceId, trackChanges: false, include);
 
             return setviceResult.Map(
                 onSuccess: Ok,
@@ -71,6 +72,35 @@ namespace GarageManagementAPI.Presentation.Controllers
                 },
                 onFailure: ProcessError
                 );
+        }
+
+        [HttpPost("{serviceId:guid}/images", Name = "Create service image")]
+        public async Task<IActionResult> CreateServiceImage(Guid serviceId, [FromForm] List<IFormFile> fileDtos)
+        {
+            var serviceExists = await _service.ServiceService.GetServiceAsync(serviceId, false);
+            if (!serviceExists.IsSuccess) return serviceExists.Map(onSuccess: Ok,
+                                                                   onFailure: ProcessError);
+            if (fileDtos == null || !fileDtos.Any())
+            {
+                return BadRequest("No files were uploaded.");
+            }
+            var createdServiceImages = new List<object>();
+            foreach (var fileDto in fileDtos)
+            {
+                var uploadFileResult = await _service.MediaService.UploadProductImageAsync(fileDto);
+
+                if (!uploadFileResult.IsSuccess) return ProcessError(uploadFileResult);
+
+                var imgTuple = uploadFileResult.GetValue<(string? publicId, string? absoluteUrl)>();
+
+                var updateResult = await _service.ProductImageService.CreateProductImageAsync(serviceId, imgTuple.publicId!, imgTuple.absoluteUrl!);
+
+                if (!updateResult.IsSuccess) return ProcessError(updateResult);
+
+                createdServiceImages.Add(updateResult.Value!.ImageLink);
+            }
+
+            return Ok(createdServiceImages);
         }
 
         /// <summary>

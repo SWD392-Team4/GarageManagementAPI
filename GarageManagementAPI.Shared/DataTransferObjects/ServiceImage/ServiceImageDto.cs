@@ -3,7 +3,7 @@ using GarageManagementAPI.Shared.Enums.SystemStatuss;
 
 namespace GarageManagementAPI.Shared.DataTransferObjects.ServiceImage
 {
-    public record class ServiceImageDto
+    public record class ServiceImageDto : BaseDto<ServiceImageDto>
     {
         public Guid ServiceId { get; set; }
         public string Link { get; set; } = null!;

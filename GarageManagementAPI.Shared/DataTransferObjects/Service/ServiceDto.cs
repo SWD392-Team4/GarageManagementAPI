@@ -13,6 +13,7 @@ namespace GarageManagementAPI.Shared.DataTransferObjects.Service
         public string WorkNature { get; set; } = null!;
         public string Action { get; set; } = null!;
         public string Description { get; set; } = null!;
+        public List<string>? ImageLink { get; set; }
         public int EstimatedHours { get; set; }
         [EnumDataType(typeof(ServiceStatus))]
         public ServiceStatus Status { get; set; }

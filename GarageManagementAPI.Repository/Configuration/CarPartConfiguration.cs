@@ -122,6 +122,15 @@ namespace GarageManagementAPI.Repository.Configuration
                     Status = CarPartStatus.Inactive,
                     CreatedAt = DateTimeOffset.Parse("2025-02-26T00:00:00Z"),
                     UpdatedAt = DateTimeOffset.Parse("2025-02-26T00:00:00Z")
+                },
+                new CarPart()
+                {
+                    Id = new Guid("d263567a-41b2-407d-b40d-6bad18eb32ca"),
+                    CarPartCategoryId = new Guid("47cc8b19-70ce-46f3-aef9-eb933eea2182"), // Engine Parts
+                    PartName = "Engine Oill",
+                    Status = CarPartStatus.Active,
+                    CreatedAt = DateTimeOffset.Parse("2025-02-26T00:00:00Z"),
+                    UpdatedAt = DateTimeOffset.Parse("2025-02-26T00:00:00Z")
                 }
             );
         }

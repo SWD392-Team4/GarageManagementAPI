@@ -18,8 +18,8 @@ namespace GarageManagementAPI.Repository.Configuration
             entity.Property(e => e.ImageLink).HasMaxLength(255);
             entity.Property(e => e.Status).HasMaxLength(255);
 
-            entity.HasOne(d => d.IdNavigation).WithOne(p => p.ServiceImage)
-                .HasForeignKey<ServiceImage>(d => d.Id)
+            entity.HasOne(d => d.IdNavigation).WithMany(p => p.ServiceImage)
+                .HasForeignKey(d => d.ServiceId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("serviceimage_id_foreign");
 

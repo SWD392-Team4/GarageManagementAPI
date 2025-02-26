@@ -39,7 +39,7 @@ namespace GarageManagementAPI.Entities.Models
 
         public virtual ICollection<ServiceHistory> ServiceHistories { get; set; } = new List<ServiceHistory>();
 
-        public virtual ServiceImage? ServiceImage { get; set; }
+        public virtual ICollection<ServiceImage> ServiceImage { get; set; } = new List<ServiceImage>();
     }
 
 }
