@@ -1,8 +1,8 @@
-﻿using GarageManagementAPI.Entities.Models;
+﻿using Microsoft.EntityFrameworkCore;
+using GarageManagementAPI.Entities.Models;
 using GarageManagementAPI.Repository.Contracts;
-using GarageManagementAPI.Shared.RequestFeatures;
-using Microsoft.EntityFrameworkCore;
 using GarageManagementAPI.Repository.Extensions;
+using GarageManagementAPI.Shared.RequestFeatures;
 
 namespace GarageManagementAPI.Repository
 {

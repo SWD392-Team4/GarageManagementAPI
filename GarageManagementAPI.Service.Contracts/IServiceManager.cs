@@ -2,36 +2,24 @@
 {
     public interface IServiceManager
     {
-        IWorkplaceService WorkplaceService { get; }
-
-        IAuthenticationService AuthenticationService { get; }
-
-        IEmployeeInfoService EmployeeInfoService { get; }
-
-        IUserService UserService { get; }
-
         IMailService MailService { get; }
-
+        IUserService UserService { get; }
         IBrandService BrandService { get; }
-
-        IProductService ProductService { get; }
-
-        IProductHistoryService ProductHistoryService { get; }
-
-        IProductCategoryService ProductCategoryService { get; }
-
-        IProductImageService ProductImageService { get; }
-
-        IServiceService ServiceService { get; }
-
-        ICarPartService CarPartService { get; }
-
-        ICarPartCategoryService CarPartCategoryService { get; }
-
         IMediaService MediaService { get; }
-
+        IServiceService ServiceService { get; }
+        IProductService ProductService { get; }
+        ICarPartService CarPartService { get; }
         ICarModelService CarModelService { get; }
-
+        IWorkplaceService WorkplaceService { get; }
         ICarCategoryService CarCategoryService { get; }
+        IServiceImageService ServiceImageService { get; }
+        IEmployeeInfoService EmployeeInfoService { get; }
+        IProductImageService ProductImageService { get; }
+        IProductHistoryService ProductHistoryService { get; }
+        IServiceHistoryService ServiceHistoryService { get; }
+        IAuthenticationService AuthenticationService { get; }
+        IProductCategoryService ProductCategoryService { get; }
+        ICarPartCategoryService CarPartCategoryService { get; }
+       
     }
 }

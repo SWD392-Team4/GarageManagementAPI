@@ -43,13 +43,5 @@ namespace GarageManagementAPI.Service
 
             return Result<IEnumerable<ExpandoObject>>.Ok(productsShaped, productsWithMetadata.MetaData);
         }
-        private async Task<Result<Product>> GetAndCheckIfProductExist(Guid productId, bool trackChanges, string? include = null)
-        {
-            var product = await _repoManager.Product.GetProductByIdAsync(productId, trackChanges, include);
-            if (product == null)
-                return product.NotFoundId(productId);
-
-            return product.OkResult();
-        }
     }
 }

@@ -7,6 +7,7 @@ namespace GarageManagementAPI.Repository.Contracts
     {
         Task<Service?> GetServiceByIdAsync(Guid serviceId, bool trackChanges, string? include = default);
         public Task<Service?> GetServiceByIdAndNameAsync(string name, Guid? serviceId, bool trackChanges);
+        public Task<Service?> GetServiceByServiceIdAndCarCategoryId(Guid serviceId, Guid carparCategoryId, bool trackChanges, string? include = default);
         Task<PagedList<Service>> GetServicesAsync(ServiceParameters serviceParameters, bool trackChanges, string? include = default);
         Task CreateServiceAsync(Service service);
         void UpdateServiceAsync(Service service);

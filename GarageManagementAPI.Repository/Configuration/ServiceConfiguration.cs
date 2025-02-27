@@ -1,6 +1,7 @@
 ﻿using GarageManagementAPI.Entities.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using System;
 
 namespace GarageManagementAPI.Repository.Configuration
 {
@@ -37,112 +38,151 @@ namespace GarageManagementAPI.Repository.Configuration
             entity.Property(e => e.Status)
                 .HasConversion<string>();
         }
-
-        protected override void SeedData(EntityTypeBuilder<Service> entity)
+      /*  protected override void SeedData(EntityTypeBuilder<Service> entity)
         {
             entity.HasData(
-                new Service()
-                {
-                    Id = new Guid("7d0e4fb5-6e8e-48fc-ba2b-daa570f5f96f"),
-                    CarPartId = Guid.Parse("82B56CC1-7122-46EC-817E-B06CD0747F55"),
-                    CarCategoryId = Guid.Parse("89BD23DE-98F2-4DE2-A753-403789911119"),
-                    ServiceCategory = "Maintenance",
-                    ServiceName = "Oil Change",
-                    WorkNature = "Routine",
-                    Action = "Replace",
-                    Description = "Replace engine oil and oil filter",
-                    EstimatedHours = 1,
-                    CreatedAt = DateTimeOffset.UtcNow,
-                    UpdatedAt = DateTimeOffset.UtcNow
-                },
-                new Service()
-                {
-                    Id = new Guid("fa7fab24-c298-43cf-b990-341b29a02996"),
-                    CarPartId = Guid.Parse("45CDFEF2-2B7D-48AA-B8FA-F95C0AA194AD"),
-                    CarCategoryId = Guid.Parse("1D25E83B-925E-472A-89D9-38C499DBFDEA"),
-                    ServiceCategory = "Repair",
-                    ServiceName = "Brake Pad Replacement",
-                    WorkNature = "Safety",
-                    Action = "Replace",
-                    Description = "Replace worn-out brake pads",
-                    EstimatedHours = 2,
-                    CreatedAt = DateTimeOffset.UtcNow,
-                    UpdatedAt = DateTimeOffset.UtcNow
-                },
-                new Service()
-                {
-                    Id = new Guid("6a927f4f-cc77-4d6d-963f-96a14a6a4fa9"),
-                    CarPartId = Guid.Parse("82B56CC1-7122-46EC-817E-B06CD0747F55"),
-                    CarCategoryId = Guid.Parse("F5BF5757-92B6-4CC2-B86B-1995F28D3FB6"),
-                    ServiceCategory = "Repair",
-                    ServiceName = "Shock Absorber Replacement",
-                    WorkNature = "Performance",
-                    Action = "Replace",
-                    Description = "Replace faulty shock absorbers",
-                    EstimatedHours = 3,
-                    CreatedAt = DateTimeOffset.UtcNow,
-                    UpdatedAt = DateTimeOffset.UtcNow
-                },
-                new Service()
-                {
-                    Id = new Guid("6ebc86c7-82e2-4ce4-b613-ebaac626bd18"),
-                    CarPartId = Guid.Parse("82B56CC1-7122-46EC-817E-B06CD0747F55"),
-                    CarCategoryId = Guid.Parse("506B4F2F-68F7-4B69-AB81-1242DE996A18"),
-                    ServiceCategory = "Repair",
-                    ServiceName = "Clutch Replacement",
-                    WorkNature = "Performance",
-                    Action = "Replace",
-                    Description = "Replace worn-out clutch kit",
-                    EstimatedHours = 4,
-                    CreatedAt = DateTimeOffset.UtcNow,
-                    UpdatedAt = DateTimeOffset.UtcNow
-                },
-                new Service()
-                {
-                    Id = new Guid("0be257e7-856d-48d6-ab5a-f984a75b67d5"),
-                    CarPartId = Guid.Parse("45CDFEF2-2B7D-48AA-B8FA-F95C0AA194AD"),
-                    CarCategoryId = Guid.Parse("B8E9B4D0-8B60-451A-9810-1132482A0D92"),
-                    ServiceCategory = "Maintenance",
-                    ServiceName = "Battery Replacement",
-                    WorkNature = "Safety",
-                    Action = "Replace",
-                    Description = "Replace old battery with a new one",
-                    EstimatedHours = 1,
-                    CreatedAt = DateTimeOffset.UtcNow,
-                    UpdatedAt = DateTimeOffset.UtcNow
-                },
-                new Service()
-                {
-                    Id = new Guid("ff884ca0-1e63-4bc1-84a1-4048a6eb627e"),
-                    CarPartId = Guid.Parse("45CDFEF2-2B7D-48AA-B8FA-F95C0AA194AD"),
-                    CarCategoryId = Guid.Parse("61A22FFB-C41D-4365-B067-11213E5579F9"),
-                    ServiceCategory = "Repair",
-                    ServiceName = "Muffler Replacement",
-                    WorkNature = "Performance",
-                    Action = "Replace",
-                    Description = "Replace damaged muffler",
-                    EstimatedHours = 2,
-                    CreatedAt = DateTimeOffset.UtcNow,
-                    UpdatedAt = DateTimeOffset.UtcNow
-                },
-                new Service()
-                {
-                    Id = new Guid("8d86d786-c02d-43a6-9b3f-3ef15761ba71"),
-                    CarPartId = Guid.Parse("82B56CC1-7122-46EC-817E-B06CD0747F55"),
-                    CarCategoryId = Guid.Parse("6F9E4206-D0A0-4366-A997-094827005006"),
-                    ServiceCategory = "Repair",
-                    ServiceName = "Radiator Replacement",
-                    WorkNature = "Performance",
-                    Action = "Replace",
-                    Description = "Replace leaking radiator",
-                    EstimatedHours = 3,
-                    CreatedAt = DateTimeOffset.UtcNow,
-                    UpdatedAt = DateTimeOffset.UtcNow
-                }
-            );
-        }
-
-
+    new Service()
+    {
+        Id = Guid.NewGuid(),
+        CarPartId = Guid.Parse("350B60F4-40FB-499B-9358-3A06EE2FF5F7"),
+        CarCategoryId = Guid.Parse("69246D30-53C9-4804-A89B-F692919172DE"),
+        ServiceCategory = "Transmission",
+        ServiceName = "Transmission Fluid Change",
+        WorkNature = "Regular Maintenance",
+        Action = "Replace Transmission Fluid",
+        Description = "Changing transmission fluid to ensure smooth gear shifts.",
+        EstimatedHours = 2,
+        CreatedAt = DateTimeOffset.Parse("2/25/2025 12:36:40 AM +07:00"),
+        UpdatedAt = DateTimeOffset.Parse("2/25/2025 12:36:40 AM +07:00")
+    },
+    new Service()
+    {
+        Id = Guid.NewGuid(),
+        CarPartId = Guid.Parse("ABADC9E1-C8E6-4F40-B078-47F609D1CF79"),
+        CarCategoryId = Guid.Parse("B88688EC-8E1C-46A2-999F-F1B8E92B8F24"),
+        ServiceCategory = "Electrical System",
+        ServiceName = "Battery Replacement",
+        WorkNature = "Replacement",
+        Action = "Replace Car Battery",
+        Description = "Replacing old battery with a new one to ensure proper electrical function.",
+        EstimatedHours = 1,
+        CreatedAt = DateTimeOffset.Parse("2/25/2025 12:36:40 AM +07:00"),
+        UpdatedAt = DateTimeOffset.Parse("2/25/2025 12:36:40 AM +07:00")
+    },
+    new Service()
+    {
+        Id = Guid.NewGuid(),
+        CarPartId = Guid.Parse("84062C49-1FE2-4B97-86C4-49E4D0F5449B"),
+        CarCategoryId = Guid.Parse("A0EEB005-F9E8-49FA-AD32-DE352A0A04AB"),
+        ServiceCategory = "Cooling System",
+        ServiceName = "Radiator Flush",
+        WorkNature = "Maintenance",
+        Action = "Flush Radiator",
+        Description = "Flushing the radiator to remove debris and old coolant.",
+        EstimatedHours = 2,
+        CreatedAt = DateTimeOffset.Parse("2/25/2025 12:36:40 AM +07:00"),
+        UpdatedAt = DateTimeOffset.Parse("2/25/2025 12:36:40 AM +07:00")
+    },
+    new Service()
+    {
+        Id = Guid.NewGuid(),
+        CarPartId = Guid.Parse("D263567A-41B2-407D-B40D-6BAD18EB32CA"),
+        CarCategoryId = Guid.Parse("2D31F83E-1508-48AB-934C-93D46266B57B"),
+        ServiceCategory = "Exhaust System",
+        ServiceName = "Muffler Replacement",
+        WorkNature = "Repair",
+        Action = "Replace Muffler",
+        Description = "Replacing the muffler to reduce noise and improve exhaust flow.",
+        EstimatedHours = 2,
+        CreatedAt = DateTimeOffset.Parse("2/25/2025 12:36:40 AM +07:00"),
+        UpdatedAt = DateTimeOffset.Parse("2/25/2025 12:36:40 AM +07:00")
+    },
+    new Service()
+    {
+        Id = Guid.NewGuid(),
+        CarPartId = Guid.Parse("855F8A55-C9D0-4532-81EE-6DA2BD0DB1F6"),
+        CarCategoryId = Guid.Parse("E0101BA3-DF29-4DF3-A0D1-68BB0853A86B"),
+        ServiceCategory = "Tires",
+        ServiceName = "Tire Rotation",
+        WorkNature = "Regular Maintenance",
+        Action = "Rotate Tires",
+        Description = "Rotating tires to ensure even wear and extend tire life.",
+        EstimatedHours = 1,
+        CreatedAt = DateTimeOffset.Parse("2/25/2025 12:36:40 AM +07:00"),
+        UpdatedAt = DateTimeOffset.Parse("2/25/2025 12:36:40 AM +07:00")
+    },
+    new Service()
+    {
+        Id = Guid.NewGuid(),
+        CarPartId = Guid.Parse("1C1FFD05-3B06-48BF-B78C-86B6EF2D3CEF"),
+        CarCategoryId = Guid.Parse("47B2CCC3-0570-4D9A-ACBE-4D95D03001C7"),
+        ServiceCategory = "Air Conditioning",
+        ServiceName = "AC Recharge",
+        WorkNature = "Maintenance",
+        Action = "Recharge AC System",
+        Description = "Recharging the AC system to restore cooling efficiency.",
+        EstimatedHours = 1,
+        CreatedAt = DateTimeOffset.Parse("2/25/2025 12:36:40 AM +07:00"),
+        UpdatedAt = DateTimeOffset.Parse("2/25/2025 12:36:40 AM +07:00")
+    },
+    new Service()
+    {
+        Id = Guid.NewGuid(),
+        CarPartId = Guid.Parse("0131E761-BDEB-4FD0-8ABA-B3CC0769D0C4"),
+        CarCategoryId = Guid.Parse("2EAED576-3F1E-43AA-B92D-4B45990DF71F"),
+        ServiceCategory = "Fuel System",
+        ServiceName = "Fuel Filter Replacement",
+        WorkNature = "Maintenance",
+        Action = "Replace Fuel Filter",
+        Description = "Replacing the fuel filter to ensure clean fuel delivery to the engine.",
+        EstimatedHours = 1,
+        CreatedAt = DateTimeOffset.Parse("2/25/2025 12:36:40 AM +07:00"),
+        UpdatedAt = DateTimeOffset.Parse("2/25/2025 12:36:40 AM +07:00")
+    },
+    new Service()
+    {
+        Id = Guid.NewGuid(),
+        CarPartId = Guid.Parse("2C74B21A-5EC4-4DCE-B376-B6B0601D7A84"),
+        CarCategoryId = Guid.Parse("12CA3969-C9FF-4B3E-91D0-1FE421C9D2F4"),
+        ServiceCategory = "Lighting",
+        ServiceName = "Headlight Bulb Replacement",
+        WorkNature = "Replacement",
+        Action = "Replace Headlight Bulb",
+        Description = "Replacing a burnt-out headlight bulb to ensure proper visibility.",
+        EstimatedHours = 1,
+        CreatedAt = DateTimeOffset.Parse("2/25/2025 12:36:40 AM +07:00"),
+        UpdatedAt = DateTimeOffset.Parse("2/25/2025 12:36:40 AM +07:00")
+    },
+    new Service()
+    {
+        Id = Guid.NewGuid(),
+        CarPartId = Guid.Parse("4B3039F3-B460-46BE-AA39-E43D4C29AF19"),
+        CarCategoryId = Guid.Parse("D8123055-C15D-4932-90BA-127E415C36B4"),
+        ServiceCategory = "Windscreen",
+        ServiceName = "Windscreen Wiper Replacement",
+        WorkNature = "Replacement",
+        Action = "Replace Windscreen Wipers",
+        Description = "Replacing worn-out windscreen wipers to ensure clear visibility during rain.",
+        EstimatedHours = 1,
+        CreatedAt = DateTimeOffset.Parse("2/25/2025 12:36:40 AM +07:00"),
+        UpdatedAt = DateTimeOffset.Parse("2/25/2025 12:36:40 AM +07:00")
+    },
+    new Service()
+    {
+        Id = Guid.NewGuid(),
+        CarPartId = Guid.Parse("4B3039F3-B460-46BE-AA39-E43D4C29AF19"),
+        CarCategoryId = Guid.Parse("AB9B4F29-FEA5-4D09-A0B3-02DD5DEDC6E5"),
+        ServiceCategory = "Interior",
+        ServiceName = "Cabin Air Filter Replacement",
+        WorkNature = "Maintenance",
+        Action = "Replace Cabin Air Filter",
+        Description = "Replacing the cabin air filter to improve air quality inside the vehicle.",
+        EstimatedHours = 1,
+        CreatedAt = DateTimeOffset.Parse("2/25/2025 12:36:40 AM +07:00"),
+        UpdatedAt = DateTimeOffset.Parse("2/25/2025 12:36:40 AM +07:00")
+    }
+);
+        }*/
     }
 }
 

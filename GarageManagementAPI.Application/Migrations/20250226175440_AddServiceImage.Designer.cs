@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GarageManagementAPI.Application.Migrations
 {
     [DbContext(typeof(RepositoryContext))]
-    [Migration("20250225195215_SeedDataService")]
-    partial class SeedDataService
+    [Migration("20250226175440_AddServiceImage")]
+    partial class AddServiceImage
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -2337,6 +2337,15 @@ namespace GarageManagementAPI.Application.Migrations
                             PartName = "Exhaust Pipe",
                             Status = "Inactive",
                             UpdatedAt = new DateTimeOffset(new DateTime(2025, 2, 26, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0))
+                        },
+                        new
+                        {
+                            Id = new Guid("d263567a-41b2-407d-b40d-6bad18eb32ca"),
+                            CarPartCategoryId = new Guid("47cc8b19-70ce-46f3-aef9-eb933eea2182"),
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 26, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            PartName = "Engine Oill",
+                            Status = "Active",
+                            UpdatedAt = new DateTimeOffset(new DateTime(2025, 2, 26, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0))
                         });
                 });
 
@@ -3995,113 +4004,6 @@ namespace GarageManagementAPI.Application.Migrations
                         .IsUnique();
 
                     b.ToTable("Service", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            Id = new Guid("7d0e4fb5-6e8e-48fc-ba2b-daa570f5f96f"),
-                            Action = "Replace",
-                            CarCategoryId = new Guid("89bd23de-98f2-4de2-a753-403789911119"),
-                            CarPartId = new Guid("82b56cc1-7122-46ec-817e-b06cd0747f55"),
-                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 19, 52, 13, 892, DateTimeKind.Unspecified).AddTicks(6446), new TimeSpan(0, 0, 0, 0, 0)),
-                            Description = "Replace engine oil and oil filter",
-                            EstimatedHours = 1,
-                            ServiceCategory = "Maintenance",
-                            ServiceName = "Oil Change",
-                            Status = "0",
-                            UpdatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 19, 52, 13, 892, DateTimeKind.Unspecified).AddTicks(6604), new TimeSpan(0, 0, 0, 0, 0)),
-                            WorkNature = "Routine"
-                        },
-                        new
-                        {
-                            Id = new Guid("fa7fab24-c298-43cf-b990-341b29a02996"),
-                            Action = "Replace",
-                            CarCategoryId = new Guid("1d25e83b-925e-472a-89d9-38c499dbfdea"),
-                            CarPartId = new Guid("45cdfef2-2b7d-48aa-b8fa-f95c0aa194ad"),
-                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 19, 52, 13, 892, DateTimeKind.Unspecified).AddTicks(6756), new TimeSpan(0, 0, 0, 0, 0)),
-                            Description = "Replace worn-out brake pads",
-                            EstimatedHours = 2,
-                            ServiceCategory = "Repair",
-                            ServiceName = "Brake Pad Replacement",
-                            Status = "0",
-                            UpdatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 19, 52, 13, 892, DateTimeKind.Unspecified).AddTicks(6756), new TimeSpan(0, 0, 0, 0, 0)),
-                            WorkNature = "Safety"
-                        },
-                        new
-                        {
-                            Id = new Guid("6a927f4f-cc77-4d6d-963f-96a14a6a4fa9"),
-                            Action = "Replace",
-                            CarCategoryId = new Guid("f5bf5757-92b6-4cc2-b86b-1995f28d3fb6"),
-                            CarPartId = new Guid("82b56cc1-7122-46ec-817e-b06cd0747f55"),
-                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 19, 52, 13, 892, DateTimeKind.Unspecified).AddTicks(6765), new TimeSpan(0, 0, 0, 0, 0)),
-                            Description = "Replace faulty shock absorbers",
-                            EstimatedHours = 3,
-                            ServiceCategory = "Repair",
-                            ServiceName = "Shock Absorber Replacement",
-                            Status = "0",
-                            UpdatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 19, 52, 13, 892, DateTimeKind.Unspecified).AddTicks(6765), new TimeSpan(0, 0, 0, 0, 0)),
-                            WorkNature = "Performance"
-                        },
-                        new
-                        {
-                            Id = new Guid("6ebc86c7-82e2-4ce4-b613-ebaac626bd18"),
-                            Action = "Replace",
-                            CarCategoryId = new Guid("506b4f2f-68f7-4b69-ab81-1242de996a18"),
-                            CarPartId = new Guid("82b56cc1-7122-46ec-817e-b06cd0747f55"),
-                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 19, 52, 13, 892, DateTimeKind.Unspecified).AddTicks(6770), new TimeSpan(0, 0, 0, 0, 0)),
-                            Description = "Replace worn-out clutch kit",
-                            EstimatedHours = 4,
-                            ServiceCategory = "Repair",
-                            ServiceName = "Clutch Replacement",
-                            Status = "0",
-                            UpdatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 19, 52, 13, 892, DateTimeKind.Unspecified).AddTicks(6771), new TimeSpan(0, 0, 0, 0, 0)),
-                            WorkNature = "Performance"
-                        },
-                        new
-                        {
-                            Id = new Guid("0be257e7-856d-48d6-ab5a-f984a75b67d5"),
-                            Action = "Replace",
-                            CarCategoryId = new Guid("b8e9b4d0-8b60-451a-9810-1132482a0d92"),
-                            CarPartId = new Guid("45cdfef2-2b7d-48aa-b8fa-f95c0aa194ad"),
-                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 19, 52, 13, 892, DateTimeKind.Unspecified).AddTicks(6776), new TimeSpan(0, 0, 0, 0, 0)),
-                            Description = "Replace old battery with a new one",
-                            EstimatedHours = 1,
-                            ServiceCategory = "Maintenance",
-                            ServiceName = "Battery Replacement",
-                            Status = "0",
-                            UpdatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 19, 52, 13, 892, DateTimeKind.Unspecified).AddTicks(6777), new TimeSpan(0, 0, 0, 0, 0)),
-                            WorkNature = "Safety"
-                        },
-                        new
-                        {
-                            Id = new Guid("ff884ca0-1e63-4bc1-84a1-4048a6eb627e"),
-                            Action = "Replace",
-                            CarCategoryId = new Guid("61a22ffb-c41d-4365-b067-11213e5579f9"),
-                            CarPartId = new Guid("45cdfef2-2b7d-48aa-b8fa-f95c0aa194ad"),
-                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 19, 52, 13, 892, DateTimeKind.Unspecified).AddTicks(6782), new TimeSpan(0, 0, 0, 0, 0)),
-                            Description = "Replace damaged muffler",
-                            EstimatedHours = 2,
-                            ServiceCategory = "Repair",
-                            ServiceName = "Muffler Replacement",
-                            Status = "0",
-                            UpdatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 19, 52, 13, 892, DateTimeKind.Unspecified).AddTicks(6782), new TimeSpan(0, 0, 0, 0, 0)),
-                            WorkNature = "Performance"
-                        },
-                        new
-                        {
-                            Id = new Guid("8d86d786-c02d-43a6-9b3f-3ef15761ba71"),
-                            Action = "Replace",
-                            CarCategoryId = new Guid("6f9e4206-d0a0-4366-a997-094827005006"),
-                            CarPartId = new Guid("82b56cc1-7122-46ec-817e-b06cd0747f55"),
-                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 19, 52, 13, 892, DateTimeKind.Unspecified).AddTicks(6788), new TimeSpan(0, 0, 0, 0, 0)),
-                            Description = "Replace leaking radiator",
-                            EstimatedHours = 3,
-                            ServiceCategory = "Repair",
-                            ServiceName = "Radiator Replacement",
-                            Status = "0",
-                            UpdatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 19, 52, 13, 892, DateTimeKind.Unspecified).AddTicks(6788), new TimeSpan(0, 0, 0, 0, 0)),
-                            WorkNature = "Performance"
-                        });
                 });
 
             modelBuilder.Entity("GarageManagementAPI.Entities.Models.ServiceFeedBack", b =>
@@ -6236,8 +6138,8 @@ namespace GarageManagementAPI.Application.Migrations
             modelBuilder.Entity("GarageManagementAPI.Entities.Models.ServiceImage", b =>
                 {
                     b.HasOne("GarageManagementAPI.Entities.Models.Service", "IdNavigation")
-                        .WithOne("ServiceImage")
-                        .HasForeignKey("GarageManagementAPI.Entities.Models.ServiceImage", "Id")
+                        .WithMany("ServiceImage")
+                        .HasForeignKey("ServiceId")
                         .IsRequired()
                         .HasConstraintName("serviceimage_id_foreign");
 

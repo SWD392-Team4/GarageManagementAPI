@@ -17,18 +17,18 @@ namespace GarageManagementAPI.Repository
             await base.CreateAsync(serviceImage);
         }
 
-        public void UpdateServiceProductImg(ServiceImage serviceImage)
+        public void UpdateServiceImage(ServiceImage serviceImage)
         {
             base.Update(serviceImage);
         }
 
-        public async Task<PagedList<ServiceImage>> GetServiceImgByIdAsync(Guid serviceImageId, ServiceImageParameters serviceImageParameters, bool trackChanges, string? include = null)
+        public async Task<PagedList<ServiceImage>> GetServiceImgByIdServiceAsync(Guid serviceId, ServiceImageParameters serviceImageParameters, bool trackChanges, string? include = null)
         {
-            var imgs = await FindByCondition(sm => sm.ServiceId.Equals(serviceImageId), trackChanges)
-                           .SearchByStatus(serviceImageParameters.Status)
-                           .Sort(serviceImageParameters.OrderBy)
-                           .IsInclude(include)
-                           .ToListAsync();
+            var imgs = await FindByCondition(sm => sm.ServiceId == serviceId, trackChanges)
+                            .SearchByStatus(serviceImageParameters.Status)
+                            .Sort(serviceImageParameters.OrderBy)
+                            .IsInclude(include)
+                            .ToListAsync();
 
             return PagedList<ServiceImage>.ToPagedList(
                imgs,
@@ -37,19 +37,12 @@ namespace GarageManagementAPI.Repository
            );
         }
 
-        public Task<ServiceImage?> GetServiceImgByLinkAndIdSerciceAsync(Guid serviceImageId, bool trackChanges, string? include = null)
+        public async Task<ServiceImage?> GetServiceImgageAsync(Guid serviceImageId, bool trackChanges, string? include = null)
         {
-            throw new NotImplementedException();
-        }
-
-        public Task<ServiceImage?> GetServiceImgByStatusAndIdSerciceAsync(Guid serviceImageId, bool trackChanges, string? include = null)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<PagedList<ServiceImage>> GetServiceImgesAsync(ServiceImageParameters serviceImageParameters, bool trackChanges, string? include = null)
-        {
-            throw new NotImplementedException();
+            Console.WriteLine(serviceImageId);
+            var serviceImage = await FindByCondition(s => s.Id == serviceImageId, trackChanges).SingleOrDefaultAsync();
+            Console.WriteLine("After: " + serviceImage?.Id);
+            return serviceImage;
         }
     }
 }

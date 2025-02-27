@@ -4,9 +4,9 @@ using GarageManagementAPI.Shared.DataTransferObjects.ProductImage;
 
 namespace GarageManagementAPI.Application.MappingProfile
 {
-    public class ProductImageProfile : Profile
+    public class ProductImageMappingProfile : Profile
     {
-        public ProductImageProfile()
+        public ProductImageMappingProfile()
         {
             CreateMap<ProductImage, ProductImageDto>();
             CreateMap<ProductImageDtoForCreation, ProductImage>();

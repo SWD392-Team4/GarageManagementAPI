@@ -6,7 +6,7 @@ using GarageManagementAPI.Repository.Extensions.Utility;
 
 namespace GarageManagementAPI.Repository.Extensions
 {
-    public static class ServiceImageExtensions
+    public static class ServiceImageRepositoryExtensions
     {
         public static IQueryable<ServiceImage> SearchByStatus(this IQueryable<ServiceImage> serivices, ServiceImageStatus? status)
         {

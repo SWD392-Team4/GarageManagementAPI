@@ -1,7 +1,7 @@
 ﻿using GarageManagementAPI.Entities.Models;
-using GarageManagementAPI.Shared.DataTransferObjects.ProductImage;
 using GarageManagementAPI.Shared.ResultModel;
 using GarageManagementAPI.Shared.ErrorsConstant.ProductImg;
+using GarageManagementAPI.Shared.DataTransferObjects.ProductImage;
 
 namespace GarageManagementAPI.Service.Extension
 {

@@ -1,8 +1,8 @@
-﻿using GarageManagementAPI.Entities.Models;
-using GarageManagementAPI.Repository.Extensions.Utility;
-using GarageManagementAPI.Shared.Enums.SystemStatuss;
+﻿using System.Linq.Dynamic.Core;
 using Microsoft.EntityFrameworkCore;
-using System.Linq.Dynamic.Core;
+using GarageManagementAPI.Entities.Models;
+using GarageManagementAPI.Shared.Enums.SystemStatuss;
+using GarageManagementAPI.Repository.Extensions.Utility;
 
 
 namespace GarageManagementAPI.Repository.Extensions
@@ -37,7 +37,6 @@ namespace GarageManagementAPI.Repository.Extensions
                 var property = ProductHistory.PropertyInfos
                     .FirstOrDefault(pi => pi.Name.Equals(field.Trim(), StringComparison.InvariantCultureIgnoreCase));
 
-                // Nếu thuộc tính hợp lệ, thực hiện Include
                 if (property != null)
                 {
                         // Bao gồm các tất cả thuộc tính 
@@ -51,15 +50,13 @@ namespace GarageManagementAPI.Repository.Extensions
         public static IQueryable<ProductHistory> Sort(this IQueryable<ProductHistory> products, string? orderByQueryString)
         {
             if (string.IsNullOrWhiteSpace(orderByQueryString))
-                return products.OrderBy(p => p.ProductPrice);  // Sắp xếp mặc định theo ProductName
+                return products.OrderBy(p => p.ProductPrice);  
 
-            // Tạo biểu thức sắp xếp động từ query string
             var orderQuery = QueryBuilder.CreateOrderQuery<ProductHistory>(orderByQueryString, ProductHistory.PropertyInfos);
 
             if (string.IsNullOrWhiteSpace(orderQuery))
-                return products.OrderBy(p => p.ProductPrice);  // Nếu không có chuỗi sắp xếp hợp lệ, sắp xếp theo ProductName
+                return products.OrderBy(p => p.ProductPrice);  
 
-            // Áp dụng sắp xếp động với biểu thức đã tạo
             return products.OrderBy(orderQuery);
         }
     }
