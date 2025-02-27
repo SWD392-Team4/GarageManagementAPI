@@ -34,7 +34,7 @@ namespace GarageManagementAPI.Repository
         {
             var service = serviceId is null ?
             await FindByCondition(s => s.ServiceName.Equals(name), trackChanges).SingleOrDefaultAsync() :
-            await FindByCondition(s => s.Id.Equals(serviceId) && s.ServiceName.ToLower().Equals(name.ToLower()), trackChanges).SingleOrDefaultAsync();
+            await FindByCondition(s => !s.Id.Equals(serviceId) && s.ServiceName.ToLower().Equals(name.ToLower()), trackChanges).SingleOrDefaultAsync();
 
             return service;
         }
@@ -66,7 +66,8 @@ namespace GarageManagementAPI.Repository
 
         public async Task<Service?> GetServiceByServiceIdAndCarCategoryId(Guid serviceId, Guid carparCategoryId, bool trackChanges, string? include = null)
         {
-            var service = await FindByCondition(s => s.CarCategoryId == carparCategoryId && s.Id == serviceId, trackChanges).SingleOrDefaultAsync();
+            var service = await FindByCondition(s => s.CarCategoryId == carparCategoryId && s.Id != serviceId, trackChanges).SingleOrDefaultAsync();
+
             return service;
         }
     }

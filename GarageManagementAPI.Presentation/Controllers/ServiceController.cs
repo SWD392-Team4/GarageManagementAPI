@@ -27,7 +27,7 @@ namespace GarageManagementAPI.Presentation.Controllers
         //[Authorize(Roles = $"{nameof(SystemRole.Administrator)},{nameof(SystemRole.Cashier)}")]
         public async Task<IActionResult> GetServices([FromQuery] ServiceParameters serviceParameters)
         {
-            var include = "CarCategory, CarPart, ServiceImage";
+            var include = "CarCategory, CarPart, ServiceImage, ServiceHistories";
             var serviceResult = await _service.ServiceService.GetServicesAsync(serviceParameters, trackChanges: false, include);
 
             return serviceResult.Map(
@@ -45,13 +45,32 @@ namespace GarageManagementAPI.Presentation.Controllers
         //[Authorize(Roles = $"{nameof(SystemRole.Administrator)},{nameof(SystemRole.Cashier)}")]
         public async Task<IActionResult> GetServiceById(Guid serviceId)
         {
-            var include = "CarCategory, CarPart, ServiceImage";
+            var include = "CarCategory, CarPart, ServiceImage, ServiceHistories";
             var setviceResult = await _service.ServiceService.GetServiceAsync(serviceId, trackChanges: false, include);
 
             return setviceResult.Map(
                 onSuccess: Ok,
                 onFailure: ProcessError
                 );
+        }
+
+
+        [HttpPut("{serviceId:guid}")]
+        public async Task<IActionResult> UpdateService(Guid serviceId, [FromBody] ServiceDtoForUpdate serviceDtoForUpdate)
+        {
+            Console.WriteLine($"Received request to update service: {serviceId}");
+            Console.WriteLine("huhu");
+            var result = await _service.ServiceService
+                .UpdateService(
+                serviceId,
+                serviceDtoForUpdate,
+                trackChanges: true
+                );
+
+            return result.Map(
+                 onSuccess: Ok,
+                 onFailure: ProcessError
+                 );
         }
 
         /// <summary>
@@ -67,12 +86,9 @@ namespace GarageManagementAPI.Presentation.Controllers
             {
                 return ProcessError(createServiceResult);
             }
-           // var createdService = createServiceResult.GetValue<ServiceDto>();
+            var createdService = createServiceResult.GetValue<ServiceDto>();
 
-            return createServiceResult.Map(
-               onSuccess: Ok,
-               onFailure: ProcessError
-               );
+            return CreatedAtRoute("GetServiceById", new { serviceId = createdService.Id }, createdService);
         }
 
         [HttpPost("{serviceId:guid}/images", Name = "Create service image")]
@@ -101,27 +117,6 @@ namespace GarageManagementAPI.Presentation.Controllers
             return Ok(createdServiceImages);
         }
 
-        /// <summary>
-        /// Update service
-        /// </summary>
-        /// <param name="serviceId"></param>
-        /// <param name="serviceDtoForUpdate"></param>
-        /// <returns></returns>
-        [HttpPut("{serviceId:guid}")]
-        public async Task<IActionResult> UpdateBrand(Guid serviceId, [FromBody] ServiceDtoForUpdate serviceDtoForUpdate)
-        {
-            var result = await _service.ServiceService
-                .UpdateService(
-                serviceId: serviceId,
-                serviceDtoForUpdate: serviceDtoForUpdate,
-                trackChanges: true
-                );
-
-            return result.Map(
-                 onSuccess: Ok,
-                 onFailure: ProcessError
-                 );
-        }
         /// <summary>
         /// Update service by field
         /// </summary>

@@ -13,7 +13,7 @@ namespace GarageManagementAPI.Repository
         {
 
         }
-        public async Task CreateProductHisotoryAsync(ServiceHistory productHisotry)
+        public async Task CreateServicetHisotoryAsync(ServiceHistory productHisotry)
         {
             await base.CreateAsync(productHisotry);
         }

@@ -263,14 +263,6 @@
             <param name="serviceDtoForCreation"></param>
             <returns></returns>
         </member>
-        <member name="M:GarageManagementAPI.Presentation.Controllers.ServiceController.UpdateBrand(System.Guid,GarageManagementAPI.Shared.DataTransferObjects.Service.ServiceDtoForUpdate)">
-            <summary>
-            Update service
-            </summary>
-            <param name="serviceId"></param>
-            <param name="serviceDtoForUpdate"></param>
-            <returns></returns>
-        </member>
         <member name="M:GarageManagementAPI.Presentation.Controllers.ServiceController.PartiallyUpdateService(System.Guid,Microsoft.AspNetCore.JsonPatch.JsonPatchDocument{GarageManagementAPI.Shared.DataTransferObjects.Service.ServiceDtoForUpdate},FluentValidation.IValidator{GarageManagementAPI.Shared.DataTransferObjects.Service.ServiceDtoForUpdate})">
             <summary>
             Update service by field

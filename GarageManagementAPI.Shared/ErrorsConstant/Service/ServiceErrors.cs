@@ -38,11 +38,11 @@ namespace GarageManagementAPI.Shared.ErrorsConstant.Service
                  Code = nameof(ServiceName),
                  Description = string.Format(ServiceName, serviceDtoForCreation.ServiceName)
              };
-              public static ErrorsResult GetCategoryAlreadyExistError(ServiceDtoForCreation serviceDtoForCreation) =>
+              public static ErrorsResult GetCategoryAlreadyExistError(Guid carCategoryId) =>
              new()
              {
                  Code = nameof(ServiceCarCategory),
-                 Description = string.Format(ServiceCarCategory, serviceDtoForCreation.CarCategoryId)
+                 Description = string.Format(ServiceCarCategory, carCategoryId)
              };
         public static ErrorsResult GetServiceNameUpdateAlreadyExistError(ServiceDtoForUpdate serviceDtoForUpdate) =>
              new()
