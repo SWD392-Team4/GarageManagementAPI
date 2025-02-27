@@ -18,6 +18,7 @@ namespace GarageManagementAPI.Repository
         private readonly Lazy<IProductImageRepository> _productImageRepository;
         private readonly Lazy<IEmployeeInfoRepository> _employeeInfoRepository;
         private readonly Lazy<IProductHistoryRepository> _productHistoryRepository;
+        private readonly Lazy<IServiceHistoryRepository> _serviceHistoryRepository;
         private readonly Lazy<IProductCategoryRepository> _productCategoryRepository;
         private readonly Lazy<ICarPartCategoryRepository> _carPartCategoryRepository;
 
@@ -36,6 +37,7 @@ namespace GarageManagementAPI.Repository
             _productImageRepository = new Lazy<IProductImageRepository>(() => new ProductImageRepository(repositoryContext));
             _employeeInfoRepository = new Lazy<IEmployeeInfoRepository>(() => new EmployeeInfoRepository(repositoryContext));
             _productHistoryRepository = new Lazy<IProductHistoryRepository>(() => new ProductHistoryRepository(repositoryContext));
+            _serviceHistoryRepository = new Lazy<IServiceHistoryRepository>(() => new ServiceHistoryRepository(repositoryContext));
             _productCategoryRepository = new Lazy<IProductCategoryRepository>(() => new ProductCategoryRepository(repositoryContext));
             _carPartCategoryRepository = new Lazy<ICarPartCategoryRepository>(() => new CarPartCategoryRepository(repositoryContext));
         }
@@ -52,6 +54,7 @@ namespace GarageManagementAPI.Repository
         public IProductImageRepository ProductImage => _productImageRepository.Value;
         public IEmployeeInfoRepository EmployeeInfo => _employeeInfoRepository.Value;
         public IProductHistoryRepository ProductHistory => _productHistoryRepository.Value;
+        public IServiceHistoryRepository ServiceHistory => _serviceHistoryRepository.Value;
         public IProductCategoryRepository ProductCategory => _productCategoryRepository.Value;
         public ICarPartCategoryRepository CarPartCategory => _carPartCategoryRepository.Value;
 

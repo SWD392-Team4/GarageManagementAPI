@@ -7,7 +7,6 @@ using GarageManagementAPI.Service.Contracts;
 using GarageManagementAPI.Shared.RequestFeatures;
 using GarageManagementAPI.Presentation.Extensions;
 using GarageManagementAPI.Shared.DataTransferObjects.Product;
-using Microsoft.AspNetCore.Authorization;
 
 namespace GarageManagementAPI.Presentation.Controllers
 {

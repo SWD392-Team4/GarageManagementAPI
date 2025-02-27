@@ -10,6 +10,7 @@ using GarageManagementAPI.Shared.DataTransferObjects.Service;
 using GarageManagementAPI.Shared.DataTransferObjects.CarPart;
 using GarageManagementAPI.Shared.DataTransferObjects.CarPartCategory;
 using GarageManagementAPI.Shared.DataTransferObjects.ServiceImage;
+using GarageManagementAPI.Shared.DataTransferObjects.ServiceHistory;
 
 namespace GarageManagementAPI.Service.DataShaping
 {
@@ -24,6 +25,7 @@ namespace GarageManagementAPI.Service.DataShaping
         private readonly Lazy<IDataShaper<ServiceImageDto>> _serviceImageShaper;
         private readonly Lazy<IDataShaper<ProductImageDto>> _productImageShaper;
         private readonly Lazy<IDataShaper<ProductHistoryDto>> _productHistoryShaper;
+        private readonly Lazy<IDataShaper<ServiceHistoryDto>> _serviceHistoryShaper;
         private readonly Lazy<IDataShaper<ProductCategoryDto>> _productCategoryShaper;
         private readonly Lazy<IDataShaper<CarPartCategoryDto>> _carPartCategoryShaper;
 
@@ -61,6 +63,8 @@ namespace GarageManagementAPI.Service.DataShaping
 
             _serviceImageShaper = new Lazy<IDataShaper<ServiceImageDto>>(
             () => new DataShaper<ServiceImageDto>(ServiceImageDto.PropertyInfos));
+            _serviceHistoryShaper = new Lazy<IDataShaper<ServiceHistoryDto>>(
+            () => new DataShaper<ServiceHistoryDto>(ServiceHistoryDto.PropertyInfos));
 
         }
         //.Value là thuộc tính của Lazy<T>, nó sẽ kích hoạt việc khởi tạo đối tượng nếu đối tượng đó chưa được khởi tạo trước đó. Nếu đối tượng đã được khởi tạo, thuộc tính .Value sẽ trả về đối tượng đó.
@@ -73,6 +77,7 @@ namespace GarageManagementAPI.Service.DataShaping
         public IDataShaper<ServiceImageDto> ServiceImage => _serviceImageShaper.Value;
         public IDataShaper<ProductImageDto> ProductImage => _productImageShaper.Value;
         public IDataShaper<ProductHistoryDto> ProductHistory => _productHistoryShaper.Value;
+        public IDataShaper<ServiceHistoryDto> ServiceHistory => _serviceHistoryShaper.Value;
         public IDataShaper<ProductCategoryDto> ProductCategory => _productCategoryShaper.Value;
         public IDataShaper<CarPartCategoryDto> CarPartCategory => _carPartCategoryShaper.Value;
     }

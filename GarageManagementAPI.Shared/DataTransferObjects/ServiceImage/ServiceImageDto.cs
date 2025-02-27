@@ -5,8 +5,8 @@ namespace GarageManagementAPI.Shared.DataTransferObjects.ServiceImage
 {
     public record class ServiceImageDto : BaseDto<ServiceImageDto>
     {
-        public Guid ServiceId { get; set; }
-        public string Link { get; set; } = null!;
+        public Guid Id { get; set; }
+        public string? ImageLink { get; set; } = "N/A";
         [EnumDataType(typeof(ServiceImageStatus))]
         public ServiceImageStatus Status { get; set; }
         public DateTimeOffset CreatedAt { get; set; }

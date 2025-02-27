@@ -1,9 +1,7 @@
 ﻿using GarageManagementAPI.Entities.Models;
-using GarageManagementAPI.Shared.DataTransferObjects.Product;
-using GarageManagementAPI.Shared.DataTransferObjects.ProductHistory;
-using GarageManagementAPI.Shared.ErrorsConstant.Product;
-using GarageManagementAPI.Shared.ErrorsConstant.ProductHistory;
 using GarageManagementAPI.Shared.ResultModel;
+using GarageManagementAPI.Shared.ErrorsConstant.ProductHistory;
+using GarageManagementAPI.Shared.DataTransferObjects.ProductHistory;
 
 namespace GarageManagementAPI.Service.Extension
 {

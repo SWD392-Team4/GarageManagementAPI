@@ -1,16 +1,15 @@
 ﻿using AutoMapper;
+using System.Dynamic;
 using GarageManagementAPI.Entities.Models;
-using GarageManagementAPI.Repository.Contracts;
-using GarageManagementAPI.Service.Contracts;
+using GarageManagementAPI.Shared.Extension;
 using GarageManagementAPI.Service.Extension;
-using GarageManagementAPI.Shared.DataTransferObjects.Product;
-using GarageManagementAPI.Shared.DataTransferObjects.ProductImage;
-using GarageManagementAPI.Shared.DataTransferObjects.ServiceImage;
+using GarageManagementAPI.Service.Contracts;
+using GarageManagementAPI.Shared.ResultModel;
+using GarageManagementAPI.Repository.Contracts;
+using GarageManagementAPI.Shared.RequestFeatures;
 using GarageManagementAPI.Shared.Enums.SystemStatuss;
 using GarageManagementAPI.Shared.ErrorsConstant.ServiceImage;
-using GarageManagementAPI.Shared.RequestFeatures;
-using GarageManagementAPI.Shared.ResultModel;
-using System.Dynamic;
+using GarageManagementAPI.Shared.DataTransferObjects.ServiceImage;
 
 namespace GarageManagementAPI.Service
 {
@@ -57,23 +56,24 @@ namespace GarageManagementAPI.Service
         {
             var serviceImage = await GetAndCheckServiceImageIsExist(serviceImageId, true);
             if (!serviceImage.IsSuccess) return Result<ServiceImage>.BadRequest([ServiceImageErrors.GetServiceImageNotFoundWithIdError(serviceImageId)]);
-            var serviceEntity = _mapper.Map<ServiceImage>(serviceImageDtoForUpdate);
+            var serviceEntity = serviceImage.GetValue<ServiceImage>();
+            _mapper.Map(serviceImageDtoForUpdate, serviceEntity);
             serviceEntity.UpdatedAt = DateTimeOffset.UtcNow.SEAsiaStandardTime();
             _repositoryManager.ServiceImage.UpdateServiceImage(serviceEntity);
             await _repositoryManager.SaveAsync();
             return Result.Success(serviceImage.StatusCode);
         }
 
-        private async Task<Result<Entities.Models.Service>> GetAndCheckServiceExist(Guid serviceId, bool trackChanges)
+        private async Task<Result<Entities.Models.Service>> GetAndCheckServiceExist(Guid serviceId, bool trackChanges, string? include = null)
         {
-            var service = await _repositoryManager.Service.GetServiceByIdAsync(serviceId, trackChanges);
+            var service = await _repositoryManager.Service.GetServiceByIdAsync(serviceId, trackChanges, include);
             if (service == null) return service.NotFound(serviceId);
             return service.OkResult();
         }
 
-        private async Task<Result<ServiceImage>> GetAndCheckServiceImageIsExist(Guid serviceImageId, bool trackchanges)
+        private async Task<Result<ServiceImage>> GetAndCheckServiceImageIsExist(Guid serviceImageId, bool trackchanges, string? include = null)
         {
-            var image = await _repositoryManager.ServiceImage.GetServiceImgageAsync(serviceImageId, trackchanges);
+            var image = await _repositoryManager.ServiceImage.GetServiceImgageAsync(serviceImageId, trackchanges, include);
             if (image == null) return image.NotFoundId(serviceImageId);
             return image.OkResult();
         }

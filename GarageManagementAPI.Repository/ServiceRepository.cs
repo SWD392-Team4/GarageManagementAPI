@@ -25,7 +25,7 @@ namespace GarageManagementAPI.Repository
         {
             var service = include is null ?
             await FindByCondition(u => u.Id.Equals(serviceId), trackChanges).SingleOrDefaultAsync() :
-            await FindByCondition(u => u.Id.Equals(serviceId), trackChanges).Include(include).SingleOrDefaultAsync();
+            await FindByCondition(u => u.Id.Equals(serviceId), trackChanges).IsInclude(include).SingleOrDefaultAsync();
 
             return service;
         }
@@ -42,9 +42,7 @@ namespace GarageManagementAPI.Repository
         public async Task<PagedList<Service>> GetServicesAsync(ServiceParameters serviceParameters, bool trackChanges, string? include = null)
         {
             // Lọc và sắp xếp danh sách Services theo các điều kiện
-            var servicesQuery = FindByCondition(s =>
-                    (string.IsNullOrEmpty(serviceParameters.ServiceName) || s.ServiceName.Contains(serviceParameters.ServiceName)),
-                    trackChanges)
+            var services = await FindAll(trackChanges)
                 .SearchByName(serviceParameters.ServiceName) // Tìm kiếm theo tên sản phẩm
                 .SearchByCreateAt(serviceParameters.CreatedAt) //Tìm kiếm theo CreatedAt
                 .SearchByUpdateAt(serviceParameters.UpdatedAt) //Tìm kiếm theo UpdateAt
@@ -55,25 +53,21 @@ namespace GarageManagementAPI.Repository
                 .IsInclude(include)
                 .SearchByCarCategory(serviceParameters.CarCategoryName)
                 .SearchByCarPart(serviceParameters.CarPartName)
-                .AsQueryable();
-
-            // Lấy danh sách sản phẩm sau khi phân trang
-            var services = await servicesQuery
-                .Skip((serviceParameters.PageNumber - 1) * serviceParameters.PageSize)
-                .Take(serviceParameters.PageSize)
                 .ToListAsync();
 
-            // Lấy tổng số bản ghi để tính toán tổng số trang
-            var count = await servicesQuery.CountAsync();
 
-            // Trả về kết quả dưới dạng PagedList
-            return new PagedList<Service>(
+
+            return PagedList<Service>.ToPagedList(
                 services,
-                count,
                 serviceParameters.PageNumber,
                 serviceParameters.PageSize
             );
         }
 
+        public async Task<Service?> GetServiceByServiceIdAndCarCategoryId(Guid serviceId, Guid carparCategoryId, bool trackChanges, string? include = null)
+        {
+            var service = await FindByCondition(s => s.CarCategoryId == carparCategoryId && s.Id == serviceId, trackChanges).SingleOrDefaultAsync();
+            return service;
+        }
     }
 }

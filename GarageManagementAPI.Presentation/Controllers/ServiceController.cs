@@ -1,12 +1,13 @@
 ﻿using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.JsonPatch;
 using GarageManagementAPI.Shared.Extension;
 using GarageManagementAPI.Service.Contracts;
 using GarageManagementAPI.Shared.RequestFeatures;
 using GarageManagementAPI.Presentation.Extensions;
 using GarageManagementAPI.Shared.DataTransferObjects.Service;
-using Microsoft.AspNetCore.Http;
+using GarageManagementAPI.Shared.DataTransferObjects.Product;
 
 namespace GarageManagementAPI.Presentation.Controllers
 {
@@ -26,7 +27,7 @@ namespace GarageManagementAPI.Presentation.Controllers
         //[Authorize(Roles = $"{nameof(SystemRole.Administrator)},{nameof(SystemRole.Cashier)}")]
         public async Task<IActionResult> GetServices([FromQuery] ServiceParameters serviceParameters)
         {
-            var include = "CarCategory, CarPart";
+            var include = "CarCategory, CarPart, ServiceImage";
             var serviceResult = await _service.ServiceService.GetServicesAsync(serviceParameters, trackChanges: false, include);
 
             return serviceResult.Map(
@@ -44,7 +45,7 @@ namespace GarageManagementAPI.Presentation.Controllers
         //[Authorize(Roles = $"{nameof(SystemRole.Administrator)},{nameof(SystemRole.Cashier)}")]
         public async Task<IActionResult> GetServiceById(Guid serviceId)
         {
-            var include = "CarCategory, CarPart";
+            var include = "CarCategory, CarPart, ServiceImage";
             var setviceResult = await _service.ServiceService.GetServiceAsync(serviceId, trackChanges: false, include);
 
             return setviceResult.Map(
@@ -61,25 +62,22 @@ namespace GarageManagementAPI.Presentation.Controllers
         [HttpPost(Name = "CreateService")]
         public async Task<IActionResult> CreateService([FromBody] ServiceDtoForCreation serviceDtoForCreation)
         {
-            var result = await _service.ServiceService.CreateServiceAsync(serviceDtoForCreation);
+            var createServiceResult = await _service.ServiceService.CreateServiceAsync(serviceDtoForCreation);
+            if (!createServiceResult.IsSuccess)
+            {
+                return ProcessError(createServiceResult);
+            }
+           // var createdService = createServiceResult.GetValue<ServiceDto>();
 
-            return result.Map(
-                onSuccess: result =>
-                {
-                    var createdService = result.GetValue<ServiceDto>();
-
-                    return CreatedAtRoute("GetServiceById", new { serviceId = createdService.Id }, result);
-                },
-                onFailure: ProcessError
-                );
+            return createServiceResult.Map(
+               onSuccess: Ok,
+               onFailure: ProcessError
+               );
         }
 
         [HttpPost("{serviceId:guid}/images", Name = "Create service image")]
         public async Task<IActionResult> CreateServiceImage(Guid serviceId, [FromForm] List<IFormFile> fileDtos)
         {
-            var serviceExists = await _service.ServiceService.GetServiceAsync(serviceId, false);
-            if (!serviceExists.IsSuccess) return serviceExists.Map(onSuccess: Ok,
-                                                                   onFailure: ProcessError);
             if (fileDtos == null || !fileDtos.Any())
             {
                 return BadRequest("No files were uploaded.");
@@ -93,11 +91,11 @@ namespace GarageManagementAPI.Presentation.Controllers
 
                 var imgTuple = uploadFileResult.GetValue<(string? publicId, string? absoluteUrl)>();
 
-                var updateResult = await _service.ProductImageService.CreateProductImageAsync(serviceId, imgTuple.publicId!, imgTuple.absoluteUrl!);
+                var updateResult = await _service.ServiceImageService.CreateImageService(serviceId, imgTuple.publicId!, imgTuple.absoluteUrl!);
 
                 if (!updateResult.IsSuccess) return ProcessError(updateResult);
 
-                createdServiceImages.Add(updateResult.Value!.ImageLink);
+                createdServiceImages.Add(updateResult.Value!.ImageLink!);
             }
 
             return Ok(createdServiceImages);

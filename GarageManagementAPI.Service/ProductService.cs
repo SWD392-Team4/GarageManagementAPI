@@ -206,7 +206,6 @@ namespace GarageManagementAPI.Service
             return productHistoryDtoToReturn.CreatedResult();
         }
 
-
         private async Task UpdateStatusProductImage(Guid productId)
         {
             var productEntity = await _repoManager.ProductImage.GetProductImgByStatusAndIdProductAsync(productId, false);
@@ -236,7 +235,6 @@ namespace GarageManagementAPI.Service
 
         private async Task<bool> GetAndCheckIfProductHistoryByIdAndPrice(Guid productId, decimal price)
         {
-            // Lấy bản ghi ProductHistory có UpdatedAt lớn nhất cho ProductId
             var latestProductHistory = await _repoManager.ProductHistory.GetProductHistoryByPriceAndIdProductAsync(productId, price, false);
 
             if (latestProductHistory != null)

@@ -16,6 +16,7 @@
         IEmployeeInfoService EmployeeInfoService { get; }
         IProductImageService ProductImageService { get; }
         IProductHistoryService ProductHistoryService { get; }
+        IServiceHistoryService ServiceHistoryService { get; }
         IAuthenticationService AuthenticationService { get; }
         IProductCategoryService ProductCategoryService { get; }
         ICarPartCategoryService CarPartCategoryService { get; }

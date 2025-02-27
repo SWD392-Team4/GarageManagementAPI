@@ -11,13 +11,13 @@ namespace GarageManagementAPI.Application.MappingProfile
                 .ForMember(dest => dest.Category,
                            otps =>
                            {
-                               otps.PreCondition(s => s.CarCategory.Category != null);
+                               otps.PreCondition(s => s.CarCategory != null && s.CarCategory.Category != null);
                                otps.MapFrom(s => s.CarCategory!.Category);
                            })
                 .ForMember(dest => dest.PartName,
                            otps =>
                            {
-                               otps.PreCondition(s => s.CarPart.PartName != null);
+                               otps.PreCondition(s => s.CarPart != null && s.CarPart.PartName != null);
                                otps.MapFrom(s => s.CarPart!.PartName);
                            })
                 .ForMember(dest => dest.ImageLink, otp =>

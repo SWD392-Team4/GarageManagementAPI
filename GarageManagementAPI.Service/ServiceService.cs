@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using System.Dynamic;
+using GarageManagementAPI.Entities.Models;
 using GarageManagementAPI.Shared.Extension;
 using GarageManagementAPI.Service.Extension;
 using GarageManagementAPI.Service.Contracts;
@@ -9,6 +10,8 @@ using GarageManagementAPI.Shared.RequestFeatures;
 using GarageManagementAPI.Shared.Enums.SystemStatuss;
 using GarageManagementAPI.Shared.ErrorsConstant.Service;
 using GarageManagementAPI.Shared.DataTransferObjects.Service;
+using GarageManagementAPI.Shared.ErrorsConstant.ServiceHisory;
+using GarageManagementAPI.Shared.DataTransferObjects.ServiceHistory;
 
 namespace GarageManagementAPI.Service
 {
@@ -27,10 +30,10 @@ namespace GarageManagementAPI.Service
 
         public async Task<Result<ServiceDto>> CreateServiceAsync(ServiceDtoForCreation serviceDtoForCreation)
         {
-            var check = await GetAndCheckIServiceExistByName(serviceDtoForCreation.ServiceName);
-            if (check)
-                return Result<ServiceDto>.BadRequest([ServiceErrors.GetServiceNameAlreadyExistError(serviceDtoForCreation)]);
+            var serviceResult = await GetAndCheckIServiceExistByName(serviceDtoForCreation.ServiceName);
 
+            if (serviceResult)
+                return Result<ServiceDto>.BadRequest([ServiceErrors.GetServiceNameAlreadyExistError(serviceDtoForCreation)]);
             var seviceEntity = _mapper.Map<Entities.Models.Service>(serviceDtoForCreation);
 
             seviceEntity.CreatedAt = DateTimeOffset.UtcNow.SEAsiaStandardTime();
@@ -38,6 +41,13 @@ namespace GarageManagementAPI.Service
             seviceEntity.Status = ServiceStatus.Inactive;
 
             await _repoManager.Service.CreateServiceAsync(seviceEntity);
+            var carCategoryResult = await GetAndCheckIfProductHistoryByIdAndCategory(serviceDtoForCreation.CarCategoryId, seviceEntity.Id);
+            if (!carCategoryResult.IsSuccess)
+                return Result<ServiceDto>.BadRequest([ServiceErrors.GetCategoryAlreadyExistError(serviceDtoForCreation)]);
+
+            //Create Service History
+            await CreateServiceHistoryAsync(seviceEntity.Id, serviceDtoForCreation.ServicePrice);
+
             await _repoManager.SaveAsync();
 
             var serviceDtoToReturn = _mapper.Map<ServiceDto>(seviceEntity);
@@ -66,7 +76,7 @@ namespace GarageManagementAPI.Service
 
         public async Task<Result<ExpandoObject>> GetServiceAsync(Guid serviceId, bool trackChanges, string? include = null)
         {
-            var serviceResult = await GetAndCheckIfServiceExist(serviceId, trackChanges);
+            var serviceResult = await GetAndCheckIfServiceExist(serviceId, trackChanges, include);
 
             if (!serviceResult.IsSuccess)
                 return Result<ExpandoObject>.NotFound(serviceResult.Errors!);
@@ -104,9 +114,9 @@ namespace GarageManagementAPI.Service
             return Result<IEnumerable<ExpandoObject>>.Ok(servicesShaped, servicesWithMetadata.MetaData);
         }
 
-        private async Task<Result<Entities.Models.Service>> GetAndCheckIfServiceExist(Guid serviceId, bool trackChanges)
+        private async Task<Result<Entities.Models.Service>> GetAndCheckIfServiceExist(Guid serviceId, bool trackChanges, string? include = null)
         {
-            var service = await _repoManager.Service.GetServiceByIdAsync(serviceId, trackChanges);
+            var service = await _repoManager.Service.GetServiceByIdAsync(serviceId, trackChanges, include);
             if (service == null)
                 return service.NotFound(serviceId);
 
@@ -118,6 +128,60 @@ namespace GarageManagementAPI.Service
             var service = await _repoManager.Service.GetServiceByIdAndNameAsync(name, serviceId, false);
             if (service == null) return false;
             return true;
+        }
+
+        public async Task<Result<ServiceHistoryDto>> CreateServiceHistoryAsync(Guid serviceId, decimal price)
+        {
+            var checkPrice = await GetAndCheckIfProductHistoryByIdAndPrice(serviceId, price);
+            if (!checkPrice.IsSuccess)
+                return Result<ServiceHistoryDto>.BadRequest([ServiceHistoryErrors.GetServiceHistoryPriceAlreadyExistError(price)]);
+
+            await UpdateStatusServiceHistory(serviceId);
+
+            var serviceEntity = new ServiceHistory
+            {
+                ServiceId = serviceId,
+                Price = price,
+                Status = ServiceHistoryStatus.Active,
+                CreatedAt = DateTimeOffset.UtcNow.SEAsiaStandardTime(),
+                UpdatedAt = DateTimeOffset.UtcNow.SEAsiaStandardTime(),
+            };
+
+            await _repoManager.ServiceHistory.CreateProductHisotoryAsync(serviceEntity);
+
+            var serviceHistoryDtoToReturn = _mapper.Map<ServiceHistoryDto>(serviceEntity);
+
+            return serviceHistoryDtoToReturn.CreatedResult();
+        }
+
+        private async Task UpdateStatusServiceHistory(Guid serviceId)
+        {
+            var productEntity = await _repoManager.ProductImage.GetProductImgByStatusAndIdProductAsync(serviceId, false);
+
+            if (productEntity != null)
+            {
+                productEntity.Status = ProductImageStatus.Inactive;
+                productEntity.UpdatedAt = DateTimeOffset.UtcNow;
+                _repoManager.ProductImage.UpdateProductImg(productEntity);
+            }
+        }
+
+        private async Task<Result<ServiceHistory>> GetAndCheckIfProductHistoryByIdAndPrice(Guid serviceId, decimal price)
+        {
+            var latestServiceHistory = await _repoManager.ServiceHistory.GetServiceHistoryByPriceAndIdServiceAsync(serviceId, price, false);
+
+            if (latestServiceHistory == null) return latestServiceHistory.NotFoundId(serviceId);
+
+            return latestServiceHistory.OkResult();
+        }
+
+        private async Task<Result<Entities.Models.Service>> GetAndCheckIfProductHistoryByIdAndCategory(Guid carCategory, Guid serviceId)
+        {
+            var service = await _repoManager.Service.GetServiceByServiceIdAndCarCategoryId(carCategory, serviceId, false);
+
+            if (service == null) return service.NotFound(serviceId);
+
+            return service.OkResult();
         }
     }
 }
