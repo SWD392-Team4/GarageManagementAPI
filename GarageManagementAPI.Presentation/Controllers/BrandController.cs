@@ -28,7 +28,7 @@ namespace GarageManagementAPI.Presentation.Controllers
         /// <param name="brandParameters"></param>
         /// <returns></returns>
         [HttpGet]
-        [Authorize(Roles = $"{nameof(SystemRole.Administrator)}, {nameof(SystemRole.Cashier)}")]
+        //[Authorize(Roles = $"{nameof(SystemRole.Administrator)}, {nameof(SystemRole.Cashier)}")]
         public async Task<IActionResult> GetBrands([FromQuery] BrandParameters brandParameters)
         {
             var brandResult = await _service.BrandService.GetBrandsAsync(brandParameters, trackChanges: false);

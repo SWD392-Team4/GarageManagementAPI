@@ -37,22 +37,34 @@ namespace GarageManagementAPI.Repository
         public async Task<PagedList<Brand>> GetBrandsAsync(BrandParameters brandParameters, bool trackChanges, string? include = null)
         {
             // Lọc và sắp xếp danh sách brands theo các điều kiện
-            var brandsQuery = await FindByCondition(b =>
-                    (string.IsNullOrEmpty(brandParameters.BrandName) || b.BrandName.Contains(brandParameters.BrandName)),
-                    trackChanges)
+            var brandsQuery = brandParameters.PageSize == 0 ? 
+                await FindAll(trackChanges)
                 .SearchByName(brandParameters.BrandName) // Tìm kiếm theo tên sản phẩm
                 .SearchByDate(brandParameters.CreatedAt) //Tìm kiếm theo CreatedAt
                 .SearchByDate(brandParameters.UpdateAt) //Tìm kiếm theo UpdateAt
                 .SearchByStatus(brandParameters.Status)
-                .Sort(brandParameters.OrderBy) 
-                .IsInclude(include) 
-                .ToListAsync(); 
+                .Sort(brandParameters.OrderBy)
+                .IsInclude(include)
+                .ToListAsync()
+                : 
+                await FindAll(trackChanges)
+                .SearchByName(brandParameters.BrandName) // Tìm kiếm theo tên sản phẩm
+                .SearchByDate(brandParameters.CreatedAt) //Tìm kiếm theo CreatedAt
+                .SearchByDate(brandParameters.UpdateAt) //Tìm kiếm theo UpdateAt
+                .SearchByStatus(brandParameters.Status)
+                .Sort(brandParameters.OrderBy)
+                .IsInclude(include)
+                .Skip((brandParameters.PageNumber - 1) * brandParameters.PageSize)
+                .Take(brandParameters.PageSize)
+                .ToListAsync();
+            var count = await FindAll(trackChanges).CountAsync();
 
             // Trả về kết quả dưới dạng PagedList
-            return PagedList<Brand>.ToPagedList(
+            return new PagedList<Brand>(
                 brandsQuery,
-                brandParameters.PageNumber,
-                brandParameters.PageSize
+                count,
+                brandParameters.PageNumber == 0 ? 1 : brandParameters.PageNumber,
+                brandParameters.PageSize == 0 ? count : brandParameters.PageSize
             );
         }
 
