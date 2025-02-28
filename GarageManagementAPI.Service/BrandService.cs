@@ -92,6 +92,22 @@ namespace GarageManagementAPI.Service
 
             return Result.NoContent();
         }
+
+        public async Task<Result<string?>> UpdateBrandImageAsync(Guid id, bool trackChanges, string imgId, string imgUrl)
+        {
+            var resultCheck = await GetAndCheckIfBrandExist(id, trackChanges);
+
+            if (!resultCheck.IsSuccess) return Result<string?>.BadRequest(resultCheck.Errors!);
+            var brandEntity = resultCheck.GetValue<Brand>();
+            var oldImage = brandEntity.ImageId;
+            brandEntity.ImageId = imgId;
+            brandEntity.ImageLink = imgUrl;
+
+            brandEntity.UpdatedAt = DateTimeOffset.UtcNow.SEAsiaStandardTime();
+            await _repoManager.SaveAsync();
+
+            return Result<string?>.Ok(oldImage);
+        }
         public async Task<Result<BrandDtoForUpdate>> GetBrandForPartiallyUpdate(Guid brandId, bool trackChanges)
         {
             var brandResult = await GetAndCheckIfBrandExist(brandId, trackChanges);

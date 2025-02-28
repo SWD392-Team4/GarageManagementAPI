@@ -4,8 +4,6 @@ using GarageManagementAPI.Service.Contracts;
 using GarageManagementAPI.Shared.DataTransferObjects.ProductImage;
 using GarageManagementAPI.Shared.RequestFeatures;
 using Microsoft.AspNetCore.Mvc;
-using GarageManagementAPI.Shared.Extension;
-using GarageManagementAPI.Shared.DataTransferObjects.Product;
 
 namespace GarageManagementAPI.Presentation.Controllers
 {
@@ -22,9 +20,9 @@ namespace GarageManagementAPI.Presentation.Controllers
         /// <param name="productId"></param>
         /// <param name="productImageParameters"></param>
         /// <returns></returns>
-        [HttpGet("{productId:guid}", Name = "GetProductImageById")]
+        [HttpGet("{productId:guid}", Name = "GetImageByProductId")]
         //[Authorize(Roles = $"{nameof(SystemRole.Administrator)},{nameof(SystemRole.Cashier)}")]
-        public async Task<IActionResult> GetProductByIdImage(Guid productId, [FromQuery] ProductImageParameters productImageParameters)
+        public async Task<IActionResult> GetImageByProductId(Guid productId, [FromQuery] ProductImageParameters productImageParameters)
         {
             var productResult = await _service.ProductImageService.GetProductImageByIdProductAsync(productId, productImageParameters, trackChanges: false);
 

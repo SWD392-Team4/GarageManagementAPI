@@ -34,6 +34,14 @@
             <param name="brandDtoForUpdate"></param>
             <returns></returns>
         </member>
+        <member name="M:GarageManagementAPI.Presentation.Controllers.BrandController.UpdateBrandImageAsync(System.Guid,Microsoft.AspNetCore.Http.IFormFile)">
+            <summary>
+            Update brand image
+            </summary>
+            <param name="brandId"></param>
+            <param name="fileDto"></param>
+            <returns></returns>
+        </member>
         <member name="M:GarageManagementAPI.Presentation.Controllers.BrandController.PartiallyUpdateBrand(System.Guid,Microsoft.AspNetCore.JsonPatch.JsonPatchDocument{GarageManagementAPI.Shared.DataTransferObjects.Brand.BrandDtoForUpdate},FluentValidation.IValidator{GarageManagementAPI.Shared.DataTransferObjects.Brand.BrandDtoForUpdate})">
             <summary>
             Update date brand by field
@@ -227,7 +235,7 @@
             <param name="productParameters"></param>
             <returns></returns>
         </member>
-        <member name="M:GarageManagementAPI.Presentation.Controllers.ProductImageController.GetProductByIdImage(System.Guid,GarageManagementAPI.Shared.RequestFeatures.ProductImageParameters)">
+        <member name="M:GarageManagementAPI.Presentation.Controllers.ProductImageController.GetImageByProductId(System.Guid,GarageManagementAPI.Shared.RequestFeatures.ProductImageParameters)">
             <summary>
             Get img product by id
             </summary>
@@ -270,6 +278,36 @@
             <param name="serviceId"></param>
             <param name="jsonPatchDocumentDto"></param>
             <param name="validator"></param>
+            <returns></returns>
+        </member>
+        <member name="M:GarageManagementAPI.Presentation.Controllers.ServiceFeedbackController.GetFeedbackByServiceId(System.Guid,GarageManagementAPI.Shared.RequestFeatures.ServiceFeedBackParameters)">
+            <summary>
+            Get feedback by service
+            </summary>
+            <param name="serviceId"></param>
+            <param name="serviceFeedbackParameters"></param>
+            <returns></returns>
+        </member>
+        <member name="M:GarageManagementAPI.Presentation.Controllers.ServiceFeedbackController.GetServiceFeebackById(System.Guid)">
+            <summary>
+            Get feedback by id
+            </summary>
+            <param name="serviceFeedbackId"></param>
+            <returns></returns>
+        </member>
+        <member name="M:GarageManagementAPI.Presentation.Controllers.ServiceFeedbackController.CreateServiceFeeback(GarageManagementAPI.Shared.DataTransferObjects.ServiceFeeback.ServiceFeedbackDtoForCreation)">
+            <summary>
+            Create feedback
+            </summary>
+            <param name="serviceFeedbackDtoForCreation"></param>
+            <returns></returns>
+        </member>
+        <member name="M:GarageManagementAPI.Presentation.Controllers.ServiceFeedbackController.UpdateServiceFeedback(System.Guid,GarageManagementAPI.Shared.DataTransferObjects.ServiceFeeback.ServiceFeedBackDtoForUpdate)">
+            <summary>
+            Update feddback
+            </summary>
+            <param name="serviceFeedbackId"></param>
+            <param name="serviceFeedbackDtoForUpdate"></param>
             <returns></returns>
         </member>
     </members>

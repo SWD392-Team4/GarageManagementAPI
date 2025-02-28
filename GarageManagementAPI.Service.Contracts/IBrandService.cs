@@ -11,6 +11,6 @@ namespace GarageManagementAPI.Service.Contracts
         public Task<Result<BrandDtoForUpdate>> GetBrandForPartiallyUpdate(Guid brandId, bool trackChanges);
         public Task<Result<BrandDto>> CreateBrandAsync(BrandDtoForCreation brandDtoForCreation);
         public Task<Result> UpdateBrand(Guid brandId, BrandDtoForUpdate brandDtoForUpdate, bool trackChanges);
-       
+        public Task<Result<string?>> UpdateBrandImageAsync(Guid id, bool trackChanges, string imgId, string imgUrl);
     }
 }

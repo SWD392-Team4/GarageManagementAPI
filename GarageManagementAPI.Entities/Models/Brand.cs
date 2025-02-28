@@ -6,10 +6,8 @@ namespace GarageManagementAPI.Entities.Models
     public partial class Brand : BaseEntity<Brand>
     {
         public string BrandName { get; set; } = null!;
-
-        public string LogoLink { get; set; } = null!;
-
-        public string LogoId { get; set; } = null!;
+        public string? ImageLink { get; set; } = "N/A";
+        public string? ImageId { get; set; } = "N/A";
 
         [EnumDataType(typeof(BrandStatus))]
         public BrandStatus Status { get; set; }

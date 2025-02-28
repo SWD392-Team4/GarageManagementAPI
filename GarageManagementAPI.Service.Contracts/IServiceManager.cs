@@ -17,6 +17,7 @@
         IProductImageService ProductImageService { get; }
         IProductHistoryService ProductHistoryService { get; }
         IServiceHistoryService ServiceHistoryService { get; }
+        IServiceFeedbackService ServiceFeedback { get; }
         IAuthenticationService AuthenticationService { get; }
         IProductCategoryService ProductCategoryService { get; }
         ICarPartCategoryService CarPartCategoryService { get; }
