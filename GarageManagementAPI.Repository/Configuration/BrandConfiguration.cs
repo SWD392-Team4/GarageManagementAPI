@@ -20,7 +20,7 @@ namespace GarageManagementAPI.Repository.Configuration
                 .HasDefaultValueSql("NEWID()")  // Cấu hình cơ sở dữ liệu sinh GUID
                 .ValueGeneratedOnAdd();         // Đảm bảo GUID sẽ được tạo khi thêm mới
             entity.Property(e => e.BrandName).HasMaxLength(255);
-            entity.Property(e => e.LogoLink).HasMaxLength(255);
+            entity.Property(e => e.ImageLink).HasMaxLength(255);
             entity.Property(e => e.Status).HasMaxLength(255);
 
             // Chuyển đổi giá trị Status từ Enum sang chuỗi khi lưu vào cơ sở dữ liệu
@@ -37,8 +37,8 @@ namespace GarageManagementAPI.Repository.Configuration
                      BrandName = "Toyota",
                      CreatedAt = DateTimeOffset.Parse("2/25/2025 12:36:40 AM +07:00"),
                      UpdatedAt = DateTimeOffset.Parse("2/25/2025 12:36:40 AM +07:00"),
-                     LogoLink = "https://res.cloudinary.com/dt2b5qfoe/image/upload/v1740421861/Brand/jh1rqnn0oavjilladcuy.png",
-                     LogoId = "Brand/jh1rqnn0oavjilladcuy",
+                     ImageLink = "https://res.cloudinary.com/dt2b5qfoe/image/upload/v1740421861/Brand/jh1rqnn0oavjilladcuy.png",
+                     ImageId = "Brand/jh1rqnn0oavjilladcuy",
                      Status = BrandStatus.Active
                  },
                 new Brand()
@@ -47,8 +47,8 @@ namespace GarageManagementAPI.Repository.Configuration
                     BrandName = "Ford",
                     CreatedAt = DateTimeOffset.Parse("2/25/2025 12:36:40 AM +07:00"),
                     UpdatedAt = DateTimeOffset.Parse("2/25/2025 12:36:40 AM +07:00"),
-                    LogoLink = "https://res.cloudinary.com/dt2b5qfoe/image/upload/v1740421924/Brand/qb6avmc6okdc39zg0uzz.png",
-                    LogoId = "Brand/qb6avmc6okdc39zg0uzz",
+                    ImageLink = "https://res.cloudinary.com/dt2b5qfoe/image/upload/v1740421924/Brand/qb6avmc6okdc39zg0uzz.png",
+                    ImageId = "Brand/qb6avmc6okdc39zg0uzz",
                     Status = BrandStatus.Active
                 },
                 new Brand()
@@ -57,8 +57,8 @@ namespace GarageManagementAPI.Repository.Configuration
                     BrandName = "Volkswagen",
                     CreatedAt = DateTimeOffset.Parse("2/25/2025 12:36:40 AM +07:00"),
                     UpdatedAt = DateTimeOffset.Parse("2/25/2025 12:36:40 AM +07:00"),
-                    LogoLink = "https://res.cloudinary.com/dt2b5qfoe/image/upload/v1740421976/Brand/gahdhvt1wvon18doxhvy.png",
-                    LogoId = "Brand/gahdhvt1wvon18doxhvy",
+                    ImageLink = "https://res.cloudinary.com/dt2b5qfoe/image/upload/v1740421976/Brand/gahdhvt1wvon18doxhvy.png",
+                    ImageId = "Brand/gahdhvt1wvon18doxhvy",
                     Status = BrandStatus.Active
                 },
                 new Brand()
@@ -67,8 +67,8 @@ namespace GarageManagementAPI.Repository.Configuration
                     BrandName = "Honda",
                     CreatedAt = DateTimeOffset.Parse("2/25/2025 12:36:40 AM +07:00"),
                     UpdatedAt = DateTimeOffset.Parse("2/25/2025 12:36:40 AM +07:00"),
-                    LogoLink = "https://res.cloudinary.com/dt2b5qfoe/image/upload/v1740422018/Brand/kx3xsj26x6czy664rjrx.png",
-                    LogoId = "Brand/kx3xsj26x6czy664rjrx",
+                    ImageLink = "https://res.cloudinary.com/dt2b5qfoe/image/upload/v1740422018/Brand/kx3xsj26x6czy664rjrx.png",
+                    ImageId = "Brand/kx3xsj26x6czy664rjrx",
                     Status = BrandStatus.Active
                 },
                 new Brand()
@@ -77,8 +77,8 @@ namespace GarageManagementAPI.Repository.Configuration
                     BrandName = "Chevrolet",
                     CreatedAt = DateTimeOffset.Parse("2/25/2025 12:36:40 AM +07:00"),
                     UpdatedAt = DateTimeOffset.Parse("2/25/2025 12:36:40 AM +07:00"),
-                    LogoLink = "https://res.cloudinary.com/dt2b5qfoe/image/upload/v1740422071/Brand/lovrlrwiei2xukzv6zq3.png",
-                    LogoId = "Brand/lovrlrwiei2xukzv6zq3",
+                    ImageLink = "https://res.cloudinary.com/dt2b5qfoe/image/upload/v1740422071/Brand/lovrlrwiei2xukzv6zq3.png",
+                    ImageId = "Brand/lovrlrwiei2xukzv6zq3",
                     Status = BrandStatus.Active
                 },
                 new Brand()
@@ -87,8 +87,8 @@ namespace GarageManagementAPI.Repository.Configuration
                     BrandName = "Nissan",
                     CreatedAt = DateTimeOffset.Parse("2/25/2025 12:36:40 AM +07:00"),
                     UpdatedAt = DateTimeOffset.Parse("2/25/2025 12:36:40 AM +07:00"),
-                    LogoLink = "https://res.cloudinary.com/dt2b5qfoe/image/upload/v1740422160/Brand/qhnes6tgs3i6nsbft8dk.png",
-                    LogoId = "Brand/qhnes6tgs3i6nsbft8dk",
+                    ImageLink = "https://res.cloudinary.com/dt2b5qfoe/image/upload/v1740422160/Brand/qhnes6tgs3i6nsbft8dk.png",
+                    ImageId = "Brand/qhnes6tgs3i6nsbft8dk",
                     Status = BrandStatus.Active
                 },
                 new Brand()
@@ -97,8 +97,8 @@ namespace GarageManagementAPI.Repository.Configuration
                     BrandName = "BMW",
                     CreatedAt = DateTimeOffset.Parse("2/25/2025 12:36:40 AM +07:00"),
                     UpdatedAt = DateTimeOffset.Parse("2/25/2025 12:36:40 AM +07:00"),
-                    LogoLink = "https://res.cloudinary.com/dt2b5qfoe/image/upload/v1740422278/Brand/akxxqktdh9mhylbhywxj.png",
-                    LogoId = "Brand/akxxqktdh9mhylbhywxj",
+                    ImageLink = "https://res.cloudinary.com/dt2b5qfoe/image/upload/v1740422278/Brand/akxxqktdh9mhylbhywxj.png",
+                    ImageId = "Brand/akxxqktdh9mhylbhywxj",
                     Status = BrandStatus.Active
                 },
                 new Brand()
@@ -107,8 +107,8 @@ namespace GarageManagementAPI.Repository.Configuration
                     BrandName = "Mercedes-Benz",
                     CreatedAt = DateTimeOffset.Parse("2/25/2025 12:36:40 AM +07:00"),
                     UpdatedAt = DateTimeOffset.Parse("2/25/2025 12:36:40 AM +07:00"),
-                    LogoLink = "https://res.cloudinary.com/dt2b5qfoe/image/upload/v1740422229/Brand/nkhahhkmagpxarghm1us.png",
-                    LogoId = "Brand/nkhahhkmagpxarghm1us",
+                    ImageLink = "https://res.cloudinary.com/dt2b5qfoe/image/upload/v1740422229/Brand/nkhahhkmagpxarghm1us.png",
+                    ImageId = "Brand/nkhahhkmagpxarghm1us",
                     Status = BrandStatus.Active
                 },
                 new Brand()
@@ -117,8 +117,8 @@ namespace GarageManagementAPI.Repository.Configuration
                     BrandName = "Audi",
                     CreatedAt = DateTimeOffset.Parse("2/25/2025 12:36:40 AM +07:00"),
                     UpdatedAt = DateTimeOffset.Parse("2/25/2025 12:36:40 AM +07:00"),
-                    LogoLink = "https://res.cloudinary.com/dt2b5qfoe/image/upload/v1740422333/Brand/biocmnahytbpqzvdtj3k.png",
-                    LogoId = "Brand/biocmnahytbpqzvdtj3k",
+                    ImageLink = "https://res.cloudinary.com/dt2b5qfoe/image/upload/v1740422333/Brand/biocmnahytbpqzvdtj3k.png",
+                    ImageId = "Brand/biocmnahytbpqzvdtj3k",
                     Status = BrandStatus.Active
                 },
                 new Brand()
@@ -127,8 +127,8 @@ namespace GarageManagementAPI.Repository.Configuration
                     BrandName = "Hyundai",
                     CreatedAt = DateTimeOffset.Parse("2/25/2025 12:36:40 AM +07:00"),
                     UpdatedAt = DateTimeOffset.Parse("2/25/2025 12:36:40 AM +07:00"),
-                    LogoLink = "https://res.cloudinary.com/dt2b5qfoe/image/upload/v1740422392/Brand/n4vgf2iu2xlddjq0fies.png",
-                    LogoId = "Brand/n4vgf2iu2xlddjq0fies",
+                    ImageLink = "https://res.cloudinary.com/dt2b5qfoe/image/upload/v1740422392/Brand/n4vgf2iu2xlddjq0fies.png",
+                    ImageId = "Brand/n4vgf2iu2xlddjq0fies",
                     Status = BrandStatus.Active
                 },
                 new Brand()
@@ -137,8 +137,8 @@ namespace GarageManagementAPI.Repository.Configuration
                     BrandName = "Kia",
                     CreatedAt = DateTimeOffset.Parse("2/25/2025 12:36:40 AM +07:00"),
                     UpdatedAt = DateTimeOffset.Parse("2/25/2025 12:36:40 AM +07:00"),
-                    LogoLink = "https://res.cloudinary.com/dt2b5qfoe/image/upload/v1740422439/Brand/wfmlm6uwd5hnguwpbioj.png",
-                    LogoId = "Brand/wfmlm6uwd5hnguwpbioj",
+                    ImageLink = "https://res.cloudinary.com/dt2b5qfoe/image/upload/v1740422439/Brand/wfmlm6uwd5hnguwpbioj.png",
+                    ImageId = "Brand/wfmlm6uwd5hnguwpbioj",
                     Status = BrandStatus.Active
                 },
                 new Brand()
@@ -147,8 +147,8 @@ namespace GarageManagementAPI.Repository.Configuration
                     BrandName = "Subaru",
                     CreatedAt = DateTimeOffset.Parse("2/25/2025 12:36:40 AM +07:00"),
                     UpdatedAt = DateTimeOffset.Parse("2/25/2025 12:36:40 AM +07:00"),
-                    LogoLink = "https://res.cloudinary.com/dt2b5qfoe/image/upload/v1740421768/Brand/dpq3tgrogw3ilo6jwqoz.png",
-                    LogoId = "Brand/dpq3tgrogw3ilo6jwqoz",
+                    ImageLink = "https://res.cloudinary.com/dt2b5qfoe/image/upload/v1740421768/Brand/dpq3tgrogw3ilo6jwqoz.png",
+                    ImageId = "Brand/dpq3tgrogw3ilo6jwqoz",
                     Status = BrandStatus.Active
                 },
                 new Brand()
@@ -157,8 +157,8 @@ namespace GarageManagementAPI.Repository.Configuration
                     BrandName = "Lexus",
                     CreatedAt = DateTimeOffset.Parse("2/25/2025 12:36:40 AM +07:00"),
                     UpdatedAt = DateTimeOffset.Parse("2/25/2025 12:36:40 AM +07:00"),
-                    LogoLink = "https://res.cloudinary.com/dt2b5qfoe/image/upload/v1740422492/Brand/qmp6fgd6qktgt52viovi.png",
-                    LogoId = "Brand/qmp6fgd6qktgt52viovi",
+                    ImageLink = "https://res.cloudinary.com/dt2b5qfoe/image/upload/v1740422492/Brand/qmp6fgd6qktgt52viovi.png",
+                    ImageId = "Brand/qmp6fgd6qktgt52viovi",
                     Status = BrandStatus.Active
                 },
                 new Brand()
@@ -167,8 +167,8 @@ namespace GarageManagementAPI.Repository.Configuration
                     BrandName = "Dodge",
                     CreatedAt = DateTimeOffset.Parse("2/25/2025 12:36:40 AM +07:00"),
                     UpdatedAt = DateTimeOffset.Parse("2/25/2025 12:36:40 AM +07:00"),
-                    LogoLink = "https://res.cloudinary.com/dt2b5qfoe/image/upload/v1740422553/Brand/sy90i7nnlc45r3l9xxff.png",
-                    LogoId = "Brand/sy90i7nnlc45r3l9xxff",
+                    ImageLink = "https://res.cloudinary.com/dt2b5qfoe/image/upload/v1740422553/Brand/sy90i7nnlc45r3l9xxff.png",
+                    ImageId = "Brand/sy90i7nnlc45r3l9xxff",
                     Status = BrandStatus.Active
                 },
                 new Brand()
@@ -177,8 +177,8 @@ namespace GarageManagementAPI.Repository.Configuration
                     BrandName = "Jeep",
                     CreatedAt = DateTimeOffset.Parse("2/25/2025 12:36:40 AM +07:00"),
                     UpdatedAt = DateTimeOffset.Parse("2/25/2025 12:36:40 AM +07:00"),
-                    LogoLink = "https://res.cloudinary.com/dt2b5qfoe/image/upload/v1740423926/Brand/xqggwm0nnswweukoaoxd.png",
-                    LogoId = "Brand/xqggwm0nnswweukoaoxd",
+                    ImageLink = "https://res.cloudinary.com/dt2b5qfoe/image/upload/v1740423926/Brand/xqggwm0nnswweukoaoxd.png",
+                    ImageId = "Brand/xqggwm0nnswweukoaoxd",
                     Status = BrandStatus.Active
                 },
                 new Brand()
@@ -187,8 +187,8 @@ namespace GarageManagementAPI.Repository.Configuration
                     BrandName = "Cadillac",
                     CreatedAt = DateTimeOffset.Parse("2/25/2025 12:36:40 AM +07:00"),
                     UpdatedAt = DateTimeOffset.Parse("2/25/2025 12:36:40 AM +07:00"),
-                    LogoLink = "https://res.cloudinary.com/dt2b5qfoe/image/upload/v1740423856/Brand/m5yackgrajh62hnouttj.png",
-                    LogoId = "Brand/m5yackgrajh62hnouttj",
+                    ImageLink = "https://res.cloudinary.com/dt2b5qfoe/image/upload/v1740423856/Brand/m5yackgrajh62hnouttj.png",
+                    ImageId = "Brand/m5yackgrajh62hnouttj",
                     Status = BrandStatus.Active
                 },
                 new Brand()
@@ -197,8 +197,8 @@ namespace GarageManagementAPI.Repository.Configuration
                     BrandName = "GMC",
                     CreatedAt = DateTimeOffset.Parse("2/25/2025 12:36:40 AM +07:00"),
                     UpdatedAt = DateTimeOffset.Parse("2/25/2025 12:36:40 AM +07:00"),
-                    LogoLink = "https://res.cloudinary.com/dt2b5qfoe/image/upload/v1740423772/Brand/kchfjjavlom9a4qnywvg.png",
-                    LogoId = "Brand/kchfjjavlom9a4qnywvg",
+                    ImageLink = "https://res.cloudinary.com/dt2b5qfoe/image/upload/v1740423772/Brand/kchfjjavlom9a4qnywvg.png",
+                    ImageId = "Brand/kchfjjavlom9a4qnywvg",
                     Status = BrandStatus.Active
                 },
                 new Brand()
@@ -207,8 +207,8 @@ namespace GarageManagementAPI.Repository.Configuration
                     BrandName = "Mitsubishi",
                     CreatedAt = DateTimeOffset.Parse("2/25/2025 12:36:40 AM +07:00"),
                     UpdatedAt = DateTimeOffset.Parse("2/25/2025 12:36:40 AM +07:00"),
-                    LogoLink = "https://res.cloudinary.com/dt2b5qfoe/image/upload/v1740423615/Brand/lyu7mi3lyfunwizhju9r.png",
-                    LogoId = "Brand/lyu7mi3lyfunwizhju9r",
+                    ImageLink = "https://res.cloudinary.com/dt2b5qfoe/image/upload/v1740423615/Brand/lyu7mi3lyfunwizhju9r.png",
+                    ImageId = "Brand/lyu7mi3lyfunwizhju9r",
                     Status = BrandStatus.Active
                 },
                 new Brand()
@@ -217,8 +217,8 @@ namespace GarageManagementAPI.Repository.Configuration
                     BrandName = "Porsche",
                     CreatedAt = DateTimeOffset.Parse("2/25/2025 12:36:40 AM +07:00"),
                     UpdatedAt = DateTimeOffset.Parse("2/25/2025 12:36:40 AM +07:00"),
-                    LogoLink = "https://res.cloudinary.com/dt2b5qfoe/image/upload/v1740423565/Brand/sbmjof2ugzzsuwoyj7r5.png",
-                    LogoId = "Brand/sbmjof2ugzzsuwoyj7r5",
+                    ImageLink = "https://res.cloudinary.com/dt2b5qfoe/image/upload/v1740423565/Brand/sbmjof2ugzzsuwoyj7r5.png",
+                    ImageId = "Brand/sbmjof2ugzzsuwoyj7r5",
                     Status = BrandStatus.Active
                 },
                 new Brand()
@@ -227,8 +227,8 @@ namespace GarageManagementAPI.Repository.Configuration
                     BrandName = "Volvo",
                     CreatedAt = DateTimeOffset.Parse("2/25/2025 12:36:40 AM +07:00"),
                     UpdatedAt = DateTimeOffset.Parse("2/25/2025 12:36:40 AM +07:00"),
-                    LogoLink = "https://res.cloudinary.com/dt2b5qfoe/image/upload/v1740423480/Brand/n3dc1tql2hvqydjaekzl.png",
-                    LogoId = "Brand/n3dc1tql2hvqydjaekzl",
+                    ImageLink = "https://res.cloudinary.com/dt2b5qfoe/image/upload/v1740423480/Brand/n3dc1tql2hvqydjaekzl.png",
+                    ImageId = "Brand/n3dc1tql2hvqydjaekzl",
                     Status = BrandStatus.Active
                 },
                 new Brand()
@@ -237,8 +237,8 @@ namespace GarageManagementAPI.Repository.Configuration
                     BrandName = "Land Rover",
                     CreatedAt = DateTimeOffset.Parse("2/25/2025 12:36:40 AM +07:00"),
                     UpdatedAt = DateTimeOffset.Parse("2/25/2025 12:36:40 AM +07:00"),
-                    LogoLink = "https://res.cloudinary.com/dt2b5qfoe/image/upload/v1740423422/Brand/ulvsdpqvmfvib7i6wxos.png",
-                    LogoId = "Brand/ulvsdpqvmfvib7i6wxos",
+                    ImageLink = "https://res.cloudinary.com/dt2b5qfoe/image/upload/v1740423422/Brand/ulvsdpqvmfvib7i6wxos.png",
+                    ImageId = "Brand/ulvsdpqvmfvib7i6wxos",
                     Status = BrandStatus.Active
                 },
                 new Brand()
@@ -247,8 +247,8 @@ namespace GarageManagementAPI.Repository.Configuration
                     BrandName = "Mazda",
                     CreatedAt = DateTimeOffset.Parse("2/25/2025 12:36:40 AM +07:00"),
                     UpdatedAt = DateTimeOffset.Parse("2/25/2025 12:36:40 AM +07:00"),
-                    LogoLink = "https://res.cloudinary.com/dt2b5qfoe/image/upload/v1740423366/Brand/kkxeemoptvcenvt86l3w.png",
-                    LogoId = "Brand/kkxeemoptvcenvt86l3w",
+                    ImageLink = "https://res.cloudinary.com/dt2b5qfoe/image/upload/v1740423366/Brand/kkxeemoptvcenvt86l3w.png",
+                    ImageId = "Brand/kkxeemoptvcenvt86l3w",
                     Status = BrandStatus.Active
                 },
                 new Brand()
@@ -257,8 +257,8 @@ namespace GarageManagementAPI.Repository.Configuration
                     BrandName = "Infiniti",
                     CreatedAt = DateTimeOffset.Parse("2/25/2025 12:36:40 AM +07:00"),
                     UpdatedAt = DateTimeOffset.Parse("2/25/2025 12:36:40 AM +07:00"),
-                    LogoLink = "https://res.cloudinary.com/dt2b5qfoe/image/upload/v1740423282/Brand/vkk2c8pgwgsdov9omkyd.png",
-                    LogoId = "Brand/vkk2c8pgwgsdov9omkyd",
+                    ImageLink = "https://res.cloudinary.com/dt2b5qfoe/image/upload/v1740423282/Brand/vkk2c8pgwgsdov9omkyd.png",
+                    ImageId = "Brand/vkk2c8pgwgsdov9omkyd",
                     Status = BrandStatus.Active
                 },
                 new Brand()
@@ -267,8 +267,8 @@ namespace GarageManagementAPI.Repository.Configuration
                     BrandName = "Buick",
                     CreatedAt = DateTimeOffset.Parse("2/25/2025 12:36:40 AM +07:00"),
                     UpdatedAt = DateTimeOffset.Parse("2/25/2025 12:36:40 AM +07:00"),
-                    LogoLink = "https://res.cloudinary.com/dt2b5qfoe/image/upload/v1740423195/Brand/pbdy8azpl3zaj57jqsjh.png",
-                    LogoId = "Brand/pbdy8azpl3zaj57jqsjh",
+                    ImageLink = "https://res.cloudinary.com/dt2b5qfoe/image/upload/v1740423195/Brand/pbdy8azpl3zaj57jqsjh.png",
+                    ImageId = "Brand/pbdy8azpl3zaj57jqsjh",
                     Status = BrandStatus.Active
                 },
                 new Brand()
@@ -277,8 +277,8 @@ namespace GarageManagementAPI.Repository.Configuration
                     BrandName = "Acura",
                     CreatedAt = DateTimeOffset.Parse("2/25/2025 12:36:40 AM +07:00"),
                     UpdatedAt = DateTimeOffset.Parse("2/25/2025 12:36:40 AM +07:00"),
-                    LogoLink = "https://res.cloudinary.com/dt2b5qfoe/image/upload/v1740423136/Brand/mkyjol2tpt7jhjmaofaz.png",
-                    LogoId = "Brand/mkyjol2tpt7jhjmaofaz",
+                    ImageLink = "https://res.cloudinary.com/dt2b5qfoe/image/upload/v1740423136/Brand/mkyjol2tpt7jhjmaofaz.png",
+                    ImageId = "Brand/mkyjol2tpt7jhjmaofaz",
                     Status = BrandStatus.Active
                 },
                 new Brand()
@@ -287,8 +287,8 @@ namespace GarageManagementAPI.Repository.Configuration
                     BrandName = "Fiat",
                     CreatedAt = DateTimeOffset.Parse("2/25/2025 12:36:40 AM +07:00"),
                     UpdatedAt = DateTimeOffset.Parse("2/25/2025 12:36:40 AM +07:00"),
-                    LogoLink = "https://res.cloudinary.com/dt2b5qfoe/image/upload/v1740423064/Brand/ifubhf1jsnt9k6xkwhv7.png",
-                    LogoId = "Brand/ifubhf1jsnt9k6xkwhv7",
+                    ImageLink = "https://res.cloudinary.com/dt2b5qfoe/image/upload/v1740423064/Brand/ifubhf1jsnt9k6xkwhv7.png",
+                    ImageId = "Brand/ifubhf1jsnt9k6xkwhv7",
                     Status = BrandStatus.Active
                 },
                 new Brand()
@@ -297,8 +297,8 @@ namespace GarageManagementAPI.Repository.Configuration
                     BrandName = "Mini",
                     CreatedAt = DateTimeOffset.Parse("2/25/2025 12:36:40 AM +07:00"),
                     UpdatedAt = DateTimeOffset.Parse("2/25/2025 12:36:40 AM +07:00"),
-                    LogoLink = "https://res.cloudinary.com/dt2b5qfoe/image/upload/v1740422988/Brand/w6ca9jl8nxdrtsluak70.png",
-                    LogoId = "Brand/w6ca9jl8nxdrtsluak70",
+                    ImageLink = "https://res.cloudinary.com/dt2b5qfoe/image/upload/v1740422988/Brand/w6ca9jl8nxdrtsluak70.png",
+                    ImageId = "Brand/w6ca9jl8nxdrtsluak70",
                     Status = BrandStatus.Active
                 },
                 new Brand()
@@ -307,8 +307,8 @@ namespace GarageManagementAPI.Repository.Configuration
                     BrandName = "Chrysler",
                     CreatedAt = DateTimeOffset.Parse("2/25/2025 12:36:40 AM +07:00"),
                     UpdatedAt = DateTimeOffset.Parse("2/25/2025 12:36:40 AM +07:00"),
-                    LogoLink = "https://res.cloudinary.com/dt2b5qfoe/image/upload/v1740422880/Brand/umb5c1sp4044krzzpo88.png",
-                    LogoId = "Brand/umb5c1sp4044krzzpo88",
+                    ImageLink = "https://res.cloudinary.com/dt2b5qfoe/image/upload/v1740422880/Brand/umb5c1sp4044krzzpo88.png",
+                    ImageId = "Brand/umb5c1sp4044krzzpo88",
                     Status = BrandStatus.Active
                 },
                 new Brand()
@@ -317,8 +317,8 @@ namespace GarageManagementAPI.Repository.Configuration
                     BrandName = "Tesla",
                     CreatedAt = DateTimeOffset.Parse("2/25/2025 12:36:40 AM +07:00"),
                     UpdatedAt = DateTimeOffset.Parse("2/25/2025 12:36:40 AM +07:00"),
-                    LogoLink = "https://res.cloudinary.com/dt2b5qfoe/image/upload/v1740423698/Brand/tmplel6lrqlfazu1bhy0.png",
-                    LogoId = "Brand/tmplel6lrqlfazu1bhy0",
+                    ImageLink = "https://res.cloudinary.com/dt2b5qfoe/image/upload/v1740423698/Brand/tmplel6lrqlfazu1bhy0.png",
+                    ImageId = "Brand/tmplel6lrqlfazu1bhy0",
                     Status = BrandStatus.Active
                 },
                 new Brand()
@@ -327,8 +327,8 @@ namespace GarageManagementAPI.Repository.Configuration
                     BrandName = "Renault",
                     CreatedAt = DateTimeOffset.Parse("2/25/2025 12:36:40 AM +07:00"),
                     UpdatedAt = DateTimeOffset.Parse("2/25/2025 12:36:40 AM +07:00"),
-                    LogoLink = "https://res.cloudinary.com/dt2b5qfoe/image/upload/v1740422660/Brand/dtvvsfc8hclugj3rt6fi.png",
-                    LogoId = "Brand/dtvvsfc8hclugj3rt6fi",
+                    ImageLink = "https://res.cloudinary.com/dt2b5qfoe/image/upload/v1740422660/Brand/dtvvsfc8hclugj3rt6fi.png",
+                    ImageId = "Brand/dtvvsfc8hclugj3rt6fi",
                     Status = BrandStatus.Active
                 },
                 new Brand()
@@ -337,8 +337,8 @@ namespace GarageManagementAPI.Repository.Configuration
                     BrandName = "Peugeot",
                     CreatedAt = DateTimeOffset.Parse("2/25/2025 12:36:40 AM +07:00"),
                     UpdatedAt = DateTimeOffset.Parse("2/25/2025 12:36:40 AM +07:00"),
-                    LogoLink = "https://res.cloudinary.com/dt2b5qfoe/image/upload/v1740422609/Brand/diqhpfvayh4esj3vion2.png",
-                    LogoId = "Brand/diqhpfvayh4esj3vion2",
+                    ImageLink = "https://res.cloudinary.com/dt2b5qfoe/image/upload/v1740422609/Brand/diqhpfvayh4esj3vion2.png",
+                    ImageId = "Brand/diqhpfvayh4esj3vion2",
                     Status = BrandStatus.Active
                 },
                 new Brand()
@@ -347,8 +347,8 @@ namespace GarageManagementAPI.Repository.Configuration
                     BrandName = "Suzuki",
                     CreatedAt = DateTimeOffset.Parse("2/25/2025 12:36:40 AM +07:00"),
                     UpdatedAt = DateTimeOffset.Parse("2/25/2025 12:36:40 AM +07:00"),
-                    LogoLink = "https://res.cloudinary.com/dt2b5qfoe/image/upload/v1740421766/Brand/elsbmo9uhii4prclhfx2.png",
-                    LogoId = "Brand/elsbmo9uhii4prclhfx2",
+                    ImageLink = "https://res.cloudinary.com/dt2b5qfoe/image/upload/v1740421766/Brand/elsbmo9uhii4prclhfx2.png",
+                    ImageId = "Brand/elsbmo9uhii4prclhfx2",
                     Status = BrandStatus.Active
                 },
                 new Brand()
@@ -357,8 +357,8 @@ namespace GarageManagementAPI.Repository.Configuration
                     BrandName = "Skoda",
                     CreatedAt = DateTimeOffset.Parse("2/25/2025 12:36:40 AM +07:00"),
                     UpdatedAt = DateTimeOffset.Parse("2/25/2025 12:36:40 AM +07:00"),
-                    LogoLink = "https://res.cloudinary.com/dt2b5qfoe/image/upload/v1740421656/Brand/zndqli8qgxhwjmr7fyo5.png",
-                    LogoId = "Brand/zndqli8qgxhwjmr7fyo5",
+                    ImageLink = "https://res.cloudinary.com/dt2b5qfoe/image/upload/v1740421656/Brand/zndqli8qgxhwjmr7fyo5.png",
+                    ImageId = "Brand/zndqli8qgxhwjmr7fyo5",
                     Status = BrandStatus.Active
                 },
                 new Brand()
@@ -367,8 +367,8 @@ namespace GarageManagementAPI.Repository.Configuration
                     BrandName = "Opel",
                     CreatedAt = DateTimeOffset.Parse("2/25/2025 12:36:40 AM +07:00"),
                     UpdatedAt = DateTimeOffset.Parse("2/25/2025 12:36:40 AM +07:00"),
-                    LogoLink = "https://res.cloudinary.com/dt2b5qfoe/image/upload/v1740421597/Brand/zkby3nlbmv7path5ujwj.png",
-                    LogoId = "Brand/zkby3nlbmv7path5ujwj",
+                    ImageLink = "https://res.cloudinary.com/dt2b5qfoe/image/upload/v1740421597/Brand/zkby3nlbmv7path5ujwj.png",
+                    ImageId = "Brand/zkby3nlbmv7path5ujwj",
                     Status = BrandStatus.Active
                 },
                 new Brand()
@@ -377,8 +377,8 @@ namespace GarageManagementAPI.Repository.Configuration
                     BrandName = "Alfa Romeo",
                     CreatedAt = DateTimeOffset.Parse("2/25/2025 12:36:40 AM +07:00"),
                     UpdatedAt = DateTimeOffset.Parse("2/25/2025 12:36:40 AM +07:00"),
-                    LogoLink = "https://res.cloudinary.com/dt2b5qfoe/image/upload/v1740421522/Brand/ot1xglmql3kdxpdbwcte.png",
-                    LogoId = "Brand/ot1xglmql3kdxpdbwcte",
+                    ImageLink = "https://res.cloudinary.com/dt2b5qfoe/image/upload/v1740421522/Brand/ot1xglmql3kdxpdbwcte.png",
+                    ImageId = "Brand/ot1xglmql3kdxpdbwcte",
                     Status = BrandStatus.Active
                 },
                 new Brand()
@@ -387,8 +387,8 @@ namespace GarageManagementAPI.Repository.Configuration
                     BrandName = "Saab",
                     CreatedAt = DateTimeOffset.Parse("2/25/2025 12:36:40 AM +07:00"),
                     UpdatedAt = DateTimeOffset.Parse("2/25/2025 12:36:40 AM +07:00"),
-                    LogoLink = "https://res.cloudinary.com/dt2b5qfoe/image/upload/v1740421444/Brand/lexnrqalxuzivogd6mov.png",
-                    LogoId = "Brand/lexnrqalxuzivogd6mov",
+                    ImageLink = "https://res.cloudinary.com/dt2b5qfoe/image/upload/v1740421444/Brand/lexnrqalxuzivogd6mov.png",
+                    ImageId = "Brand/lexnrqalxuzivogd6mov",
                     Status = BrandStatus.Active
                 },
                 new Brand()
@@ -397,8 +397,8 @@ namespace GarageManagementAPI.Repository.Configuration
                     BrandName = "Genesis",
                     CreatedAt = DateTimeOffset.Parse("2/25/2025 12:36:40 AM +07:00"),
                     UpdatedAt = DateTimeOffset.Parse("2/25/2025 12:36:40 AM +07:00"),
-                    LogoLink = "https://res.cloudinary.com/dt2b5qfoe/image/upload/v1740421364/Brand/bn8lek9t1qielpj33asx.png",
-                    LogoId = "Brand/bn8lek9t1qielpj33asx",
+                    ImageLink = "https://res.cloudinary.com/dt2b5qfoe/image/upload/v1740421364/Brand/bn8lek9t1qielpj33asx.png",
+                    ImageId = "Brand/bn8lek9t1qielpj33asx",
                     Status = BrandStatus.Active
                 },
                 new Brand()
@@ -407,8 +407,8 @@ namespace GarageManagementAPI.Repository.Configuration
                     BrandName = "Lincoln",
                     CreatedAt = DateTimeOffset.Parse("2/25/2025 12:36:40 AM +07:00"),
                     UpdatedAt = DateTimeOffset.Parse("2/25/2025 12:36:40 AM +07:00"),
-                    LogoLink = "https://res.cloudinary.com/dt2b5qfoe/image/upload/v1740421296/Brand/dvxwxwkt98k2vm237hb3.png",
-                    LogoId = "Brand/dvxwxwkt98k2vm237hb3",
+                    ImageLink = "https://res.cloudinary.com/dt2b5qfoe/image/upload/v1740421296/Brand/dvxwxwkt98k2vm237hb3.png",
+                    ImageId = "Brand/dvxwxwkt98k2vm237hb3",
                     Status = BrandStatus.Active
                 },
                 new Brand()
@@ -417,8 +417,8 @@ namespace GarageManagementAPI.Repository.Configuration
                     BrandName = "Isuzu",
                     CreatedAt = DateTimeOffset.Parse("2/25/2025 12:36:40 AM +07:00"),
                     UpdatedAt = DateTimeOffset.Parse("2/25/2025 12:36:40 AM +07:00"),
-                    LogoLink = "https://res.cloudinary.com/dt2b5qfoe/image/upload/v1740421187/Brand/zrlnucqkikvx4necltgs.png",
-                    LogoId = "Brand/zrlnucqkikvx4necltgs",
+                    ImageLink = "https://res.cloudinary.com/dt2b5qfoe/image/upload/v1740421187/Brand/zrlnucqkikvx4necltgs.png",
+                    ImageId = "Brand/zrlnucqkikvx4necltgs",
                     Status = BrandStatus.Active
                 },
                 new Brand()
@@ -427,8 +427,8 @@ namespace GarageManagementAPI.Repository.Configuration
                     BrandName = "Bentley",
                     CreatedAt = DateTimeOffset.Parse("2/25/2025 12:36:40 AM +07:00"),
                     UpdatedAt = DateTimeOffset.Parse("2/25/2025 12:36:40 AM +07:00"),
-                    LogoLink = "https://res.cloudinary.com/dt2b5qfoe/image/upload/v1740421127/Brand/uu8ru4pxd9lywnclld9y.png",
-                    LogoId = "Brand/uu8ru4pxd9lywnclld9y",
+                    ImageLink = "https://res.cloudinary.com/dt2b5qfoe/image/upload/v1740421127/Brand/uu8ru4pxd9lywnclld9y.png",
+                    ImageId = "Brand/uu8ru4pxd9lywnclld9y",
                     Status = BrandStatus.Active
                 },
                 new Brand()
@@ -437,8 +437,8 @@ namespace GarageManagementAPI.Repository.Configuration
                     BrandName = "Aston Martin",
                     CreatedAt = DateTimeOffset.Parse("2/25/2025 12:36:40 AM +07:00"),
                     UpdatedAt = DateTimeOffset.Parse("2/25/2025 12:36:40 AM +07:00"),
-                    LogoLink = "https://res.cloudinary.com/dt2b5qfoe/image/upload/v1740421051/Brand/hnposen4390ckqokcgcq.png",
-                    LogoId = "Brand/hnposen4390ckqokcgcq",
+                    ImageLink = "https://res.cloudinary.com/dt2b5qfoe/image/upload/v1740421051/Brand/hnposen4390ckqokcgcq.png",
+                    ImageId = "Brand/hnposen4390ckqokcgcq",
                     Status = BrandStatus.Active
                 },
                 new Brand()
@@ -447,8 +447,8 @@ namespace GarageManagementAPI.Repository.Configuration
                     BrandName = "Maserati",
                     CreatedAt = DateTimeOffset.Parse("2/25/2025 12:36:40 AM +07:00"),
                     UpdatedAt = DateTimeOffset.Parse("2/25/2025 12:36:40 AM +07:00"),
-                    LogoLink = "https://res.cloudinary.com/dt2b5qfoe/image/upload/v1740420549/Brand/dcfpdtrz6pqk5b7rkdfn.png",
-                    LogoId = "Brand/dcfpdtrz6pqk5b7rkdfn",
+                    ImageLink = "https://res.cloudinary.com/dt2b5qfoe/image/upload/v1740420549/Brand/dcfpdtrz6pqk5b7rkdfn.png",
+                    ImageId = "Brand/dcfpdtrz6pqk5b7rkdfn",
                     Status = BrandStatus.Active
                 },
                 new Brand()
@@ -457,8 +457,8 @@ namespace GarageManagementAPI.Repository.Configuration
                     BrandName = "Jaguar",
                     CreatedAt = DateTimeOffset.Parse("2/25/2025 12:36:40 AM +07:00"),
                     UpdatedAt = DateTimeOffset.Parse("2/25/2025 12:36:40 AM +07:00"),
-                    LogoLink = "https://res.cloudinary.com/dt2b5qfoe/image/upload/v1740420465/Brand/jbn02u6cdkbhr9suovy1.png",
-                    LogoId = "Brand/jbn02u6cdkbhr9suovy1",
+                    ImageLink = "https://res.cloudinary.com/dt2b5qfoe/image/upload/v1740420465/Brand/jbn02u6cdkbhr9suovy1.png",
+                    ImageId = "Brand/jbn02u6cdkbhr9suovy1",
                     Status = BrandStatus.Active
                 },
                 new Brand()
@@ -467,8 +467,8 @@ namespace GarageManagementAPI.Repository.Configuration
                     BrandName = "Ferrari",
                     CreatedAt = DateTimeOffset.Parse("2/25/2025 12:36:40 AM +07:00"),
                     UpdatedAt = DateTimeOffset.Parse("2/25/2025 12:36:40 AM +07:00"),
-                    LogoLink = "https://res.cloudinary.com/dt2b5qfoe/image/upload/v1740420390/Brand/k8qf8xzk746w5ff9j6wx.png",
-                    LogoId = "Brand/k8qf8xzk746w5ff9j6wx",
+                    ImageLink = "https://res.cloudinary.com/dt2b5qfoe/image/upload/v1740420390/Brand/k8qf8xzk746w5ff9j6wx.png",
+                    ImageId = "Brand/k8qf8xzk746w5ff9j6wx",
                     Status = BrandStatus.Active
                 },
                 new Brand()
@@ -477,8 +477,8 @@ namespace GarageManagementAPI.Repository.Configuration
                     BrandName = "Lamborghini",
                     CreatedAt = DateTimeOffset.Parse("2/25/2025 12:36:40 AM +07:00"),
                     UpdatedAt = DateTimeOffset.Parse("2/25/2025 12:36:40 AM +07:00"),
-                    LogoLink = "https://res.cloudinary.com/dt2b5qfoe/image/upload/v1740420327/Brand/yjzqo0gcbjye6j78cfff.png",
-                    LogoId = "Brand/yjzqo0gcbjye6j78cfff",
+                    ImageLink = "https://res.cloudinary.com/dt2b5qfoe/image/upload/v1740420327/Brand/yjzqo0gcbjye6j78cfff.png",
+                    ImageId = "Brand/yjzqo0gcbjye6j78cfff",
                     Status = BrandStatus.Active
                 },
                 new Brand()
@@ -487,8 +487,8 @@ namespace GarageManagementAPI.Repository.Configuration
                     BrandName = "Bugatti",
                     CreatedAt = DateTimeOffset.Parse("2/25/2025 12:36:40 AM +07:00"),
                     UpdatedAt = DateTimeOffset.Parse("2/25/2025 12:36:40 AM +07:00"),
-                    LogoLink = "https://res.cloudinary.com/dt2b5qfoe/image/upload/v1740420222/Brand/x1iiioelr1eduzvlz6gz.png",
-                    LogoId = "Brand/x1iiioelr1eduzvlz6gz",
+                    ImageLink = "https://res.cloudinary.com/dt2b5qfoe/image/upload/v1740420222/Brand/x1iiioelr1eduzvlz6gz.png",
+                    ImageId = "Brand/x1iiioelr1eduzvlz6gz",
                     Status = BrandStatus.Active
                 },
                 new Brand()
@@ -497,8 +497,8 @@ namespace GarageManagementAPI.Repository.Configuration
                     BrandName = "McLaren",
                     CreatedAt = DateTimeOffset.Parse("2/25/2025 12:36:40 AM +07:00"),
                     UpdatedAt = DateTimeOffset.Parse("2/25/2025 12:36:40 AM +07:00"),
-                    LogoLink = "https://res.cloudinary.com/dt2b5qfoe/image/upload/v1740420144/Brand/cpxc269y35mhr8pdijlr.png",
-                    LogoId = "Brand/cpxc269y35mhr8pdijlr",
+                    ImageLink = "https://res.cloudinary.com/dt2b5qfoe/image/upload/v1740420144/Brand/cpxc269y35mhr8pdijlr.png",
+                    ImageId = "Brand/cpxc269y35mhr8pdijlr",
                     Status = BrandStatus.Active
                 },
                 new Brand()
@@ -507,8 +507,8 @@ namespace GarageManagementAPI.Repository.Configuration
                     BrandName = "Rolls-Royce",
                     CreatedAt = DateTimeOffset.Parse("2/25/2025 12:36:40 AM +07:00"),
                     UpdatedAt = DateTimeOffset.Parse("2/25/2025 12:36:40 AM +07:00"),
-                    LogoLink = "https://res.cloudinary.com/dt2b5qfoe/image/upload/v1740420078/Brand/jmluhi20qavru6lcvpvc.png",
-                    LogoId = "Brand/jmluhi20qavru6lcvpvc",
+                    ImageLink = "https://res.cloudinary.com/dt2b5qfoe/image/upload/v1740420078/Brand/jmluhi20qavru6lcvpvc.png",
+                    ImageId = "Brand/jmluhi20qavru6lcvpvc",
                     Status = BrandStatus.Active
                 },
                 new Brand()
@@ -517,8 +517,8 @@ namespace GarageManagementAPI.Repository.Configuration
                     BrandName = "Pagani",
                     CreatedAt = DateTimeOffset.Parse("2/25/2025 12:36:40 AM +07:00"),
                     UpdatedAt = DateTimeOffset.Parse("2/25/2025 12:36:40 AM +07:00"),
-                    LogoLink = "https://res.cloudinary.com/dt2b5qfoe/image/upload/v1740419988/Brand/hmvywzznk4hecggkxi3p.png",
-                    LogoId = "Brand/hmvywzznk4hecggkxi3p",
+                    ImageLink = "https://res.cloudinary.com/dt2b5qfoe/image/upload/v1740419988/Brand/hmvywzznk4hecggkxi3p.png",
+                    ImageId = "Brand/hmvywzznk4hecggkxi3p",
                     Status = BrandStatus.Active
                 },
                 new Brand()
@@ -527,8 +527,8 @@ namespace GarageManagementAPI.Repository.Configuration
                     BrandName = "Koenigsegg",
                     CreatedAt = DateTimeOffset.Parse("2/25/2025 12:36:40 AM +07:00"),
                     UpdatedAt = DateTimeOffset.Parse("2/25/2025 12:36:40 AM +07:00"),
-                    LogoLink = "https://res.cloudinary.com/dt2b5qfoe/image/upload/f_auto,q_auto/v1/Brand/jvcdennahy5k7y8tgcin",
-                    LogoId = "Brand/jvcdennahy5k7y8tgcin",
+                    ImageLink = "https://res.cloudinary.com/dt2b5qfoe/image/upload/f_auto,q_auto/v1/Brand/jvcdennahy5k7y8tgcin",
+                    ImageId = "Brand/jvcdennahy5k7y8tgcin",
                     Status = BrandStatus.Active
                 }
             );

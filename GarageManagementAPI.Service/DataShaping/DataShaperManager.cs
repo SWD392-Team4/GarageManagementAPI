@@ -11,6 +11,7 @@ using GarageManagementAPI.Shared.DataTransferObjects.CarPart;
 using GarageManagementAPI.Shared.DataTransferObjects.CarPartCategory;
 using GarageManagementAPI.Shared.DataTransferObjects.ServiceImage;
 using GarageManagementAPI.Shared.DataTransferObjects.ServiceHistory;
+using GarageManagementAPI.Shared.DataTransferObjects.ServiceFeeback;
 
 namespace GarageManagementAPI.Service.DataShaping
 {
@@ -27,7 +28,9 @@ namespace GarageManagementAPI.Service.DataShaping
         private readonly Lazy<IDataShaper<ProductHistoryDto>> _productHistoryShaper;
         private readonly Lazy<IDataShaper<ServiceHistoryDto>> _serviceHistoryShaper;
         private readonly Lazy<IDataShaper<ProductCategoryDto>> _productCategoryShaper;
+        private readonly Lazy<IDataShaper<ServiceFeedBackDto>> _serviceFeedbackShaper;
         private readonly Lazy<IDataShaper<CarPartCategoryDto>> _carPartCategoryShaper;
+        private readonly Lazy<IDataShaper<ServiceFeedBackDto>> _serviceFeedBackShaper;
 
         public DataShaperManager()
         {
@@ -63,9 +66,12 @@ namespace GarageManagementAPI.Service.DataShaping
 
             _serviceImageShaper = new Lazy<IDataShaper<ServiceImageDto>>(
             () => new DataShaper<ServiceImageDto>(ServiceImageDto.PropertyInfos));
+
             _serviceHistoryShaper = new Lazy<IDataShaper<ServiceHistoryDto>>(
             () => new DataShaper<ServiceHistoryDto>(ServiceHistoryDto.PropertyInfos));
 
+            _serviceFeedBackShaper = new Lazy<IDataShaper<ServiceFeedBackDto>>(
+            () => new DataShaper<ServiceFeedBackDto>(ServiceFeedBackDto.PropertyInfos));
         }
         //.Value là thuộc tính của Lazy<T>, nó sẽ kích hoạt việc khởi tạo đối tượng nếu đối tượng đó chưa được khởi tạo trước đó. Nếu đối tượng đã được khởi tạo, thuộc tính .Value sẽ trả về đối tượng đó.
         public IDataShaper<UserDto> User => _userShaper.Value;
@@ -78,7 +84,10 @@ namespace GarageManagementAPI.Service.DataShaping
         public IDataShaper<ProductImageDto> ProductImage => _productImageShaper.Value;
         public IDataShaper<ProductHistoryDto> ProductHistory => _productHistoryShaper.Value;
         public IDataShaper<ServiceHistoryDto> ServiceHistory => _serviceHistoryShaper.Value;
+        public IDataShaper<ServiceFeedBackDto> ServiceFeedBack => _serviceFeedbackShaper.Value;
         public IDataShaper<ProductCategoryDto> ProductCategory => _productCategoryShaper.Value;
         public IDataShaper<CarPartCategoryDto> CarPartCategory => _carPartCategoryShaper.Value;
+        public IDataShaper<ServiceFeedBackDto> ServiceFeedback => _serviceFeedBackShaper.Value;
+
     }
 }

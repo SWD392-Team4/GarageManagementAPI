@@ -29,6 +29,7 @@ namespace GarageManagementAPI.Service
         private readonly Lazy<IAuthenticationService> _authenticationService;
         private readonly Lazy<IProductCategoryService> _productCategoryService;
         private readonly Lazy<ICarPartCategoryService> _carPartCategoryService;
+        private readonly Lazy<IServiceFeedbackService> _serviceFeedbackService;
 
         public ServiceManager(
             IRepositoryManager repositoryManager,
@@ -144,6 +145,12 @@ namespace GarageManagementAPI.Service
             mapper,
             dataShaper));
 
+            _serviceFeedbackService = new Lazy<IServiceFeedbackService>(() =>
+            new ServiceFeedBackService(
+            repositoryManager,
+            mapper,
+            dataShaper));
+
             _mediaService = new Lazy<IMediaService>(() =>
             new MediaService(cloudinaryConfiguration));
         }
@@ -161,6 +168,7 @@ namespace GarageManagementAPI.Service
         public IServiceImageService ServiceImageService => _serviceImageService.Value;
         public IProductImageService ProductImageService => _productImageService.Value;
         public IEmployeeInfoService EmployeeInfoService => _employeeInfoService.Value;
+        public IServiceFeedbackService ServiceFeedback => _serviceFeedbackService.Value;
         public IAuthenticationService AuthenticationService => _authenticationService.Value;
         public IProductHistoryService ProductHistoryService => _productHistoryService.Value;
         public IServiceHistoryService ServiceHistoryService => _serviceHistoryService.Value;

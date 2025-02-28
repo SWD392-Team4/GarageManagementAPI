@@ -17,7 +17,7 @@ namespace GarageManagementAPI.Application.MappingProfile
                 .ForMember(dest => dest.BrandLinkLogo, opt =>
                 {
                     opt.PreCondition(e => e.Brand != null);
-                    opt.MapFrom(e => e.Brand.LogoLink);
+                    opt.MapFrom(e => e.Brand.ImageLink);
                 })
                 .ForMember(dest => dest.Category, opt =>
                 {

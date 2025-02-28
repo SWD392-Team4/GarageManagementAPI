@@ -89,7 +89,8 @@ namespace GarageManagementAPI.Service
             => await UploadImageAsync(file, _productFolder);
         public async Task<Result<(string? publicId, string? absoluteUrl)>> UploadServiceImageAsync(IFormFile file)
             => await UploadImageAsync(file, _productFolder);
-
+        public async Task<Result<(string? publicId, string? absoluteUrl)>> UploadBrandImageAsync(IFormFile file)
+            => await UploadImageAsync(file, _productFolder);
         public async Task<Result<string>> RemoveImage(string publicId)
         {
 

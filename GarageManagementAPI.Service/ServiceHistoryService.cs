@@ -1,11 +1,10 @@
 ﻿using AutoMapper;
-using GarageManagementAPI.Entities.Models;
-using GarageManagementAPI.Repository.Contracts;
-using GarageManagementAPI.Service.Contracts;
-using GarageManagementAPI.Shared.DataTransferObjects.ServiceHistory;
-using GarageManagementAPI.Shared.RequestFeatures;
-using GarageManagementAPI.Shared.ResultModel;
 using System.Dynamic;
+using GarageManagementAPI.Service.Contracts;
+using GarageManagementAPI.Shared.ResultModel;
+using GarageManagementAPI.Repository.Contracts;
+using GarageManagementAPI.Shared.RequestFeatures;
+using GarageManagementAPI.Shared.DataTransferObjects.ServiceHistory;
 
 namespace GarageManagementAPI.Service
 {

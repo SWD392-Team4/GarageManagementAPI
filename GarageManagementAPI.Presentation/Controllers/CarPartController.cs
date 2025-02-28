@@ -43,7 +43,7 @@ namespace GarageManagementAPI.Presentation.Controllers
         public async Task<IActionResult> GetCarPartById(Guid carPartId)
         {
             var include = "CarPartCategory";
-            var carPartResult = await _service.CarPartService.GetCarPartAsync(carPartId, trackChanges: false);
+            var carPartResult = await _service.CarPartService.GetCarPartAsync(carPartId, trackChanges: false, include);
 
             return carPartResult.Map(
                 onSuccess: Ok,

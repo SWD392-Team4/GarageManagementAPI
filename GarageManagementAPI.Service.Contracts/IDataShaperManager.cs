@@ -10,6 +10,7 @@ using GarageManagementAPI.Shared.DataTransferObjects.CarPart;
 using GarageManagementAPI.Shared.DataTransferObjects.ServiceImage;
 using GarageManagementAPI.Shared.DataTransferObjects.CarPartCategory;
 using GarageManagementAPI.Shared.DataTransferObjects.ServiceHistory;
+using GarageManagementAPI.Shared.DataTransferObjects.ServiceFeeback;
 
 namespace GarageManagementAPI.Service.Contracts
 {
@@ -27,5 +28,6 @@ namespace GarageManagementAPI.Service.Contracts
         IDataShaper<ServiceHistoryDto> ServiceHistory { get; }
         IDataShaper<ProductCategoryDto> ProductCategory { get; }
         IDataShaper<CarPartCategoryDto> CarPartCategory { get; }
+        IDataShaper<ServiceFeedBackDto> ServiceFeedback { get; }
     }
 }
