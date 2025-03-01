@@ -1,6 +1,8 @@
 using GarageManagementAPI.Application;
 using GarageManagementAPI.Application.Extensions;
 using Microsoft.AspNetCore.HttpOverrides;
+using GarageManagementAPI.Service;
+using api.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -25,8 +27,8 @@ builder.Services.AddMailConfiguration(builder.Configuration);
 builder.Services.AddCloudinaryConfiguration(builder.Configuration);
 builder.Services.ConfigureSwagger();
 builder.Services.ConfigureValidator();
-builder.Services.AddSignalR(); 
-
+builder.Services.ConfigureRedis(builder.Configuration);
+builder.Services.AddSignalR();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -50,6 +52,8 @@ app.UseResponseCaching();
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
+app.UseWebSockets();
+app.MapHub<CommunicationHub>("/hub").RequireAuthorization().RequireCors("CorsPolicy"); ;
 
 app.Run();
 

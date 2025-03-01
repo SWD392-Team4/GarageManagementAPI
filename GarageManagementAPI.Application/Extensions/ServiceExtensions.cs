@@ -18,6 +18,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using StackExchange.Redis;
 using System.Net;
 using System.Text;
 using System.Text.Json.Serialization;
@@ -34,15 +35,22 @@ namespace GarageManagementAPI.Application.Extensions
             });
 
         public static void ConfigureCors(this IServiceCollection services) =>
-            services.AddCors(options =>
-            {
-                options.AddPolicy("CorsPolicy", builder =>
-                builder.AllowAnyOrigin()
-                .AllowAnyMethod()
-                .AllowAnyHeader()
-                .WithExposedHeaders("X-Pagination"));
-            });
-
+             services.AddCors(options =>
+             {
+                 /*  options.AddPolicy("CorsPolicy", builder =>
+                   builder.AllowAnyOrigin()
+                   .AllowAnyMethod()
+                   .AllowAnyHeader()
+                   .WithExposedHeaders("X-Pagination")); */
+                 options.AddPolicy("CorsPolicy",
+         builder =>
+         {
+             builder.WithOrigins("http://localhost:3000") // Cho phép origin này
+                    .AllowAnyHeader()
+                    .AllowAnyMethod()
+                    .AllowCredentials(); // Cho phép credentials
+         });
+             });
         public static void ConfigureRepositoryManager(this IServiceCollection services) =>
             services.AddScoped<IRepositoryManager, RepositoryManager>();
 
@@ -219,6 +227,22 @@ namespace GarageManagementAPI.Application.Extensions
                     NameClaimType = "UserName",
                     RoleClaimType = "Role",
                 };
+                opt.Events = new JwtBearerEvents
+                {
+                    OnMessageReceived = context =>
+                    {
+                        var accessToken = context.Request.Query["access_token"]; // Kiểm tra token từ query
+
+                        // Kiểm tra nếu request là từ SignalR và có token trong query
+                        if (!string.IsNullOrEmpty(accessToken) &&
+                            context.HttpContext.Request.Path.StartsWithSegments("/hub"))
+                        {
+                            context.Token = accessToken; // Gán token cho context
+                        }
+
+                        return Task.CompletedTask;
+                    }
+                };
             });
         }
 
@@ -264,9 +288,23 @@ namespace GarageManagementAPI.Application.Extensions
             });
         }
 
+        public static void ConfigureSignalR(this IServiceCollection services)
+        {
+            services.AddSignalR();
+        }
+
         public static void ConfigureValidator(this IServiceCollection services)
             => services.AddValidatorsFromAssembly(typeof(GarageManagementAPI.Presentation.AssemblyReference).Assembly, includeInternalTypes: true);
 
+        public static void ConfigureRedis(this IServiceCollection services, IConfiguration configuration)
+        {
+            services.AddSingleton<IConnectionMultiplexer>(sp =>
+            {
+                var redisConnectionString = configuration.GetConnectionString("Redis");
+                var configurationOptions = ConfigurationOptions.Parse(redisConnectionString);
 
+                return ConnectionMultiplexer.Connect(configurationOptions);
+            });
+        }
     }
 }
