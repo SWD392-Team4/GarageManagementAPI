@@ -1,144 +1,193 @@
-﻿using GarageManagementAPI.Service.Contracts;
-using GarageManagementAPI.Shared.DataTransferObjects.CommunicationHub;
-using Microsoft.AspNetCore.SignalR;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using StackExchange.Redis;
-using System.Collections.Concurrent;
+using System.Security.Claims;
+using Microsoft.AspNetCore.SignalR;
+using GarageManagementAPI.Shared.DataTransferObjects.CommunicationHub;
+using MimeKit;
+using GarageManagementAPI.Entities.Models;
 
-namespace GarageManagementAPI.Service
+namespace api.Services
 {
-    public class CommunicationHub : Hub, ICommunicationHub
+    public class CommunicationHub : Hub
     {
-        private static readonly ConcurrentDictionary<string, string> _userConnections = new();
         private readonly IConnectionMultiplexer _redis;
+        private static Dictionary<string, string> _userConnections = new Dictionary<string, string>();
 
         public CommunicationHub(IConnectionMultiplexer redis)
         {
             _redis = redis;
         }
-        // Khi người dùng kết nối, lưu Connection ID của họ
-        public override async Task OnConnectedAsync()
-        {
-            var userId = await GetOrCreateUserId();
-            _userConnections.AddOrUpdate(userId, Context.ConnectionId, (_, _) => Context.ConnectionId);
 
-            if (Context.User.Identity?.IsAuthenticated != true)
+        // Khi người dùng kết nối, lưu Connection ID của họ
+        public override Task OnConnectedAsync()
+        {
+            var userId = GetUserId();
+            if (string.IsNullOrEmpty(userId))
             {
-                await Clients.Caller.SendAsync("ReceiveGuestId", userId);
+                throw new UnauthorizedAccessException("User is not authenticated.");
+            }
+            if (userId != null && Context != null && !_userConnections.ContainsKey(userId))
+            {
+                _userConnections.Add(userId, Context.ConnectionId);
             }
 
-            await base.OnConnectedAsync();
+            return base.OnConnectedAsync();
         }
-
-        public override async Task OnDisconnectedAsync(Exception? exception)
+        public async Task NewMessage(string receiverId, string message)
         {
-            var userId = await GetUserId();
-            _userConnections.TryRemove(userId, out _);
-            await base.OnDisconnectedAsync(exception);
-        }
-
-        public async Task SendMessage(string receiverId, string message)
-        {
-            var senderId = await GetUserId();
+            var senderId = GetUserId();
+            if (string.IsNullOrEmpty(senderId))
+            {
+                throw new UnauthorizedAccessException("User is not authenticated.");
+            }
+            string chatRoomKey;
+            // Tạo đối tượng tin nhắn
             var chatMessage = new SignalRDto
             {
                 UserId = senderId,
                 Message = message,
-                Timestamp = DateTime.Now,
-                IsRead = false
+                Timestamp = DateTime.Now
             };
-
-            await SaveMessageToRedis(senderId, receiverId, chatMessage);
-            await NotifyParticipants(senderId, receiverId, chatMessage);
-        }
-
-        public async Task<List<SignalRDto>> GetChatHistory(string partnerId)
-        {
-            var userId = await GetUserId();
-            var chatRoomKey = GetChatRoomKey(userId, partnerId);
-
-            var db = _redis.GetDatabase();
-            var messages = await db.ListRangeAsync(chatRoomKey, 0, 50);
-
-            return messages.Select(m =>
-                JsonConvert.DeserializeObject<SignalRDto>(m.ToString())!
-            ).ToList();
-        }
-
-        public async Task MarkMessageAsRead(string partnerId)
-        {
-            var userId = await GetUserId();
-            var chatRoomKey = GetChatRoomKey(userId, partnerId);
-
-            var db = _redis.GetDatabase();
-            var messages = (await db.ListRangeAsync(chatRoomKey, 0, 50)).ToList();
-
-            for (int i = 0; i < messages.Count; i++)
+            // Tạo chatRoomKey cho cuộc trò chuyện
+            if (senderId != null)
             {
-                var msg = JsonConvert.DeserializeObject<SignalRDto>(messages[i].ToString()!);
-                if (msg?.UserId == partnerId && !msg.IsRead)
+                chatRoomKey = GetChatRoomKey(senderId, receiverId);
+                // Lấy database Redis
+                var db = _redis.GetDatabase();
+
+                // Kiểm tra loại dữ liệu của key
+                var type = await db.KeyTypeAsync(chatRoomKey);
+
+                // Nếu key không phải là List, xóa key cũ để tránh lỗi
+                if (type != RedisType.List)
                 {
-                    msg.IsRead = true;
-                    await db.ListSetByIndexAsync(chatRoomKey, i, JsonConvert.SerializeObject(msg));
-                    break;
+                    await db.KeyDeleteAsync(chatRoomKey);
                 }
-            }
-        }
 
-        private async Task<string> GetOrCreateUserId()
-        {
-            if (Context.User.Identity?.IsAuthenticated == true)
+                // Chuyển đối tượng thành chuỗi JSON
+                string jsonMessage = JsonConvert.SerializeObject(chatMessage);
+
+                // Lưu tin nhắn vào Redis (sử dụng List để lưu các tin nhắn)
+                await db.ListRightPushAsync(chatRoomKey, jsonMessage);
+            }
+
+            if (senderId != null && _userConnections.ContainsKey(receiverId))
             {
-                return Context.User.FindFirst("sub")?.Value!;
-            }
+                // Lấy Connection ID của người gửi 
+                var senderConnectionId = _userConnections[senderId];
+                // Gửi tin nhắn tới người gửi 
+                await Clients.Client(senderConnectionId).SendAsync("receiveMessage", chatMessage);
 
-            if (Context.Items.TryGetValue("GuestId", out var guestId))
+            }
+            if (senderId != null && _userConnections.ContainsKey(senderId))
             {
-                return guestId?.ToString()!;
+                // Lấy Connection ID của người nhận
+                var receiverConnectionId = _userConnections[senderId];
+                // Gửi tin nhắn tới người nhận 
+                await Clients.Client(receiverConnectionId).SendAsync("receiveMessage", chatMessage);
             }
 
-            var newGuestId = Guid.NewGuid().ToString();
-            Context.Items["GuestId"] = newGuestId;
-            return newGuestId;
+            //Gửi tin nhắn tới tất cả client của hai người nếu 2 người đnag online
+            await Clients.User(senderId!.ToString()).SendAsync("messageReceived", chatMessage);
+            await Clients.User(receiverId.ToString()).SendAsync("messageReceived", chatMessage);
         }
 
-        private async Task<string> GetUserId()
+        public async Task<List<SignalRDto>> GetChatHistory(string receiverId)
         {
-            return Context.User.Identity?.IsAuthenticated == true
-                ? Context.User.FindFirst("sub")?.Value!
-                : Context.Items["GuestId"]?.ToString()!;
-        }
+            var senderId = GetUserId();
+            if (string.IsNullOrEmpty(senderId))
+            {
+                throw new UnauthorizedAccessException("User is not authenticated.");
+            }
 
-        private async Task SaveMessageToRedis(string senderId, string receiverId, SignalRDto message)
-        {
-            var chatRoomKey = GetChatRoomKey(senderId, receiverId);
+            string chatRoomKey = GetChatRoomKey(senderId, receiverId);
             var db = _redis.GetDatabase();
 
-            await db.ListRightPushAsync(chatRoomKey, JsonConvert.SerializeObject(message));
-            await db.KeyExpireAsync(chatRoomKey, TimeSpan.FromDays(30));
-        }
-
-        private async Task NotifyParticipants(string senderId, string receiverId, SignalRDto message)
-        {
-            var tasks = new List<Task>();
-
-            if (_userConnections.TryGetValue(senderId, out var senderConnId))
+            bool chatRoomExists = await db.KeyExistsAsync(chatRoomKey);
+            if (!chatRoomExists)
             {
-                tasks.Add(Clients.Client(senderConnId).SendAsync("ReceiveMessage", message));
+                return new List<SignalRDto>();  // Trả về danh sách rỗng nếu không có tin nhắn
             }
 
-            if (_userConnections.TryGetValue(receiverId, out var receiverConnId))
-            {
-                tasks.Add(Clients.Client(receiverConnId).SendAsync("ReceiveMessage", message));
-            }
-
-            await Task.WhenAll(tasks);
+            var chatHistoryJson = await db.ListRangeAsync(chatRoomKey, 0, 50);
+            // Chuyển đổi từng tin nhắn từ dạng string sang đối tượng SignalRDto
+            var chats = chatHistoryJson
+                .Select(message => JsonConvert.DeserializeObject<SignalRDto>(message.ToString()))
+                .ToList();
+            return chats!;
         }
 
-        private static string GetChatRoomKey(string user1, string user2)
+        // Phương thức gửi thông báo cho người dùng
+        public async Task SendNotification(string userId, string notificationMessage)
         {
-            var orderedIds = new[] { user1, user2 }.OrderBy(id => id).ToArray();
-            return $"chat:{orderedIds[0]}:{orderedIds[1]}";
+            // Lấy Redis database
+            var db = _redis.GetDatabase();
+            // Tạo key cho thông báo của người dùng
+            string notificationKey = GetNotificationKey(userId);
+            // Tạo đối tượng thông báo
+            var notification = new SignalRDto
+            {
+                UserId = userId,
+                Message = notificationMessage,
+                Timestamp = DateTime.Now
+            };
+            string jsonNotification = JsonConvert.SerializeObject(notification);
+            // Lưu thông báo vào Redis
+            await db.ListRightPushAsync(notificationKey, jsonNotification);
+            if (_userConnections.ContainsKey(userId))
+            {
+                var connectionId = _userConnections[userId];
+                await Clients.Client(connectionId).SendAsync("receiveNotification", notificationMessage);
+            }
+        }
+
+        public async Task<List<SignalRDto>> GetNotifications(string userId)
+        {
+            var db = _redis.GetDatabase();
+            // Lấy key của thông báo
+            string notificationKey = GetNotificationKey(userId);
+            // Kiểm tra xem có thông báo nào không
+            bool notificationsExist = await db.KeyExistsAsync(notificationKey);
+            if (!notificationsExist)
+            {
+                return new List<SignalRDto>();  // Trả về danh sách rỗng nếu không có thông báo
+            }
+
+            // Lấy tất cả thông báo từ Redis (tối đa 50 thông báo gần nhất)
+            var notificationsJson = await db.ListRangeAsync(notificationKey, 0, 50);
+
+            var notifications = notificationsJson
+                            .Select(message => JsonConvert.DeserializeObject<SignalRDto>(message.ToString()))
+                            .ToList();
+            // Chuyển đổi thông báo từ Redis thành danh sách chuỗi
+            return notifications!;
+        }
+
+        public override Task OnDisconnectedAsync(Exception exception)
+        {
+            var userId = GetUserId();
+            if (_userConnections.ContainsKey(userId))
+            {
+                _userConnections.Remove(userId);
+            }
+            return base.OnDisconnectedAsync(exception);
+        }
+
+        // Hàm tạo key cho cuộc trò chuyện giữa hai người
+        private string GetChatRoomKey(string user1Id, string user2Id)
+        {
+            return $"{(user1Id.CompareTo(user2Id) < 0 ? user1Id : user2Id)}:{(user1Id.CompareTo(user2Id) > 0 ? user1Id : user2Id)}";
+        }
+        private string GetNotificationKey(string userId)
+        {
+            return $"notifications:{userId}";
+        }
+
+
+        private string GetUserId()
+        {
+            Console.WriteLine("UserId" + Context.User.FindFirstValue("UserId"));
+            return Context.User.FindFirstValue("UserId")!;
         }
     }
 }
