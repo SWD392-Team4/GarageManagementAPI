@@ -53,8 +53,6 @@ namespace GarageManagementAPI.Repository
                 .SearchByBrand(productParameters.ProductBrandName)
                 .ToListAsync();
 
-            Console.WriteLine(products.Count());
-
             return PagedList<Product>.ToPagedList(
                 products,
                 productParameters.PageNumber,
