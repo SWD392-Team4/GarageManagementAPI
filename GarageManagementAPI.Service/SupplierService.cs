@@ -48,7 +48,7 @@ namespace GarageManagementAPI.Service
         }
 
 
-        public async Task<Result<ExpandoObject>> GetSupplierAsync(Guid supplierId, SupplierParameters SupplierParameterdParameters, bool trackChanges, string? include = null)
+        public async Task<Result<ExpandoObject>> GetSupplierAsync(Guid supplierId, SupplierParameters supplierParameters, bool trackChanges, string? include = null)
         {
             var supplierResult = await GetAndCheckIfSupplierExist(supplierId, trackChanges);
 
@@ -59,7 +59,7 @@ namespace GarageManagementAPI.Service
 
             var suppliersDto = _mapper.Map<SupplierDto>(supplierEntity);
 
-            var SupplierShaped = _dataShaper.Supplier.ShapeData(suppliersDto, null);
+            var SupplierShaped = _dataShaper.Supplier.ShapeData(suppliersDto, supplierParameters.Fields);
 
             return Result<ExpandoObject>.Ok(SupplierShaped);
         }

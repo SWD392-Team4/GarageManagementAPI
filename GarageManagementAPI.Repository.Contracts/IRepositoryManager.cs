@@ -21,6 +21,7 @@ namespace GarageManagementAPI.Repository.Contracts
         IServiceFeedBackRepository ServiceFeeback { get; }
         IProductCategoryRepository ProductCategory { get; }
         ICarPartCategoryRepository CarPartCategory { get; }
+        ISupplierContactRepository SupplierContact { get; }
         Task<IDbContextTransaction> BeginTransactionAsync();
         IExecutionStrategy CreateExecutionStrategy();
         Task SaveAsync();

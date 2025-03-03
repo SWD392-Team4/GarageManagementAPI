@@ -22,11 +22,11 @@ namespace GarageManagementAPI.Shared.ErrorsConstant.Supplier
                 Code = nameof(SupplierNotFound),
                 Description = SupplierNotFound
             };
-        public static ErrorsResult GetSupplierNotFoundWithIdError(Guid SupplierId) =>
+        public static ErrorsResult GetSupplierNotFoundWithIdError(Guid supplierId) =>
             new()
             {
                 Code = nameof(SupplierNotFound),
-                Description = string.Format(SupplierNotFound, SupplierId)
+                Description = string.Format(SupplierNotFound, supplierId)
             };
         public static ErrorsResult GetSupplierNameAlreadyExistError(SupplierDtoForCreation supplierDtoForCreation) =>
              new()

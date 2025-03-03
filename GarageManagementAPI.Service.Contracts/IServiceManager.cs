@@ -22,6 +22,7 @@
         IAuthenticationService AuthenticationService { get; }
         IProductCategoryService ProductCategoryService { get; }
         ICarPartCategoryService CarPartCategoryService { get; }
-       
+        ISupplierContactService SupplierContactService { get; }
+
     }
 }

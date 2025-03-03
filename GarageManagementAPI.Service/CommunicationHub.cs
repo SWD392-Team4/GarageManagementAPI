@@ -195,7 +195,7 @@ namespace api.Services
                 try
                 {
                     var chatMessage = JsonConvert.DeserializeObject<dynamic>(msg.ToString());
-                    if (chatMessage.UserId.ToString().Trim() != senderId.ToString().Trim() && chatMessage.IsRead == false)
+                    if (chatMessage!.UserId.ToString().Trim() != senderId.ToString().Trim() && chatMessage.IsRead == false)
         {
                         chatMessage.isRead = true;
         }

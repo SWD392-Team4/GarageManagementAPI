@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using GarageManagementAPI.Shared.Enums;
 using Microsoft.AspNetCore.Authorization;
 using GarageManagementAPI.Shared.Extension;
 using GarageManagementAPI.Service.Contracts;
