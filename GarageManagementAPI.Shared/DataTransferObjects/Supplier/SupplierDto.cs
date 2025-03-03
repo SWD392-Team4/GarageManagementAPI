@@ -1,10 +1,11 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using GarageManagementAPI.Shared.Enums.SystemStatuss;
 
-namespace GarageManagementAPI.Entities.Models
+namespace GarageManagementAPI.Shared.DataTransferObjects.Supplier
 {
-    public partial class Supplier : BaseEntity<Supplier>
+    public record class SupplierDto : BaseDto<SupplierDto>
     {
+        public required Guid Id { get; set; }
         public string Name { get; set; } = null!;
 
         public string? TaxCode { get; set; }
@@ -25,9 +26,5 @@ namespace GarageManagementAPI.Entities.Models
         public DateTimeOffset UpdatedAt { get; set; }
 
         public string SupplierCategory { get; set; } = null!;
-
-        public virtual ICollection<SupplierContact> SupplierContacts { get; set; } = new List<SupplierContact>();
     }
-
 }
-

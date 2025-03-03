@@ -4,6 +4,7 @@
     {
         IMailService MailService { get; }
         IUserService UserService { get; }
+        ISupplierService SupplierService { get; }
         IBrandService BrandService { get; }
         IMediaService MediaService { get; }
         IServiceService ServiceService { get; }
@@ -12,12 +13,12 @@
         ICarModelService CarModelService { get; }
         IWorkplaceService WorkplaceService { get; }
         ICarCategoryService CarCategoryService { get; }
+        IServiceFeedbackService ServiceFeedback { get; }
         IServiceImageService ServiceImageService { get; }
         IEmployeeInfoService EmployeeInfoService { get; }
         IProductImageService ProductImageService { get; }
         IProductHistoryService ProductHistoryService { get; }
         IServiceHistoryService ServiceHistoryService { get; }
-        IServiceFeedbackService ServiceFeedback { get; }
         IAuthenticationService AuthenticationService { get; }
         IProductCategoryService ProductCategoryService { get; }
         ICarPartCategoryService CarPartCategoryService { get; }
