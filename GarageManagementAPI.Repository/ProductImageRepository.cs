@@ -1,7 +1,7 @@
-﻿using GarageManagementAPI.Entities.Models;
+﻿using Microsoft.EntityFrameworkCore;
+using GarageManagementAPI.Entities.Models;
 using GarageManagementAPI.Repository.Contracts;
 using GarageManagementAPI.Repository.Extensions;
-using Microsoft.EntityFrameworkCore;
 using GarageManagementAPI.Shared.RequestFeatures;
 using GarageManagementAPI.Shared.Enums.SystemStatuss;
 
@@ -11,9 +11,7 @@ namespace GarageManagementAPI.Repository
     {
         public ProductImageRepository(RepositoryContext repositoryContext) : base(repositoryContext)
         {
-
         }
-
         public async Task CreateProductImgAsync(ProductImage productImage)
         {
             await base.CreateAsync(productImage);
@@ -22,6 +20,12 @@ namespace GarageManagementAPI.Repository
         public void UpdateProductImg(ProductImage productImage)
         {
             base.Update(productImage);
+        }
+        public async Task<ProductImage?> GetProductImgAsync(Guid productImgId, bool trackChanges, string? include = null)
+        {
+            var productImg = await FindByCondition(p => p.Id == productImgId, false)
+                                      .FirstOrDefaultAsync();
+            return productImg;
         }
 
         public async Task<PagedList<ProductImage>> GetProductImgByIdProductAsync(Guid productId, ProductImageParameters productImageParameters, bool trackChanges, string? include = null)
@@ -32,7 +36,6 @@ namespace GarageManagementAPI.Repository
                       .IsInclude(include)
                       .AsQueryable();
             //AsQueryable() sử dụng để chuyển một tập hợp dữ liệu (như danh sách hoặc mảng) sang kiểu IQueryable<T>
-
 
             var productImgs = await imgsQuery
             .Skip((productImageParameters.PageNumber - 1) * productImageParameters.PageSize)
@@ -85,5 +88,7 @@ namespace GarageManagementAPI.Repository
                productImageParameters.PageSize
            );
         }
+
+
     }
 }

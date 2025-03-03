@@ -1,5 +1,5 @@
-﻿using GarageManagementAPI.Entities.Models;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
+using GarageManagementAPI.Entities.Models;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace GarageManagementAPI.Repository.Configuration
@@ -13,7 +13,7 @@ namespace GarageManagementAPI.Repository.Configuration
             entity.ToTable("PackageImage");
 
             entity.Property(e => e.Id).ValueGeneratedOnAdd().HasDefaultValueSql("NEWID()");
-            entity.Property(e => e.Link).HasMaxLength(255);
+            entity.Property(e => e.ImageLink).HasMaxLength(255);
             entity.Property(e => e.Status).HasMaxLength(255);
 
             entity.HasOne(d => d.Package).WithMany(p => p.PackageImages)

@@ -1,15 +1,15 @@
-﻿using GarageManagementAPI.Service.Contracts;
+﻿using AutoMapper;
+using System.Dynamic;
 using GarageManagementAPI.Entities.Models;
+using GarageManagementAPI.Shared.Extension;
+using GarageManagementAPI.Service.Extension;
+using GarageManagementAPI.Service.Contracts;
+using GarageManagementAPI.Shared.ResultModel;
 using GarageManagementAPI.Repository.Contracts;
 using GarageManagementAPI.Shared.RequestFeatures;
-using GarageManagementAPI.Shared.ResultModel;
-using GarageManagementAPI.Shared.DataTransferObjects.Brand;
-using AutoMapper;
-using System.Dynamic;
-using GarageManagementAPI.Shared.Extension;
-using GarageManagementAPI.Shared.ErrorsConstant.Brand;
-using GarageManagementAPI.Service.Extension;
 using GarageManagementAPI.Shared.Enums.SystemStatuss;
+using GarageManagementAPI.Shared.ErrorsConstant.Brand;
+using GarageManagementAPI.Shared.DataTransferObjects.Brand;
 
 namespace GarageManagementAPI.Service
 {
@@ -87,9 +87,26 @@ namespace GarageManagementAPI.Service
             _mapper.Map(brandDtoForUpdate, brandEntity);
 
             brandEntity.UpdatedAt = DateTimeOffset.UtcNow.SEAsiaStandardTime();
+
             await _repoManager.SaveAsync();
 
             return Result.NoContent();
+        }
+
+        public async Task<Result<string?>> UpdateBrandImageAsync(Guid id, bool trackChanges, string imgId, string imgUrl)
+        {
+            var resultCheck = await GetAndCheckIfBrandExist(id, trackChanges);
+
+            if (!resultCheck.IsSuccess) return Result<string?>.BadRequest(resultCheck.Errors!);
+            var brandEntity = resultCheck.GetValue<Brand>();
+            var oldImage = brandEntity.ImageId;
+            brandEntity.ImageId = imgId;
+            brandEntity.ImageLink = imgUrl;
+
+            brandEntity.UpdatedAt = DateTimeOffset.UtcNow.SEAsiaStandardTime();
+            await _repoManager.SaveAsync();
+
+            return Result<string?>.Ok(oldImage);
         }
         public async Task<Result<BrandDtoForUpdate>> GetBrandForPartiallyUpdate(Guid brandId, bool trackChanges)
         {

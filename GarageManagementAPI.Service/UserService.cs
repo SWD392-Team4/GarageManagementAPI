@@ -1,17 +1,16 @@
 ﻿using AutoMapper;
+using System.Dynamic;
+using Microsoft.AspNetCore.Identity;
 using GarageManagementAPI.Entities.Models;
-using GarageManagementAPI.Repository.Contracts;
+using GarageManagementAPI.Shared.Extension;
 using GarageManagementAPI.Service.Contracts;
 using GarageManagementAPI.Service.Extension;
+using GarageManagementAPI.Repository.Contracts;
+using GarageManagementAPI.Shared.RequestFeatures;
 using GarageManagementAPI.Shared.Constant.Authentication;
 using GarageManagementAPI.Shared.DataTransferObjects.User;
-using GarageManagementAPI.Shared.DataTransferObjects.Workplace;
 using GarageManagementAPI.Shared.ErrorsConstant.Workplace;
-using GarageManagementAPI.Shared.Extension;
-using GarageManagementAPI.Shared.RequestFeatures;
 using GarageManagementAPI.Shared.ResultModel;
-using Microsoft.AspNetCore.Identity;
-using System.Dynamic;
 
 namespace GarageManagementAPI.Service
 {

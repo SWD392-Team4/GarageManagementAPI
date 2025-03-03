@@ -1,7 +1,6 @@
 ﻿
 using FluentValidation;
 using GarageManagementAPI.Shared.DataTransferObjects.Product;
-using GarageManagementAPI.Shared.ErrorsConstant.Product;
 
 namespace GarageManagementAPI.Presentation.Validator.Product
 {
@@ -9,15 +8,15 @@ namespace GarageManagementAPI.Presentation.Validator.Product
     {
         public ProductDtoForManipulationValidator()
         {
-            AddNameRules();
+           // AddNameRules();
         }
 
-        private void AddNameRules()
+       /* private void AddNameRules()
         {
             RuleFor(b => b.ProductName)
                 .NotEmpty()
                 .WithMessage(ProductErrors.NameRequired)
                 .WithErrorCode(nameof(ProductErrors.NameRequired));
-        }
+        }*/
     }
 }

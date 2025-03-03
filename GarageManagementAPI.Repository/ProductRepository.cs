@@ -43,31 +43,18 @@ namespace GarageManagementAPI.Repository
         public async Task<PagedList<Product>> GetProductsAsync(ProductParameters productParameters, bool trackChanges, string? include = null)
         {
             // Lọc và sắp xếp danh sách sản phẩm theo các điều kiện từ productParameters
-            var productsQuery = FindByCondition(p =>
-                    (string.IsNullOrEmpty(productParameters.ProductName) || p.ProductName.Contains(productParameters.ProductName)),
-                    trackChanges)
-                .SearchByName(productParameters.ProductName) // Tìm kiếm theo tên sản phẩm
-                .SearchByStatus(productParameters.ProductStatus)
+            var products = await FindAll(trackChanges)
+                .SearchByName(productParameters.ProductName) 
+                 .SearchByStatus(productParameters.ProductStatus)
+                .Sort(productParameters.OrderBy)
+                .IsInclude(include)
                 .SearchByPrice(productParameters.MinPrice, productParameters.MaxPrice)
                 .SearchByCategory(productParameters.ProductCategory)
                 .SearchByBrand(productParameters.ProductBrandName)
-                .Sort(productParameters.OrderBy)
-                .IsInclude(include)
-                .AsQueryable();
-
-            // Phân trang dữ liệu sản phẩm
-            var products = await productsQuery
-                .Skip((productParameters.PageNumber - 1) * productParameters.PageSize)
-                .Take(productParameters.PageSize)
                 .ToListAsync();
 
-            // Lấy tổng số bản ghi để tính toán tổng số trang
-            var count = await productsQuery.CountAsync();
-
-            // Trả về kết quả dưới dạng PagedList
-            return new PagedList<Product>(
+            return PagedList<Product>.ToPagedList(
                 products,
-                count,
                 productParameters.PageNumber,
                 productParameters.PageSize
             );

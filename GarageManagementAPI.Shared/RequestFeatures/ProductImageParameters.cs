@@ -5,7 +5,7 @@ namespace GarageManagementAPI.Shared.RequestFeatures
 {
     public class ProductImageParameters : RequestParameters
     {
-        public ProductImageParameters() => OrderBy = "status";
+        public ProductImageParameters() => OrderBy = "Link";
         [EnumDataType(typeof(ProductImageStatus))]
         public ProductImageStatus? Status { get; set; } = null;
     }

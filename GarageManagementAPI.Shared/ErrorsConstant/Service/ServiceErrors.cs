@@ -12,6 +12,7 @@ namespace GarageManagementAPI.Shared.ErrorsConstant.Service
         public const string ServiceStatusRequired = "The service status is required";
         public const string ServiceStatusInvalid = "Invalid service status.";
         public const string ServiceNotFoundWithId = "Can not found service with id {0}.";
+        public const string ServiceCarCategory = "Service with car category id {0} already existed.";
         #endregion
 
         #region static method
@@ -36,6 +37,12 @@ namespace GarageManagementAPI.Shared.ErrorsConstant.Service
              {
                  Code = nameof(ServiceName),
                  Description = string.Format(ServiceName, serviceDtoForCreation.ServiceName)
+             };
+              public static ErrorsResult GetCategoryAlreadyExistError(Guid carCategoryId) =>
+             new()
+             {
+                 Code = nameof(ServiceCarCategory),
+                 Description = string.Format(ServiceCarCategory, carCategoryId)
              };
         public static ErrorsResult GetServiceNameUpdateAlreadyExistError(ServiceDtoForUpdate serviceDtoForUpdate) =>
              new()

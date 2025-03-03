@@ -15,32 +15,25 @@ namespace GarageManagementAPI.Repository.Extensions
                 return product;
             }
 
-            var lowerCaseTerm = name.Trim().ToLower();
-            return product.Where(p => p.ProductName!.ToLower().Contains(name.Trim().ToLower()));
+            return product.Where(p => EF.Functions.Like(p.ProductName, $"%{name}%"));
         }
-
         public static IQueryable<Product> SearchByPrice(this IQueryable<Product> products, decimal? minPrice, decimal? maxPrice)
         {
-            if (!minPrice.HasValue && !maxPrice.HasValue)
+            if (!minPrice.HasValue || !maxPrice.HasValue)
             {
                 return products;
             }
 
-            // Find the max price available in the database
-            var maxDbPrice = products
-                             .Where(p => p.ProductHistories != null)
-                             .SelectMany(p => p.ProductHistories)
-                             .Where(ph => ph.Status.ToString().Equals(ProductHistoryStatus.Active.ToString()))
-                             .Max(ph => (decimal?)ph.ProductPrice) ?? 0;
-
-            // Filter by price range
-            return products.Where(p => p.ProductHistories != null &&
-                                       p.ProductHistories.Any(ph =>
-                                           ph.Status.ToString().Equals(ProductHistoryStatus.Active.ToString()) &&
-                                           (!minPrice.HasValue || ph.ProductPrice >= minPrice) &&  // Filter by minPrice if it exists
-                                           (maxPrice.HasValue ? ph.ProductPrice <= maxPrice : ph.ProductPrice <= maxDbPrice) // Use maxDbPrice if maxPrice is null
-                                       ));
+            return products.Where(p =>
+                p.ProductHistories != null &&
+                p.ProductHistories.Any(ph =>
+                    ph.Status == ProductHistoryStatus.Active &&
+                    ph.ProductPrice >= minPrice &&
+                    ph.ProductPrice <= maxPrice
+                )
+            );
         }
+
 
 
         public static IQueryable<Product> SearchByCategory(this IQueryable<Product> products, string? category)

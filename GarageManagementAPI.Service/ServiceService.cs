@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using System.Dynamic;
+using GarageManagementAPI.Entities.Models;
 using GarageManagementAPI.Shared.Extension;
 using GarageManagementAPI.Service.Extension;
 using GarageManagementAPI.Service.Contracts;
@@ -9,6 +10,9 @@ using GarageManagementAPI.Shared.RequestFeatures;
 using GarageManagementAPI.Shared.Enums.SystemStatuss;
 using GarageManagementAPI.Shared.ErrorsConstant.Service;
 using GarageManagementAPI.Shared.DataTransferObjects.Service;
+using GarageManagementAPI.Shared.ErrorsConstant.ServiceHisory;
+using GarageManagementAPI.Shared.DataTransferObjects.ServiceHistory;
+using GarageManagementAPI.Shared.DataTransferObjects.Product;
 
 namespace GarageManagementAPI.Service
 {
@@ -27,10 +31,10 @@ namespace GarageManagementAPI.Service
 
         public async Task<Result<ServiceDto>> CreateServiceAsync(ServiceDtoForCreation serviceDtoForCreation)
         {
-            var check = await GetAndCheckIServiceExistByName(serviceDtoForCreation.ServiceName);
-            if (check)
-                return Result<ServiceDto>.BadRequest([ServiceErrors.GetServiceNameAlreadyExistError(serviceDtoForCreation)]);
+            var serviceResult = await GetAndCheckIServiceExistByName(serviceDtoForCreation.ServiceName);
 
+            if (serviceResult)
+                return Result<ServiceDto>.BadRequest([ServiceErrors.GetServiceNameAlreadyExistError(serviceDtoForCreation)]);
             var seviceEntity = _mapper.Map<Entities.Models.Service>(serviceDtoForCreation);
 
             seviceEntity.CreatedAt = DateTimeOffset.UtcNow.SEAsiaStandardTime();
@@ -38,6 +42,13 @@ namespace GarageManagementAPI.Service
             seviceEntity.Status = ServiceStatus.Inactive;
 
             await _repoManager.Service.CreateServiceAsync(seviceEntity);
+            var carCategoryResult = await GetAndCheckIfProductHistoryByIdAndCategory(serviceDtoForCreation.CarCategoryId, seviceEntity.Id);
+            if (carCategoryResult)
+                return Result<ServiceDto>.BadRequest([ServiceErrors.GetCategoryAlreadyExistError(serviceDtoForCreation.CarCategoryId)]);
+
+            //Create Service History
+            await CreateServiceHistoryAsync(seviceEntity.Id, serviceDtoForCreation.ServicePrice);
+
             await _repoManager.SaveAsync();
 
             var serviceDtoToReturn = _mapper.Map<ServiceDto>(seviceEntity);
@@ -47,17 +58,21 @@ namespace GarageManagementAPI.Service
 
         public async Task<Result> UpdateService(Guid serviceId, ServiceDtoForUpdate serviceDtoForUpdate, bool trackChanges)
         {
-            var checkServiceIsExistResult = await GetAndCheckIfServiceExist(serviceId, trackChanges);
-            var checkServiceNameIsExistResult = await GetAndCheckIServiceExistByName(serviceDtoForUpdate.ServiceName, serviceId);
-            if (checkServiceNameIsExistResult)
+            var serviceResult = await GetAndCheckIfServiceExist(serviceId, trackChanges);
+            var serviceNameRedult = await GetAndCheckIServiceExistByName(serviceDtoForUpdate.ServiceName, serviceId);
+            var carCategoryResult = await GetAndCheckIfProductHistoryByIdAndCategory(serviceDtoForUpdate.CarCategoryId, serviceId);
+            if (carCategoryResult)
+                return Result<ServiceDto>.BadRequest([ServiceErrors.GetCategoryAlreadyExistError(serviceDtoForUpdate.CarCategoryId)]);
+            if (serviceNameRedult)
                 return Result<ServiceDto>.BadRequest([ServiceErrors.GetServiceNameUpdateAlreadyExistError(serviceDtoForUpdate)]);
-            if (!checkServiceIsExistResult.IsSuccess)
-                return Result<ServiceDto>.Failure(checkServiceIsExistResult.StatusCode, checkServiceIsExistResult.Errors!);
-            var serviceEntity = checkServiceIsExistResult.GetValue<Entities.Models.Service>();
-
+            if (!serviceResult.IsSuccess)
+                return Result<ServiceDto>.Failure(serviceResult.StatusCode, serviceResult.Errors!);
+            var serviceEntity = serviceResult.GetValue<Entities.Models.Service>();
             _mapper.Map(serviceDtoForUpdate, serviceEntity);
 
             serviceEntity.UpdatedAt = DateTimeOffset.UtcNow.SEAsiaStandardTime();
+            //Create Service History
+            await CreateServiceHistoryAsync(serviceId, serviceDtoForUpdate.ServicePrice);
             await _repoManager.SaveAsync();
 
             return Result.NoContent();
@@ -66,7 +81,7 @@ namespace GarageManagementAPI.Service
 
         public async Task<Result<ExpandoObject>> GetServiceAsync(Guid serviceId, bool trackChanges, string? include = null)
         {
-            var serviceResult = await GetAndCheckIfServiceExist(serviceId, trackChanges);
+            var serviceResult = await GetAndCheckIfServiceExist(serviceId, trackChanges, include);
 
             if (!serviceResult.IsSuccess)
                 return Result<ExpandoObject>.NotFound(serviceResult.Errors!);
@@ -104,9 +119,9 @@ namespace GarageManagementAPI.Service
             return Result<IEnumerable<ExpandoObject>>.Ok(servicesShaped, servicesWithMetadata.MetaData);
         }
 
-        private async Task<Result<Entities.Models.Service>> GetAndCheckIfServiceExist(Guid serviceId, bool trackChanges)
+        private async Task<Result<Entities.Models.Service>> GetAndCheckIfServiceExist(Guid serviceId, bool trackChanges, string? include = null)
         {
-            var service = await _repoManager.Service.GetServiceByIdAsync(serviceId, trackChanges);
+            var service = await _repoManager.Service.GetServiceByIdAsync(serviceId, trackChanges, include);
             if (service == null)
                 return service.NotFound(serviceId);
 
@@ -117,6 +132,60 @@ namespace GarageManagementAPI.Service
         {
             var service = await _repoManager.Service.GetServiceByIdAndNameAsync(name, serviceId, false);
             if (service == null) return false;
+            return true;
+        }
+
+        public async Task<Result<ServiceHistoryDto>> CreateServiceHistoryAsync(Guid serviceId, decimal price)
+        {
+            var servicePriceResult = await GetAndCheckIfProductHistoryByIdAndPrice(serviceId, price);
+            if (servicePriceResult)
+                return Result<ServiceHistoryDto>.BadRequest([ServiceHistoryErrors.GetServiceHistoryPriceAlreadyExistError(price)]);
+
+            await UpdateStatusServiceHistory(serviceId);
+
+            var serviceEntity = new ServiceHistory
+            {
+                ServiceId = serviceId,
+                Price = price,
+                Status = ServiceHistoryStatus.Active,
+                CreatedAt = DateTimeOffset.UtcNow.SEAsiaStandardTime(),
+                UpdatedAt = DateTimeOffset.UtcNow.SEAsiaStandardTime(),
+            };
+            Console.WriteLine("Xin chao");
+            await _repoManager.ServiceHistory.CreateServicetHisotoryAsync(serviceEntity);
+
+            var serviceHistoryDtoToReturn = _mapper.Map<ServiceHistoryDto>(serviceEntity);
+
+            return serviceHistoryDtoToReturn.CreatedResult();
+        }
+
+        private async Task UpdateStatusServiceHistory(Guid serviceId)
+        {
+            var productEntity = await _repoManager.ProductImage.GetProductImgByStatusAndIdProductAsync(serviceId, false);
+
+            if (productEntity != null)
+            {
+                productEntity.Status = ProductImageStatus.Inactive;
+                productEntity.UpdatedAt = DateTimeOffset.UtcNow;
+                _repoManager.ProductImage.UpdateProductImg(productEntity);
+            }
+        }
+
+        private async Task<bool> GetAndCheckIfProductHistoryByIdAndPrice(Guid serviceId, decimal price)
+        {
+            var latestServiceHistory = await _repoManager.ServiceHistory.GetServiceHistoryByPriceAndIdServiceAsync(serviceId, price, false);
+
+            if (latestServiceHistory != null) return true;
+
+            return false;
+        }
+
+        private async Task<bool> GetAndCheckIfProductHistoryByIdAndCategory(Guid carCategoryId, Guid serviceId)
+        {
+            var service = await _repoManager.Service.GetServiceByServiceIdAndCarCategoryId(serviceId, carCategoryId, false);
+
+            if (service == null) return false;
+
             return true;
         }
     }

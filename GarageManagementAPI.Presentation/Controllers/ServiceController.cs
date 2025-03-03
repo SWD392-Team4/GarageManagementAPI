@@ -1,11 +1,13 @@
 ﻿using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.JsonPatch;
 using GarageManagementAPI.Shared.Extension;
 using GarageManagementAPI.Service.Contracts;
 using GarageManagementAPI.Shared.RequestFeatures;
 using GarageManagementAPI.Presentation.Extensions;
 using GarageManagementAPI.Shared.DataTransferObjects.Service;
+using GarageManagementAPI.Shared.DataTransferObjects.Product;
 
 namespace GarageManagementAPI.Presentation.Controllers
 {
@@ -25,7 +27,7 @@ namespace GarageManagementAPI.Presentation.Controllers
         //[Authorize(Roles = $"{nameof(SystemRole.Administrator)},{nameof(SystemRole.Cashier)}")]
         public async Task<IActionResult> GetServices([FromQuery] ServiceParameters serviceParameters)
         {
-            var include = "CarCategory, CarPart";
+            var include = "CarCategory, CarPart, ServiceImage, ServiceHistories";
             var serviceResult = await _service.ServiceService.GetServicesAsync(serviceParameters, trackChanges: false, include);
 
             return serviceResult.Map(
@@ -43,13 +45,32 @@ namespace GarageManagementAPI.Presentation.Controllers
         //[Authorize(Roles = $"{nameof(SystemRole.Administrator)},{nameof(SystemRole.Cashier)}")]
         public async Task<IActionResult> GetServiceById(Guid serviceId)
         {
-            var include = "CarCategory, CarPart";
-            var setviceResult = await _service.ServiceService.GetServiceAsync(serviceId, trackChanges: false);
+            var include = "CarCategory, CarPart, ServiceImage, ServiceHistories";
+            var setviceResult = await _service.ServiceService.GetServiceAsync(serviceId, trackChanges: false, include);
 
             return setviceResult.Map(
                 onSuccess: Ok,
                 onFailure: ProcessError
                 );
+        }
+
+
+        [HttpPut("{serviceId:guid}")]
+        public async Task<IActionResult> UpdateService(Guid serviceId, [FromBody] ServiceDtoForUpdate serviceDtoForUpdate)
+        {
+            Console.WriteLine($"Received request to update service: {serviceId}");
+            Console.WriteLine("huhu");
+            var result = await _service.ServiceService
+                .UpdateService(
+                serviceId,
+                serviceDtoForUpdate,
+                trackChanges: true
+                );
+
+            return result.Map(
+                 onSuccess: Ok,
+                 onFailure: ProcessError
+                 );
         }
 
         /// <summary>
@@ -60,40 +81,42 @@ namespace GarageManagementAPI.Presentation.Controllers
         [HttpPost(Name = "CreateService")]
         public async Task<IActionResult> CreateService([FromBody] ServiceDtoForCreation serviceDtoForCreation)
         {
-            var result = await _service.ServiceService.CreateServiceAsync(serviceDtoForCreation);
+            var createServiceResult = await _service.ServiceService.CreateServiceAsync(serviceDtoForCreation);
+            if (!createServiceResult.IsSuccess)
+            {
+                return ProcessError(createServiceResult);
+            }
+            var createdService = createServiceResult.GetValue<ServiceDto>();
 
-            return result.Map(
-                onSuccess: result =>
-                {
-                    var createdService = result.GetValue<ServiceDto>();
-
-                    return CreatedAtRoute("GetServiceById", new { serviceId = createdService.Id }, result);
-                },
-                onFailure: ProcessError
-                );
+            return CreatedAtRoute("GetServiceById", new { serviceId = createdService.Id }, createdService);
         }
 
-        /// <summary>
-        /// Update service
-        /// </summary>
-        /// <param name="serviceId"></param>
-        /// <param name="serviceDtoForUpdate"></param>
-        /// <returns></returns>
-        [HttpPut("{serviceId:guid}")]
-        public async Task<IActionResult> UpdateBrand(Guid serviceId, [FromBody] ServiceDtoForUpdate serviceDtoForUpdate)
+        [HttpPost("{serviceId:guid}/images", Name = "Create service image")]
+        public async Task<IActionResult> CreateServiceImage(Guid serviceId, [FromForm] List<IFormFile> fileDtos)
         {
-            var result = await _service.ServiceService
-                .UpdateService(
-                serviceId: serviceId,
-                serviceDtoForUpdate: serviceDtoForUpdate,
-                trackChanges: true
-                );
+            if (fileDtos == null || !fileDtos.Any())
+            {
+                return BadRequest("No files were uploaded.");
+            }
+            var createdServiceImages = new List<object>();
+            foreach (var fileDto in fileDtos)
+            {
+                var uploadFileResult = await _service.MediaService.UploadProductImageAsync(fileDto);
 
-            return result.Map(
-                 onSuccess: Ok,
-                 onFailure: ProcessError
-                 );
+                if (!uploadFileResult.IsSuccess) return ProcessError(uploadFileResult);
+
+                var imgTuple = uploadFileResult.GetValue<(string? publicId, string? absoluteUrl)>();
+
+                var updateResult = await _service.ServiceImageService.CreateImageService(serviceId, imgTuple.publicId!, imgTuple.absoluteUrl!);
+
+                if (!updateResult.IsSuccess) return ProcessError(updateResult);
+
+                createdServiceImages.Add(updateResult.Value!.ImageLink!);
+            }
+
+            return Ok(createdServiceImages);
         }
+
         /// <summary>
         /// Update service by field
         /// </summary>

@@ -1,5 +1,4 @@
-﻿using GarageManagementAPI.Shared.Enums;
-using GarageManagementAPI.Shared.Enums.SystemStatuss;
+﻿using GarageManagementAPI.Shared.Enums.SystemStatuss;
 using System.ComponentModel.DataAnnotations;
 
 namespace GarageManagementAPI.Shared.DataTransferObjects.Product
@@ -8,5 +7,6 @@ namespace GarageManagementAPI.Shared.DataTransferObjects.Product
     {
         [EnumDataType(typeof(ProductStatus))]
         public ProductStatus? Status { get; set; } = ProductStatus.Inactive;
+        public List<string>? Link { get; set; } = null!;
     }
 }

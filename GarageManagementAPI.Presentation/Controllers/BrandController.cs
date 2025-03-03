@@ -1,11 +1,17 @@
 ﻿using FluentValidation;
 using GarageManagementAPI.Presentation.Extensions;
 using GarageManagementAPI.Service.Contracts;
+using GarageManagementAPI.Shared.Constant.Authentication;
 using GarageManagementAPI.Shared.DataTransferObjects.Brand;
+using GarageManagementAPI.Shared.Enums;
 using GarageManagementAPI.Shared.Extension;
 using GarageManagementAPI.Shared.RequestFeatures;
+using GarageManagementAPI.Shared.ResultModel;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace GarageManagementAPI.Presentation.Controllers
 {
@@ -22,7 +28,7 @@ namespace GarageManagementAPI.Presentation.Controllers
         /// <param name="brandParameters"></param>
         /// <returns></returns>
         [HttpGet]
-        //[Authorize(Roles = $"{nameof(SystemRole.Administrator)},{nameof(SystemRole.Cashier)}")]
+        //[Authorize(Roles = $"{nameof(SystemRole.Administrator)}, {nameof(SystemRole.Cashier)}")]
         public async Task<IActionResult> GetBrands([FromQuery] BrandParameters brandParameters)
         {
             var brandResult = await _service.BrandService.GetBrandsAsync(brandParameters, trackChanges: false);
@@ -39,7 +45,7 @@ namespace GarageManagementAPI.Presentation.Controllers
         /// <param name="brandParameters"></param>
         /// <returns></returns>
         [HttpGet("{brandId:guid}", Name = "GetBrandById")]
-        //[Authorize(Roles = $"{nameof(SystemRole.Administrator)},{nameof(SystemRole.Cashier)}")]
+        [Authorize(Roles = $"{nameof(SystemRole.Administrator)},{nameof(SystemRole.Cashier)}")]
         public async Task<IActionResult> GetBrandById(Guid brandId, [FromQuery] BrandParameters brandParameters)
         {
             var brandResult = await _service.BrandService.GetBrandAsync(brandId, brandParameters, trackChanges: false);
@@ -77,6 +83,7 @@ namespace GarageManagementAPI.Presentation.Controllers
         /// <param name="brandId"></param>
         /// <param name="brandDtoForUpdate"></param>
         /// <returns></returns>
+        [Authorize(Roles = $"{nameof(SystemRole.Administrator)}")]
         [HttpPut("{brandId:guid}")]
         public async Task<IActionResult> UpdateBrand(Guid brandId, [FromBody] BrandDtoForUpdate brandDtoForUpdate)
         {
@@ -91,6 +98,40 @@ namespace GarageManagementAPI.Presentation.Controllers
                  onSuccess: Ok,
                  onFailure: ProcessError
                  );
+        }
+        /// <summary>
+        /// Update brand image
+        /// </summary>
+        /// <param name="brandId"></param>
+        /// <param name="fileDto"></param>
+        /// <returns></returns>
+        [Authorize(Roles = $"{nameof(SystemRole.Administrator)}")]
+        [HttpPost("{brandId:guid}/image")]
+        public async Task<IActionResult> UpdateBrandImageAsync(Guid brandId, [FromForm] IFormFile fileDto)
+        {
+            var uploadFileResult = await _service.MediaService.UploadBrandImageAsync(fileDto);
+
+            if (!uploadFileResult.IsSuccess)
+                return ProcessError(uploadFileResult);
+
+            var imgTuple = uploadFileResult.GetValue<(string? publicId, string? absoluteUrl)>();
+
+            var updateResult = await _service.BrandService.UpdateBrandImageAsync(brandId, true, imgTuple.publicId!, imgTuple.absoluteUrl!);
+
+            if (!updateResult.IsSuccess)
+                return ProcessError(updateResult);
+
+            var oldImageId = updateResult.GetValue<string?>();
+
+            if (oldImageId is null)
+                return NoContent();
+
+            var removeResult = await _service.MediaService.RemoveImage(oldImageId);
+
+            return removeResult.Map(
+                onSuccess: _ => NoContent(),
+                onFailure: ProcessError
+                );
         }
 
         /// <summary>

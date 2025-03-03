@@ -5,6 +5,7 @@ namespace GarageManagementAPI.Repository.Contracts
 {
     public interface IProductImageRepository : IRepositoryBase<ProductImage>
     {
+        Task<ProductImage?> GetProductImgAsync(Guid productImgId, bool trackChanges, string? include = default);
         Task<PagedList<ProductImage>> GetProductImgByIdProductAsync(Guid productId, ProductImageParameters productImageParameters, bool trackChanges, string? include = default);
         Task<ProductImage?> GetProductImgByStatusAndIdProductAsync(Guid productId, bool trackChanges, string? include = default);
         Task<ProductImage?> GetProductImgByLinkAndIdProductAsync(Guid productId, bool trackChanges, string? include = default);

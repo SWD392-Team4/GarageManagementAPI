@@ -1,12 +1,12 @@
-﻿using GarageManagementAPI.Service.Contracts;
-using GarageManagementAPI.Shared.Extension;
-using GarageManagementAPI.Shared.DataTransferObjects.Product;
+﻿using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
-using GarageManagementAPI.Shared.RequestFeatures;
-using FluentValidation;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.JsonPatch;
+using GarageManagementAPI.Shared.Extension;
+using GarageManagementAPI.Service.Contracts;
+using GarageManagementAPI.Shared.RequestFeatures;
 using GarageManagementAPI.Presentation.Extensions;
-
+using GarageManagementAPI.Shared.DataTransferObjects.Product;
 
 namespace GarageManagementAPI.Presentation.Controllers
 {
@@ -72,23 +72,56 @@ namespace GarageManagementAPI.Presentation.Controllers
         /// <summary>
         /// Create product
         /// </summary>
+        /// <param name="productId"></param>
+        /// <param name="fileDtos">The list of files to be uploaded with the product.</param>
+        /// <returns></returns>
+        [HttpPost("{productId:guid}/images", Name = "CreateProductImage")]
+        public async Task<IActionResult> CreateProductImage(Guid productId, [FromForm] List<IFormFile> fileDtos)
+        {
+            var productExists = await _service.ProductService.GetProductByIdAsync(productId, false);
+            if (!productExists.IsSuccess) return productExists.Map(onSuccess: Ok,
+                                                                   onFailure: ProcessError);
+            if (fileDtos == null || !fileDtos.Any())
+            {
+                return BadRequest("No files were uploaded.");
+            }
+            var createdProductImages = new List<object>();
+            foreach (var fileDto in fileDtos)
+            {
+                var uploadFileResult = await _service.MediaService.UploadProductImageAsync(fileDto);
+
+                if (!uploadFileResult.IsSuccess) return ProcessError(uploadFileResult);
+
+                var imgTuple = uploadFileResult.GetValue<(string? publicId, string? absoluteUrl)>();
+
+                var updateResult = await _service.ProductImageService.CreateProductImageAsync(productId, imgTuple.publicId!, imgTuple.absoluteUrl!);
+
+                if (!updateResult.IsSuccess) return ProcessError(updateResult);
+                
+                createdProductImages.Add(updateResult.Value!.ImageLink);
+            }
+
+            return Ok(createdProductImages);
+        }
+        /// <summary>
+        /// Create Product
+        /// </summary>
         /// <param name="productDtoForCreation"></param>
         /// <returns></returns>
         [HttpPost(Name = "CreateProduct")]
         public async Task<IActionResult> CreateProduct([FromBody] ProductDtoForCreation productDtoForCreation)
         {
-            var result = await _service.ProductService.CreateProductAsync(productDtoForCreation);
+            var createProductResult = await _service.ProductService.CreateProductAsync(productDtoForCreation);
+            if (!createProductResult.IsSuccess)
+            {
+                return ProcessError(createProductResult);
+            }
 
-            return result.Map(
-                onSuccess: result =>
-                {
-                    var createdProduct = result.GetValue<ProductDto>();
+            var createdProduct = createProductResult.GetValue<ProductDto>();
 
-                    return CreatedAtRoute("GetProductById", new { productId = createdProduct.Id }, result);
-                },
-                onFailure: ProcessError
-                );
+            return CreatedAtRoute("GetProductById", new { productId = createdProduct.Id }, createdProduct);
         }
+
         /// <summary>
         /// Update product
         /// </summary>
@@ -110,6 +143,7 @@ namespace GarageManagementAPI.Presentation.Controllers
                  onFailure: ProcessError
                  );
         }
+
         /// <summary>
         /// Update product by field
         /// </summary>

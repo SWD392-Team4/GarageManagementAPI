@@ -8,6 +8,11 @@ namespace GarageManagementAPI.Shared.ErrorsConstant.CarCategory
 
         public const string CarCategoryAlreadyExist = "Car category with name {0} alreadyExist.";
 
+        public const string CarCategoryNameRequired = "Car category name is required.";
+        public const string CarCategoryDescriptionRequired = " Car category descrtiption is required.";
+        public const string CarCategoryStatusRequired = "Car category status is required.";
+        public const string CarCategoryStatusInvalid = "Car category status is invalid.";
+
         public static ErrorsResult GetCarCategoryNotFoundError(Guid id)
             => new()
             {

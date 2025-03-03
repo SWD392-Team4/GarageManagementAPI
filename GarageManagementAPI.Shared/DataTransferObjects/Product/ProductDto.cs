@@ -1,4 +1,5 @@
-﻿using GarageManagementAPI.Shared.Enums.SystemStatuss;
+﻿using GarageManagementAPI.Shared.DataTransferObjects.ProductImage;
+using GarageManagementAPI.Shared.Enums.SystemStatuss;
 using System.ComponentModel.DataAnnotations;
 
 namespace GarageManagementAPI.Shared.DataTransferObjects.Product
@@ -11,14 +12,11 @@ namespace GarageManagementAPI.Shared.DataTransferObjects.Product
         public string Category { get; set; } = null!;
         public string BrandName { get; set; } = null!;
         public decimal? ProductPrice { get; set; }
-        public string? ProductImg { get; set; }
+        public List<string>? ImageLink { get; set; }
         public string? ProductDescription { get; set; }
-
         [EnumDataType(typeof(ProductStatus))]
         public ProductStatus Status { get; set; }
-
         public DateTimeOffset CreatedAt { get; set; }
-
         public DateTimeOffset UpdatedAt { get; set; }
     }
 }

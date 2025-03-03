@@ -1,7 +1,7 @@
-﻿using AutoMapper.Internal;
-using GarageManagementAPI.Service.Contracts;
-using System.Dynamic;
+﻿using System.Dynamic;
 using System.Reflection;
+using AutoMapper.Internal;
+using GarageManagementAPI.Service.Contracts;
 
 namespace GarageManagementAPI.Service.DataShaping
 {

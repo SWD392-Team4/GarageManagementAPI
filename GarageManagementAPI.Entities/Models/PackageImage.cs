@@ -6,8 +6,8 @@ namespace GarageManagementAPI.Entities.Models
     public partial class PackageImage : BaseEntity<PackageImage>
     {
         public Guid PackageId { get; set; }
-
-        public string Link { get; set; } = null!;
+        public string? ImageLink { get; set; } = "N/A";
+        public string? ImageId { get; set; } = "N/A";
 
         [EnumDataType(typeof(SystemStatus))]
         public SystemStatus Status { get; set; }

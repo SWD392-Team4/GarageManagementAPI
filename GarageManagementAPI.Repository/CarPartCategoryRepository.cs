@@ -23,10 +23,10 @@ namespace GarageManagementAPI.Repository
             //SingleOrDefaultAsync method throws an exception if more than one element satisfies the condition.
             var carPartCategory = carPartCategoryId is null ?
                                   await FindByCondition(c => c.PartCategory.ToLower().Equals(name), trackChanges).SingleOrDefaultAsync() :
-                                  await FindByCondition(c => c.PartCategory.ToLower().Equals(name) && c.Id.Equals(carPartCategoryId), trackChanges).SingleOrDefaultAsync();
+                                  await FindByCondition(c => c.PartCategory.ToLower().Equals(name) && !c.Id.Equals(carPartCategoryId), trackChanges).SingleOrDefaultAsync();
             return carPartCategory;
         }
-
+            
         public async Task<CarPartCategory?> GetCarPartCategoryByIdAsync(Guid carPartCategoryId, bool trackChanges, string? include = null)
         {
            var cartPartCategory = include is null ? 

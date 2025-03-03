@@ -1,8 +1,6 @@
-﻿using GarageManagementAPI.Shared.DataTransferObjects.Product;
-using GarageManagementAPI.Shared.DataTransferObjects.ProductHistory;
-using GarageManagementAPI.Shared.RequestFeatures;
+﻿using System.Dynamic;
 using GarageManagementAPI.Shared.ResultModel;
-using System.Dynamic;
+using GarageManagementAPI.Shared.RequestFeatures;
 
 namespace GarageManagementAPI.Service.Contracts
 {
