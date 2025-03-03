@@ -23,6 +23,7 @@ namespace GarageManagementAPI.Repository
         private readonly Lazy<IProductCategoryRepository> _productCategoryRepository;
         private readonly Lazy<ICarPartCategoryRepository> _carPartCategoryRepository;
         private readonly Lazy<IServiceFeedBackRepository> _serviceFeedBackRepository;
+        private readonly Lazy<IAppointmentRepository> _appointmentRepository;
 
         public RepositoryManager(RepositoryContext repositoryContext)
         {
@@ -44,6 +45,7 @@ namespace GarageManagementAPI.Repository
             _productCategoryRepository = new Lazy<IProductCategoryRepository>(() => new ProductCategoryRepository(repositoryContext));
             _carPartCategoryRepository = new Lazy<ICarPartCategoryRepository>(() => new CarPartCategoryRepository(repositoryContext));
             _serviceFeedBackRepository = new Lazy<IServiceFeedBackRepository>(() => new ServiceFeedBackRepository(repositoryContext));
+            _appointmentRepository = new Lazy<IAppointmentRepository>(() => new AppointmentRepository(repositoryContext));
         }
 
         public IUserRepository User => _userRepository.Value;
@@ -62,7 +64,7 @@ namespace GarageManagementAPI.Repository
         public IServiceFeedBackRepository ServiceFeeback => _serviceFeebackRepository.Value;
         public IProductCategoryRepository ProductCategory => _productCategoryRepository.Value;
         public ICarPartCategoryRepository CarPartCategory => _carPartCategoryRepository.Value;
-
+        public IAppointmentRepository Appointment => _appointmentRepository.Value;
 
         public async Task<IDbContextTransaction> BeginTransactionAsync()
         {

@@ -29,8 +29,6 @@ namespace GarageManagementAPI.Service
         private readonly Lazy<IAuthenticationService> _authenticationService;
         private readonly Lazy<IProductCategoryService> _productCategoryService;
         private readonly Lazy<ICarPartCategoryService> _carPartCategoryService;
-        private readonly Lazy<ICarCategoryService> _carCategoryService;
-        private readonly Lazy<ICarModelService> _carModelService;
         private readonly Lazy<IAppointmentService> _appointmentService;
         private readonly Lazy<IServiceFeedbackService> _serviceFeedbackService;
 
@@ -194,21 +192,7 @@ namespace GarageManagementAPI.Service
         public IProductHistoryService ProductHistoryService => _productHistoryService.Value;
         public IServiceHistoryService ServiceHistoryService => _serviceHistoryService.Value;
         public IProductCategoryService ProductCategoryService => _productCategoryService.Value;
-
-        public IProductImageService ProductImageService => _productImageService.Value;
-
-        public IServiceService ServiceService => _serviceService.Value;
-
-        public ICarPartService CarPartService => _carPartService.Value;
-
         public ICarPartCategoryService CarPartCategoryService => _carPartCategoryService.Value;
-
-        public IMediaService MediaService => _mediaService.Value;
-
-        public ICarModelService CarModelService => _carModelService.Value;
-
-        public ICarCategoryService CarCategoryService => _carCategoryService.Value;
-
         public IAppointmentService AppointmentService => _appointmentService.Value;
     }
 }
