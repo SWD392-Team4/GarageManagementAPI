@@ -7,7 +7,6 @@ using GarageManagementAPI.Service.Contracts;
 using GarageManagementAPI.Shared.RequestFeatures;
 using GarageManagementAPI.Presentation.Extensions;
 using GarageManagementAPI.Shared.DataTransferObjects.Service;
-using GarageManagementAPI.Shared.DataTransferObjects.Product;
 
 namespace GarageManagementAPI.Presentation.Controllers
 {
@@ -58,8 +57,6 @@ namespace GarageManagementAPI.Presentation.Controllers
         [HttpPut("{serviceId:guid}")]
         public async Task<IActionResult> UpdateService(Guid serviceId, [FromBody] ServiceDtoForUpdate serviceDtoForUpdate)
         {
-            Console.WriteLine($"Received request to update service: {serviceId}");
-            Console.WriteLine("huhu");
             var result = await _service.ServiceService
                 .UpdateService(
                 serviceId,
@@ -81,6 +78,7 @@ namespace GarageManagementAPI.Presentation.Controllers
         [HttpPost(Name = "CreateService")]
         public async Task<IActionResult> CreateService([FromBody] ServiceDtoForCreation serviceDtoForCreation)
         {
+            Console.WriteLine("Xin chao");
             var createServiceResult = await _service.ServiceService.CreateServiceAsync(serviceDtoForCreation);
             if (!createServiceResult.IsSuccess)
             {
