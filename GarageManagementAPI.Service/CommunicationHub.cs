@@ -1,9 +1,10 @@
-﻿using Newtonsoft.Json;
+﻿using GarageManagementAPI.Service.Contracts;
+using GarageManagementAPI.Shared.DataTransferObjects.CommunicationHub;
+using Microsoft.AspNetCore.SignalR;
+using Newtonsoft.Json;
 using StackExchange.Redis;
 using System.Security.Claims;
-using Microsoft.AspNetCore.SignalR;
-using GarageManagementAPI.Shared.DataTransferObjects.CommunicationHub;
-using GarageManagementAPI.Service.Contracts;
+
 
 namespace api.Services
 {
@@ -84,6 +85,7 @@ namespace api.Services
 
             string chatRoomKey = GetChatRoomKey(senderId, receiverId);
             var db = _redis.GetDatabase();
+            var messages = await db.ListRangeAsync(chatRoomKey, 0, 50);
 
             bool chatRoomExists = await db.KeyExistsAsync(chatRoomKey);
             if (!chatRoomExists)
@@ -231,7 +233,6 @@ namespace api.Services
         {
             return $"notifications:{userId}";
         }
-
 
         private string GetUserId()
         {
