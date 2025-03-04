@@ -31,7 +31,7 @@ namespace GarageManagementAPI.Presentation.Validator.User
                 .Matches(@"[0-9]+")
                 .WithMessage(UserErrors.PasswordMissingDigit)
                 .WithErrorCode(nameof(UserErrors.PasswordMissingDigit))
-                .Matches(@"[\!\?\*\.]+")
+                .Matches(@"^(?=.*[\!\@\#\$\%\^\&\*\(\)_\+\-\=\[\]\{\}\|\;\:\'\""\,\.\<\>\?\/\\]).+$")
                 .WithMessage(UserErrors.PasswordMissingSpecialCharacter)
                 .WithErrorCode(nameof(UserErrors.PasswordMissingSpecialCharacter));
         }

@@ -1,10 +1,9 @@
-﻿using GarageManagementAPI.Service.Contracts;
+using GarageManagementAPI.Service.Contracts;
 using GarageManagementAPI.Shared.DataTransferObjects.CommunicationHub;
 using Microsoft.AspNetCore.SignalR;
 using Newtonsoft.Json;
 using StackExchange.Redis;
 using System.Security.Claims;
-
 namespace api.Services
 {
     public class CommunicationHub : Hub, ICommunicationHub
@@ -232,6 +231,7 @@ namespace api.Services
             {
             return $"notifications:{userId}";
             }
+
 
         private string GetUserId()
         {
