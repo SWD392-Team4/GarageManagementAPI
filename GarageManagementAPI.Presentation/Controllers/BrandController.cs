@@ -1,17 +1,14 @@
 ﻿using FluentValidation;
-using GarageManagementAPI.Presentation.Extensions;
-using GarageManagementAPI.Service.Contracts;
-using GarageManagementAPI.Shared.Constant.Authentication;
-using GarageManagementAPI.Shared.DataTransferObjects.Brand;
-using GarageManagementAPI.Shared.Enums;
-using GarageManagementAPI.Shared.Extension;
-using GarageManagementAPI.Shared.RequestFeatures;
-using GarageManagementAPI.Shared.ResultModel;
-using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.JsonPatch;
-using Microsoft.AspNetCore.Mvc;
-using System.Security.Claims;
+using GarageManagementAPI.Shared.Enums;
+using Microsoft.AspNetCore.Authorization;
+using GarageManagementAPI.Shared.Extension;
+using GarageManagementAPI.Service.Contracts;
+using GarageManagementAPI.Shared.RequestFeatures;
+using GarageManagementAPI.Presentation.Extensions;
+using GarageManagementAPI.Shared.DataTransferObjects.Brand;
 
 namespace GarageManagementAPI.Presentation.Controllers
 {

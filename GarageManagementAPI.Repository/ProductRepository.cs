@@ -1,8 +1,8 @@
-﻿using GarageManagementAPI.Entities.Models;
+﻿using Microsoft.EntityFrameworkCore;
+using GarageManagementAPI.Entities.Models;
 using GarageManagementAPI.Repository.Contracts;
-using GarageManagementAPI.Shared.RequestFeatures;
-using Microsoft.EntityFrameworkCore;
 using GarageManagementAPI.Repository.Extensions;
+using GarageManagementAPI.Shared.RequestFeatures;
 
 namespace GarageManagementAPI.Repository
 {
@@ -27,7 +27,7 @@ namespace GarageManagementAPI.Repository
             var product = include is null ?
             await FindByCondition(p => p.ProductBarcode.Equals(barcode), trackChanges).SingleOrDefaultAsync() :
             await FindByCondition(p => p.ProductBarcode.Equals(barcode), trackChanges).IsInclude(include).SingleOrDefaultAsync();
- 
+
             return product;
         }
 
@@ -44,13 +44,15 @@ namespace GarageManagementAPI.Repository
         {
             // Lọc và sắp xếp danh sách sản phẩm theo các điều kiện từ productParameters
             var products = await FindAll(trackChanges)
-                .SearchByName(productParameters.ProductName) 
+                .SearchByName(productParameters.ProductName)
                  .SearchByStatus(productParameters.ProductStatus)
                 .Sort(productParameters.OrderBy)
                 .IsInclude(include)
                 .SearchByPrice(productParameters.MinPrice, productParameters.MaxPrice)
                 .SearchByCategory(productParameters.ProductCategory)
                 .SearchByBrand(productParameters.ProductBrandName)
+                .Skip((productParameters.PageNumber - 1) * productParameters.PageSize)
+                .Take(productParameters.PageSize)
                 .ToListAsync();
 
             return PagedList<Product>.ToPagedList(

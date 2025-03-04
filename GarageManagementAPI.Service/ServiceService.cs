@@ -12,7 +12,6 @@ using GarageManagementAPI.Shared.ErrorsConstant.Service;
 using GarageManagementAPI.Shared.DataTransferObjects.Service;
 using GarageManagementAPI.Shared.ErrorsConstant.ServiceHisory;
 using GarageManagementAPI.Shared.DataTransferObjects.ServiceHistory;
-using GarageManagementAPI.Shared.DataTransferObjects.Product;
 
 namespace GarageManagementAPI.Service
 {
@@ -35,22 +34,21 @@ namespace GarageManagementAPI.Service
 
             if (serviceResult)
                 return Result<ServiceDto>.BadRequest([ServiceErrors.GetServiceNameAlreadyExistError(serviceDtoForCreation)]);
-            var seviceEntity = _mapper.Map<Entities.Models.Service>(serviceDtoForCreation);
 
+            var carCategoryResult = await GetAndCheckIfCategoryByCarCategory(serviceDtoForCreation.CarCategoryId);
+            if (carCategoryResult)
+                return Result<ServiceDto>.BadRequest([ServiceErrors.GetCategoryAlreadyExistError(serviceDtoForCreation.CarCategoryId)]);
+            var seviceEntity = _mapper.Map<Entities.Models.Service>(serviceDtoForCreation);
             seviceEntity.CreatedAt = DateTimeOffset.UtcNow.SEAsiaStandardTime();
             seviceEntity.UpdatedAt = DateTimeOffset.UtcNow.SEAsiaStandardTime();
             seviceEntity.Status = ServiceStatus.Inactive;
 
             await _repoManager.Service.CreateServiceAsync(seviceEntity);
-            var carCategoryResult = await GetAndCheckIfProductHistoryByIdAndCategory(serviceDtoForCreation.CarCategoryId, seviceEntity.Id);
-            if (carCategoryResult)
-                return Result<ServiceDto>.BadRequest([ServiceErrors.GetCategoryAlreadyExistError(serviceDtoForCreation.CarCategoryId)]);
+            await _repoManager.SaveAsync();
 
             //Create Service History
             await CreateServiceHistoryAsync(seviceEntity.Id, serviceDtoForCreation.ServicePrice);
-
-            await _repoManager.SaveAsync();
-
+ 
             var serviceDtoToReturn = _mapper.Map<ServiceDto>(seviceEntity);
 
             return serviceDtoToReturn.CreatedResult();
@@ -60,7 +58,7 @@ namespace GarageManagementAPI.Service
         {
             var serviceResult = await GetAndCheckIfServiceExist(serviceId, trackChanges);
             var serviceNameRedult = await GetAndCheckIServiceExistByName(serviceDtoForUpdate.ServiceName, serviceId);
-            var carCategoryResult = await GetAndCheckIfProductHistoryByIdAndCategory(serviceDtoForUpdate.CarCategoryId, serviceId);
+            var carCategoryResult = await GetAndCheckIfCategoryByCarCategory(serviceDtoForUpdate.CarCategoryId, serviceId);
             if (carCategoryResult)
                 return Result<ServiceDto>.BadRequest([ServiceErrors.GetCategoryAlreadyExistError(serviceDtoForUpdate.CarCategoryId)]);
             if (serviceNameRedult)
@@ -153,7 +151,7 @@ namespace GarageManagementAPI.Service
             };
             Console.WriteLine("Xin chao");
             await _repoManager.ServiceHistory.CreateServicetHisotoryAsync(serviceEntity);
-
+            await _repoManager.SaveAsync();
             var serviceHistoryDtoToReturn = _mapper.Map<ServiceHistoryDto>(serviceEntity);
 
             return serviceHistoryDtoToReturn.CreatedResult();
@@ -180,9 +178,9 @@ namespace GarageManagementAPI.Service
             return false;
         }
 
-        private async Task<bool> GetAndCheckIfProductHistoryByIdAndCategory(Guid carCategoryId, Guid serviceId)
+        private async Task<bool> GetAndCheckIfCategoryByCarCategory(Guid carCategoryId, Guid? serviceId = null)
         {
-            var service = await _repoManager.Service.GetServiceByServiceIdAndCarCategoryId(serviceId, carCategoryId, false);
+            var service = await _repoManager.Service.GetServiceByCarCategoryId(serviceId, carCategoryId, false);
 
             if (service == null) return false;
 

@@ -1,6 +1,6 @@
-﻿using GarageManagementAPI.Shared.ErrorModel;
+﻿using System.Net;
+using GarageManagementAPI.Shared.ErrorModel;
 using GarageManagementAPI.Shared.ResultModel;
-using System.Net;
 
 namespace GarageManagementAPI.Shared.Extension
 {

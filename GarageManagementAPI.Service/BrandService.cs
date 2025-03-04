@@ -56,8 +56,8 @@ namespace GarageManagementAPI.Service
 
         public async Task<Result<BrandDto>> CreateBrandAsync(BrandDtoForCreation brandDtoForCreation)
         {
-            var check = await GetAndCheckIfBrandExistByName(brandDtoForCreation.BrandName);
-            if (check)
+            var brandNameResult = await GetAndCheckIfBrandExistByName(brandDtoForCreation.BrandName);
+            if (brandNameResult)
                 return Result<BrandDto>.BadRequest([BrandErrors.GetBrandNameAlreadyExistError(brandDtoForCreation)]);
 
             var brandEntity = _mapper.Map<Brand>(brandDtoForCreation);

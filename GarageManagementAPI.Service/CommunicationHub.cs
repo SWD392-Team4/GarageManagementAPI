@@ -1,11 +1,9 @@
-﻿using GarageManagementAPI.Service.Contracts;
+using GarageManagementAPI.Service.Contracts;
 using GarageManagementAPI.Shared.DataTransferObjects.CommunicationHub;
 using Microsoft.AspNetCore.SignalR;
 using Newtonsoft.Json;
 using StackExchange.Redis;
 using System.Security.Claims;
-
-
 namespace api.Services
 {
     public class CommunicationHub : Hub, ICommunicationHub
@@ -22,7 +20,7 @@ namespace api.Services
         public override async Task OnConnectedAsync()
         {
             var userId = GetUserId();
-
+            Console.WriteLine("userId: " + userId);
             if (string.IsNullOrEmpty(userId))
             {
                 Context.Abort();
@@ -47,7 +45,7 @@ namespace api.Services
 
             // Nếu key tồn tại nhưng không phải List, xóa để tránh lỗi
             if (type != RedisType.None && type != RedisType.List)
-            {
+        {
                 await db.KeyDeleteAsync(chatRoomKey);
             }
 
@@ -67,7 +65,7 @@ namespace api.Services
             {
                 var receiverConnectionId = _userConnections[receiverId];
                 await Clients.Client(receiverConnectionId).SendAsync("receiveMessage", chatMessage);
-            }
+        }
             if (_userConnections.ContainsKey(senderId))
             {
                 var senderConnectionId = _userConnections[senderId];
@@ -90,8 +88,8 @@ namespace api.Services
             bool chatRoomExists = await db.KeyExistsAsync(chatRoomKey);
             if (!chatRoomExists)
             {
-                return new List<SignalRDto>();  // Trả về danh sách rỗng nếu không có tin nhắn
-            }
+                return new List<SignalRDto>(); 
+        }
 
             var chatHistoryJson = await db.ListRangeAsync(chatRoomKey, 0, 50);
             // Chuyển đổi từng tin nhắn từ dạng string sang đối tượng SignalRDto
@@ -136,8 +134,8 @@ namespace api.Services
             // Kiểm tra xem có thông báo nào không
             bool notificationsExist = await db.KeyExistsAsync(notificationKey);
             if (!notificationsExist)
-            {
-                return new List<SignalRDto>();  // Trả về danh sách rỗng nếu không có thông báo
+        {
+                return new List<SignalRDto>(); 
             }
 
             // Lấy tất cả thông báo từ Redis (tối đa 50 thông báo gần nhất)
@@ -196,15 +194,15 @@ namespace api.Services
                 try
                 {
                     var chatMessage = JsonConvert.DeserializeObject<dynamic>(msg.ToString());
-                    if (chatMessage.UserId.ToString().Trim() != senderId.ToString().Trim() && chatMessage.IsRead == false)
-                    {
+                    if (chatMessage!.UserId.ToString().Trim() != senderId.ToString().Trim() && chatMessage.IsRead == false)
+        {
                         chatMessage.isRead = true;
-                    }
+        }
 
                     updatedMessages.Add(JsonConvert.SerializeObject(chatMessage));
                 }
                 catch (Exception ex)
-                {
+        {
                     Console.WriteLine($"Error processing message: {ex.Message}");
                 }
             }
@@ -218,7 +216,7 @@ namespace api.Services
         {
             var userId = GetUserId();
             if (_userConnections.ContainsKey(userId))
-            {
+        {
                 _userConnections.Remove(userId);
             }
             return base.OnDisconnectedAsync(exception);
@@ -226,13 +224,14 @@ namespace api.Services
 
         // Hàm tạo key cho cuộc trò chuyện giữa hai người
         private string GetChatRoomKey(string user1Id, string user2Id)
-        {
+            {
             return $"{(user1Id.CompareTo(user2Id) < 0 ? user1Id : user2Id)}:{(user1Id.CompareTo(user2Id) > 0 ? user1Id : user2Id)}";
-        }
+            }
         private string GetNotificationKey(string userId)
-        {
+            {
             return $"notifications:{userId}";
-        }
+            }
+
 
         private string GetUserId()
         {
