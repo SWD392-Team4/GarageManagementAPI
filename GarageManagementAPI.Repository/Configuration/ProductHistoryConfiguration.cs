@@ -47,7 +47,7 @@ namespace GarageManagementAPI.Repository.Configuration
                 new ProductHistory()
                 {
                     Id = new Guid("72d247fb-5249-4ce1-a400-fce2559e7db0"),
-                    ProductId = new Guid("AC103CCC-BD82-44CA-ADB7-5B478B95965A"), // Clothing
+                    ProductId = new Guid("e9a7beda-ff63-4ac5-92cb-b7fa152c41c2"), // Clothing
                     ProductPrice = 1200,
                     CreatedAt = DateTimeOffset.Parse("2025-02-25T00:36:40Z")
                 },
@@ -70,13 +70,6 @@ namespace GarageManagementAPI.Repository.Configuration
                     Id = new Guid("2254581b-c244-4c41-b5e4-c353629c2105"),
                     ProductId = new Guid("1C1FFD05-3B06-48BF-B78C-86B6EF2D3CEF"), // Clothing
                     ProductPrice = 300,
-                    CreatedAt = DateTimeOffset.Parse("2025-02-25T00:36:40Z")
-                },
-                new ProductHistory()
-                {
-                    Id = new Guid("97b8ca2f-9784-4262-a57e-5695f3f0f642"),
-                    ProductId = new Guid("AC103CCC-BD82-44CA-ADB7-5B478B95965A"), // Electronics
-                    ProductPrice = 450,
                     CreatedAt = DateTimeOffset.Parse("2025-02-25T00:36:40Z")
                 }
             );
