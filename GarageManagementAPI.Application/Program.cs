@@ -53,7 +53,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
 app.UseWebSockets();
-app.MapHub<CommunicationHub>("/hub").RequireAuthorization().RequireCors("CorsPolicy");
+app.MapHub<CommunicationHub>("/hub").RequireCors("CorsPolicy");
 
 app.Run();
 

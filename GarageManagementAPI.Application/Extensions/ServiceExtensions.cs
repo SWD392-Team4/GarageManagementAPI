@@ -43,14 +43,15 @@ namespace GarageManagementAPI.Application.Extensions
                    .AllowAnyHeader()
                    .WithExposedHeaders("X-Pagination")); */
                  options.AddPolicy("CorsPolicy",
-         builder =>
-         {
-             builder.WithOrigins("http://localhost:3000") // Cho phép origin này
-                    .AllowAnyHeader()
-                    .AllowAnyMethod()
-                    .AllowCredentials(); // Cho phép credentials
-         });
-             });
+                 builder =>
+                  {
+                      builder.WithOrigins("http://localhost:3000", "https://tbturbotrack.netlify.app/")
+                      .AllowAnyHeader()
+                      .AllowAnyMethod()
+                      .AllowCredentials()
+                      .WithExposedHeaders("X-Pagination");
+                  });            
+               });
         public static void ConfigureRepositoryManager(this IServiceCollection services) =>
             services.AddScoped<IRepositoryManager, RepositoryManager>();
 

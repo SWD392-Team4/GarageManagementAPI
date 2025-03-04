@@ -19,10 +19,10 @@ namespace GarageManagementAPI.Application.MappingProfile
             .Select(p => new ProductDto
             {
                  Id = p.Id,
-                 ProductName = p.ProductName,  // Ánh xạ ProductName
+                 ProductName = p.ProductName,  
                  ProductBarcode = p.ProductBarcode,
             })
-             .ToList()  // Chuyển thành danh sách
+             .ToList()
          );
      });
 

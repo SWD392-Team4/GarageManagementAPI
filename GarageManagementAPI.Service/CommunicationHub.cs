@@ -21,7 +21,7 @@ namespace api.Services
         public override async Task OnConnectedAsync()
         {
             var userId = GetUserId();
-
+            Console.WriteLine("userId: " + userId);
             if (string.IsNullOrEmpty(userId))
             {
                 Context.Abort();
@@ -89,7 +89,7 @@ namespace api.Services
             bool chatRoomExists = await db.KeyExistsAsync(chatRoomKey);
             if (!chatRoomExists)
             {
-                return new List<SignalRDto>();  // Trả về danh sách rỗng nếu không có tin nhắn
+                return new List<SignalRDto>(); 
         }
 
             var chatHistoryJson = await db.ListRangeAsync(chatRoomKey, 0, 50);
@@ -136,7 +136,7 @@ namespace api.Services
             bool notificationsExist = await db.KeyExistsAsync(notificationKey);
             if (!notificationsExist)
         {
-                return new List<SignalRDto>();  // Trả về danh sách rỗng nếu không có thông báo
+                return new List<SignalRDto>(); 
             }
 
             // Lấy tất cả thông báo từ Redis (tối đa 50 thông báo gần nhất)

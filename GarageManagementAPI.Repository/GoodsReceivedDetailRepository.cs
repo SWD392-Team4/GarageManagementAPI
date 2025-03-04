@@ -19,7 +19,6 @@ namespace GarageManagementAPI.Repository
 
         public async Task<GoodsReceivedDetail?> GetGoodsReceivedDetailAsync(Guid goodsReceivedDetailId, bool trackChanges, string? include = null)
         {
-            Console.WriteLine(include);
             var goodsReceivedDetail = include is null ?
               await FindByCondition(b => b.Id.Equals(goodsReceivedDetailId), trackChanges).SingleOrDefaultAsync() :
               await FindByCondition(b => b.Id.Equals(goodsReceivedDetailId), trackChanges).IsInclude(include).SingleOrDefaultAsync();
@@ -46,6 +45,11 @@ namespace GarageManagementAPI.Repository
               .Skip((goodsReceivedDetailParameters.PageNumber - 1) * goodsReceivedDetailParameters.PageSize)
               .Take(goodsReceivedDetailParameters.PageSize)
               .ToListAsync();
+            foreach (var product in goodsReceivedDetails)
+            {
+                Console.WriteLine($"ID: {product.Id}, Name: {product.Product?.ProductName}, Status: {product.Status}");
+            }
+
             return PagedList<GoodsReceivedDetail>.ToPagedList(
                 goodsReceivedDetails,
                 goodsReceivedDetailParameters.PageNumber,

@@ -11,13 +11,14 @@ namespace GarageManagementAPI.Application.MappingProfile
             CreateMap<GoodsReceivedDetail, GoodsReceivedDetailDto>()
                  .ForMember(dest => dest.Productname, opts =>
                  {
+                   
                      opts.PreCondition(src => src.Product != null);
-                     opts.MapFrom(src => src.Product!.ProductName);
+                     opts.MapFrom(src => src.Product.ProductName);
                  })
                   .ForMember(dest => dest.RefereneceNumber, opts =>
                   {
                       opts.PreCondition(src => src.GoodsReceived != null);
-                      opts.MapFrom(src => src.GoodsReceived!.RefereneceNumber);
+                      opts.MapFrom(src => src.GoodsReceived.RefereneceNumber);
                   });              
             CreateMap<GoodsReceivedDetailDtoForCreation, GoodsReceivedDetail>();
             CreateMap<GoodsReceivedDetailDtoForUpdate, GoodsReceivedDetail>().ReverseMap();

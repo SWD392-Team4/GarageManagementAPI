@@ -55,6 +55,7 @@ namespace GarageManagementAPI.Service
             var goodsReceivedEntity = goodsReceivedResult.GetValue<GoodsReceivedDetail>();
 
             var goodsReceivedDetailDto = _mapper.Map<GoodsReceivedDetailDto>(goodsReceivedEntity);
+            Console.WriteLine("ProductName" + goodsReceivedDetailDto.Productname);
 
             var goodsReceivedDetailShaped = _dataShaper.GoodsReceivedDetail.ShapeData(goodsReceivedDetailDto, goodsReceivedDetailParameterdParameters.Fields);
 
