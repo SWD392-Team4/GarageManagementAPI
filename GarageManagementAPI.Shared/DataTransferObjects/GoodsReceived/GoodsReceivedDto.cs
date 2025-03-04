@@ -1,29 +1,23 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿
+
 using GarageManagementAPI.Shared.Enums.SystemStatuss;
+using System.ComponentModel.DataAnnotations;
 
-namespace GarageManagementAPI.Entities.Models
+namespace GarageManagementAPI.Shared.DataTransferObjects.GoodsReceived
 {
-    public partial class GoodsReceived : BaseEntity<GoodsReceived>
+    public record class GoodsReceivedDto : BaseDto<GoodsReceivedDto>
     {
-        public Guid CreatedWarehouseManagerId { get; set; }
-
-        public Guid SupplierContactId { get; set; }
-
-        public Guid WarehouseId { get; set; }
-
+        public Guid Id { get; set; }
         public string RefereneceNumber { get; set; } = null!;
-
         public string InvoiceCode { get; set; } = null!;
-
         public string SourceAddress { get; set; } = null!;
-
         public string SourceProvince { get; set; } = null!;
-
         public string SourceDistrict { get; set; } = null!;
-
         public string SourceWards { get; set; } = null!;
-
         public decimal TotalPrice { get; set; }
+        public string ContactPersonName { get; set; } = null!;
+        public string WorkPlaceName { get; set; } = null!;
+        public string WarehouseManagereName { get; set; } = null!;
 
         [EnumDataType(typeof(GoodsReceivedStatus))]
         public GoodsReceivedStatus Status { get; set; }
@@ -31,15 +25,5 @@ namespace GarageManagementAPI.Entities.Models
         public DateTimeOffset CreatedAt { get; set; }
 
         public DateTimeOffset UpdatedAt { get; set; }
-
-        public virtual User CreatedWarehouseManager { get; set; } = null!;
-
-        public virtual ICollection<GoodsReceivedDetail> GoodsReceivedDetails { get; set; } = new List<GoodsReceivedDetail>();
-
-        public virtual SupplierContact SupplierContact { get; set; } = null!;
-
-        public virtual Workplace Warehouse { get; set; } = null!;
     }
-
 }
-

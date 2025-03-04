@@ -18,6 +18,7 @@ namespace GarageManagementAPI.Repository
         private readonly Lazy<IServiceImageRepository> _serviceImageRepository;
         private readonly Lazy<IProductImageRepository> _productImageRepository;
         private readonly Lazy<IEmployeeInfoRepository> _employeeInfoRepository;
+        private readonly Lazy<IGoodsReceivedRepository> _goodsReceivedtRepository;
         private readonly Lazy<IProductHistoryRepository> _productHistoryRepository;
         private readonly Lazy<IServiceHistoryRepository> _serviceHistoryRepository;
         private readonly Lazy<IProductCategoryRepository> _productCategoryRepository;
@@ -46,6 +47,7 @@ namespace GarageManagementAPI.Repository
             _carPartCategoryRepository = new Lazy<ICarPartCategoryRepository>(() => new CarPartCategoryRepository(repositoryContext));
             _serviceFeedBackRepository = new Lazy<IServiceFeedBackRepository>(() => new ServiceFeedBackRepository(repositoryContext));
             _supplierContactRepository = new Lazy<ISupplierContactRepository>(() => new SupplierContactRepository(repositoryContext));
+            _goodsReceivedtRepository = new Lazy<IGoodsReceivedRepository>(() => new GoodsReceivedRepository(repositoryContext));
         }
 
         public IUserRepository User => _userRepository.Value;
@@ -60,6 +62,7 @@ namespace GarageManagementAPI.Repository
         public IServiceImageRepository ServiceImage => _serviceImageRepository.Value;
         public IProductImageRepository ProductImage => _productImageRepository.Value;
         public IEmployeeInfoRepository EmployeeInfo => _employeeInfoRepository.Value;
+        public IGoodsReceivedRepository GoodsReceived => _goodsReceivedtRepository.Value;
         public IProductHistoryRepository ProductHistory => _productHistoryRepository.Value;
         public IServiceHistoryRepository ServiceHistory => _serviceHistoryRepository.Value;
         public IServiceFeedBackRepository ServiceFeeback => _serviceFeedBackRepository.Value;

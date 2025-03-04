@@ -8,6 +8,7 @@ using GarageManagementAPI.Shared.DataTransferObjects.Supplier;
 using GarageManagementAPI.Shared.DataTransferObjects.Workplace;
 using GarageManagementAPI.Shared.DataTransferObjects.ProductImage;
 using GarageManagementAPI.Shared.DataTransferObjects.ServiceImage;
+using GarageManagementAPI.Shared.DataTransferObjects.GoodsReceived;
 using GarageManagementAPI.Shared.DataTransferObjects.ServiceHistory;
 using GarageManagementAPI.Shared.DataTransferObjects.ServiceFeeback;
 using GarageManagementAPI.Shared.DataTransferObjects.ProductHistory;
@@ -24,17 +25,17 @@ namespace GarageManagementAPI.Service.DataShaping
         private readonly Lazy<IDataShaper<ServiceDto>> _serviceShaper;
         private readonly Lazy<IDataShaper<ProductDto>> _productShaper;
         private readonly Lazy<IDataShaper<CarPartDto>> _carPartShaper;
-        private readonly Lazy<IDataShaper<WorkplaceDto>> _workplaceShaper;
         private readonly Lazy<IDataShaper<SupplierDto>> _supplierShapper;
+        private readonly Lazy<IDataShaper<WorkplaceDto>> _workplaceShaper;
         private readonly Lazy<IDataShaper<ServiceImageDto>> _serviceImageShaper;
         private readonly Lazy<IDataShaper<ProductImageDto>> _productImageShaper;
+        private readonly Lazy<IDataShaper<GoodsReceivedDto>> _goodsReceivedShaper;
         private readonly Lazy<IDataShaper<ProductHistoryDto>> _productHistoryShaper;
         private readonly Lazy<IDataShaper<ServiceHistoryDto>> _serviceHistoryShaper;
         private readonly Lazy<IDataShaper<SupplierContactDto>> _supplierContactShaper;
         private readonly Lazy<IDataShaper<ProductCategoryDto>> _productCategoryShaper;
         private readonly Lazy<IDataShaper<CarPartCategoryDto>> _carPartCategoryShaper;
         private readonly Lazy<IDataShaper<ServiceFeedBackDto>> _serviceFeedBackShaper;
-
         public DataShaperManager()
         {
             _workplaceShaper = new Lazy<IDataShaper<WorkplaceDto>>(
@@ -79,6 +80,8 @@ namespace GarageManagementAPI.Service.DataShaping
             () => new DataShaper<ServiceFeedBackDto>(ServiceFeedBackDto.PropertyInfos));
             _supplierContactShaper = new Lazy<IDataShaper<SupplierContactDto>>(
             () => new DataShaper<SupplierContactDto>(SupplierContactDto.PropertyInfos));
+            _goodsReceivedShaper = new Lazy<IDataShaper<GoodsReceivedDto>>(
+           () => new DataShaper<GoodsReceivedDto>(GoodsReceivedDto.PropertyInfos));
         }
         //.Value là thuộc tính của Lazy<T>, nó sẽ kích hoạt việc khởi tạo đối tượng nếu đối tượng đó chưa được khởi tạo trước đó. Nếu đối tượng đã được khởi tạo, thuộc tính .Value sẽ trả về đối tượng đó.
         public IDataShaper<UserDto> User => _userShaper.Value;
@@ -90,6 +93,7 @@ namespace GarageManagementAPI.Service.DataShaping
         public IDataShaper<WorkplaceDto> Workplace => _workplaceShaper.Value;
         public IDataShaper<ServiceImageDto> ServiceImage => _serviceImageShaper.Value;
         public IDataShaper<ProductImageDto> ProductImage => _productImageShaper.Value;
+        public IDataShaper<GoodsReceivedDto> GoodsReceived => _goodsReceivedShaper.Value;
         public IDataShaper<ProductHistoryDto> ProductHistory => _productHistoryShaper.Value;
         public IDataShaper<ServiceHistoryDto> ServiceHistory => _serviceHistoryShaper.Value;
         public IDataShaper<ProductCategoryDto> ProductCategory => _productCategoryShaper.Value;

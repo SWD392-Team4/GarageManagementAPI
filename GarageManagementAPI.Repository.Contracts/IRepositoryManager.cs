@@ -16,6 +16,7 @@ namespace GarageManagementAPI.Repository.Contracts
         IServiceImageRepository ServiceImage { get; }
         IProductImageRepository ProductImage { get; }
         IEmployeeInfoRepository EmployeeInfo { get; }
+        IGoodsReceivedRepository GoodsReceived { get; }
         IProductHistoryRepository ProductHistory { get; }
         IServiceHistoryRepository ServiceHistory { get; }
         IServiceFeedBackRepository ServiceFeeback { get; }
