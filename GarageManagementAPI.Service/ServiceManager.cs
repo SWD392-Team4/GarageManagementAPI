@@ -1,10 +1,10 @@
 ﻿using AutoMapper;
-using GarageManagementAPI.Entities.ConfigurationModels;
-using GarageManagementAPI.Entities.Models;
-using GarageManagementAPI.Repository.Contracts;
-using GarageManagementAPI.Service.Contracts;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
+using Microsoft.AspNetCore.Identity;
+using GarageManagementAPI.Entities.Models;
+using GarageManagementAPI.Service.Contracts;
+using GarageManagementAPI.Repository.Contracts;
+using GarageManagementAPI.Entities.ConfigurationModels;
 
 namespace GarageManagementAPI.Service
 {
@@ -33,6 +33,7 @@ namespace GarageManagementAPI.Service
         private readonly Lazy<ICarPartCategoryService> _carPartCategoryService;
         private readonly Lazy<ISupplierContactService> _supplierContactService;
         private readonly Lazy<IServiceFeedbackService> _serviceFeedbackService;
+        private readonly Lazy<IGoodsReceivedDetailService> _goodsReceivedDetailService;
 
         public ServiceManager(
             IRepositoryManager repositoryManager,
@@ -169,10 +170,16 @@ namespace GarageManagementAPI.Service
             dataShaper));
 
             _goodsReceivedService = new Lazy<IGoodsReceivedService>(() =>
-           new GoodsReceivedService(
-           repositoryManager,
-           mapper,
-           dataShaper));
+            new GoodsReceivedService(
+            repositoryManager,
+            mapper,
+            dataShaper));
+
+            _goodsReceivedDetailService = new Lazy<IGoodsReceivedDetailService>(() =>
+            new GoodsReceivedDetailService(
+            repositoryManager,
+            mapper,
+            dataShaper));
             _mediaService = new Lazy<IMediaService>(() =>
             new MediaService(cloudinaryConfiguration));
         }
@@ -199,5 +206,6 @@ namespace GarageManagementAPI.Service
         public IProductCategoryService ProductCategoryService => _productCategoryService.Value;
         public ICarPartCategoryService CarPartCategoryService => _carPartCategoryService.Value;
         public ISupplierContactService SupplierContactService => _supplierContactService.Value;
+        public IGoodsReceivedDetailService GoodsReceivedDetailService => _goodsReceivedDetailService.Value;
     }
 }

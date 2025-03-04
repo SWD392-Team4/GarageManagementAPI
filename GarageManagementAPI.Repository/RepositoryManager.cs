@@ -25,6 +25,7 @@ namespace GarageManagementAPI.Repository
         private readonly Lazy<ICarPartCategoryRepository> _carPartCategoryRepository;
         private readonly Lazy<IServiceFeedBackRepository> _serviceFeedBackRepository;
         private readonly Lazy<ISupplierContactRepository> _supplierContactRepository;
+        private readonly Lazy<IGoodsReceivedDetailRepository> _goodsReceivedDetailRepository;
 
         public RepositoryManager(RepositoryContext repositoryContext)
         {
@@ -41,13 +42,14 @@ namespace GarageManagementAPI.Repository
             _serviceImageRepository = new Lazy<IServiceImageRepository>(() => new ServiceImageRepository(repositoryContext));
             _productImageRepository = new Lazy<IProductImageRepository>(() => new ProductImageRepository(repositoryContext));
             _employeeInfoRepository = new Lazy<IEmployeeInfoRepository>(() => new EmployeeInfoRepository(repositoryContext));
+            _goodsReceivedtRepository = new Lazy<IGoodsReceivedRepository>(() => new GoodsReceivedRepository(repositoryContext));
             _productHistoryRepository = new Lazy<IProductHistoryRepository>(() => new ProductHistoryRepository(repositoryContext));
             _serviceHistoryRepository = new Lazy<IServiceHistoryRepository>(() => new ServiceHistoryRepository(repositoryContext));
             _productCategoryRepository = new Lazy<IProductCategoryRepository>(() => new ProductCategoryRepository(repositoryContext));
             _carPartCategoryRepository = new Lazy<ICarPartCategoryRepository>(() => new CarPartCategoryRepository(repositoryContext));
             _serviceFeedBackRepository = new Lazy<IServiceFeedBackRepository>(() => new ServiceFeedBackRepository(repositoryContext));
             _supplierContactRepository = new Lazy<ISupplierContactRepository>(() => new SupplierContactRepository(repositoryContext));
-            _goodsReceivedtRepository = new Lazy<IGoodsReceivedRepository>(() => new GoodsReceivedRepository(repositoryContext));
+            _goodsReceivedDetailRepository = new Lazy<IGoodsReceivedDetailRepository>(() => new GoodsReceivedDetailRepository(repositoryContext));
         }
 
         public IUserRepository User => _userRepository.Value;
@@ -69,6 +71,7 @@ namespace GarageManagementAPI.Repository
         public IProductCategoryRepository ProductCategory => _productCategoryRepository.Value;
         public ICarPartCategoryRepository CarPartCategory => _carPartCategoryRepository.Value;
         public ISupplierContactRepository SupplierContact => _supplierContactRepository.Value;
+        public IGoodsReceivedDetailRepository GoodsReceivedDetail => _goodsReceivedDetailRepository.Value;
 
 
         public async Task<IDbContextTransaction> BeginTransactionAsync()
