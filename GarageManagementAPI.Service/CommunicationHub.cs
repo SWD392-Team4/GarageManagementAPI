@@ -1,26 +1,30 @@
+using GarageManagementAPI.Service;
 using GarageManagementAPI.Service.Contracts;
 using GarageManagementAPI.Shared.DataTransferObjects.CommunicationHub;
+using GarageManagementAPI.Entities.Models;
 using Microsoft.AspNetCore.SignalR;
 using Newtonsoft.Json;
 using StackExchange.Redis;
 using System.Security.Claims;
+using GarageManagementAPI.Repository.Contracts;
 namespace api.Services
 {
     public class CommunicationHub : Hub, ICommunicationHub
     {
         private readonly IConnectionMultiplexer _redis;
         private static Dictionary<string, string> _userConnections = new Dictionary<string, string>();
+        private readonly IRepositoryManager _repoManager;
 
-        public CommunicationHub(IConnectionMultiplexer redis)
+        public CommunicationHub(IConnectionMultiplexer redis, IRepositoryManager repoManager)
         {
             _redis = redis;
+            _repoManager = repoManager;
         }
 
         // Khi người dùng kết nối, lưu Connection ID của họ
         public override async Task OnConnectedAsync()
         {
             var userId = GetUserId();
-            Console.WriteLine("userId: " + userId);
             if (string.IsNullOrEmpty(userId))
             {
                 Context.Abort();
@@ -103,11 +107,8 @@ namespace api.Services
         public async Task SendNotification(string receiver, string notificationMessage)
         {
             var senderId = GetUserId();
-            // Lấy Redis database
             var db = _redis.GetDatabase();
-            // Tạo key cho thông báo của người dùng
             string notificationKey = GetNotificationKey(receiver);
-            // Tạo đối tượng thông báo
             var notification = new SignalRDto
             {
                 UserId = senderId,
@@ -115,7 +116,6 @@ namespace api.Services
                 Timestamp = DateTime.Now
             };
             string jsonNotification = JsonConvert.SerializeObject(notification);
-            // Lưu thông báo vào Redis
             await db.ListRightPushAsync(notificationKey, jsonNotification);
             if (_userConnections.ContainsKey(receiver))
             {
@@ -129,22 +129,18 @@ namespace api.Services
         {
             var userId = GetUserId();
             var db = _redis.GetDatabase();
-            // Lấy key của thông báo
             string notificationKey = GetNotificationKey(userId);
-            // Kiểm tra xem có thông báo nào không
             bool notificationsExist = await db.KeyExistsAsync(notificationKey);
             if (!notificationsExist)
         {
                 return new List<SignalRDto>(); 
             }
 
-            // Lấy tất cả thông báo từ Redis (tối đa 50 thông báo gần nhất)
             var notificationsJson = await db.ListRangeAsync(notificationKey, 0, 50);
 
             var notifications = notificationsJson
                             .Select(message => JsonConvert.DeserializeObject<SignalRDto>(message.ToString()))
                             .ToList();
-            // Chuyển đổi thông báo từ Redis thành danh sách chuỗi
             return notifications!;
         }
 
@@ -220,6 +216,50 @@ namespace api.Services
                 _userConnections.Remove(userId);
             }
             return base.OnDisconnectedAsync(exception);
+        }
+
+        public async Task<List<User>> GetChattedUsersWithDetails()
+        {
+            var chattedUserIds = await GetChattedUsers();
+            var users = new List<User>();
+            foreach (var userId in chattedUserIds)
+            {
+                if (Guid.TryParse(userId, out var userGuid))
+                {
+                    var user = await _repoManager.User.GetUserByIdAsync(userGuid, trackChanges: false);
+                    if (user != null)
+                    {
+                        users.Add(user);
+                    }
+                }
+            }
+
+            return users;
+        }
+
+        private async Task<List<string>> GetChattedUsers()
+        {
+            var userId = GetUserId();
+            var db = _redis.GetDatabase();
+            var server = _redis.GetServer(_redis.GetEndPoints().First());
+            var keys = server.Keys(pattern: $"*:{userId}").Concat(server.Keys(pattern: $"{userId}:*")).ToList();
+
+            var chattedUsers = new List<string>();
+
+            foreach (var key in keys)
+            {
+                var parts = key.ToString().Split(':');
+                if (parts.Length == 2)
+                {
+                    var otherUserId = parts[0] == userId ? parts[1] : parts[0];
+                    if (!chattedUsers.Contains(otherUserId))
+                    {
+                        chattedUsers.Add(otherUserId);
+                    }
+                }
+            }
+
+            return chattedUsers;
         }
 
         // Hàm tạo key cho cuộc trò chuyện giữa hai người
