@@ -13,6 +13,8 @@ namespace GarageManagementAPI.Shared.ErrorsConstant.Product
         public const string ProductStatusInvalid = "Invalid product status.";
         public const string ProductNotFoundWithId = "Can not found Product with id {0}.";
         public const string ProductNotFoundWithBarcode = "Can not found Product with barcode {0}.";
+        public const string ProductCategoryNotFoundWithId = "Can not found product category with id {0}.";
+        public const string BrandNotFoundWithId = "Can not found brand with id {0}.";
         #endregion
 
         #region static method
@@ -52,6 +54,10 @@ namespace GarageManagementAPI.Shared.ErrorsConstant.Product
                 Code = nameof(ProductNameOrBarCode),
                 Description = string.Format(ProductNameOrBarCode, productDtoForUpdate.ProductBarcode)
             };
+        public static ErrorsResult GetProductCategoryIsNotFound(Guid productCategoryId) =>
+            new() { Code = nameof(ProductCategoryNotFoundWithId), Description = string.Format(ProductCategoryNotFoundWithId, productCategoryId) };
+        public static ErrorsResult GetBrandIsNotFound(Guid brandId) =>
+            new() { Code = nameof(BrandNotFoundWithId), Description = string.Format(BrandNotFoundWithId, brandId) };
         #endregion
     }
 }

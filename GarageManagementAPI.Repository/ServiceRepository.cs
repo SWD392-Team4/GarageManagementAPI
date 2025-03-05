@@ -66,8 +66,10 @@ namespace GarageManagementAPI.Repository
 
         public async Task<Service?> GetServiceByCarCategoryId(Guid? serviceId, Guid carparCategoryId, bool trackChanges, string? include = null)
         {
-            var service = serviceId == null ? await FindByCondition(s => s.CarCategoryId == carparCategoryId, trackChanges).SingleOrDefaultAsync() :
-                await FindByCondition(s => s.CarCategoryId == carparCategoryId && s.Id != serviceId, trackChanges).SingleOrDefaultAsync();
+            var service =
+                await FindByCondition(s => s.CarCategoryId.Equals(carparCategoryId) && !s.Id.Equals(serviceId), trackChanges).SingleOrDefaultAsync();
+            Console.WriteLine("service " + service);
+            Console.WriteLine("service " + carparCategoryId);
             return service;
         }
     }
