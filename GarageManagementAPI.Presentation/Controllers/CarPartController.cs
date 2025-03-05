@@ -61,14 +61,13 @@ namespace GarageManagementAPI.Presentation.Controllers
         {
             var result = await _service.CarPartService.CreateCarPartAsync(carPartDtoForCreation);
 
-            return result.Map(
-                onSuccess: result =>
+            return await result.Map(
+                onSuccess: async result =>
                 {
                     var createdCarPart = result.GetValue<CarPartDto>();
-
-                    return CreatedAtRoute("GetCarPartById", new { CarPartId = createdCarPart.Id }, result);
+                    return await GetCarPartById(createdCarPart.Id);
                 },
-                onFailure: ProcessError
+               onFailure: error => Task.FromResult(ProcessError(error))
                 );
         }
 
