@@ -24,6 +24,8 @@ namespace GarageManagementAPI.Application.MappingProfile
                     opts.PreCondition(src => src.CarModel != null);
                     opts.MapFrom(src => src.CarModel.ModelName);
                 });
+
+            CreateMap<AppointmentDtoForCreate, Appointment>();
         }
     }
 }

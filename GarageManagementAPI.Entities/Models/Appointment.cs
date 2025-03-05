@@ -31,6 +31,7 @@ namespace GarageManagementAPI.Entities.Models
 
         public decimal Price { get; set; }
 
+        [EnumDataType(typeof(AppointmentType))]
         public AppointmentType AppointmentType { get; set; }
 
         public string? CarLicensePlateNumber { get; set; }

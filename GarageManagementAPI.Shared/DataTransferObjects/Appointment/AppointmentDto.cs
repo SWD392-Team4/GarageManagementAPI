@@ -52,8 +52,6 @@ namespace GarageManagementAPI.Shared.DataTransferObjects.Appointment
 
         public Guid GarageId { get; set; }
 
-        public int Mileage { get; set; }
-
         public string CustomerName { get; set; } = null!;
 
         public string CustomerPhoneNumber { get; set; } = null!;
@@ -70,6 +68,8 @@ namespace GarageManagementAPI.Shared.DataTransferObjects.Appointment
 
         public IList<AppointmentDetailDtoForCreate>? ServiceList { get; set; }
 
+        public IList<AppointmentSellingProductDtoForCreate>? ProductForSellings { get; set; }
+
     }
 
     public record AppointmentDetailDtoForCreate
@@ -83,6 +83,12 @@ namespace GarageManagementAPI.Shared.DataTransferObjects.Appointment
     {
         public Guid ProductHistoryId { get; set; }
 
+        public int Quantity { get; set; }
+    }
+
+    public record AppointmentSellingProductDtoForCreate
+    {
+        public Guid ProductHistoryId { get; set; }
         public int Quantity { get; set; }
     }
 }

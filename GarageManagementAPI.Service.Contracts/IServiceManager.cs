@@ -19,15 +19,13 @@
         IServiceFeedbackService ServiceFeedback { get; }
         IServiceImageService ServiceImageService { get; }
         IEmployeeInfoService EmployeeInfoService { get; }
-        IProductImageService ProductImageService { get; }
         IGoodsReceivedService GoodsReceivedService { get; }
-        IProductHistoryService ProductHistoryService { get; }
         IServiceHistoryService ServiceHistoryService { get; }
-        IAuthenticationService AuthenticationService { get; }
-        IProductCategoryService ProductCategoryService { get; }
         ICarPartCategoryService CarPartCategoryService { get; }
         ISupplierContactService SupplierContactService { get; }
         IGoodsReceivedDetailService GoodsReceivedDetailService { get; }
+        IAppointmentService AppointmentService { get; }
+        IWorkplaceService WorkplaceService { get; }
 
     }
 }
