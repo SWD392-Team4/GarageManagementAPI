@@ -13,14 +13,21 @@
         IProductCategoryService ProductCategoryService { get; }
         IProductImageService ProductImageService { get; }
         ICarPartService CarPartService { get; }
-        ICarPartCategoryService CarPartCategoryService { get; }
+        ISupplierService SupplierService { get; }
         ICarModelService CarModelService { get; }
         ICarCategoryService CarCategoryService { get; }
-        IAppointmentService AppointmentService { get; }
         IServiceFeedbackService ServiceFeedback { get; }
-        IWorkplaceService WorkplaceService { get; }
         IServiceImageService ServiceImageService { get; }
+        IEmployeeInfoService EmployeeInfoService { get; }
+        IProductImageService ProductImageService { get; }
+        IGoodsReceivedService GoodsReceivedService { get; }
+        IProductHistoryService ProductHistoryService { get; }
         IServiceHistoryService ServiceHistoryService { get; }
-    }
+        IAuthenticationService AuthenticationService { get; }
+        IProductCategoryService ProductCategoryService { get; }
+        ICarPartCategoryService CarPartCategoryService { get; }
+        ISupplierContactService SupplierContactService { get; }
+        IGoodsReceivedDetailService GoodsReceivedDetailService { get; }
 
+    }
 }

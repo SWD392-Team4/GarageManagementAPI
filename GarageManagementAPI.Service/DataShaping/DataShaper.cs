@@ -75,7 +75,10 @@ namespace GarageManagementAPI.Service.DataShaping
             {
                 var objectPropertyValue = property.GetValue(entity);
                 if (objectPropertyValue != null)
-                    shapedObject.TryAdd(property.Name, objectPropertyValue);
+                {
+                    var propertyName = char.ToLower(property.Name[0]) + property.Name.Substring(1);
+                    shapedObject.TryAdd(propertyName, objectPropertyValue);
+                }
             }
 
             return shapedObject;

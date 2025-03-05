@@ -1,11 +1,6 @@
 ﻿using GarageManagementAPI.Shared.Enums;
 using GarageManagementAPI.Shared.Enums.SystemStatuss;
-using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace GarageManagementAPI.Shared.DataTransferObjects.Appointment
 {
@@ -49,5 +44,45 @@ namespace GarageManagementAPI.Shared.DataTransferObjects.Appointment
 
         [EnumDataType(typeof(AppointmentType))]
         public AppointmentType AppointmentType { get; set; }
+    }
+
+    public record AppointmentDtoForCreate
+    {
+        public Guid CarModelId { get; set; }
+
+        public Guid GarageId { get; set; }
+
+        public int Mileage { get; set; }
+
+        public string CustomerName { get; set; } = null!;
+
+        public string CustomerPhoneNumber { get; set; } = null!;
+
+        public string CustomerEmail { get; set; } = null!;
+
+        public DateTimeOffset EstimatedAppointmentTime { get; set; }
+
+        public DateTimeOffset EstimatedEndTime { get; set; }
+
+        public decimal Price { get; set; }
+
+        public IList<Guid>? PackageList { get; set; }
+
+        public IList<AppointmentDetailDtoForCreate>? ServiceList { get; set; }
+
+    }
+
+    public record AppointmentDetailDtoForCreate
+    {
+        public Guid ServiceHistoryId { get; set; }
+
+        public IList<AppointmentReplacementPartDtoForCreate>? ReplacementParts { get; set; }
+    }
+
+    public record AppointmentReplacementPartDtoForCreate
+    {
+        public Guid ProductHistoryId { get; set; }
+
+        public int Quantity { get; set; }
     }
 }

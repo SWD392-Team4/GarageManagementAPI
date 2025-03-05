@@ -11,6 +11,10 @@ using GarageManagementAPI.Shared.DataTransferObjects.ServiceImage;
 using GarageManagementAPI.Shared.DataTransferObjects.CarPartCategory;
 using GarageManagementAPI.Shared.DataTransferObjects.ServiceHistory;
 using GarageManagementAPI.Shared.DataTransferObjects.ServiceFeeback;
+using GarageManagementAPI.Shared.DataTransferObjects.Supplier;
+using GarageManagementAPI.Shared.DataTransferObjects.SupplierContact;
+using GarageManagementAPI.Shared.DataTransferObjects.GoodsReceived;
+using GarageManagementAPI.Shared.DataTransferObjects.GoodsReceivedDetail;
 
 namespace GarageManagementAPI.Service.Contracts
 {
@@ -18,16 +22,20 @@ namespace GarageManagementAPI.Service.Contracts
     {
         IDataShaper<UserDto> User { get; }
         IDataShaper<BrandDto> Brand { get; }
+        IDataShaper<ServiceDto> Service { get; }
         IDataShaper<ProductDto> Product { get; }
         IDataShaper<CarPartDto> CarPart { get; }
-        IDataShaper<ServiceDto> Service { get; }
+        IDataShaper<SupplierDto> Supplier { get; }
         IDataShaper<WorkplaceDto> Workplace { get; }
         IDataShaper<ServiceImageDto> ServiceImage { get; }
         IDataShaper<ProductImageDto> ProductImage { get; }
+        IDataShaper<GoodsReceivedDto> GoodsReceived { get; }
         IDataShaper<ProductHistoryDto> ProductHistory { get; }
         IDataShaper<ServiceHistoryDto> ServiceHistory { get; }
         IDataShaper<ProductCategoryDto> ProductCategory { get; }
         IDataShaper<CarPartCategoryDto> CarPartCategory { get; }
         IDataShaper<ServiceFeedBackDto> ServiceFeedback { get; }
+        IDataShaper<SupplierContactDto> SupplierContact { get; }
+        IDataShaper<GoodsReceivedDetailDto> GoodsReceivedDetail { get; }
     }
 }

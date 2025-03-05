@@ -14,8 +14,8 @@ namespace GarageManagementAPI.Entities.Models
 
         public Guid? UpdateByCustomerId { get; set; }
 
-        [EnumDataType(typeof(AppointmentDetailStatus))]
-        public AppointmentDetailStatus Status { get; set; }
+        [EnumDataType(typeof(AppointmentDetailPackageStatus))]
+        public AppointmentDetailPackageStatus Status { get; set; }
 
         public DateTimeOffset CreatedAt { get; set; }
 

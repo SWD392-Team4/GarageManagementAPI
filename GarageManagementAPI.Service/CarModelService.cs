@@ -10,6 +10,8 @@ using GarageManagementAPI.Shared.RequestFeatures;
 using GarageManagementAPI.Shared.Extension;
 using GarageManagementAPI.Service.Extension;
 using GarageManagementAPI.Shared.Enums.SystemStatuss;
+using GarageManagementAPI.Shared.ErrorsConstant.Brand;
+using GarageManagementAPI.Shared.ErrorsConstant.CarCategory;
 
 namespace GarageManagementAPI.Service
 {
@@ -77,6 +79,15 @@ namespace GarageManagementAPI.Service
 
             if (!checkIfExistWithNameAndCategoryAndBrandAndYearResult.IsSuccess)
                 return Result<CarModelDto>.BadRequest(checkIfExistWithNameAndCategoryAndBrandAndYearResult.Errors!);
+
+            var isBrandIdExist = await _repoManager.Brand.GetBrandByIdAsync(carModelDtoForCreate.BrandId, false);
+            if (isBrandIdExist is null)
+                return Result<CarModelDto>.NotFound([BrandErrors.GetBrandNotFoundError()]);
+
+            var isCarCategoryExist = await _repoManager.CarCategory.GetCarCategoryAsync(carModelDtoForCreate.CarCategoryId, false);
+
+            if (isCarCategoryExist is null)
+                return Result<CarModelDto>.NotFound([CarCategoryErrors.GetCarCategoryNotFoundError(carModelDtoForCreate.CarCategoryId)]);
 
             var carModelEntity = _mapper.Map<CarModel>(carModelDtoForCreate);
 

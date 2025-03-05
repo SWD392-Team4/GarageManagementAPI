@@ -36,21 +36,20 @@ namespace GarageManagementAPI.Repository
 
         public async Task<PagedList<Brand>> GetBrandsAsync(BrandParameters brandParameters, bool trackChanges, string? include = null)
         {
-            // Lọc và sắp xếp danh sách brands theo các điều kiện
             var brandsQuery = brandParameters.PageSize == 0 ? 
                 await FindAll(trackChanges)
-                .SearchByName(brandParameters.BrandName) // Tìm kiếm theo tên sản phẩm
-                .SearchByDate(brandParameters.CreatedAt) //Tìm kiếm theo CreatedAt
-                .SearchByDate(brandParameters.UpdateAt) //Tìm kiếm theo UpdateAt
+                .SearchByName(brandParameters.BrandName) 
+                .SearchByDate(brandParameters.CreatedAt) 
+                .SearchByDate(brandParameters.UpdateAt) 
                 .SearchByStatus(brandParameters.Status)
                 .Sort(brandParameters.OrderBy)
                 .IsInclude(include)
                 .ToListAsync()
                 : 
                 await FindAll(trackChanges)
-                .SearchByName(brandParameters.BrandName) // Tìm kiếm theo tên sản phẩm
-                .SearchByDate(brandParameters.CreatedAt) //Tìm kiếm theo CreatedAt
-                .SearchByDate(brandParameters.UpdateAt) //Tìm kiếm theo UpdateAt
+                .SearchByName(brandParameters.BrandName) 
+                .SearchByDate(brandParameters.CreatedAt) 
+                .SearchByDate(brandParameters.UpdateAt) 
                 .SearchByStatus(brandParameters.Status)
                 .Sort(brandParameters.OrderBy)
                 .IsInclude(include)

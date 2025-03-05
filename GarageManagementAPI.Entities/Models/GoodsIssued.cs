@@ -1,5 +1,6 @@
-﻿using GarageManagementAPI.Shared.Enums;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
+using GarageManagementAPI.Shared.Enums.SystemStatuss;
+
 
 namespace GarageManagementAPI.Entities.Models
 {
@@ -10,19 +11,19 @@ namespace GarageManagementAPI.Entities.Models
         public Guid WarehouseId { get; set; }
 
         public Guid GarageId { get; set; }
-
         public decimal TotalCost { get; set; }
 
         public string ReferenceNumber { get; set; } = null!;
 
         public string InvoiceCode { get; set; } = null!;
 
-        [EnumDataType(typeof(SystemStatus))]
-        public SystemStatus Status { get; set; }
+        [EnumDataType(typeof(GoodsIssuedStatus))]
+        public GoodsIssuedStatus Status { get; set; }
 
         public DateTimeOffset CreatedAt { get; set; }
 
         public DateTimeOffset UpdatedAt { get; set; }
+
 
         public virtual User CreatedWareHouseManager { get; set; } = null!;
 

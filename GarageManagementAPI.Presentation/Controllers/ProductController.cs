@@ -97,7 +97,7 @@ namespace GarageManagementAPI.Presentation.Controllers
                 var updateResult = await _service.ProductImageService.CreateProductImageAsync(productId, imgTuple.publicId!, imgTuple.absoluteUrl!);
 
                 if (!updateResult.IsSuccess) return ProcessError(updateResult);
-                
+
                 createdProductImages.Add(updateResult.Value!.ImageLink);
             }
 
@@ -119,7 +119,7 @@ namespace GarageManagementAPI.Presentation.Controllers
 
             var createdProduct = createProductResult.GetValue<ProductDto>();
 
-            return CreatedAtRoute("GetProductById", new { productId = createdProduct.Id }, createdProduct);
+            return CreatedAtRoute("GetProductById", new { productId = createdProduct.Id }, createProductResult);
         }
 
         /// <summary>
