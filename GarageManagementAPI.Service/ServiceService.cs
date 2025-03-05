@@ -31,12 +31,16 @@ namespace GarageManagementAPI.Service
         public async Task<Result<ServiceDto>> CreateServiceAsync(ServiceDtoForCreation serviceDtoForCreation)
         {
             var serviceResult = await GetAndCheckIServiceExistByName(serviceDtoForCreation.ServiceName);
-
+            var carPartResult = await GetAndCheckIfCarPartIsExist(serviceDtoForCreation.CarPartId);
+            var carCategoryResult = await GetAndCheckIfCarCategoryIsExist(serviceDtoForCreation.CarCategoryId);
+            var serviceCarCategoryResult = await GetAndCheckIfCategoryByCarCategory(serviceDtoForCreation.CarCategoryId);
             if (serviceResult)
                 return Result<ServiceDto>.BadRequest([ServiceErrors.GetServiceNameAlreadyExistError(serviceDtoForCreation)]);
-
-            var carCategoryResult = await GetAndCheckIfCategoryByCarCategory(serviceDtoForCreation.CarCategoryId);
+            if (carPartResult)
+                return Result<ServiceDto>.BadRequest([ServiceErrors.GetCarPartNotFoundError(serviceDtoForCreation.CarPartId)]);
             if (carCategoryResult)
+                return Result<ServiceDto>.BadRequest([ServiceErrors.GetCarCategoryNotFoundError(serviceDtoForCreation.CarCategoryId)]);
+            if (serviceCarCategoryResult)
                 return Result<ServiceDto>.BadRequest([ServiceErrors.GetCategoryAlreadyExistError(serviceDtoForCreation.CarCategoryId)]);
             var seviceEntity = _mapper.Map<Entities.Models.Service>(serviceDtoForCreation);
             seviceEntity.CreatedAt = DateTimeOffset.UtcNow.SEAsiaStandardTime();
@@ -57,12 +61,18 @@ namespace GarageManagementAPI.Service
         public async Task<Result> UpdateService(Guid serviceId, ServiceDtoForUpdate serviceDtoForUpdate, bool trackChanges)
         {
             var serviceResult = await GetAndCheckIfServiceExist(serviceId, trackChanges);
-            var serviceNameRedult = await GetAndCheckIServiceExistByName(serviceDtoForUpdate.ServiceName, serviceId);
-            var carCategoryResult = await GetAndCheckIfCategoryByCarCategory(serviceDtoForUpdate.CarCategoryId, serviceId);
-            if (carCategoryResult)
-                return Result<ServiceDto>.BadRequest([ServiceErrors.GetCategoryAlreadyExistError(serviceDtoForUpdate.CarCategoryId)]);
-            if (serviceNameRedult)
+            var carPartResult = await GetAndCheckIfCarPartIsExist(serviceDtoForUpdate.CarPartId);
+            var carCategoryResult = await GetAndCheckIfCarCategoryIsExist(serviceDtoForUpdate.CarCategoryId);
+            var serviceNameResult = await GetAndCheckIServiceExistByName(serviceDtoForUpdate.ServiceName, serviceId);
+            var serviceCarCategoryResult = await GetAndCheckIfCategoryByCarCategory(serviceDtoForUpdate.CarCategoryId, serviceId);
+            if (serviceNameResult)
                 return Result<ServiceDto>.BadRequest([ServiceErrors.GetServiceNameUpdateAlreadyExistError(serviceDtoForUpdate)]);
+            if (carPartResult)
+                return Result<ServiceDto>.BadRequest([ServiceErrors.GetCarPartNotFoundError(serviceDtoForUpdate.CarPartId)]);
+            if (carCategoryResult)
+                return Result<ServiceDto>.BadRequest([ServiceErrors.GetCarCategoryNotFoundError(serviceDtoForUpdate.CarCategoryId)]);
+            if (serviceCarCategoryResult)
+                return Result<ServiceDto>.BadRequest([ServiceErrors.GetCategoryAlreadyExistError(serviceDtoForUpdate.CarCategoryId)]);
             if (!serviceResult.IsSuccess)
                 return Result<ServiceDto>.Failure(serviceResult.StatusCode, serviceResult.Errors!);
             var serviceEntity = serviceResult.GetValue<Entities.Models.Service>();
@@ -185,6 +195,24 @@ namespace GarageManagementAPI.Service
             if (service == null) return false;
 
             return true;
+        }
+
+        private async Task<bool> GetAndCheckIfCarCategoryIsExist(Guid carCategoryId)
+        {
+            var category = await _repoManager.CarCategory.GetCarCategoryAsync(carCategoryId, false);
+
+            if (category == null) return true;
+
+            return false;
+        }
+
+        private async Task<bool> GetAndCheckIfCarPartIsExist(Guid carPartId)
+        {
+            var category = await _repoManager.CarPart.GetCarPartByIdAsync(carPartId, false);
+
+            if (category == null) return true;
+
+            return false;
         }
     }
 }
