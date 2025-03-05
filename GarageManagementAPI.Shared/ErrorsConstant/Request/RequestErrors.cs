@@ -18,6 +18,7 @@ namespace GarageManagementAPI.Shared.Constant.Request
         public const string FileTooLarge = "File size exceeds the maximum limit.";
         public const string FileExtensionInvalid = "Invalid file extension.";
         public const string FileTypeInvalid = "Invalid file type.";
+        public const string TooManyImageUpload = "The number of uploaded images has exceeded the limit. Only 5 images are allowed.";
         #endregion
 
         #region Static Methods
@@ -96,6 +97,15 @@ namespace GarageManagementAPI.Shared.Constant.Request
             {
                 Code = nameof(FileTypeInvalid),
                 Description = FileTypeInvalid
+            };
+        }
+
+        public static ErrorsResult GetTooManyImageUploadErrors()
+        {
+            return new ErrorsResult
+            {
+                Code = nameof(TooManyImageUpload),
+                Description = TooManyImageUpload
             };
         }
         #endregion

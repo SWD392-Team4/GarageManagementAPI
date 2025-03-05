@@ -5,7 +5,8 @@ namespace GarageManagementAPI.Entities.Models
 {
     public partial class Package : BaseEntity<Package>
     {
-        public string ServiceCategory { get; set; } = null!;
+        [EnumDataType(typeof(ServiceCategory))]
+        public ServiceCategory ServiceCategory { get; set; }
 
         public Guid CarCategoryId { get; set; }
 

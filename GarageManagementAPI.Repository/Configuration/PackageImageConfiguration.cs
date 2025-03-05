@@ -14,15 +14,12 @@ namespace GarageManagementAPI.Repository.Configuration
 
             entity.Property(e => e.Id).ValueGeneratedOnAdd().HasDefaultValueSql("NEWID()");
             entity.Property(e => e.ImageLink).HasMaxLength(255);
-            entity.Property(e => e.Status).HasMaxLength(255);
 
             entity.HasOne(d => d.Package).WithMany(p => p.PackageImages)
                 .HasForeignKey(d => d.PackageId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("packageimage_packageid_foreign");
 
-            entity.Property(e => e.Status)
-                .HasConversion<string>();
         }
     }
 }

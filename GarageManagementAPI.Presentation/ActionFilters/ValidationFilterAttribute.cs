@@ -23,7 +23,7 @@ namespace GarageManagementAPI.Presentation.ActionFilters
             {
 
                 var param = context.ActionArguments
-                    .SingleOrDefault(x =>
+                    .FirstOrDefault(x =>
                     x!.Key!.ToString()!.Contains("Dto")).Value;
 
                 if (param is null)

@@ -58,7 +58,6 @@ namespace GarageManagementAPI.Repository
             modelBuilder.ApplyConfiguration(new InvoiceServiceDetailConfiguration());
             modelBuilder.ApplyConfiguration(new PackageConditionConfiguration());
             modelBuilder.ApplyConfiguration(new PackageConfiguration());
-            modelBuilder.ApplyConfiguration(new PackageDetailConfiguration());
             modelBuilder.ApplyConfiguration(new PackageFeedBackConfiguration());
             modelBuilder.ApplyConfiguration(new PackageHistoryConfiguration());
             modelBuilder.ApplyConfiguration(new PackageImageConfiguration());

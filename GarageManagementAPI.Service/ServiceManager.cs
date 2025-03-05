@@ -35,6 +35,11 @@ namespace GarageManagementAPI.Service
         private readonly Lazy<IAppointmentService> _appointmentService;
         private readonly Lazy<IServiceFeedbackService> _serviceFeedbackService;
         private readonly Lazy<IGoodsReceivedDetailService> _goodsReceivedDetailService;
+        private readonly Lazy<IPackageService> _packageService;
+        private readonly Lazy<IPackageConditionService> _packageConditionService;
+        private readonly Lazy<IPackageFeedBackService> _packageFeedBackService;
+        private readonly Lazy<IPackageUsageService> _packageUsageService;
+        private readonly Lazy<IPackageUsageDetailService> _packageUsageDetailService;
 
         public ServiceManager(
             IRepositoryManager repositoryManager,
@@ -201,6 +206,16 @@ namespace GarageManagementAPI.Service
             dataShaper));
             _mediaService = new Lazy<IMediaService>(() =>
             new MediaService(cloudinaryConfiguration));
+
+            _packageService = new Lazy<IPackageService>(() => new PackageService(repositoryManager, mapper, dataShaper));
+
+            _packageConditionService = new Lazy<IPackageConditionService>(() => new PackageConditionService(repositoryManager, mapper, dataShaper));
+
+            _packageFeedBackService = new Lazy<IPackageFeedBackService>(() => new PackageFeedBackService(repositoryManager, mapper, dataShaper));
+
+            _packageUsageService = new Lazy<IPackageUsageService>(() => new PackageUsageService(repositoryManager, mapper, dataShaper));
+
+            _packageUsageDetailService = new Lazy<IPackageUsageDetailService>(() => new PackageUsageDetailService(repositoryManager, mapper, dataShaper));
         }
 
         public IUserService UserService => _userService.Value;
@@ -227,5 +242,10 @@ namespace GarageManagementAPI.Service
         public ISupplierContactService SupplierContactService => _supplierContactService.Value;
         public IGoodsReceivedDetailService GoodsReceivedDetailService => _goodsReceivedDetailService.Value;
         public IAppointmentService AppointmentService => _appointmentService.Value;
+        public IPackageService PackageService => _packageService.Value;
+        public IPackageConditionService PackageConditionService => _packageConditionService.Value;
+        public IPackageFeedBackService PackageFeedBackService => _packageFeedBackService.Value;
+        public IPackageUsageService PackageUsageService => _packageUsageService.Value;
+        public IPackageUsageDetailService PackageUsageDetailService => _packageUsageDetailService.Value;
     }
 }

@@ -3,6 +3,7 @@ using GarageManagementAPI.Repository.Contracts;
 using GarageManagementAPI.Shared.RequestFeatures;
 using GarageManagementAPI.Repository.Extensions;
 using Microsoft.EntityFrameworkCore;
+using Bogus.DataSets;
 
 namespace GarageManagementAPI.Repository
 {
@@ -20,6 +21,9 @@ namespace GarageManagementAPI.Repository
         {
             base.Update(service);
         }
+
+        public async Task<IEnumerable<Service>> GetByIdsAsync(IEnumerable<Guid> ids, bool trackChanges)
+            => await FindByCondition(x => ids.Contains(x.Id), trackChanges).ToListAsync();
 
         public async Task<Service?> GetServiceByIdAsync(Guid serviceId, bool trackChanges, string? include = null)
         {

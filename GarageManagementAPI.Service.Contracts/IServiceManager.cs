@@ -26,6 +26,11 @@
         IGoodsReceivedDetailService GoodsReceivedDetailService { get; }
         IAppointmentService AppointmentService { get; }
         IWorkplaceService WorkplaceService { get; }
+        IPackageService PackageService { get; }
+        IPackageConditionService PackageConditionService { get; }
+        IPackageFeedBackService PackageFeedBackService { get; }
+        IPackageUsageService PackageUsageService { get; }
+        IPackageUsageDetailService PackageUsageDetailService { get; }
 
     }
 }

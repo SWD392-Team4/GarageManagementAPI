@@ -3142,10 +3142,9 @@ namespace GarageManagementAPI.Application.Migrations
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
 
-                    b.Property<string>("ServiceCategory")
-                        .IsRequired()
+                    b.Property<int>("ServiceCategory")
                         .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
+                        .HasColumnType("int");
 
                     b.Property<string>("Status")
                         .IsRequired()
@@ -3188,7 +3187,7 @@ namespace GarageManagementAPI.Application.Migrations
                     b.HasKey("Id")
                         .HasName("packagecondition_id_primary");
 
-                    b.HasIndex(new[] { "ConditionType", "ConditionValue" }, "packagecondition_conditiontype_conditionvalue_unique")
+                    b.HasIndex(new[] { "PackageId", "ConditionType", "ConditionValue" }, "packagecondition_conditiontype_conditionvalue_unique")
                         .IsUnique();
 
                     b.HasIndex(new[] { "PackageId" }, "packagecondition_packageid_index");
@@ -3198,31 +3197,15 @@ namespace GarageManagementAPI.Application.Migrations
 
             modelBuilder.Entity("GarageManagementAPI.Entities.Models.PackageDetail", b =>
                 {
-                    b.Property<Guid>("PackageHistoryId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<Guid>("ServiceId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<DateTimeOffset>("CreatedAt")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
+                    b.Property<Guid>("PackageHistoryId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("Status")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
+                    b.HasKey("ServiceId", "PackageHistoryId");
 
-                    b.Property<DateTimeOffset>("UpdatedAt")
-                        .HasColumnType("datetimeoffset");
-
-                    b.HasKey("PackageHistoryId", "ServiceId")
-                        .HasName("packagedetail_packagehistoryid_serviceid_primary");
-
-                    b.HasIndex("ServiceId");
+                    b.HasIndex("PackageHistoryId");
 
                     b.ToTable("PackageDetail", (string)null);
                 });
@@ -3320,9 +3303,6 @@ namespace GarageManagementAPI.Application.Migrations
                         .HasColumnType("uniqueidentifier")
                         .HasDefaultValueSql("NEWID()");
 
-                    b.Property<DateTimeOffset>("CreatedAt")
-                        .HasColumnType("datetimeoffset");
-
                     b.Property<string>("ImageId")
                         .HasColumnType("nvarchar(max)");
 
@@ -3332,14 +3312,6 @@ namespace GarageManagementAPI.Application.Migrations
 
                     b.Property<Guid>("PackageId")
                         .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Status")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
-
-                    b.Property<DateTimeOffset>("UpdatedAt")
-                        .HasColumnType("datetimeoffset");
 
                     b.HasKey("Id")
                         .HasName("packageimage_id_primary");
@@ -3990,6 +3962,608 @@ namespace GarageManagementAPI.Application.Migrations
                         .IsUnique();
 
                     b.ToTable("Service", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("5c0b84e8-48df-41cd-a9b3-ff376d0c8d01"),
+                            Action = "Replace",
+                            CarCategoryId = new Guid("3a6129c6-36ce-4e85-b0a0-8ffbee30ddf1"),
+                            CarPartId = new Guid("350b60f4-40fb-499b-9358-3a06ee2ff5f7"),
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 0, 36, 40, 0, DateTimeKind.Unspecified), new TimeSpan(0, 7, 0, 0, 0)),
+                            Description = "Changing transmission fluid to ensure smooth gear shifts and prolong transmission life.",
+                            EstimatedHours = 2,
+                            ServiceCategory = "Maintenance",
+                            ServiceName = "Transmission Fluid Change",
+                            Status = "0",
+                            UpdatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 0, 36, 40, 0, DateTimeKind.Unspecified), new TimeSpan(0, 7, 0, 0, 0)),
+                            WorkNature = "Preventive"
+                        },
+                        new
+                        {
+                            Id = new Guid("2e7f0139-ca6b-4261-b8b1-92025af17c23"),
+                            Action = "Repair",
+                            CarCategoryId = new Guid("3a6129c6-36ce-4e85-b0a0-8ffbee30ddf1"),
+                            CarPartId = new Guid("350b60f4-40fb-499b-9358-3a06ee2ff5f7"),
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 0, 36, 40, 0, DateTimeKind.Unspecified), new TimeSpan(0, 7, 0, 0, 0)),
+                            Description = "Replacing worn brake pads to restore optimal braking performance.",
+                            EstimatedHours = 2,
+                            ServiceCategory = "Repair",
+                            ServiceName = "Brake Pad Replacement",
+                            Status = "0",
+                            UpdatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 0, 36, 40, 0, DateTimeKind.Unspecified), new TimeSpan(0, 7, 0, 0, 0)),
+                            WorkNature = "Corrective"
+                        },
+                        new
+                        {
+                            Id = new Guid("ae25aa47-7d00-4d8d-b858-6b68f2fa1461"),
+                            Action = "Inspect",
+                            CarCategoryId = new Guid("983fba7a-11b2-4cdc-8ef0-64ddf6dfbfc4"),
+                            CarPartId = new Guid("350b60f4-40fb-499b-9358-3a06ee2ff5f7"),
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 0, 36, 40, 0, DateTimeKind.Unspecified), new TimeSpan(0, 7, 0, 0, 0)),
+                            Description = "Conducting a comprehensive inspection to fine-tune engine performance.",
+                            EstimatedHours = 1,
+                            ServiceCategory = "Maintenance",
+                            ServiceName = "Engine Tune-Up Inspection",
+                            Status = "0",
+                            UpdatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 0, 36, 40, 0, DateTimeKind.Unspecified), new TimeSpan(0, 7, 0, 0, 0)),
+                            WorkNature = "Preventive"
+                        },
+                        new
+                        {
+                            Id = new Guid("804addd4-32e2-40e2-8836-cba4314a37cb"),
+                            Action = "Repair",
+                            CarCategoryId = new Guid("983fba7a-11b2-4cdc-8ef0-64ddf6dfbfc4"),
+                            CarPartId = new Guid("350b60f4-40fb-499b-9358-3a06ee2ff5f7"),
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 0, 36, 40, 0, DateTimeKind.Unspecified), new TimeSpan(0, 7, 0, 0, 0)),
+                            Description = "Repairing suspension components to improve ride comfort and safety.",
+                            EstimatedHours = 3,
+                            ServiceCategory = "Repair",
+                            ServiceName = "Suspension Repair",
+                            Status = "0",
+                            UpdatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 0, 36, 40, 0, DateTimeKind.Unspecified), new TimeSpan(0, 7, 0, 0, 0)),
+                            WorkNature = "Corrective"
+                        },
+                        new
+                        {
+                            Id = new Guid("292e282b-441e-4eae-b4d3-fa66e998093d"),
+                            Action = "Upgrade",
+                            CarCategoryId = new Guid("5191690b-1d10-476e-b4f5-4044218e64c2"),
+                            CarPartId = new Guid("350b60f4-40fb-499b-9358-3a06ee2ff5f7"),
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 0, 36, 40, 0, DateTimeKind.Unspecified), new TimeSpan(0, 7, 0, 0, 0)),
+                            Description = "Upgrading the infotainment system for enhanced connectivity and features.",
+                            EstimatedHours = 3,
+                            ServiceCategory = "Upgrade",
+                            ServiceName = "Infotainment System Upgrade",
+                            Status = "0",
+                            UpdatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 0, 36, 40, 0, DateTimeKind.Unspecified), new TimeSpan(0, 7, 0, 0, 0)),
+                            WorkNature = "Enhancement"
+                        },
+                        new
+                        {
+                            Id = new Guid("8e8f9751-ea57-41f1-aebe-653d7c2707e2"),
+                            Action = "Lubricate",
+                            CarCategoryId = new Guid("5191690b-1d10-476e-b4f5-4044218e64c2"),
+                            CarPartId = new Guid("350b60f4-40fb-499b-9358-3a06ee2ff5f7"),
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 0, 36, 40, 0, DateTimeKind.Unspecified), new TimeSpan(0, 7, 0, 0, 0)),
+                            Description = "Lubricating engine components to reduce friction and wear.",
+                            EstimatedHours = 1,
+                            ServiceCategory = "Maintenance",
+                            ServiceName = "Engine Oil Lubrication",
+                            Status = "0",
+                            UpdatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 0, 36, 40, 0, DateTimeKind.Unspecified), new TimeSpan(0, 7, 0, 0, 0)),
+                            WorkNature = "Preventive"
+                        },
+                        new
+                        {
+                            Id = new Guid("ae0292b9-460b-453b-a7e3-94f5e37c72b1"),
+                            Action = "Clean",
+                            CarCategoryId = new Guid("506b4f2f-68f7-4b69-ab81-1242de996a18"),
+                            CarPartId = new Guid("350b60f4-40fb-499b-9358-3a06ee2ff5f7"),
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 0, 36, 40, 0, DateTimeKind.Unspecified), new TimeSpan(0, 7, 0, 0, 0)),
+                            Description = "Cleaning the roof mechanism to ensure smooth operation and a spotless finish.",
+                            EstimatedHours = 1,
+                            ServiceCategory = "CarWash",
+                            ServiceName = "Convertible Roof Cleaning",
+                            Status = "0",
+                            UpdatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 0, 36, 40, 0, DateTimeKind.Unspecified), new TimeSpan(0, 7, 0, 0, 0)),
+                            WorkNature = "Aesthetic"
+                        },
+                        new
+                        {
+                            Id = new Guid("679799ff-ac1e-4db5-95c0-611bbb151930"),
+                            Action = "Replace",
+                            CarCategoryId = new Guid("506b4f2f-68f7-4b69-ab81-1242de996a18"),
+                            CarPartId = new Guid("350b60f4-40fb-499b-9358-3a06ee2ff5f7"),
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 0, 36, 40, 0, DateTimeKind.Unspecified), new TimeSpan(0, 7, 0, 0, 0)),
+                            Description = "Replacing worn wiper blades to maintain clear visibility during rain.",
+                            EstimatedHours = 1,
+                            ServiceCategory = "Maintenance",
+                            ServiceName = "Windshield Wiper Replacement",
+                            Status = "0",
+                            UpdatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 0, 36, 40, 0, DateTimeKind.Unspecified), new TimeSpan(0, 7, 0, 0, 0)),
+                            WorkNature = "Preventive"
+                        },
+                        new
+                        {
+                            Id = new Guid("0b9a2e4d-f0c5-4fd3-81cc-95ab24a98fed"),
+                            Action = "Polish",
+                            CarCategoryId = new Guid("13f81bcb-5943-4cfe-9a1f-c38c9dac0969"),
+                            CarPartId = new Guid("350b60f4-40fb-499b-9358-3a06ee2ff5f7"),
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 0, 36, 40, 0, DateTimeKind.Unspecified), new TimeSpan(0, 7, 0, 0, 0)),
+                            Description = "Thorough cleaning and polishing of the cabin to restore a premium feel.",
+                            EstimatedHours = 2,
+                            ServiceCategory = "Detailing",
+                            ServiceName = "Interior Detailing & Polishing",
+                            Status = "0",
+                            UpdatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 0, 36, 40, 0, DateTimeKind.Unspecified), new TimeSpan(0, 7, 0, 0, 0)),
+                            WorkNature = "Aesthetic"
+                        },
+                        new
+                        {
+                            Id = new Guid("5764887f-1f3e-43d8-8ff2-4ec5acf2b625"),
+                            Action = "Inspect",
+                            CarCategoryId = new Guid("13f81bcb-5943-4cfe-9a1f-c38c9dac0969"),
+                            CarPartId = new Guid("350b60f4-40fb-499b-9358-3a06ee2ff5f7"),
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 0, 36, 40, 0, DateTimeKind.Unspecified), new TimeSpan(0, 7, 0, 0, 0)),
+                            Description = "Inspecting brake fluid levels and condition to ensure reliable braking.",
+                            EstimatedHours = 1,
+                            ServiceCategory = "Maintenance",
+                            ServiceName = "Brake Fluid Inspection",
+                            Status = "0",
+                            UpdatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 0, 36, 40, 0, DateTimeKind.Unspecified), new TimeSpan(0, 7, 0, 0, 0)),
+                            WorkNature = "Preventive"
+                        },
+                        new
+                        {
+                            Id = new Guid("2ffc838c-bc9c-4f50-9aae-c1626d28f948"),
+                            Action = "Align",
+                            CarCategoryId = new Guid("37a876a6-e608-4bff-9d5b-9bef9e671094"),
+                            CarPartId = new Guid("350b60f4-40fb-499b-9358-3a06ee2ff5f7"),
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 0, 36, 40, 0, DateTimeKind.Unspecified), new TimeSpan(0, 7, 0, 0, 0)),
+                            Description = "Adjusting wheel angles to ensure even tire wear and improved handling.",
+                            EstimatedHours = 2,
+                            ServiceCategory = "Maintenance",
+                            ServiceName = "Wheel Alignment Service",
+                            Status = "0",
+                            UpdatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 0, 36, 40, 0, DateTimeKind.Unspecified), new TimeSpan(0, 7, 0, 0, 0)),
+                            WorkNature = "Corrective"
+                        },
+                        new
+                        {
+                            Id = new Guid("ca9e6960-f038-4e9f-97c9-9190378129a4"),
+                            Action = "Repair",
+                            CarCategoryId = new Guid("37a876a6-e608-4bff-9d5b-9bef9e671094"),
+                            CarPartId = new Guid("350b60f4-40fb-499b-9358-3a06ee2ff5f7"),
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 0, 36, 40, 0, DateTimeKind.Unspecified), new TimeSpan(0, 7, 0, 0, 0)),
+                            Description = "Repairing faulty suspension components to restore ride quality.",
+                            EstimatedHours = 3,
+                            ServiceCategory = "Repair",
+                            ServiceName = "Suspension System Repair",
+                            Status = "0",
+                            UpdatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 0, 36, 40, 0, DateTimeKind.Unspecified), new TimeSpan(0, 7, 0, 0, 0)),
+                            WorkNature = "Corrective"
+                        },
+                        new
+                        {
+                            Id = new Guid("108faee1-bdc5-4a21-99ab-1446d7070817"),
+                            Action = "Clean",
+                            CarCategoryId = new Guid("89bd23de-98f2-4de2-a753-403789911119"),
+                            CarPartId = new Guid("350b60f4-40fb-499b-9358-3a06ee2ff5f7"),
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 0, 36, 40, 0, DateTimeKind.Unspecified), new TimeSpan(0, 7, 0, 0, 0)),
+                            Description = "A complete exterior wash to remove dirt and restore shine.",
+                            EstimatedHours = 1,
+                            ServiceCategory = "CarWash",
+                            ServiceName = "Exterior Wash & Clean",
+                            Status = "0",
+                            UpdatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 0, 36, 40, 0, DateTimeKind.Unspecified), new TimeSpan(0, 7, 0, 0, 0)),
+                            WorkNature = "Aesthetic"
+                        },
+                        new
+                        {
+                            Id = new Guid("dbd23c8d-f822-4924-926e-c47d67bfb11c"),
+                            Action = "Restore",
+                            CarCategoryId = new Guid("89bd23de-98f2-4de2-a753-403789911119"),
+                            CarPartId = new Guid("350b60f4-40fb-499b-9358-3a06ee2ff5f7"),
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 0, 36, 40, 0, DateTimeKind.Unspecified), new TimeSpan(0, 7, 0, 0, 0)),
+                            Description = "Restoring headlight clarity to improve nighttime visibility.",
+                            EstimatedHours = 1,
+                            ServiceCategory = "Detailing",
+                            ServiceName = "Headlight Restoration",
+                            Status = "0",
+                            UpdatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 0, 36, 40, 0, DateTimeKind.Unspecified), new TimeSpan(0, 7, 0, 0, 0)),
+                            WorkNature = "Aesthetic"
+                        },
+                        new
+                        {
+                            Id = new Guid("0fdac649-9fa0-4ed9-8b68-2c51290db904"),
+                            Action = "Replace",
+                            CarCategoryId = new Guid("1d25e83b-925e-472a-89d9-38c499dbfdea"),
+                            CarPartId = new Guid("350b60f4-40fb-499b-9358-3a06ee2ff5f7"),
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 0, 36, 40, 0, DateTimeKind.Unspecified), new TimeSpan(0, 7, 0, 0, 0)),
+                            Description = "Replacing the air filter to maintain optimal engine performance.",
+                            EstimatedHours = 1,
+                            ServiceCategory = "Maintenance",
+                            ServiceName = "Air Filter Replacement",
+                            Status = "0",
+                            UpdatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 0, 36, 40, 0, DateTimeKind.Unspecified), new TimeSpan(0, 7, 0, 0, 0)),
+                            WorkNature = "Preventive"
+                        },
+                        new
+                        {
+                            Id = new Guid("19e4766f-30d7-4bf7-a5de-c38aa54c39ab"),
+                            Action = "Repair",
+                            CarCategoryId = new Guid("1d25e83b-925e-472a-89d9-38c499dbfdea"),
+                            CarPartId = new Guid("350b60f4-40fb-499b-9358-3a06ee2ff5f7"),
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 0, 36, 40, 0, DateTimeKind.Unspecified), new TimeSpan(0, 7, 0, 0, 0)),
+                            Description = "Repairing malfunctioning brake components for safety.",
+                            EstimatedHours = 2,
+                            ServiceCategory = "Repair",
+                            ServiceName = "Brake System Repair",
+                            Status = "0",
+                            UpdatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 0, 36, 40, 0, DateTimeKind.Unspecified), new TimeSpan(0, 7, 0, 0, 0)),
+                            WorkNature = "Corrective"
+                        },
+                        new
+                        {
+                            Id = new Guid("95417c69-fadd-45f8-94f9-70b89bbded4e"),
+                            Action = "Refill",
+                            CarCategoryId = new Guid("d904d7f0-674a-48dd-ae45-794d8e257583"),
+                            CarPartId = new Guid("350b60f4-40fb-499b-9358-3a06ee2ff5f7"),
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 0, 36, 40, 0, DateTimeKind.Unspecified), new TimeSpan(0, 7, 0, 0, 0)),
+                            Description = "Refilling the coolant system to prevent overheating.",
+                            EstimatedHours = 1,
+                            ServiceCategory = "Maintenance",
+                            ServiceName = "Coolant Refill Service",
+                            Status = "0",
+                            UpdatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 0, 36, 40, 0, DateTimeKind.Unspecified), new TimeSpan(0, 7, 0, 0, 0)),
+                            WorkNature = "Preventive"
+                        },
+                        new
+                        {
+                            Id = new Guid("6fc59687-aaf1-4fdc-821f-6fa276232515"),
+                            Action = "Repair",
+                            CarCategoryId = new Guid("d904d7f0-674a-48dd-ae45-794d8e257583"),
+                            CarPartId = new Guid("350b60f4-40fb-499b-9358-3a06ee2ff5f7"),
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 0, 36, 40, 0, DateTimeKind.Unspecified), new TimeSpan(0, 7, 0, 0, 0)),
+                            Description = "Repairing the drive shaft to restore proper power transmission.",
+                            EstimatedHours = 3,
+                            ServiceCategory = "Repair",
+                            ServiceName = "Drive Shaft Repair",
+                            Status = "0",
+                            UpdatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 0, 36, 40, 0, DateTimeKind.Unspecified), new TimeSpan(0, 7, 0, 0, 0)),
+                            WorkNature = "Corrective"
+                        },
+                        new
+                        {
+                            Id = new Guid("d55973be-a40f-435b-8078-d489c74d0fd7"),
+                            Action = "Upgrade",
+                            CarCategoryId = new Guid("6f9e4206-d0a0-4366-a997-094827005006"),
+                            CarPartId = new Guid("350b60f4-40fb-499b-9358-3a06ee2ff5f7"),
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 0, 36, 40, 0, DateTimeKind.Unspecified), new TimeSpan(0, 7, 0, 0, 0)),
+                            Description = "Upgrading the ECU for improved performance and responsiveness.",
+                            EstimatedHours = 3,
+                            ServiceCategory = "Upgrade",
+                            ServiceName = "Performance ECU Upgrade",
+                            Status = "0",
+                            UpdatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 0, 36, 40, 0, DateTimeKind.Unspecified), new TimeSpan(0, 7, 0, 0, 0)),
+                            WorkNature = "Enhancement"
+                        },
+                        new
+                        {
+                            Id = new Guid("1aef6a6e-7376-42e2-ba86-50954246809e"),
+                            Action = "Lubricate",
+                            CarCategoryId = new Guid("6f9e4206-d0a0-4366-a997-094827005006"),
+                            CarPartId = new Guid("350b60f4-40fb-499b-9358-3a06ee2ff5f7"),
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 0, 36, 40, 0, DateTimeKind.Unspecified), new TimeSpan(0, 7, 0, 0, 0)),
+                            Description = "Lubricating the differential to reduce wear and maintain performance.",
+                            EstimatedHours = 1,
+                            ServiceCategory = "Maintenance",
+                            ServiceName = "Differential Lubrication",
+                            Status = "0",
+                            UpdatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 0, 36, 40, 0, DateTimeKind.Unspecified), new TimeSpan(0, 7, 0, 0, 0)),
+                            WorkNature = "Preventive"
+                        },
+                        new
+                        {
+                            Id = new Guid("ca325344-f16a-44e5-b1cf-2b2c33375b16"),
+                            Action = "Polish",
+                            CarCategoryId = new Guid("7ebb6c15-8e16-439c-bd07-b998c4b26ab3"),
+                            CarPartId = new Guid("350b60f4-40fb-499b-9358-3a06ee2ff5f7"),
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 0, 36, 40, 0, DateTimeKind.Unspecified), new TimeSpan(0, 7, 0, 0, 0)),
+                            Description = "Polishing leather seats to maintain a luxurious and refined interior.",
+                            EstimatedHours = 2,
+                            ServiceCategory = "Detailing",
+                            ServiceName = "Leather Seat Polishing",
+                            Status = "0",
+                            UpdatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 0, 36, 40, 0, DateTimeKind.Unspecified), new TimeSpan(0, 7, 0, 0, 0)),
+                            WorkNature = "Aesthetic"
+                        },
+                        new
+                        {
+                            Id = new Guid("1d001811-24d7-4f17-9b99-040417ee758c"),
+                            Action = "Update",
+                            CarCategoryId = new Guid("7ebb6c15-8e16-439c-bd07-b998c4b26ab3"),
+                            CarPartId = new Guid("350b60f4-40fb-499b-9358-3a06ee2ff5f7"),
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 0, 36, 40, 0, DateTimeKind.Unspecified), new TimeSpan(0, 7, 0, 0, 0)),
+                            Description = "Updating the infotainment software to incorporate the latest features.",
+                            EstimatedHours = 2,
+                            ServiceCategory = "Upgrade",
+                            ServiceName = "Infotainment Software Update",
+                            Status = "0",
+                            UpdatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 0, 36, 40, 0, DateTimeKind.Unspecified), new TimeSpan(0, 7, 0, 0, 0)),
+                            WorkNature = "Digital"
+                        },
+                        new
+                        {
+                            Id = new Guid("49dcb9e8-cc88-417b-9cc2-da9223cba7bb"),
+                            Action = "Update",
+                            CarCategoryId = new Guid("b8e9b4d0-8b60-451a-9810-1132482a0d92"),
+                            CarPartId = new Guid("350b60f4-40fb-499b-9358-3a06ee2ff5f7"),
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 0, 36, 40, 0, DateTimeKind.Unspecified), new TimeSpan(0, 7, 0, 0, 0)),
+                            Description = "Updating software to optimize battery performance and safety.",
+                            EstimatedHours = 2,
+                            ServiceCategory = "Upgrade",
+                            ServiceName = "Battery Management Software Update",
+                            Status = "0",
+                            UpdatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 0, 36, 40, 0, DateTimeKind.Unspecified), new TimeSpan(0, 7, 0, 0, 0)),
+                            WorkNature = "Digital"
+                        },
+                        new
+                        {
+                            Id = new Guid("dd5961c4-d25d-4ccc-87d1-5d2509e9d2a0"),
+                            Action = "Inspect",
+                            CarCategoryId = new Guid("b8e9b4d0-8b60-451a-9810-1132482a0d92"),
+                            CarPartId = new Guid("350b60f4-40fb-499b-9358-3a06ee2ff5f7"),
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 0, 36, 40, 0, DateTimeKind.Unspecified), new TimeSpan(0, 7, 0, 0, 0)),
+                            Description = "Inspecting high voltage cables for damage or wear to ensure EV safety.",
+                            EstimatedHours = 1,
+                            ServiceCategory = "Maintenance",
+                            ServiceName = "High Voltage Cable Inspection",
+                            Status = "0",
+                            UpdatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 0, 36, 40, 0, DateTimeKind.Unspecified), new TimeSpan(0, 7, 0, 0, 0)),
+                            WorkNature = "Preventive"
+                        },
+                        new
+                        {
+                            Id = new Guid("aaa8c312-e261-4a4b-8dee-ef1f9548df6a"),
+                            Action = "Inspect",
+                            CarCategoryId = new Guid("961975c1-3dd5-4ed0-b260-b324b1c32eed"),
+                            CarPartId = new Guid("350b60f4-40fb-499b-9358-3a06ee2ff5f7"),
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 0, 36, 40, 0, DateTimeKind.Unspecified), new TimeSpan(0, 7, 0, 0, 0)),
+                            Description = "Performing diagnostic tests to ensure hybrid system efficiency.",
+                            EstimatedHours = 1,
+                            ServiceCategory = "Maintenance",
+                            ServiceName = "Hybrid System Diagnostic Inspection",
+                            Status = "0",
+                            UpdatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 0, 36, 40, 0, DateTimeKind.Unspecified), new TimeSpan(0, 7, 0, 0, 0)),
+                            WorkNature = "Preventive"
+                        },
+                        new
+                        {
+                            Id = new Guid("8cff9d86-e1f4-4ccd-9d4a-50d9b631d2ff"),
+                            Action = "Repair",
+                            CarCategoryId = new Guid("961975c1-3dd5-4ed0-b260-b324b1c32eed"),
+                            CarPartId = new Guid("350b60f4-40fb-499b-9358-3a06ee2ff5f7"),
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 0, 36, 40, 0, DateTimeKind.Unspecified), new TimeSpan(0, 7, 0, 0, 0)),
+                            Description = "Repairing the electric motor to restore hybrid performance.",
+                            EstimatedHours = 3,
+                            ServiceCategory = "Repair",
+                            ServiceName = "Electric Motor Repair",
+                            Status = "0",
+                            UpdatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 0, 36, 40, 0, DateTimeKind.Unspecified), new TimeSpan(0, 7, 0, 0, 0)),
+                            WorkNature = "Corrective"
+                        },
+                        new
+                        {
+                            Id = new Guid("465f7c43-42ad-446a-88a3-1de98daff9d5"),
+                            Action = "Upgrade",
+                            CarCategoryId = new Guid("a0ded8b7-8094-4ece-8cf7-d1670080ef60"),
+                            CarPartId = new Guid("350b60f4-40fb-499b-9358-3a06ee2ff5f7"),
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 0, 36, 40, 0, DateTimeKind.Unspecified), new TimeSpan(0, 7, 0, 0, 0)),
+                            Description = "Upgrading the exhaust system to boost performance and achieve a sporty sound.",
+                            EstimatedHours = 3,
+                            ServiceCategory = "Upgrade",
+                            ServiceName = "Sport Exhaust Upgrade",
+                            Status = "0",
+                            UpdatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 0, 36, 40, 0, DateTimeKind.Unspecified), new TimeSpan(0, 7, 0, 0, 0)),
+                            WorkNature = "Enhancement"
+                        },
+                        new
+                        {
+                            Id = new Guid("5699cd29-fc73-4495-86c2-d3854f3844c6"),
+                            Action = "Replace",
+                            CarCategoryId = new Guid("a0ded8b7-8094-4ece-8cf7-d1670080ef60"),
+                            CarPartId = new Guid("350b60f4-40fb-499b-9358-3a06ee2ff5f7"),
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 0, 36, 40, 0, DateTimeKind.Unspecified), new TimeSpan(0, 7, 0, 0, 0)),
+                            Description = "Changing engine oil to maintain performance and extend engine life.",
+                            EstimatedHours = 1,
+                            ServiceCategory = "Maintenance",
+                            ServiceName = "Engine Oil Change",
+                            Status = "0",
+                            UpdatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 0, 36, 40, 0, DateTimeKind.Unspecified), new TimeSpan(0, 7, 0, 0, 0)),
+                            WorkNature = "Preventive"
+                        },
+                        new
+                        {
+                            Id = new Guid("8e09e528-ef74-4687-993d-33447cbc7b46"),
+                            Action = "Upgrade",
+                            CarCategoryId = new Guid("48b990a0-cce6-4d09-9a7e-e6d1a76bdb46"),
+                            CarPartId = new Guid("350b60f4-40fb-499b-9358-3a06ee2ff5f7"),
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 0, 36, 40, 0, DateTimeKind.Unspecified), new TimeSpan(0, 7, 0, 0, 0)),
+                            Description = "Upgrading the exhaust for enhanced performance and aggressive sound.",
+                            EstimatedHours = 3,
+                            ServiceCategory = "Upgrade",
+                            ServiceName = "Performance Exhaust Upgrade",
+                            Status = "0",
+                            UpdatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 0, 36, 40, 0, DateTimeKind.Unspecified), new TimeSpan(0, 7, 0, 0, 0)),
+                            WorkNature = "Enhancement"
+                        },
+                        new
+                        {
+                            Id = new Guid("9d2bc061-81f1-46c7-96e4-97b9b7cd8f94"),
+                            Action = "Repair",
+                            CarCategoryId = new Guid("48b990a0-cce6-4d09-9a7e-e6d1a76bdb46"),
+                            CarPartId = new Guid("350b60f4-40fb-499b-9358-3a06ee2ff5f7"),
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 0, 36, 40, 0, DateTimeKind.Unspecified), new TimeSpan(0, 7, 0, 0, 0)),
+                            Description = "Comprehensive repair of engine components to restore peak performance.",
+                            EstimatedHours = 4,
+                            ServiceCategory = "Repair",
+                            ServiceName = "Engine Overhaul Repair",
+                            Status = "0",
+                            UpdatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 0, 36, 40, 0, DateTimeKind.Unspecified), new TimeSpan(0, 7, 0, 0, 0)),
+                            WorkNature = "Corrective"
+                        },
+                        new
+                        {
+                            Id = new Guid("1f3cc46a-b312-4100-9efc-12e3c64eb60c"),
+                            Action = "Lubricate",
+                            CarCategoryId = new Guid("5aa5a48b-686e-426e-a54e-c5e59bbc7373"),
+                            CarPartId = new Guid("350b60f4-40fb-499b-9358-3a06ee2ff5f7"),
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 0, 36, 40, 0, DateTimeKind.Unspecified), new TimeSpan(0, 7, 0, 0, 0)),
+                            Description = "Lubricating the differential to reduce friction in off-road conditions.",
+                            EstimatedHours = 1,
+                            ServiceCategory = "Maintenance",
+                            ServiceName = "Differential Lubrication",
+                            Status = "0",
+                            UpdatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 0, 36, 40, 0, DateTimeKind.Unspecified), new TimeSpan(0, 7, 0, 0, 0)),
+                            WorkNature = "Preventive"
+                        },
+                        new
+                        {
+                            Id = new Guid("bb3b64ea-6cf2-47cb-9ead-3914cb0505ad"),
+                            Action = "Repair",
+                            CarCategoryId = new Guid("5aa5a48b-686e-426e-a54e-c5e59bbc7373"),
+                            CarPartId = new Guid("350b60f4-40fb-499b-9358-3a06ee2ff5f7"),
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 0, 36, 40, 0, DateTimeKind.Unspecified), new TimeSpan(0, 7, 0, 0, 0)),
+                            Description = "Repairing suspension mounts to ensure durability on rough terrain.",
+                            EstimatedHours = 3,
+                            ServiceCategory = "Repair",
+                            ServiceName = "Suspension Mount Repair",
+                            Status = "0",
+                            UpdatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 0, 36, 40, 0, DateTimeKind.Unspecified), new TimeSpan(0, 7, 0, 0, 0)),
+                            WorkNature = "Corrective"
+                        },
+                        new
+                        {
+                            Id = new Guid("0af80b56-c94e-4665-9660-2caf6f2faa92"),
+                            Action = "Inspect",
+                            CarCategoryId = new Guid("d4018b86-eb87-4114-9b9e-5fae1034cbd8"),
+                            CarPartId = new Guid("350b60f4-40fb-499b-9358-3a06ee2ff5f7"),
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 0, 36, 40, 0, DateTimeKind.Unspecified), new TimeSpan(0, 7, 0, 0, 0)),
+                            Description = "Routine engine inspection to detect early signs of wear.",
+                            EstimatedHours = 1,
+                            ServiceCategory = "Maintenance",
+                            ServiceName = "Regular Engine Inspection",
+                            Status = "0",
+                            UpdatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 0, 36, 40, 0, DateTimeKind.Unspecified), new TimeSpan(0, 7, 0, 0, 0)),
+                            WorkNature = "Preventive"
+                        },
+                        new
+                        {
+                            Id = new Guid("e320a34f-1e76-48d6-a2fa-a45b7eeddb07"),
+                            Action = "Replace",
+                            CarCategoryId = new Guid("d4018b86-eb87-4114-9b9e-5fae1034cbd8"),
+                            CarPartId = new Guid("350b60f4-40fb-499b-9358-3a06ee2ff5f7"),
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 0, 36, 40, 0, DateTimeKind.Unspecified), new TimeSpan(0, 7, 0, 0, 0)),
+                            Description = "Replacing brake pads to maintain effective stopping power.",
+                            EstimatedHours = 2,
+                            ServiceCategory = "Repair",
+                            ServiceName = "Brake Pad Replacement",
+                            Status = "0",
+                            UpdatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 0, 36, 40, 0, DateTimeKind.Unspecified), new TimeSpan(0, 7, 0, 0, 0)),
+                            WorkNature = "Corrective"
+                        },
+                        new
+                        {
+                            Id = new Guid("2f7203ad-ff0a-4fc6-b6bd-ff75f4855633"),
+                            Action = "Clean",
+                            CarCategoryId = new Guid("fc000760-6615-4f3b-96cc-7607ba6609a8"),
+                            CarPartId = new Guid("350b60f4-40fb-499b-9358-3a06ee2ff5f7"),
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 0, 36, 40, 0, DateTimeKind.Unspecified), new TimeSpan(0, 7, 0, 0, 0)),
+                            Description = "Exterior wash designed specifically for subcompact cars.",
+                            EstimatedHours = 1,
+                            ServiceCategory = "CarWash",
+                            ServiceName = "Compact Car Exterior Wash",
+                            Status = "0",
+                            UpdatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 0, 36, 40, 0, DateTimeKind.Unspecified), new TimeSpan(0, 7, 0, 0, 0)),
+                            WorkNature = "Aesthetic"
+                        },
+                        new
+                        {
+                            Id = new Guid("dae53a3d-c422-4242-a6c6-752ad99223ec"),
+                            Action = "Refill",
+                            CarCategoryId = new Guid("fc000760-6615-4f3b-96cc-7607ba6609a8"),
+                            CarPartId = new Guid("350b60f4-40fb-499b-9358-3a06ee2ff5f7"),
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 0, 36, 40, 0, DateTimeKind.Unspecified), new TimeSpan(0, 7, 0, 0, 0)),
+                            Description = "Refilling the coolant to ensure the engine runs at optimal temperatures.",
+                            EstimatedHours = 1,
+                            ServiceCategory = "Maintenance",
+                            ServiceName = "Coolant Refill",
+                            Status = "0",
+                            UpdatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 0, 36, 40, 0, DateTimeKind.Unspecified), new TimeSpan(0, 7, 0, 0, 0)),
+                            WorkNature = "Preventive"
+                        },
+                        new
+                        {
+                            Id = new Guid("9fc6018f-efcf-45c3-9208-a4b4eac755fb"),
+                            Action = "Lubricate",
+                            CarCategoryId = new Guid("61a22ffb-c41d-4365-b067-11213e5579f9"),
+                            CarPartId = new Guid("350b60f4-40fb-499b-9358-3a06ee2ff5f7"),
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 0, 36, 40, 0, DateTimeKind.Unspecified), new TimeSpan(0, 7, 0, 0, 0)),
+                            Description = "Lubricating the power steering system for smooth steering response.",
+                            EstimatedHours = 1,
+                            ServiceCategory = "Maintenance",
+                            ServiceName = "Power Steering Fluid Lubrication",
+                            Status = "0",
+                            UpdatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 0, 36, 40, 0, DateTimeKind.Unspecified), new TimeSpan(0, 7, 0, 0, 0)),
+                            WorkNature = "Preventive"
+                        },
+                        new
+                        {
+                            Id = new Guid("3605af66-e2e0-4189-acfa-78b2151e8108"),
+                            Action = "Repair",
+                            CarCategoryId = new Guid("61a22ffb-c41d-4365-b067-11213e5579f9"),
+                            CarPartId = new Guid("350b60f4-40fb-499b-9358-3a06ee2ff5f7"),
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 0, 36, 40, 0, DateTimeKind.Unspecified), new TimeSpan(0, 7, 0, 0, 0)),
+                            Description = "Repairing the brake system to ensure reliable stopping performance.",
+                            EstimatedHours = 2,
+                            ServiceCategory = "Repair",
+                            ServiceName = "Brake System Repair",
+                            Status = "0",
+                            UpdatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 0, 36, 40, 0, DateTimeKind.Unspecified), new TimeSpan(0, 7, 0, 0, 0)),
+                            WorkNature = "Corrective"
+                        },
+                        new
+                        {
+                            Id = new Guid("a1d96353-b314-4c19-ba52-c95252d838ed"),
+                            Action = "Upgrade",
+                            CarCategoryId = new Guid("f5bf5757-92b6-4cc2-b86b-1995f28d3fb6"),
+                            CarPartId = new Guid("350b60f4-40fb-499b-9358-3a06ee2ff5f7"),
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 0, 36, 40, 0, DateTimeKind.Unspecified), new TimeSpan(0, 7, 0, 0, 0)),
+                            Description = "Upgrading the infotainment system with advanced features for a superior experience.",
+                            EstimatedHours = 3,
+                            ServiceCategory = "Upgrade",
+                            ServiceName = "Advanced Infotainment Upgrade",
+                            Status = "0",
+                            UpdatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 0, 36, 40, 0, DateTimeKind.Unspecified), new TimeSpan(0, 7, 0, 0, 0)),
+                            WorkNature = "Enhancement"
+                        },
+                        new
+                        {
+                            Id = new Guid("41e56392-31fc-4013-bcf1-a5a3348bce68"),
+                            Action = "Polish",
+                            CarCategoryId = new Guid("f5bf5757-92b6-4cc2-b86b-1995f28d3fb6"),
+                            CarPartId = new Guid("350b60f4-40fb-499b-9358-3a06ee2ff5f7"),
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 0, 36, 40, 0, DateTimeKind.Unspecified), new TimeSpan(0, 7, 0, 0, 0)),
+                            Description = "Comprehensive interior detailing to restore and maintain a luxurious cabin finish.",
+                            EstimatedHours = 3,
+                            ServiceCategory = "Detailing",
+                            ServiceName = "Full Interior Detailing",
+                            Status = "0",
+                            UpdatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 0, 36, 40, 0, DateTimeKind.Unspecified), new TimeSpan(0, 7, 0, 0, 0)),
+                            WorkNature = "Aesthetic"
+                        });
                 });
 
             modelBuilder.Entity("GarageManagementAPI.Entities.Models.ServiceFeedBack", b =>
@@ -5877,21 +6451,17 @@ namespace GarageManagementAPI.Application.Migrations
 
             modelBuilder.Entity("GarageManagementAPI.Entities.Models.PackageDetail", b =>
                 {
-                    b.HasOne("GarageManagementAPI.Entities.Models.PackageHistory", "PackageHistory")
-                        .WithMany("PackageDetails")
+                    b.HasOne("GarageManagementAPI.Entities.Models.PackageHistory", null)
+                        .WithMany()
                         .HasForeignKey("PackageHistoryId")
-                        .IsRequired()
-                        .HasConstraintName("packagedetail_packagehistoryid_foreign");
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-                    b.HasOne("GarageManagementAPI.Entities.Models.Service", "Service")
-                        .WithMany("PackageDetails")
+                    b.HasOne("GarageManagementAPI.Entities.Models.Service", null)
+                        .WithMany()
                         .HasForeignKey("ServiceId")
-                        .IsRequired()
-                        .HasConstraintName("packagedetail_serviceid_foreign");
-
-                    b.Navigation("PackageHistory");
-
-                    b.Navigation("Service");
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("GarageManagementAPI.Entities.Models.PackageFeedBack", b =>
@@ -6335,8 +6905,6 @@ namespace GarageManagementAPI.Application.Migrations
 
                     b.Navigation("InvoicePackageDetails");
 
-                    b.Navigation("PackageDetails");
-
                     b.Navigation("PackageUsages");
                 });
 
@@ -6384,8 +6952,6 @@ namespace GarageManagementAPI.Application.Migrations
 
             modelBuilder.Entity("GarageManagementAPI.Entities.Models.Service", b =>
                 {
-                    b.Navigation("PackageDetails");
-
                     b.Navigation("ServiceFeedBacks");
 
                     b.Navigation("ServiceHistories");

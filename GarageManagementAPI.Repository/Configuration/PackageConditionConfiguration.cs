@@ -12,7 +12,7 @@ namespace GarageManagementAPI.Repository.Configuration
 
             entity.ToTable("PackageCondition");
 
-            entity.HasIndex(e => new { e.ConditionType, e.ConditionValue }, "packagecondition_conditiontype_conditionvalue_unique").IsUnique();
+            entity.HasIndex(e => new { e.PackageId, e.ConditionType, e.ConditionValue }, "packagecondition_conditiontype_conditionvalue_unique").IsUnique();
 
             entity.HasIndex(e => e.PackageId, "packagecondition_packageid_index");
 

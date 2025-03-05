@@ -13,4 +13,5 @@ namespace GarageManagementAPI.Shared.RequestFeatures
         public ProductCategoryStatus? Status { get; set; } = null;
 
     }
+
 }

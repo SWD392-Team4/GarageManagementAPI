@@ -127,12 +127,6 @@ namespace GarageManagementAPI.Presentation.Controllers
                 );
         }
 
-        [HttpPost("confirm-phone")]
-        public async Task<IActionResult> ConfirmPhone()
-        {
-            throw new NotImplementedException();
-        }
-
         [HttpPost("forgot-password")]
         [EnableRateLimiting("SendMailForgotPasswordPolicy")]
         public async Task<IActionResult> ForgotPassowrd([FromBody] UserForForgotPasswordDto userForForgotPasswordDto)

@@ -45,8 +45,8 @@ namespace GarageManagementAPI.Application.Extensions
                       .AllowAnyMethod()
                       .AllowCredentials()
                       .WithExposedHeaders("X-Pagination");
-                  });            
-               });
+                  });
+             });
         public static void ConfigureRepositoryManager(this IServiceCollection services) =>
             services.AddScoped<IRepositoryManager, RepositoryManager>();
 
@@ -118,7 +118,7 @@ namespace GarageManagementAPI.Application.Extensions
                 }));
                 options.AddPolicy("SendMailConfirmEmailPolicy", context =>
                  RateLimitPartition.GetFixedWindowLimiter(
-                 partitionKey: context.User.Identity.Name ?? context.Connection.RemoteIpAddress?.ToString() ?? "anonymous",
+                 partitionKey: context.User.Identity!.Name ?? context.Connection.RemoteIpAddress?.ToString() ?? "anonymous",
                  partition => new FixedWindowRateLimiterOptions
                  {
                      AutoReplenishment = true,
@@ -128,7 +128,7 @@ namespace GarageManagementAPI.Application.Extensions
                 options.AddPolicy("SendMailForgotPasswordPolicy", context =>
                 {
                     return RateLimitPartition.GetFixedWindowLimiter(
-                        partitionKey: context.User.Identity.Name ?? context.Connection.RemoteIpAddress?.ToString() ?? "anonymous",
+                        partitionKey: context.User.Identity!.Name ?? context.Connection.RemoteIpAddress?.ToString() ?? "anonymous",
                         factory: partition => new FixedWindowRateLimiterOptions
                         {
                             AutoReplenishment = true,
@@ -297,7 +297,7 @@ namespace GarageManagementAPI.Application.Extensions
             services.AddSingleton<IConnectionMultiplexer>(sp =>
             {
                 var redisConnectionString = configuration.GetConnectionString("Redis");
-                var configurationOptions = ConfigurationOptions.Parse(redisConnectionString);
+                var configurationOptions = ConfigurationOptions.Parse(redisConnectionString!);
 
                 return ConnectionMultiplexer.Connect(configurationOptions);
             });

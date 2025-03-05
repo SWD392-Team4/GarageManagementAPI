@@ -28,7 +28,7 @@ namespace GarageManagementAPI.Entities.Models
 
         public virtual Package Package { get; set; } = null!;
 
-        public virtual ICollection<PackageDetail> PackageDetails { get; set; } = new List<PackageDetail>();
+        public virtual ICollection<Service> Services { get; set; } = new List<Service>();
 
         public virtual ICollection<PackageUsage> PackageUsages { get; set; } = new List<PackageUsage>();
     }

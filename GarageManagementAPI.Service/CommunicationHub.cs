@@ -49,7 +49,7 @@ namespace api.Services
 
             // Nếu key tồn tại nhưng không phải List, xóa để tránh lỗi
             if (type != RedisType.None && type != RedisType.List)
-        {
+            {
                 await db.KeyDeleteAsync(chatRoomKey);
             }
 
@@ -69,7 +69,7 @@ namespace api.Services
             {
                 var receiverConnectionId = _userConnections[receiverId];
                 await Clients.Client(receiverConnectionId).SendAsync("receiveMessage", chatMessage);
-        }
+            }
             if (_userConnections.ContainsKey(senderId))
             {
                 var senderConnectionId = _userConnections[senderId];
@@ -92,8 +92,8 @@ namespace api.Services
             bool chatRoomExists = await db.KeyExistsAsync(chatRoomKey);
             if (!chatRoomExists)
             {
-                return new List<SignalRDto>(); 
-        }
+                return new List<SignalRDto>();
+            }
 
             var chatHistoryJson = await db.ListRangeAsync(chatRoomKey, 0, 50);
             // Chuyển đổi từng tin nhắn từ dạng string sang đối tượng SignalRDto
@@ -132,8 +132,8 @@ namespace api.Services
             string notificationKey = GetNotificationKey(userId);
             bool notificationsExist = await db.KeyExistsAsync(notificationKey);
             if (!notificationsExist)
-        {
-                return new List<SignalRDto>(); 
+            {
+                return new List<SignalRDto>();
             }
 
             var notificationsJson = await db.ListRangeAsync(notificationKey, 0, 50);
@@ -191,14 +191,14 @@ namespace api.Services
                 {
                     var chatMessage = JsonConvert.DeserializeObject<dynamic>(msg.ToString());
                     if (chatMessage!.UserId.ToString().Trim() != senderId.ToString().Trim() && chatMessage.IsRead == false)
-        {
+                    {
                         chatMessage.isRead = true;
-        }
+                    }
 
                     updatedMessages.Add(JsonConvert.SerializeObject(chatMessage));
                 }
                 catch (Exception ex)
-        {
+                {
                     Console.WriteLine($"Error processing message: {ex.Message}");
                 }
             }
@@ -208,11 +208,11 @@ namespace api.Services
         }
 
 
-        public override Task OnDisconnectedAsync(Exception exception)
+        public override Task OnDisconnectedAsync(Exception? exception)
         {
             var userId = GetUserId();
             if (_userConnections.ContainsKey(userId))
-        {
+            {
                 _userConnections.Remove(userId);
             }
             return base.OnDisconnectedAsync(exception);
@@ -220,7 +220,7 @@ namespace api.Services
 
         public async Task<List<User>> GetChattedUsersWithDetails()
         {
-            var chattedUserIds = await GetChattedUsers();
+            var chattedUserIds = GetChattedUsers();
             var users = new List<User>();
             foreach (var userId in chattedUserIds)
             {
@@ -237,7 +237,7 @@ namespace api.Services
             return users;
         }
 
-        private async Task<List<string>> GetChattedUsers()
+        private List<string> GetChattedUsers()
         {
             var userId = GetUserId();
             var db = _redis.GetDatabase();
@@ -264,13 +264,13 @@ namespace api.Services
 
         // Hàm tạo key cho cuộc trò chuyện giữa hai người
         private string GetChatRoomKey(string user1Id, string user2Id)
-            {
+        {
             return $"{(user1Id.CompareTo(user2Id) < 0 ? user1Id : user2Id)}:{(user1Id.CompareTo(user2Id) > 0 ? user1Id : user2Id)}";
-            }
+        }
         private string GetNotificationKey(string userId)
-            {
+        {
             return $"notifications:{userId}";
-            }
+        }
 
 
         private string GetUserId()

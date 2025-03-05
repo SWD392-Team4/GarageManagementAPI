@@ -1,10 +1,8 @@
 ﻿using GarageManagementAPI.Shared.ErrorModel;
 using GarageManagementAPI.Shared.RequestFeatures;
 using System.Net;
-using System.Net.NetworkInformation;
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace GarageManagementAPI.Shared.ResultModel
 {
@@ -32,6 +30,11 @@ namespace GarageManagementAPI.Shared.ResultModel
             Errors = errors;
             StatusCode = statusCode;
         }
+        protected Result(HttpStatusCode statusCode, ErrorsResult errors)
+        {
+            Errors = [errors];
+            StatusCode = statusCode;
+        }
 
         public static Result Success(HttpStatusCode statusCode)
             => new Result(statusCode);
@@ -55,6 +58,21 @@ namespace GarageManagementAPI.Shared.ResultModel
             => new Result(HttpStatusCode.Unauthorized, errors);
 
         public static Result Forbidden(List<ErrorsResult> errors)
+            => new Result(HttpStatusCode.Forbidden, errors);
+
+        public static Result Failure(HttpStatusCode statusCode, ErrorsResult errors)
+             => new Result(statusCode, errors);
+
+        public static Result NotFound(ErrorsResult errors)
+            => new Result(HttpStatusCode.NotFound, errors);
+
+        public static Result BadRequest(ErrorsResult errors)
+             => new Result(HttpStatusCode.BadRequest, errors);
+
+        public static Result Unauthorized(ErrorsResult errors)
+            => new Result(HttpStatusCode.Unauthorized, errors);
+
+        public static Result Forbidden(ErrorsResult errors)
             => new Result(HttpStatusCode.Forbidden, errors);
 
         //public static implicit operator Result(HttpStatusCode statusCode)
@@ -94,6 +112,7 @@ namespace GarageManagementAPI.Shared.ResultModel
         }
 
         protected Result(HttpStatusCode statuscode, List<ErrorsResult> errors) : base(statuscode, errors) { }
+        protected Result(HttpStatusCode statuscode, ErrorsResult errors) : base(statuscode, errors) { }
 
         public static Result<T> Success(T value, HttpStatusCode statusCode, MetaData? paging = null)
             => new Result<T>(value, statusCode, paging);
@@ -124,7 +143,16 @@ namespace GarageManagementAPI.Shared.ResultModel
         public static new Result<T> Forbidden(List<ErrorsResult> errors)
             => new Result<T>(HttpStatusCode.Forbidden, errors);
 
+        public static new Result<T> NotFound(ErrorsResult errors)
+            => new Result<T>(HttpStatusCode.NotFound, errors);
+
+        public static new Result<T> BadRequest(ErrorsResult errors)
+            => new Result<T>(HttpStatusCode.BadRequest, errors);
+
+        public static new Result<T> Unauthorized(ErrorsResult errors)
+            => new Result<T>(HttpStatusCode.Unauthorized, errors);
+
+        public static new Result<T> Forbidden(ErrorsResult errors)
+            => new Result<T>(HttpStatusCode.Forbidden, errors);
     }
-
-
 }

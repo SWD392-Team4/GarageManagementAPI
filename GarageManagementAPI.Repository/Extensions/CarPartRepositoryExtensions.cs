@@ -37,11 +37,11 @@ namespace GarageManagementAPI.Repository.Extensions
         {
             if (!date.HasValue || date.Value == DateTimeOffset.MinValue)
             {
-                return carPart; 
+                return carPart;
             }
 
             DateTimeOffset startDate = date.Value.Date;
-            DateTimeOffset endDate = startDate.AddDays(1).AddTicks(-1); 
+            DateTimeOffset endDate = startDate.AddDays(1).AddTicks(-1);
 
             // Check for out-of-range values before querying
             if (startDate > DateTimeOffset.MaxValue || endDate > DateTimeOffset.MaxValue)

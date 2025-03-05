@@ -1,4 +1,5 @@
 ﻿using GarageManagementAPI.Entities.Models;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -14,7 +15,7 @@ namespace GarageManagementAPI.Repository.Configuration
 
             entity.HasIndex(e => e.PackageId, "packagehistory_packageid_index");
 
-            entity.HasIndex(e => new { e.PackageId, e.PackagePrice, e.ValidityPeriod, e.TimeUnit, e.UsageLimit }, "packagehistory_packageid_packageprice_validityperiod_timeunit_usagelimit_unique").IsUnique();
+            entity.HasIndex(e => new { e.PackageId, e.PackagePrice, e.ValidityPeriod, e.TimeUnit, e.UsageLimit }, "packagehistory_packageid_packageprice_validityperiod_timeunit_usagelimit");
 
             entity.Property(e => e.Id).ValueGeneratedOnAdd().HasDefaultValueSql("NEWID()");
             entity.Property(e => e.PackagePrice).HasColumnType("decimal(18, 2)");
@@ -32,6 +33,17 @@ namespace GarageManagementAPI.Repository.Configuration
 
             entity.Property(e => e.TimeUnit)
                 .HasConversion<string>();
+
+            entity.HasMany(p => p.Services)
+               .WithMany(s => s.PackageHistories)
+               .UsingEntity<PackageDetail>(
+                   j => j.HasOne<Service>().WithMany().HasForeignKey(pd => pd.ServiceId),
+                   j => j.HasOne<PackageHistory>().WithMany().HasForeignKey(pd => pd.PackageHistoryId),
+                   j =>
+                   {
+                       j.HasKey(pd => new { pd.ServiceId, pd.PackageHistoryId });
+                       j.ToTable("PackageDetail");
+                   });
         }
     }
 }

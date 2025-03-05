@@ -1,4 +1,5 @@
-﻿using GarageManagementAPI.Shared.Enums.SystemStatuss;
+﻿using GarageManagementAPI.Shared.Enums;
+using GarageManagementAPI.Shared.Enums.SystemStatuss;
 using System.ComponentModel.DataAnnotations;
 
 namespace GarageManagementAPI.Entities.Models
@@ -9,13 +10,16 @@ namespace GarageManagementAPI.Entities.Models
 
         public Guid CarCategoryId { get; set; }
 
-        public string ServiceCategory { get; set; } = null!;
+        [EnumDataType(typeof(ServiceStatus))]
+        public ServiceCategory ServiceCategory { get; set; }
 
         public string ServiceName { get; set; } = null!;
 
-        public string WorkNature { get; set; } = null!;
+        [EnumDataType(typeof(WorkNature))]
+        public WorkNature WorkNature { get; set; }
 
-        public string Action { get; set; } = null!;
+        [EnumDataType(typeof(ServiceAction))]
+        public ServiceAction Action { get; set; }
 
         public string Description { get; set; } = null!;
 
@@ -32,7 +36,7 @@ namespace GarageManagementAPI.Entities.Models
 
         public virtual CarPart CarPart { get; set; } = null!;
 
-        public virtual ICollection<PackageDetail> PackageDetails { get; set; } = new List<PackageDetail>();
+        public virtual ICollection<PackageHistory> PackageHistories { get; set; } = new List<PackageHistory>();
 
         public virtual ICollection<ServiceFeedBack> ServiceFeedBacks { get; set; } = new List<ServiceFeedBack>();
 

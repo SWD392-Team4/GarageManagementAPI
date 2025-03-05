@@ -25,6 +25,13 @@ namespace GarageManagementAPI.Repository.Contracts
         ISupplierContactRepository SupplierContact { get; }
         IGoodsReceivedDetailRepository GoodsReceivedDetail { get; }
         IAppointmentRepository Appointment { get; }
+        IPackageRepository Package { get; }
+        IPackageConditionRepository PackageCondition { get; }
+        IPackageFeedBackRepository PackageFeedBack { get; }
+        IPackageHistoryRepository PackageHistory { get; }
+        IPackageImageRepository PackageImage { get; }
+        IPackageUsageRepository PackageUsage { get; }
+        IPackageUsageDetailRepository PackageUsageDetail { get; }
         Task<IDbContextTransaction> BeginTransactionAsync();
         IExecutionStrategy CreateExecutionStrategy();
         Task SaveAsync();

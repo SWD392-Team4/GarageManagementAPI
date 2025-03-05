@@ -8,27 +8,37 @@ namespace GarageManagementAPI.Shared.ErrorsConstant.Service
         #region Service const errors
         public const string ServiceNotFound = "Service with id {0} doesn't exist.";
         public const string ServiceName = "Service with name already existed.";
-        public const string ServiceNotFoundWithId = "Can not found service with id {0}.";
+        public const string ServicesNotFoundWithIds = "Can not found any service with list id {0}.)";
+        public const string ServicesFoundNotMatchWithIds = "Service found not match with list id {0}.)";
         public const string ServiceCarCategory = "Service with car category id {0} already existed.";
         public const string CarCategoryExist = "Car category with id {0} not found.";
         public const string CarPartExist = "Car part with id {0} not found.";
         #endregion
 
         #region static method
-        public static ErrorsResult GetServiceNotFoundWithIdError()
+        public static ErrorsResult GetServiceNotFoundWithIdError(IEnumerable<Guid> ids)
         {
             return new()
             {
-                Code = nameof(ServiceNotFoundWithId),
-                Description = ServiceNotFoundWithId
+                Code = nameof(ServicesNotFoundWithIds),
+                Description = string.Format(ServicesNotFoundWithIds, ids)
+            };
+        }
+
+        public static ErrorsResult GetServicesFoundNotMatchWithIdsError(IEnumerable<Guid> ids)
+        {
+            return new()
+            {
+                Code = nameof(ServicesFoundNotMatchWithIds),
+                Description = string.Format(ServicesFoundNotMatchWithIds, ids)
             };
         }
 
         public static ErrorsResult GetServiceNotFoundError(Guid ServiceId) =>
             new()
             {
-                Code = nameof(ServiceNotFoundWithId),
-                Description = string.Format(ServiceNotFoundWithId, ServiceId)
+                Code = nameof(ServiceNotFound),
+                Description = string.Format(ServiceNotFound, ServiceId)
             };
 
         public static ErrorsResult GetServiceNameAlreadyExistError(ServiceDtoForCreation serviceDtoForCreation) =>
@@ -37,12 +47,12 @@ namespace GarageManagementAPI.Shared.ErrorsConstant.Service
                  Code = nameof(ServiceName),
                  Description = string.Format(ServiceName, serviceDtoForCreation.ServiceName)
              };
-              public static ErrorsResult GetCategoryAlreadyExistError(Guid carCategoryId) =>
-             new()
-             {
-                 Code = nameof(ServiceCarCategory),
-                 Description = string.Format(ServiceCarCategory, carCategoryId)
-             };
+        public static ErrorsResult GetCategoryAlreadyExistError(Guid carCategoryId) =>
+       new()
+       {
+           Code = nameof(ServiceCarCategory),
+           Description = string.Format(ServiceCarCategory, carCategoryId)
+       };
         public static ErrorsResult GetServiceNameUpdateAlreadyExistError(ServiceDtoForUpdate serviceDtoForUpdate) =>
              new()
              {

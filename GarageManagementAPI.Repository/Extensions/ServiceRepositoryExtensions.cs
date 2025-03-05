@@ -1,5 +1,6 @@
 ﻿using GarageManagementAPI.Entities.Models;
 using GarageManagementAPI.Repository.Extensions.Utility;
+using GarageManagementAPI.Shared.Enums;
 using GarageManagementAPI.Shared.Enums.SystemStatuss;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Dynamic.Core;
@@ -19,24 +20,24 @@ namespace GarageManagementAPI.Repository.Extensions
             return service.Where(s => s.ServiceName!.Contains(name.Trim(), StringComparison.OrdinalIgnoreCase));
         }
 
-        public static IQueryable<Service> SearchByWorkNature(this IQueryable<Service> service, string? workNature)
+        public static IQueryable<Service> SearchByWorkNature(this IQueryable<Service> service, WorkNature? workNature)
         {
-            if (string.IsNullOrWhiteSpace(workNature))
+            if (workNature is null)
             {
                 return service;
             }
 
-            return service.Where(s => s.WorkNature!.Contains(workNature.Trim(), StringComparison.OrdinalIgnoreCase));
+            return service.Where(s => s.WorkNature.Equals(workNature));
         }
 
-        public static IQueryable<Service> SearchByAction(this IQueryable<Service> service, string? action)
+        public static IQueryable<Service> SearchByAction(this IQueryable<Service> service, ServiceAction? action)
         {
-            if (string.IsNullOrWhiteSpace(action))
+            if (action is null)
             {
                 return service;
             }
 
-            return service.Where(s => s.Action!.Contains(action.Trim(), StringComparison.OrdinalIgnoreCase));
+            return service.Where(s => s.Action.Equals(action));
         }
 
 
@@ -89,12 +90,12 @@ namespace GarageManagementAPI.Repository.Extensions
         {
             if (!updatedAt.HasValue || updatedAt.Value == DateTimeOffset.MinValue)
             {
-                return service; 
+                return service;
             }
 
             DateTimeOffset startDate = updatedAt.Value.Date;
             // End of day calculation
-            DateTimeOffset endDate = startDate.AddDays(1).AddTicks(-1); 
+            DateTimeOffset endDate = startDate.AddDays(1).AddTicks(-1);
 
             // Check for out-of-range values before querying
             if (startDate > DateTimeOffset.MaxValue || endDate > DateTimeOffset.MaxValue)
@@ -159,13 +160,13 @@ namespace GarageManagementAPI.Repository.Extensions
         public static IQueryable<Service> Sort(this IQueryable<Service> Services, string? orderByQueryString)
         {
             if (string.IsNullOrWhiteSpace(orderByQueryString))
-                return Services.OrderBy(p => p.ServiceName);  
+                return Services.OrderBy(p => p.ServiceName);
 
             // Tạo biểu thức sắp xếp động từ query string
             var orderQuery = QueryBuilder.CreateOrderQuery<Service>(orderByQueryString, Service.PropertyInfos);
 
             if (string.IsNullOrWhiteSpace(orderQuery))
-                return Services.OrderBy(p => p.ServiceName); 
+                return Services.OrderBy(p => p.ServiceName);
 
             return Services.OrderBy(orderQuery);
         }
