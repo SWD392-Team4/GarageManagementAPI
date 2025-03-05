@@ -40,7 +40,7 @@ namespace GarageManagementAPI.Service
 
         public async Task<Result<ExpandoObject>> GetCarPartAsync(Guid carPartId, bool trackChanges, string? include = null)
         {
-            var carPartResult = await GetAndCheckIfCarPartExist(carPartId, trackChanges);
+            var carPartResult = await GetAndCheckIfCarPartExist(carPartId, trackChanges, include);
 
             if (!carPartResult.IsSuccess)
                 return Result<ExpandoObject>.NotFound(carPartResult.Errors!);
@@ -69,9 +69,9 @@ namespace GarageManagementAPI.Service
             await _repoManager.CarPart.CreateCarPartAsync(carPartEntity);
             await _repoManager.SaveAsync();
 
-            var CarPartDtoToReturn = _mapper.Map<CarPartDto>(carPartEntity);
+            var carPartDtoToReturn = _mapper.Map<CarPartDto>(carPartEntity);
 
-            return CarPartDtoToReturn.CreatedResult();
+            return carPartDtoToReturn.CreatedResult();
         }
 
         public async Task<Result> UpdateCarPart(Guid carPartId, CarPartDtoForUpdate carPartDtoForUpdate, bool trackChanges)
@@ -110,9 +110,9 @@ namespace GarageManagementAPI.Service
             if (CarPart == null) return false;
             return true;
         }
-        private async Task<Result<CarPart>> GetAndCheckIfCarPartExist(Guid carPartId, bool trackChanges)
+        private async Task<Result<CarPart>> GetAndCheckIfCarPartExist(Guid carPartId, bool trackChanges, string? include = null)
         {
-            var carPart = await _repoManager.CarPart.GetCarPartByIdAsync(carPartId, trackChanges);
+            var carPart = await _repoManager.CarPart.GetCarPartByIdAsync(carPartId, trackChanges, include);
             if (carPart == null)
                 return carPart.NotFound(carPartId);
 

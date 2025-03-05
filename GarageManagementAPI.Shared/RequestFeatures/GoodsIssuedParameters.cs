@@ -6,7 +6,8 @@ namespace GarageManagementAPI.Shared.RequestFeatures
     public class GoodsIssuedParameters : RequestParameters
     {
         public GoodsIssuedParameters() => OrderBy = "TotalCost";
-        public decimal TotalCost { get; set; }
+        public decimal? minTotalCost { get; set; } = 0;
+        public decimal? maxTotalCost { get; set; }
         public string ReferenceNumber { get; set; } = null!;
         public string InvoiceCode { get; set; } = null!;
 

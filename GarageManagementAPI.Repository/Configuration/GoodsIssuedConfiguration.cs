@@ -23,11 +23,6 @@ namespace GarageManagementAPI.Repository.Configuration
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("goodsissued_createdwarehousemanagerid_foreign");
 
-            entity.HasOne(d => d.Garage).WithMany(p => p.GoodsIssuedGarages)
-                .HasForeignKey(d => d.GarageId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("goodsissued_garageid_foreign");
-
             entity.HasOne(d => d.Warehouse).WithMany(p => p.GoodsIssuedWarehouses)
                 .HasForeignKey(d => d.WarehouseId)
                 .OnDelete(DeleteBehavior.ClientSetNull)

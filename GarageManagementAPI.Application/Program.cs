@@ -1,7 +1,6 @@
 using GarageManagementAPI.Application;
 using GarageManagementAPI.Application.Extensions;
 using Microsoft.AspNetCore.HttpOverrides;
-using GarageManagementAPI.Service;
 using api.Services;
 
 var builder = WebApplication.CreateBuilder(args);

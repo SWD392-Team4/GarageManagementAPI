@@ -15,6 +15,7 @@ namespace GarageManagementAPI.Repository
         private readonly Lazy<ISupplierRepository> _supplierRepository;
         private readonly Lazy<IWorkplaceRepository> _workplaceRepository;
         private readonly Lazy<ICarCategoryRepository> _carCategoryRepository;
+        private readonly Lazy<IGoodsIssuedRepository> _goodsIssuedRepository;
         private readonly Lazy<IServiceImageRepository> _serviceImageRepository;
         private readonly Lazy<IProductImageRepository> _productImageRepository;
         private readonly Lazy<IEmployeeInfoRepository> _employeeInfoRepository;
@@ -38,6 +39,7 @@ namespace GarageManagementAPI.Repository
             _carModelRepository = new Lazy<ICarModelRepository>(() => new CarModelRepository(repositoryContext));
             _supplierRepository = new Lazy<ISupplierRepository>(() => new SupplierRepository(repositoryContext));
             _workplaceRepository = new Lazy<IWorkplaceRepository>(() => new WorkplaceRepository(repositoryContext));
+            _goodsIssuedRepository = new Lazy<IGoodsIssuedRepository>(() => new GoodsIssuedRepository(repositoryContext));
             _carCategoryRepository = new Lazy<ICarCategoryRepository>(() => new CarCategoryRepository(repositoryContext));
             _serviceImageRepository = new Lazy<IServiceImageRepository>(() => new ServiceImageRepository(repositoryContext));
             _productImageRepository = new Lazy<IProductImageRepository>(() => new ProductImageRepository(repositoryContext));
@@ -61,6 +63,7 @@ namespace GarageManagementAPI.Repository
         public ISupplierRepository Supplier => _supplierRepository.Value;
         public IWorkplaceRepository Workplace => _workplaceRepository.Value;
         public ICarCategoryRepository CarCategory => _carCategoryRepository.Value;
+        public IGoodsIssuedRepository GoodsIssued => _goodsIssuedRepository.Value;
         public IServiceImageRepository ServiceImage => _serviceImageRepository.Value;
         public IProductImageRepository ProductImage => _productImageRepository.Value;
         public IEmployeeInfoRepository EmployeeInfo => _employeeInfoRepository.Value;
