@@ -68,12 +68,12 @@ namespace GarageManagementAPI.Service
                 return Result<ProductDtoForUpdate>.BadRequest([ProductErrors.GetProductNameUpdateAlreadyExistError(productDtoForUpdate)]);
             if (!productResult.IsSuccess)
                 return Result<ProductDtoForUpdate>.Failure(productResult.StatusCode, productResult.Errors!);
-            var productEntity = productResult.GetValue<Product>();
             if (productCategoryResult)
                 return Result<ProductDto>.BadRequest([ProductErrors.GetProductCategoryIsNotFound(productDtoForUpdate.ProductCategoryId)]);
             if (brandResult)
                 return Result<ProductDto>.BadRequest([ProductErrors.GetBrandIsNotFound(productDtoForUpdate.BrandId)]);
 
+            var productEntity = productResult.GetValue<Product>();
             _mapper.Map(productDtoForUpdate, productEntity);
 
             productEntity.UpdatedAt = DateTimeOffset.UtcNow.SEAsiaStandardTime();
@@ -210,7 +210,6 @@ namespace GarageManagementAPI.Service
             var checkPrice = await GetAndCheckIfProductHistoryByIdAndPrice(productId, price);
             if (checkPrice)
                 return Result<ProductHistoryDto>.BadRequest([ProductHistoryErrors.GetProductHistoryPriceAlreadyExistError(price)]);
-            var date = DateTimeOffset.UtcNow.SEAsiaStandardTime();
 
             await UpdateStatusProductHistory(productId);
 

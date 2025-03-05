@@ -12,6 +12,7 @@
         ISupplierService SupplierService { get; }
         ICarModelService CarModelService { get; }
         IWorkplaceService WorkplaceService { get; }
+        IGoodsIssuedService GoodsIssuedService { get; }
         ICarCategoryService CarCategoryService { get; }
         IServiceFeedbackService ServiceFeedback { get; }
         IServiceImageService ServiceImageService { get; }

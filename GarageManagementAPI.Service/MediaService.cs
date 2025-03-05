@@ -84,7 +84,6 @@ namespace GarageManagementAPI.Service
 
         public async Task<Result<(string? publicId, string? absoluteUrl)>> UploadUserImageAsync(IFormFile file)
             => await UploadImageAsync(file, _userFolder);
-
         public async Task<Result<(string? publicId, string? absoluteUrl)>> UploadProductImageAsync(IFormFile file)
             => await UploadImageAsync(file, _productFolder);
         public async Task<Result<(string? publicId, string? absoluteUrl)>> UploadServiceImageAsync(IFormFile file)
