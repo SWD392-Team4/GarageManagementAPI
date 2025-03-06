@@ -21,10 +21,10 @@ namespace api.Services
             _repoManager = repoManager;
         }
 
-        // Khi người dùng kết nối, lưu Connection ID của họ
         public override async Task OnConnectedAsync()
         {
             var userId = GetUserId();
+            Console.WriteLine(userId);
             if (string.IsNullOrEmpty(userId))
             {
                 Context.Abort();
@@ -211,6 +211,7 @@ namespace api.Services
         public override Task OnDisconnectedAsync(Exception exception)
         {
             var userId = GetUserId();
+            Console.WriteLine($"Client {Context.ConnectionId} connected");
             if (_userConnections.ContainsKey(userId))
         {
                 _userConnections.Remove(userId);
@@ -273,10 +274,13 @@ namespace api.Services
             }
 
 
-        private string GetUserId()
+        private string? GetUserId()
         {
-            var userId = Context.User.FindFirstValue("UserId")!;
+            var userId = Context.User?.FindFirstValue("UserId"); 
+            Console.WriteLine($"UserId: {userId}");
+            Console.WriteLine($"UserName" + Context.User?.FindFirstValue("UserName"));
             return userId;
         }
+
     }
 }
