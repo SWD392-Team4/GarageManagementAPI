@@ -230,7 +230,7 @@ namespace GarageManagementAPI.Application.Extensions
                         var accessToken = context.Request.Query["access_token"]; 
 
                         if (!string.IsNullOrEmpty(accessToken) &&
-                            context.HttpContext.Request.Path.StartsWithSegments("/hub"))
+                            context.HttpContext.Request.Path.StartsWithSegments("/chatHub"))
                         {
                             Console.WriteLine("accessToken: " + accessToken);
                             context.Token = accessToken; // Gán token cho context

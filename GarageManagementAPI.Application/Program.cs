@@ -52,7 +52,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
 
-app.MapHub<CommunicationHub>("/hub").RequireCors("CorsPolicy");
+app.MapHub<CommunicationHub>("/chatHub").RequireAuthorization();
 
 app.Run();
 
