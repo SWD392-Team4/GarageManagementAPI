@@ -151,7 +151,7 @@ namespace GarageManagementAPI.Service
                     var services = packageHistory.Services.ToList();
                     services.AddRange(serviceList);
                     packageHistory.Services = services;
-                    packageHistory.PackageId = checkIfCarCategoryExist.Id;
+                    packageHistory.PackageId = checkIfPackageExist.Id;
                     await _repoManager.PackageHistory.CreateAsync(packageHistory);
                     checkIfPackageExist.PackageHistories.Add(packageHistory);
                 }
@@ -171,7 +171,7 @@ namespace GarageManagementAPI.Service
                 var services = packageHistory.Services.ToList();
                 services.AddRange(serviceList);
                 packageHistory.Services = services;
-                packageHistory.PackageId = checkIfCarCategoryExist.Id;
+                packageHistory.PackageId = checkIfPackageExist.Id;
                 await _repoManager.PackageHistory.CreateAsync(packageHistory);
                 checkIfPackageExist.PackageHistories.Add(packageHistory);
 
