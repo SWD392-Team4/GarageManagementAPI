@@ -9,9 +9,9 @@
             MetaData = new MetaData()
             {
                 TotalCount = count,
-                PageSize = pageSize,
+                PageSize = pageSize == 0 ? count : pageSize,
                 CurrentPage = pageNumber,
-                TotalPages = (int)Math.Ceiling(count / (double)pageSize)
+                TotalPages = pageSize == 0 ? 1 :(int)Math.Ceiling(count / (double)pageSize)
             };
 
             AddRange(items);
@@ -23,7 +23,7 @@
             int pageSize)
         {
             var count = source.Count();
-            var items = source.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToList();
+            var items = pageSize == 0 ? source.ToList() : source.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToList();
 
             return new PagedList<T>(items, count, pageNumber, pageSize);
         }

@@ -72,8 +72,6 @@ namespace GarageManagementAPI.Repository
                  .SearchByStatus(supplierParameters.Status)
                  .Sort(supplierParameters.OrderBy)
                  .IsInclude(include)
-                 .Skip((supplierParameters.PageNumber - 1) * supplierParameters.PageSize)
-                 .Take(supplierParameters.PageSize)
                  .ToListAsync();
             return PagedList<Supplier>.ToPagedList(
                 suppliers,

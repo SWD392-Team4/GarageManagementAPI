@@ -66,17 +66,17 @@ namespace GarageManagementAPI.Repository
 
         public Task<ServiceHistory?> GetServiceHistoryByPriceAndIdServiceAsync(Guid serviceId, decimal price, bool trackChanges, string? include = null)
         {
-            var ServiceHistory = FindByCondition(p => p.ServiceId.Equals(serviceId) && p.Price == price, false)
+            var serviceHistory = FindByCondition(p => p.ServiceId.Equals(serviceId) && p.Price == price, false)
                    .OrderByDescending(p => p.UpdatedAt)
                    .FirstOrDefaultAsync();
-            return ServiceHistory;
+            return serviceHistory;
         }
 
         public Task<ServiceHistory?> GetServiceHistoryByStatusAndIdServiceAsync(Guid serviceId, bool trackChanges, string? include = null)
         {
-            var ServiceHistory = FindByCondition(s => s.Status == ServiceHistoryStatus.Active && s.ServiceId == serviceId, false).OrderByDescending(p => p.UpdatedAt)
+            var serviceHistory = FindByCondition(s => s.Status == ServiceHistoryStatus.Active && s.ServiceId == serviceId, false).OrderByDescending(p => p.UpdatedAt)
                                    .FirstOrDefaultAsync();
-            return ServiceHistory;
+            return serviceHistory;
         }
     }
 }

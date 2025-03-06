@@ -53,7 +53,7 @@ app.UseAuthorization();
 app.MapControllers();
 app.UseWebSockets(new WebSocketOptions
 {
-    KeepAliveInterval = TimeSpan.FromSeconds(15) 
+    KeepAliveInterval = TimeSpan.FromSeconds(10) 
 });
 app.MapHub<CommunicationHub>("/hub").RequireCors("CorsPolicy");
 

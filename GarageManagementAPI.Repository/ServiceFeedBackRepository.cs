@@ -38,7 +38,6 @@ namespace GarageManagementAPI.Repository
                 .IsInclude(include)
                 .ToListAsync();
 
-            // Trả về kết quả dưới dạng PagedList
             return PagedList<ServiceFeedBack>.ToPagedList(
                 serviceFeedback,
                 serviceFeedbackParameters.PageNumber,
