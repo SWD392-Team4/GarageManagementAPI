@@ -287,11 +287,7 @@ namespace GarageManagementAPI.Application.Extensions
 
         public static void ConfigureSignalR(this IServiceCollection services)
         {
-            services.AddSignalR(options =>
-            {
-                options.KeepAliveInterval = TimeSpan.FromSeconds(15); 
-                options.ClientTimeoutInterval = TimeSpan.FromSeconds(60); 
-            });
+            services.AddSignalR().AddAzureSignalR();
         }
 
         public static void ConfigureValidator(this IServiceCollection services)

@@ -51,8 +51,6 @@ namespace GarageManagementAPI.Repository
                 .SearchByPrice(productParameters.MinPrice, productParameters.MaxPrice)
                 .SearchByCategory(productParameters.ProductCategory)
                 .SearchByBrand(productParameters.ProductBrandName)
-                .Skip((productParameters.PageNumber - 1) * productParameters.PageSize)
-                .Take(productParameters.PageSize)
                 .ToListAsync();
 
             return PagedList<Product>.ToPagedList(

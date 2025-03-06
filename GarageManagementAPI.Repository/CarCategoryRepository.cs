@@ -21,17 +21,11 @@ namespace GarageManagementAPI.Repository
         {
             var carCategories = await FindAll(trackChanges)
             .Sort(carCategoryParameters.OrderBy)
-            .Skip((carCategoryParameters.PageNumber - 1) * carCategoryParameters.PageSize)
-            .Take(carCategoryParameters.PageSize)
             .ToListAsync();
 
-            var count = await FindAll(trackChanges)
-                .CountAsync();
 
-
-            return new PagedList<CarCategory>(
+            return PagedList<CarCategory>.ToPagedList(
                 carCategories,
-                count,
                 carCategoryParameters.PageNumber,
                 carCategoryParameters.PageSize);
         }

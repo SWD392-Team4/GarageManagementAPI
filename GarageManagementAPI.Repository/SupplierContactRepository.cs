@@ -38,8 +38,6 @@ namespace GarageManagementAPI.Repository
                 .SearchByhoneNumber(supplierContactParameters.ContactPhoneNumber)
                 .SearchByPosition(supplierContactParameters.ContactPosition)
                 .IsInclude(include)
-                .Skip((supplierContactParameters.PageNumber - 1) * supplierContactParameters.PageSize)
-                .Take(supplierContactParameters.PageSize)
                 .ToListAsync();
             return PagedList<SupplierContact>.ToPagedList(
                  suppliers,

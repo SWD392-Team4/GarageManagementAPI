@@ -1,5 +1,6 @@
 ﻿using GarageManagementAPI.Entities.Models;
 using GarageManagementAPI.Repository.Extensions.Utility;
+using Microsoft.EntityFrameworkCore;
 using System.Linq.Dynamic.Core;
 
 namespace GarageManagementAPI.Repository.Extensions
@@ -59,6 +60,28 @@ namespace GarageManagementAPI.Repository.Extensions
             }
 
             return carModels.Where(c => c.ModelYear.Year.Equals(modelYear));
+        }
+
+        public static IQueryable<CarModel> IsInclude(this IQueryable<CarModel> carModel, string? fieldsString)
+        {
+            if (string.IsNullOrWhiteSpace(fieldsString))
+                return carModel;
+
+            var fields = fieldsString.Split(',', StringSplitOptions.RemoveEmptyEntries);
+
+
+            foreach (var field in fields)
+            {
+                var property = CarModel.PropertyInfos
+                    .FirstOrDefault(pi => pi.Name.Equals(field.Trim(), StringComparison.InvariantCultureIgnoreCase));
+
+                if (property != null)
+                {
+                    carModel = carModel.Include(field.Trim());
+                }
+            }
+
+            return carModel;
         }
     }
 }

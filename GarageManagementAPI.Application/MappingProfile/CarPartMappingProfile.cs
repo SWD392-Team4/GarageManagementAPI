@@ -13,6 +13,11 @@ namespace GarageManagementAPI.Application.MappingProfile
                 {
                     otps.PreCondition(src => src.CarPartCategory != null);
                     otps.MapFrom(src => src.CarPartCategory!.PartCategory);
+                })
+                .ForMember(dest =>dest.CarPartCategoryId, otps =>
+                {
+                    otps.PreCondition(src => src.CarPartCategory != null);
+                    otps.MapFrom(src => src.CarPartCategory!.Id);
                 });
             CreateMap<CarPartDtoForCreation, CarPart>();
             CreateMap<CarPartDtoForUpdate, CarPart>().ReverseMap();

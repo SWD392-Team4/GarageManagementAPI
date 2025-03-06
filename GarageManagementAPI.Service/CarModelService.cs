@@ -28,9 +28,9 @@ namespace GarageManagementAPI.Service
             _dataShaper = dataShaper;
         }
 
-        private async Task<Result<CarModel>> GetByIdAndCheckIfExist(Guid id, bool trackChanges)
+        private async Task<Result<CarModel>> GetByIdAndCheckIfExist(Guid id, bool trackChanges, string? include = null)
         {
-            var result = await _repoManager.CarModel.GetCarModelAsync(id, trackChanges);
+            var result = await _repoManager.CarModel.GetCarModelAsync(id, trackChanges, include);
             if (result == null)
                 return Result<CarModel>.NotFound([CarModelErrors.GetCarModelNotFoundError(id)]);
 
@@ -51,9 +51,9 @@ namespace GarageManagementAPI.Service
             return Result.Ok();
         }
 
-        public async Task<Result<CarModelDto>> GetCarModel(Guid id, bool trackChanges)
+        public async Task<Result<CarModelDto>> GetCarModel(Guid id, bool trackChanges, string include)
         {
-            var checkIfExistResult = await GetByIdAndCheckIfExist(id, trackChanges);
+            var checkIfExistResult = await GetByIdAndCheckIfExist(id, trackChanges, include);
 
             if (!checkIfExistResult.IsSuccess)
                 return Result<CarModelDto>.NotFound(checkIfExistResult.Errors!);
@@ -65,9 +65,9 @@ namespace GarageManagementAPI.Service
             return Result<CarModelDto>.Ok(carModelDto);
         }
 
-        public async Task<Result<IEnumerable<CarModelDto>>> GetCarModels(CarModelParameters carModeParameters, bool trackChanges)
+        public async Task<Result<IEnumerable<CarModelDto>>> GetCarModels(CarModelParameters carModeParameters, bool trackChanges, string include)
         {
-            var carModels = await _repoManager.CarModel.GetCarModelsAsync(carModeParameters, trackChanges);
+            var carModels = await _repoManager.CarModel.GetCarModelsAsync(carModeParameters, trackChanges, include);
             var carModelsDto = _mapper.Map<IEnumerable<CarModelDto>>(carModels);
 
             return Result<IEnumerable<CarModelDto>>.Ok(carModelsDto, carModels.MetaData);

@@ -17,7 +17,8 @@ namespace GarageManagementAPI.Presentation.Controllers
         [HttpGet]
         public async Task<IActionResult> GetCarModels([FromQuery] CarModelParameters carModelParameters)
         {
-            var result = await _service.CarModelService.GetCarModels(carModelParameters, false);
+            var include = "Brand, CarCategory";
+            var result = await _service.CarModelService.GetCarModels(carModelParameters, false, include);
 
             return result.Map(
                 onSuccess: Ok,
@@ -28,7 +29,8 @@ namespace GarageManagementAPI.Presentation.Controllers
         [HttpGet("{id:Guid}", Name = "GetCarModelById")]
         public async Task<IActionResult> GetCarModelById(Guid id)
         {
-            var result = await _service.CarModelService.GetCarModel(id, false);
+            var include = "Brand, CarCategory";
+            var result = await _service.CarModelService.GetCarModel(id, false, include);
 
             return result.Map(
                 onSuccess: Ok,

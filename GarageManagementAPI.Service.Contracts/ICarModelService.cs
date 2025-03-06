@@ -6,9 +6,9 @@ namespace GarageManagementAPI.Service.Contracts
 {
     public interface ICarModelService
     {
-        public Task<Result<CarModelDto>> GetCarModel(Guid id, bool trackChanges);
+        public Task<Result<CarModelDto>> GetCarModel(Guid id, bool trackChanges, string include);
 
-        public Task<Result<IEnumerable<CarModelDto>>> GetCarModels(CarModelParameters carModeParameters, bool trackChanges);
+        public Task<Result<IEnumerable<CarModelDto>>> GetCarModels(CarModelParameters carModeParameters, bool trackChanges, string include);
 
         public Task<Result<CarModelDto>> CreateCarModels(CarModelDtoForCreate carModelDtoForCreate);
 

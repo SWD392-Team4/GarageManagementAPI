@@ -17,7 +17,7 @@ namespace GarageManagementAPI.Repository
             await base.CreateAsync(carModel);
         }
 
-        public async Task<PagedList<CarModel>> GetCarModelsAsync(CarModelParameters carModelParameters, bool trackChanges)
+        public async Task<PagedList<CarModel>> GetCarModelsAsync(CarModelParameters carModelParameters, bool trackChanges, string? include)
         {
             var carModels = await FindAll(trackChanges)
             .SearchByBrandId(carModelParameters.BrandId)
@@ -25,30 +25,18 @@ namespace GarageManagementAPI.Repository
             .SearchByModelName(carModelParameters.ModelName)
             .SearchByModelYear(carModelParameters.ModelYear)
             .Sort(carModelParameters.OrderBy)
-            .Skip((carModelParameters.PageNumber - 1) * carModelParameters.PageSize)
-            .Take(carModelParameters.PageSize)
-            .Include(e => e.Brand)
-            .Include(e => e.CarCategory)
+             .IsInclude(include)
             .ToListAsync();
 
-            var count = await FindAll(trackChanges)
-                .SearchByBrandId(carModelParameters.BrandId)
-                .SearchByCarCategoryId(carModelParameters.CarCategoryId)
-                .SearchByModelName(carModelParameters.ModelName)
-                .SearchByModelYear(carModelParameters.ModelYear)
-                .CountAsync();
-
-
-            return new PagedList<CarModel>(
+            return PagedList<CarModel>.ToPagedList(
                 carModels,
-                count,
                 carModelParameters.PageNumber,
                 carModelParameters.PageSize);
         }
 
-        public async Task<CarModel?> GetCarModelAsync(Guid id, bool trackChanges)
+        public async Task<CarModel?> GetCarModelAsync(Guid id, bool trackChanges, string? include)
         {
-            return await FindByCondition(e => e.Id.Equals(id), trackChanges).SingleOrDefaultAsync();
+            return include == null ? await FindByCondition(e => e.Id.Equals(id), trackChanges).SingleOrDefaultAsync() : await FindByCondition(e => e.Id.Equals(id), trackChanges).IsInclude(include).SingleOrDefaultAsync();
         }
     }
 }
