@@ -174,14 +174,13 @@ namespace GarageManagementAPI.Service
                 packageHistory.PackageId = checkIfPackageExist.Id;
                 await _repoManager.PackageHistory.CreateAsync(packageHistory);
                 checkIfPackageExist.PackageHistories.Add(packageHistory);
-
             }
-            if (packageDtoForUpdate.PackageConditionsForUpdate is not null && packageDtoForUpdate.PackageConditionsForUpdate.Any())
-            {
-                var packageConditions = await _repoManager.PackageCondition.GetPackageConditionsByPackageIdAsync(id, true);
+            //if (packageDtoForUpdate.PackageConditionsForUpdate is not null && packageDtoForUpdate.PackageConditionsForUpdate.Any())
+            //{
+            //    var packageConditions = await _repoManager.PackageCondition.GetPackageConditionsByPackageIdAsync(id, true);
 
-                _mapper.Map(packageDtoForUpdate.PackageConditionsForUpdate, packageConditions);
-            }
+            //    _mapper.Map(packageDtoForUpdate.PackageConditionsForUpdate, packageConditions);
+            //}
 
             checkIfPackageExist.UpdatedAt = DateTimeOffset.UtcNow.SEAsiaStandardTime();
             await _repoManager.SaveAsync();

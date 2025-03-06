@@ -10,7 +10,6 @@ namespace GarageManagementAPI.Shared.DataTransferObjects.Package
         [EnumDataType(typeof(PackageStatus))]
         public PackageStatus Status { get; set; }
 
-        public IEnumerable<PackageConditionDtoForUpdate>? PackageConditionsForUpdate { get; set; }
 
         public IEnumerable<string>? ImageLinksForRemove { get; set; }
 

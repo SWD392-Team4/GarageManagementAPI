@@ -12,37 +12,35 @@ namespace GarageManagementAPI.Shared.DataTransferObjects.Package
         public Guid? Id { get; set; }
 
         [EnumDataType(typeof(ServiceCategory))]
-        public ServiceCategory? ServiceCategory { get; set; }
+        public ServiceCategory ServiceCategory { get; set; }
 
-        public IList<string>? ImageLinks { get; set; }
+        public Guid CarCategoryId { get; set; }
 
-        public Guid? CarCategoryId { get; set; }
+        public string PackageName { get; set; } = null!;
 
-        public string? Category { get; set; }
-
-        public string? PackageName { get; set; }
-
-        public string? Description { get; set; }
-
-        public decimal? PackagePrice { get; set; }
-
-        public int? ValidityPeriod { get; set; }
-
-        [EnumDataType(typeof(TimeUnit))]
-        public TimeUnit? TimeUnit { get; set; }
-
-        public int? UsageLimit { get; set; }
+        public string Description { get; set; } = null!;
 
         [EnumDataType(typeof(PackageType))]
-        public PackageType? Type { get; set; }
+        public PackageType Type { get; set; }
 
         [EnumDataType(typeof(PackageStatus))]
-        public PackageStatus? Status { get; set; }
+        public PackageStatus Status { get; set; }
 
-        public IList<PackageConditionDto>? PackageConditions { get; set; }
+        public DateTimeOffset CreatedAt { get; set; }
 
-        public DateTimeOffset? CreatedAt { get; set; }
-
-        public DateTimeOffset? UpdatedAt { get; set; }
+        public DateTimeOffset UpdatedAt { get; set; }
     }
+
+    //public record PackageDtoWithRelation
+    //{
+    //    public CarCategory? CarCategory { get; set; }
+
+    //    public ICollection<PackageCondition> PackageConditions { get; set; }
+
+    //    public ICollection<PackageFeedBack> PackageFeedBacks { get; set; }
+
+    //    public ICollection<PackageHistory> PackageHistories { get; set; }
+
+    //    public ICollection<PackageImage> PackageImages { get; set; }
+    //}
 }
