@@ -54,6 +54,9 @@ namespace GarageManagementAPI.Shared.ResultModel
         public static Result BadRequest(List<ErrorsResult> errors)
              => new Result(HttpStatusCode.BadRequest, errors);
 
+        public static Result Conflict(List<ErrorsResult> errors)
+           => new Result(HttpStatusCode.Conflict, errors);
+
         public static Result Unauthorized(List<ErrorsResult> errors)
             => new Result(HttpStatusCode.Unauthorized, errors);
 
@@ -71,6 +74,9 @@ namespace GarageManagementAPI.Shared.ResultModel
 
         public static Result Unauthorized(ErrorsResult errors)
             => new Result(HttpStatusCode.Unauthorized, errors);
+
+        public static Result Conflict(ErrorsResult errors)
+            => new Result(HttpStatusCode.Conflict, errors);
 
         public static Result Forbidden(ErrorsResult errors)
             => new Result(HttpStatusCode.Forbidden, errors);
@@ -134,6 +140,9 @@ namespace GarageManagementAPI.Shared.ResultModel
         public static new Result<T> NotFound(List<ErrorsResult> errors)
             => new Result<T>(HttpStatusCode.NotFound, errors);
 
+        public static new Result<T> Conflict(List<ErrorsResult> errors)
+            => new Result<T>(HttpStatusCode.Conflict, errors);
+
         public static new Result<T> BadRequest(List<ErrorsResult> errors)
             => new Result<T>(HttpStatusCode.BadRequest, errors);
 
@@ -145,6 +154,9 @@ namespace GarageManagementAPI.Shared.ResultModel
 
         public static new Result<T> NotFound(ErrorsResult errors)
             => new Result<T>(HttpStatusCode.NotFound, errors);
+
+        public static new Result<T> Conflict(ErrorsResult errors)
+            => new Result<T>(HttpStatusCode.Conflict, errors);
 
         public static new Result<T> BadRequest(ErrorsResult errors)
             => new Result<T>(HttpStatusCode.BadRequest, errors);

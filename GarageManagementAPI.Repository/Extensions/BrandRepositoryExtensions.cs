@@ -27,11 +27,11 @@ namespace GarageManagementAPI.Repository.Extensions
         {
             if (!date.HasValue || date.Value == DateTimeOffset.MinValue)
             {
-                return brand;  
+                return brand;
             }
 
             DateTimeOffset startDate = date.Value.Date;
-            DateTimeOffset endDate = startDate.AddDays(1).AddTicks(-1); 
+            DateTimeOffset endDate = startDate.AddDays(1).AddTicks(-1);
 
             // Check for out-of-range values before querying
             if (startDate > DateTimeOffset.MaxValue || endDate > DateTimeOffset.MaxValue)
@@ -70,13 +70,13 @@ namespace GarageManagementAPI.Repository.Extensions
         public static IQueryable<Brand> Sort(this IQueryable<Brand> brands, string? orderByQueryString)
         {
             if (string.IsNullOrWhiteSpace(orderByQueryString))
-                return brands.OrderBy(p => p.BrandName); 
+                return brands.OrderBy(p => p.BrandName);
 
             // Tạo biểu thức sắp xếp động từ query string
             var orderQuery = QueryBuilder.CreateOrderQuery<Brand>(orderByQueryString, Brand.PropertyInfos);
 
             if (string.IsNullOrWhiteSpace(orderQuery))
-                return brands.OrderBy(p => p.BrandName); 
+                return brands.OrderBy(p => p.BrandName);
 
             return brands.OrderBy(orderQuery);
         }

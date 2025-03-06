@@ -32,6 +32,5 @@ namespace GarageManagementAPI.Entities.Models
 
         public virtual ICollection<PackageUsage> PackageUsages { get; set; } = new List<PackageUsage>();
     }
-
 }
 

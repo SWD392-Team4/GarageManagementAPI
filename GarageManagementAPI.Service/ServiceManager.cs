@@ -40,6 +40,7 @@ namespace GarageManagementAPI.Service
         private readonly Lazy<IPackageFeedBackService> _packageFeedBackService;
         private readonly Lazy<IPackageUsageService> _packageUsageService;
         private readonly Lazy<IPackageUsageDetailService> _packageUsageDetailService;
+        private readonly Lazy<IPackageImageService> _packageImageService;
 
         public ServiceManager(
             IRepositoryManager repositoryManager,
@@ -216,6 +217,8 @@ namespace GarageManagementAPI.Service
             _packageUsageService = new Lazy<IPackageUsageService>(() => new PackageUsageService(repositoryManager, mapper, dataShaper));
 
             _packageUsageDetailService = new Lazy<IPackageUsageDetailService>(() => new PackageUsageDetailService(repositoryManager, mapper, dataShaper));
+
+            _packageImageService = new Lazy<IPackageImageService>(() => new PackageImageService(repositoryManager, mapper, dataShaper));
         }
 
         public IUserService UserService => _userService.Value;
@@ -247,5 +250,6 @@ namespace GarageManagementAPI.Service
         public IPackageFeedBackService PackageFeedBackService => _packageFeedBackService.Value;
         public IPackageUsageService PackageUsageService => _packageUsageService.Value;
         public IPackageUsageDetailService PackageUsageDetailService => _packageUsageDetailService.Value;
+        public IPackageImageService PackageImageService => _packageImageService.Value;
     }
 }

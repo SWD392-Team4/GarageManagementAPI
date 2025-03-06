@@ -17,6 +17,8 @@ using GarageManagementAPI.Shared.DataTransferObjects.ProductCategory;
 using GarageManagementAPI.Shared.DataTransferObjects.CarPartCategory;
 using GarageManagementAPI.Shared.DataTransferObjects.SupplierContact;
 using GarageManagementAPI.Shared.DataTransferObjects.GoodsReceivedDetail;
+using GarageManagementAPI.Shared.DataTransferObjects.PackageImage;
+using GarageManagementAPI.Shared.DataTransferObjects.Package;
 
 namespace GarageManagementAPI.Service.DataShaping
 {
@@ -40,6 +42,8 @@ namespace GarageManagementAPI.Service.DataShaping
         private readonly Lazy<IDataShaper<CarPartCategoryDto>> _carPartCategoryShaper;
         private readonly Lazy<IDataShaper<ServiceFeedBackDto>> _serviceFeedBackShaper;
         private readonly Lazy<IDataShaper<GoodsReceivedDetailDto>> _goodsReceivedDetailShaper;
+        private readonly Lazy<IDataShaper<PackageImageDto>> _packageImageShaper;
+        private readonly Lazy<IDataShaper<PackageDto>> _packageShaper;
         public DataShaperManager()
         {
             _workplaceShaper = new Lazy<IDataShaper<WorkplaceDto>>(
@@ -91,8 +95,15 @@ namespace GarageManagementAPI.Service.DataShaping
 
             _goodsReceivedDetailShaper = new Lazy<IDataShaper<GoodsReceivedDetailDto>>(
             () => new DataShaper<GoodsReceivedDetailDto>(GoodsReceivedDetailDto.PropertyInfos));
+
             _goodsIssuedShaper = new Lazy<IDataShaper<GoodsIssuedDto>>(
             () => new DataShaper<GoodsIssuedDto>(GoodsIssuedDto.PropertyInfos));
+
+            _packageImageShaper = new Lazy<IDataShaper<PackageImageDto>>(
+            () => new DataShaper<PackageImageDto>(PackageImageDto.PropertyInfos));
+
+            _packageShaper = new Lazy<IDataShaper<PackageDto>>(
+            () => new DataShaper<PackageDto>(PackageDto.PropertyInfos));
         }
         //.Value là thuộc tính của Lazy<T>, nó sẽ kích hoạt việc khởi tạo đối tượng nếu đối tượng đó chưa được khởi tạo trước đó. Nếu đối tượng đã được khởi tạo, thuộc tính .Value sẽ trả về đối tượng đó.
         public IDataShaper<UserDto> User => _userShaper.Value;
@@ -113,6 +124,8 @@ namespace GarageManagementAPI.Service.DataShaping
         public IDataShaper<ServiceFeedBackDto> ServiceFeedback => _serviceFeedBackShaper.Value;
         public IDataShaper<SupplierContactDto> SupplierContact => _supplierContactShaper.Value;
         public IDataShaper<GoodsReceivedDetailDto> GoodsReceivedDetail => _goodsReceivedDetailShaper.Value;
+        public IDataShaper<PackageImageDto> PackageImage => _packageImageShaper.Value;
+        public IDataShaper<PackageDto> Package => _packageShaper.Value;
 
     }
 }

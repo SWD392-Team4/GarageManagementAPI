@@ -2,11 +2,15 @@
 using GarageManagementAPI.Service.Contracts;
 using GarageManagementAPI.Shared.Constant.Request;
 using GarageManagementAPI.Shared.DataTransferObjects.Package;
+using GarageManagementAPI.Shared.Enums;
 using GarageManagementAPI.Shared.Extension;
 using GarageManagementAPI.Shared.RequestFeatures;
 using GarageManagementAPI.Shared.ResultModel;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Dynamic;
+using System.Linq;
 
 namespace GarageManagementAPI.Presentation.Controllers
 {
@@ -31,10 +35,10 @@ namespace GarageManagementAPI.Presentation.Controllers
         }
 
         [HttpGet("{packageId:guid}", Name = "GetPackageById")]
-        public async Task<IActionResult> GetPackageById(Guid packageId, [FromQuery] PackageParameters packageParameters)
+        public async Task<IActionResult> GetPackageById(Guid packageId, [FromQuery] string? fields)
         {
             var result = await _service.PackageService
-                .GetPackageByIdAsync(packageId, false);
+                .GetPackageByIdAsync(packageId, false, fields);
 
             return result.Map(
                  onSuccess: Ok,
@@ -43,15 +47,17 @@ namespace GarageManagementAPI.Presentation.Controllers
         }
 
         [HttpPost(Name = "CreatePacakge")]
-        public async Task<IActionResult> CreatePacakge([FromForm] IList<IFormFile>? imagePackage, [FromForm] PackageDtoForCreation packageDtoForCreationompany)
+        [Authorize(Roles = nameof(SystemRole.Administrator))]
+        public async Task<IActionResult> CreatePacakge([FromQuery] string? fields, [FromForm] IList<IFormFile>? imagePackage, [FromForm] PackageDtoForCreation packageDtoForCreationompany)
         {
             if (imagePackage is not null && imagePackage.Count >= 5)
                 return BadRequest(Result.BadRequest(RequestErrors.GetTooManyImageUploadErrors()));
 
-            var imagePublicIds = new List<(string? publicId, string? absoluteUrl)>();
+            List<(string? publicId, string? absoluteUrl)>? imagePublicIds = null;
 
             if (imagePackage is not null)
             {
+                imagePublicIds = [];
                 foreach (var image in imagePackage)
                 {
                     var uploadImageResult = await _service.MediaService.UploadPackageImageAsync(image);
@@ -62,37 +68,37 @@ namespace GarageManagementAPI.Presentation.Controllers
                     imagePublicIds.Add(imgTuple);
                 }
             }
-            var result = await _service.PackageService.CreatePackage(packageDtoForCreationompany, imagePublicIds);
+            var result = await _service.PackageService.CreatePackage(packageDtoForCreationompany, imagePublicIds, fields);
 
             return result.Map(
                 onSuccess: result =>
                 {
-                    var createdPackage = result.GetValue<PackageDto>();
+                    var createdPackage = result.GetValue<ExpandoObject>();
+                    var packageId = createdPackage
+                        .FirstOrDefault(kv => kv.Key.Equals("id", StringComparison.InvariantCultureIgnoreCase)).Value;
 
-                    return CreatedAtRoute("GetPackageById", new { packageId = createdPackage.Id }, result);
+                    return CreatedAtRoute("GetPackageById", new { packageId }, result);
                 },
                 onFailure: ProcessError
             );
         }
 
         [HttpPut("{packageId:guid}", Name = "UpdatePackage")]
-        public async Task<IActionResult> UpdatePackage(Guid packageId, [FromForm] IList<IFormFile>? imagePackage, [FromForm] PackageDtoForUpdate packageDtoForUpdate)
+        [Authorize(Roles = nameof(SystemRole.Administrator))]
+        public async Task<IActionResult> UpdatePackage(Guid packageId, [FromBody] PackageDtoForUpdate packageDtoForUpdate)
         {
-            if (imagePackage is not null && imagePackage.Count >= 5)
-                return BadRequest(Result.BadRequest(RequestErrors.GetTooManyImageUploadErrors()));
-            var imagePublicIds = new List<(string? publicId, string? absoluteUrl)>();
-            if (imagePackage is not null)
-            {
-                foreach (var image in imagePackage)
-                {
-                    var uploadImageResult = await _service.MediaService.UploadPackageImageAsync(image);
-                    if (!uploadImageResult.IsSuccess)
-                        return ProcessError(uploadImageResult);
-                    var imgTuple = uploadImageResult.GetValue<(string? publicId, string? absoluteUrl)>();
-                    imagePublicIds.Add(imgTuple);
-                }
-            }
-            var result = await _service.PackageService.UpdatePackage(packageId, packageDtoForUpdate, imagePublicIds);
+            var result = await _service.PackageService.UpdatePackage(packageId, packageDtoForUpdate);
+            return result.Map(
+                onSuccess: _ => NoContent(),
+                onFailure: ProcessError
+            );
+        }
+
+        [HttpDelete("{packageId:guid}", Name = "DeletePackage")]
+        [Authorize(Roles = nameof(SystemRole.Administrator))]
+        public async Task<IActionResult> DeletePackage(Guid packageId)
+        {
+            var result = await _service.PackageService.RemovePacakge(packageId);
             return result.Map(
                 onSuccess: _ => NoContent(),
                 onFailure: ProcessError

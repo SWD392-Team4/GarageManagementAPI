@@ -17,9 +17,6 @@ namespace GarageManagementAPI.Entities.Models
         [EnumDataType(typeof(PackageType))]
         public PackageType Type { get; set; }
 
-        [EnumDataType(typeof(PackageStatus))]
-        public PackageStatus Status { get; set; }
-
         public DateTimeOffset CreatedAt { get; set; }
 
         public DateTimeOffset UpdatedAt { get; set; }

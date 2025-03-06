@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace GarageManagementAPI.Shared.DataTransferObjects.PackageHistory
 {
-    public record PackageHistoryDto
+    public record PackageHistoryDto : BaseDto<PackageHistoryDto>
     {
         public Guid Id { get; set; }
 

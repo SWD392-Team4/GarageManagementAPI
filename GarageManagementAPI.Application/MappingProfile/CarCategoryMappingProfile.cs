@@ -11,6 +11,7 @@ namespace GarageManagementAPI.Application.MappingProfile
             CreateMap<CarCategory, CarCategoryDto>();
             CreateMap<CarCategoryDtoForCreate, CarCategory>();
             CreateMap<CarCategoryDtoForUpdate, CarCategory>().ReverseMap();
+
         }
     }
 }

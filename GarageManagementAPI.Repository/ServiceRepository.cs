@@ -22,7 +22,7 @@ namespace GarageManagementAPI.Repository
             base.Update(service);
         }
 
-        public async Task<IEnumerable<Service>> GetByIdsAsync(IEnumerable<Guid> ids, bool trackChanges)
+        public async Task<IEnumerable<Service>> GetServiceByIdsAsync(IEnumerable<Guid> ids, bool trackChanges)
             => await FindByCondition(x => ids.Contains(x.Id), trackChanges).ToListAsync();
 
         public async Task<Service?> GetServiceByIdAsync(Guid serviceId, bool trackChanges, string? include = null)
@@ -51,6 +51,7 @@ namespace GarageManagementAPI.Repository
                 .SearchByCreateAt(serviceParameters.CreatedAt) //Tìm kiếm theo CreatedAt
                 .SearchByUpdateAt(serviceParameters.UpdatedAt) //Tìm kiếm theo UpdateAt
                 .SearchByWorkNature(serviceParameters.WorkNature)
+                .SearchByServiceCategory(serviceParameters.ServiceCategory)
                 .SearchByAction(serviceParameters.Action)
                 .SearchByStatus(serviceParameters.Status)
                 .Sort(serviceParameters.OrderBy)
@@ -75,6 +76,11 @@ namespace GarageManagementAPI.Repository
             Console.WriteLine("service " + service);
             Console.WriteLine("service " + carparCategoryId);
             return service;
+        }
+
+        public async Task<IEnumerable<Service>> GetServiceByPackageHistoryIdAsync(Guid pacakgeHistoryId, bool trackChanges)
+        {
+            return await FindByCondition(x => x.PackageHistories.Any(x => x.Id.Equals(pacakgeHistoryId)), trackChanges).ToListAsync();
         }
     }
 }

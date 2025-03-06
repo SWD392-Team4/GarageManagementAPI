@@ -16,51 +16,23 @@ namespace GarageManagementAPI.Repository
         public async Task<Package?> GetPacakgeByNameAsync(string packageName, bool trackChanges)
         {
             var package = await FindByCondition(p => p.PackageName.Equals(packageName), trackChanges)
-                .Select(p => new Package
-                {
-                    Id = p.Id,
-                    PackageName = p.PackageName,
-                    Description = p.Description,
-                    Type = p.Type,
-                    Status = p.Status,
-                    ServiceCategory = p.ServiceCategory,
-                    CarCategoryId = p.CarCategoryId,
-                    CreatedAt = p.CreatedAt,
-                    UpdatedAt = p.UpdatedAt,
-                    CarCategory = p.CarCategory,
-                    PackageConditions = p.PackageConditions,
-                    PackageImages = p.PackageImages,
-                    PackageHistories = p.PackageHistories
-            .OrderByDescending(ph => ph.CreatedAt).Where(ph => ph.Status.Equals(PackageHistoryStatus.Active))
-            .Take(1)
-            .ToList()
-                })
-                .FirstOrDefaultAsync();
+                .Include(p => p.PackageImages)
+                .Include(p => p.PackageHistories.OrderByDescending(ph => ph.CreatedAt).Take(1))
+                .Include(p => p.PackageConditions)
+                .Include(p => p.CarCategory)
+                .AsSplitQuery()
+                .SingleOrDefaultAsync();
             return package;
         }
 
         public async Task<Package?> GetPackageByIdAsync(Guid id, bool trackChanges)
         {
             var package = await FindByCondition(p => p.Id.Equals(id), trackChanges)
-                .Select(p => new Package
-                {
-                    Id = p.Id,
-                    PackageName = p.PackageName,
-                    Description = p.Description,
-                    Type = p.Type,
-                    Status = p.Status,
-                    ServiceCategory = p.ServiceCategory,
-                    CarCategoryId = p.CarCategoryId,
-                    CreatedAt = p.CreatedAt,
-                    UpdatedAt = p.UpdatedAt,
-                    CarCategory = p.CarCategory,
-                    PackageConditions = p.PackageConditions,
-                    PackageImages = p.PackageImages,
-                    PackageHistories = p.PackageHistories
-                    .OrderByDescending(ph => ph.CreatedAt).Where(ph => ph.Status.Equals(PackageHistoryStatus.Active))
-                    .Take(1)
-                    .ToList()
-                })
+                .Include(p => p.PackageImages)
+                .Include(p => p.PackageHistories.OrderByDescending(ph => ph.CreatedAt).Take(1))
+                .Include(p => p.PackageConditions)
+                .Include(p => p.CarCategory)
+                .AsSplitQuery()
                 .SingleOrDefaultAsync();
             return package;
         }
@@ -71,25 +43,11 @@ namespace GarageManagementAPI.Repository
                 .Sort(packageParameters.OrderBy)
                 .Skip((packageParameters.PageNumber - 1) * packageParameters.PageSize)
                 .Take(packageParameters.PageSize)
-                .Select(p => new Package
-                {
-                    Id = p.Id,
-                    PackageName = p.PackageName,
-                    Description = p.Description,
-                    Type = p.Type,
-                    Status = p.Status,
-                    ServiceCategory = p.ServiceCategory,
-                    CarCategoryId = p.CarCategoryId,
-                    CreatedAt = p.CreatedAt,
-                    UpdatedAt = p.UpdatedAt,
-                    CarCategory = p.CarCategory,
-                    PackageConditions = p.PackageConditions,
-                    PackageImages = p.PackageImages,
-                    PackageHistories = p.PackageHistories
-                    .OrderByDescending(ph => ph.CreatedAt).Where(ph => ph.Status.Equals(PackageHistoryStatus.Active))
-                    .Take(1)
-                    .ToList()
-                })
+                .Include(p => p.PackageImages)
+                .Include(p => p.PackageHistories.OrderByDescending(ph => ph.CreatedAt).Take(1))
+                .Include(p => p.PackageConditions)
+                .Include(p => p.CarCategory)
+                .AsSplitQuery()
                 .ToListAsync();
 
             var count = await FindAll(trackChanges)

@@ -16,8 +16,9 @@ namespace GarageManagementAPI.Repository.Extensions
             {
                 return service;
             }
+            var lowercase = name.ToLower().Trim();
 
-            return service.Where(s => s.ServiceName!.Contains(name.Trim(), StringComparison.OrdinalIgnoreCase));
+            return service.Where(s => s.ServiceName!.ToLower().Contains(lowercase));
         }
 
         public static IQueryable<Service> SearchByWorkNature(this IQueryable<Service> service, WorkNature? workNature)
@@ -40,6 +41,15 @@ namespace GarageManagementAPI.Repository.Extensions
             return service.Where(s => s.Action.Equals(action));
         }
 
+        public static IQueryable<Service> SearchByServiceCategory(this IQueryable<Service> service, ServiceCategory? serviceCategory)
+        {
+            if (serviceCategory is null)
+            {
+                return service;
+            }
+
+            return service.Where(s => s.ServiceCategory.Equals(serviceCategory));
+        }
 
         public static IQueryable<Service> SearchByEstimatedHours(this IQueryable<Service> services, int? estimatedHours)
         {

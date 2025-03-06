@@ -11,6 +11,8 @@ using GarageManagementAPI.Shared.Enums.SystemStatuss;
 using GarageManagementAPI.Shared.Enums;
 using GarageManagementAPI.Shared.ErrorsConstant.Service;
 using GarageManagementAPI.Shared.ErrorsConstant.Package;
+using System.Dynamic;
+using System.Net;
 
 namespace GarageManagementAPI.Service
 {
@@ -26,166 +28,143 @@ namespace GarageManagementAPI.Service
             _dataShaper = dataShaper;
         }
 
-        public async Task<Result<PackageDto>> CreatePackage(PackageDtoForCreation packageDtoForCreation, List<(string? publicId, string? absoluteUrl)>? imageTuples = null)
+        public async Task<Result<ExpandoObject>> CreatePackage(PackageDtoForCreation packageDtoForCreation, List<(string? ImageId, string? ImageLink)>? imageTuples = null, string? fields = null)
         {
-            var checkIfPackgeExist = await _repoManager.Package.GetPacakgeByNameAsync(packageDtoForCreation.PackageName!, false);
+            var carCategoryCheck = await _repoManager.CarCategory.GetCarCategoryAsync(packageDtoForCreation.CarCategoryId!.Value, trackChanges: true);
+            if (carCategoryCheck is null)
+                return Result<ExpandoObject>.NotFound(CarCategoryErrors.GetCarCategoryNotFoundError(packageDtoForCreation.CarCategoryId!.Value));
 
-            if (checkIfPackgeExist is not null)
-                return Result<PackageDto>.BadRequest(PackageErrors.GetPackageAlreadyExistError(packageDtoForCreation.PackageName!));
+            var serviceListCheck = await _repoManager.Service.GetServiceByIdsAsync(packageDtoForCreation.ServiceList!, trackChanges: true);
+            if (serviceListCheck.Count() != packageDtoForCreation.ServiceList!.Count())
+                return Result<ExpandoObject>.NotFound(ServiceErrors.GetServicesFoundNotMatchWithIdsError(packageDtoForCreation.ServiceList!));
 
-            var checkIfCarCategoryExist = await _repoManager.CarCategory.GetCarCategoryAsync(packageDtoForCreation.CarCategoryId!.Value, false);
-            if (checkIfCarCategoryExist is null)
-                return Result<PackageDto>.NotFound(CarCategoryErrors.GetCarCategoryNotFoundError(packageDtoForCreation.CarCategoryId.Value));
+            var packageWithNameExistCheck = await _repoManager.Package.GetPacakgeByNameAsync(packageDtoForCreation.PackageName!, trackChanges: false);
+            if (packageWithNameExistCheck is not null)
+                return Result<ExpandoObject>.Conflict(PackageErrors.GetPackageAlreadyExistError(packageDtoForCreation.PackageName!));
 
-            var packageEntity = _mapper.Map<Package>(packageDtoForCreation);
+            var package = _mapper.Map<Package>(packageDtoForCreation);
             var packageHistory = _mapper.Map<PackageHistory>(packageDtoForCreation);
+            var packageConditions = _mapper.Map<IEnumerable<PackageCondition>>(packageDtoForCreation.PackageConditions);
+
+            if (imageTuples is not null)
+            {
+                var packageImages = new List<PackageImage>();
+                foreach (var imageItem in imageTuples)
+                {
+                    var packageImage = new PackageImage
+                    {
+                        ImageLink = imageItem.ImageLink,
+                        ImageId = imageItem.ImageId
+                    };
+                    packageImages.Add(packageImage);
+                }
+                package.PackageImages = packageImages;
+            }
 
             packageHistory.Status = PackageHistoryStatus.Active;
             packageHistory.CreatedAt = DateTimeOffset.UtcNow.SEAsiaStandardTime();
+            packageHistory.Services = [.. serviceListCheck];
 
-            if (packageDtoForCreation.ServiceList is not null && packageDtoForCreation.ServiceList.Any())
-            {
-                var serviceList = await _repoManager.Service.GetByIdsAsync(packageDtoForCreation.ServiceList!, true);
-                if (!serviceList.Any())
-                    return Result<PackageDto>.NotFound(ServiceErrors.GetServiceNotFoundWithIdError(packageDtoForCreation.ServiceList!.ToList()));
+            package.CarCategory = carCategoryCheck;
+            package.PackageHistories.Add(packageHistory);
+            package.PackageConditions = [.. packageConditions];
+            package.CreatedAt = DateTimeOffset.UtcNow.SEAsiaStandardTime();
+            package.UpdatedAt = DateTimeOffset.UtcNow.SEAsiaStandardTime();
 
-                if (serviceList.Count() != packageDtoForCreation.ServiceList!.Count())
-                    return Result<PackageDto>.NotFound(ServiceErrors.GetServicesFoundNotMatchWithIdsError(packageDtoForCreation.ServiceList!.ToList()));
-                var services = packageHistory.Services.ToList();
-                services.AddRange(serviceList);
-                packageHistory.Services = services;
-            }
 
-            if (imageTuples != null && imageTuples.Any())
-            {
-                packageEntity.PackageImages = [.. imageTuples.Select(imageTuple => new PackageImage
-                {
-                    ImageId = imageTuple.publicId,
-                    ImageLink = imageTuple.absoluteUrl
-                })];
-            }
-            packageEntity.CreatedAt = DateTimeOffset.UtcNow.SEAsiaStandardTime();
-            packageEntity.UpdatedAt = DateTimeOffset.UtcNow.SEAsiaStandardTime();
-            packageEntity.Status = PackageStatus.Active;
-
-            packageEntity.PackageHistories.Add(packageHistory);
-            await _repoManager.Package.CreateAsync(packageEntity);
+            await _repoManager.Package.CreateAsync(package);
             await _repoManager.SaveAsync();
-            packageEntity.CarCategory = checkIfCarCategoryExist;
 
-            var packageDtoToReturn = _mapper.Map<PackageDto>(packageEntity);
+            var packageDto = _mapper.Map<PackageDto>(package);
 
-            return Result<PackageDto>.Created(packageDtoToReturn);
+            var packageDtoShaped = _dataShaper.Package.ShapeData(packageDto, fields);
+
+            return Result<ExpandoObject>.Ok(packageDtoShaped);
         }
 
-        public async Task<Result<PackageDto>> GetPackageByIdAsync(Guid id, bool trackChanges)
+        public async Task<Result<ExpandoObject>> GetPackageByIdAsync(Guid id, bool trackChanges, string? fields = null)
         {
-            var checkIfPackageExist = await _repoManager.Package.GetPackageByIdAsync(id, false);
+            var package = await _repoManager.Package.GetPackageByIdAsync(id, trackChanges);
+            if (package is null)
+                return Result<ExpandoObject>.NotFound(PackageErrors.GetPackageNotFoundError(id));
 
-            if (checkIfPackageExist is null)
-                return Result<PackageDto>.NotFound(PackageErrors.GetPackageNotFoundError(id));
+            var packageDto = _mapper.Map<PackageDto>(package);
 
-            var packageDto = _mapper.Map<PackageDto>(checkIfPackageExist);
+            var packageDtoShaped = _dataShaper.Package.ShapeData(packageDto, fields);
 
-            return Result<PackageDto>.Ok(packageDto);
+            return Result<ExpandoObject>.Ok(packageDtoShaped);
 
         }
 
-        public async Task<Result<IEnumerable<PackageDto>>> GetPackagesAsync(PackageParameters packageParameters, bool trackChanges)
+        public async Task<Result<IEnumerable<ExpandoObject>>> GetPackagesAsync(PackageParameters packageParameters, bool trackChanges)
         {
             var packages = await _repoManager.Package.GetPackagesAsync(packageParameters, trackChanges);
 
-            var packageDtos = _mapper.Map<IEnumerable<PackageDto>>(packages);
+            var packageDto = _mapper.Map<IEnumerable<PackageDto>>(packages);
 
-            return Result<IEnumerable<PackageDto>>.Ok(packageDtos, packages.MetaData);
+            var packageDtoShaped = _dataShaper.Package.ShapeData(packageDto, packageParameters.Fields);
+
+            return Result<IEnumerable<ExpandoObject>>.Ok(packageDtoShaped, packages.MetaData);
         }
 
-        public Task<Result> RemovePacakge(Guid id)
+        public async Task<Result> RemovePacakge(Guid id)
         {
-            throw new NotImplementedException();
-        }
-
-        public async Task<Result> UpdatePackage(Guid id, PackageDtoForUpdate packageDtoForUpdate, List<(string? publicId, string? absoluteUrl)>? imageTuples = null)
-        {
-            var checkIfPackageExist = await _repoManager.Package.GetPackageByIdAsync(id, true);
-            if (checkIfPackageExist is null)
+            var package = await _repoManager.Package.GetPackageByIdAsync(id, true);
+            if (package is null)
                 return Result.NotFound(PackageErrors.GetPackageNotFoundError(id));
 
-            var checkIfPackageExistWithName = await _repoManager.Package.GetPacakgeByNameAsync(packageDtoForUpdate.PackageName!, false);
-
-            if (checkIfPackageExistWithName is not null && !checkIfPackageExistWithName.Id.Equals(id))
-                return Result<PackageDto>.BadRequest(PackageErrors.GetPackageAlreadyExistError(packageDtoForUpdate.PackageName!));
-
-            var checkIfCarCategoryExist = await _repoManager.CarCategory.GetCarCategoryAsync(packageDtoForUpdate.CarCategoryId!.Value, false);
-            if (checkIfCarCategoryExist is null)
-                return Result<PackageDto>.NotFound(CarCategoryErrors.GetCarCategoryNotFoundError(packageDtoForUpdate.CarCategoryId.Value));
-
-            _mapper.Map(packageDtoForUpdate, checkIfPackageExist);
-
-            var recentPackageHistory = checkIfPackageExist.PackageHistories.FirstOrDefault();
-            var serviceListId = packageDtoForUpdate.ServiceList;
-
-            if (recentPackageHistory is not null && serviceListId is not null && serviceListId.Any() && recentPackageHistory!.Services is not null)
-            {
-                //recentPackageHistory = await _repoManager.PackageHistory.GetPackageHistoryByIdAsync(recentPackageHistory.Id, true);
-                var recentServiceListId = recentPackageHistory!.Services.Select(e => e.Id);
-
-                if (((serviceListId.Except(recentServiceListId).Any() || recentServiceListId.Except(serviceListId).Any()) ||
-                        (!recentPackageHistory.PackagePrice.Equals(packageDtoForUpdate.PackagePrice) ||
-                         !recentPackageHistory.ValidityPeriod.Equals(packageDtoForUpdate.ValidityPeriod) ||
-                         !recentPackageHistory.TimeUnit.Equals(packageDtoForUpdate.TimeUnit) ||
-                         !recentPackageHistory.UsageLimit.Equals(packageDtoForUpdate.UsageLimit))
-                    ))
-                {
-                    var packageHistory = _mapper.Map<PackageHistory>(packageDtoForUpdate);
-                    packageHistory.Status = PackageHistoryStatus.Active;
-                    packageHistory.CreatedAt = DateTimeOffset.UtcNow.SEAsiaStandardTime();
-                    recentPackageHistory.Status = PackageHistoryStatus.Inactive;
-
-                    var serviceList = await _repoManager.Service.GetByIdsAsync(serviceListId, true);
-                    if (!serviceList.Any())
-                        return Result<PackageDto>.NotFound(ServiceErrors.GetServiceNotFoundWithIdError(serviceListId));
-
-                    if (serviceList.Count() != serviceListId.Count())
-                        return Result<PackageDto>.NotFound(ServiceErrors.GetServicesFoundNotMatchWithIdsError(serviceListId));
-                    var services = packageHistory.Services.ToList();
-                    services.AddRange(serviceList);
-                    packageHistory.Services = services;
-                    packageHistory.PackageId = checkIfPackageExist.Id;
-                    await _repoManager.PackageHistory.CreateAsync(packageHistory);
-                    checkIfPackageExist.PackageHistories.Add(packageHistory);
-                }
-            }
-            else if (recentPackageHistory is null && serviceListId is not null && serviceListId.Any())
-            {
-                var packageHistory = _mapper.Map<PackageHistory>(packageDtoForUpdate);
-                packageHistory.Status = PackageHistoryStatus.Active;
-                packageHistory.CreatedAt = DateTimeOffset.UtcNow.SEAsiaStandardTime();
-
-                var serviceList = await _repoManager.Service.GetByIdsAsync(serviceListId, true);
-                if (!serviceList.Any())
-                    return Result<PackageDto>.NotFound(ServiceErrors.GetServiceNotFoundWithIdError(serviceListId));
-
-                if (serviceList.Count() != serviceListId.Count())
-                    return Result<PackageDto>.NotFound(ServiceErrors.GetServicesFoundNotMatchWithIdsError(serviceListId));
-                var services = packageHistory.Services.ToList();
-                services.AddRange(serviceList);
-                packageHistory.Services = services;
-                packageHistory.PackageId = checkIfPackageExist.Id;
-                await _repoManager.PackageHistory.CreateAsync(packageHistory);
-                checkIfPackageExist.PackageHistories.Add(packageHistory);
-            }
-            //if (packageDtoForUpdate.PackageConditionsForUpdate is not null && packageDtoForUpdate.PackageConditionsForUpdate.Any())
-            //{
-            //    var packageConditions = await _repoManager.PackageCondition.GetPackageConditionsByPackageIdAsync(id, true);
-
-            //    _mapper.Map(packageDtoForUpdate.PackageConditionsForUpdate, packageConditions);
-            //}
-
-            checkIfPackageExist.UpdatedAt = DateTimeOffset.UtcNow.SEAsiaStandardTime();
+            _repoManager.Package.Delete(package);
             await _repoManager.SaveAsync();
 
-            return Result.NoContent();
+            return Result.Ok();
+        }
+
+        public async Task<Result> UpdatePackage(Guid id, PackageDtoForUpdate packageDtoForUpdate)
+        {
+            var package = await _repoManager.Package.GetPackageByIdAsync(id, true);
+            if (package is null)
+                return Result.NotFound(PackageErrors.GetPackageNotFoundError(id));
+
+            var carCategoryCheck = await _repoManager.CarCategory.GetCarCategoryAsync(packageDtoForUpdate.CarCategoryId!.Value, trackChanges: true);
+            if (carCategoryCheck is null)
+                return Result.NotFound(CarCategoryErrors.GetCarCategoryNotFoundError(packageDtoForUpdate.CarCategoryId!.Value));
+
+            var packageWithNameExistCheck = await _repoManager.Package.GetPacakgeByNameAsync(packageDtoForUpdate.PackageName!, trackChanges: false);
+            if (packageWithNameExistCheck is not null && !packageWithNameExistCheck.Id.Equals(id))
+                return Result.Conflict(PackageErrors.GetPackageAlreadyExistError(packageDtoForUpdate.PackageName!));
+
+            var packageHistoryForUpdate = _mapper.Map<PackageHistory>(packageDtoForUpdate);
+            var currentPackageHistory = package.PackageHistories.FirstOrDefault();
+
+            if (currentPackageHistory is not null &&
+                (!currentPackageHistory.PackagePrice.Equals(packageDtoForUpdate.PackagePrice) ||
+                !currentPackageHistory.TimeUnit.Equals(packageDtoForUpdate.TimeUnit) ||
+                !currentPackageHistory.UsageLimit.Equals(packageDtoForUpdate.UsageLimit) ||
+                !currentPackageHistory.ValidityPeriod.Equals(packageDtoForUpdate.ValidityPeriod) ||
+                currentPackageHistory.Status.Equals(PackageHistoryStatus.Inactive)
+                ))
+            {
+                currentPackageHistory.Status = PackageHistoryStatus.Inactive;
+                var currentPackageHistoryServices = await _repoManager.Service.GetServiceByPackageHistoryIdAsync(currentPackageHistory.Id, true);
+
+                packageHistoryForUpdate.Status = PackageHistoryStatus.Active;
+                packageHistoryForUpdate.CreatedAt = DateTimeOffset.UtcNow.SEAsiaStandardTime();
+                packageHistoryForUpdate.Services = [.. currentPackageHistoryServices];
+                packageHistoryForUpdate.PackageId = id;
+                await _repoManager.PackageHistory.CreateAsync(packageHistoryForUpdate);
+                package.PackageHistories.Add(packageHistoryForUpdate);
+            }
+            else if (currentPackageHistory is null)
+            {
+                return Result.Conflict(PackageErrors.GetPackageDoesNotHaveAnyPackageHistoryError(id));
+            }
+
+
+            _mapper.Map(packageDtoForUpdate, package);
+            package.UpdatedAt = DateTimeOffset.UtcNow.SEAsiaStandardTime();
+            await _repoManager.SaveAsync();
+
+            return Result.Ok();
         }
     }
 }

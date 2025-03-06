@@ -31,6 +31,7 @@
         IPackageFeedBackService PackageFeedBackService { get; }
         IPackageUsageService PackageUsageService { get; }
         IPackageUsageDetailService PackageUsageDetailService { get; }
+        IPackageImageService PackageImageService { get; }
 
     }
 }

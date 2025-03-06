@@ -22,7 +22,8 @@ namespace GarageManagementAPI.Presentation.Controllers
             {
                 HttpStatusCode.NotFound => NotFound(result),
                 HttpStatusCode.BadRequest => BadRequest(result),
-                HttpStatusCode.Unauthorized => Unauthorized(result)
+                HttpStatusCode.Unauthorized => Unauthorized(result),
+                HttpStatusCode.Conflict => Conflict(result)
                 ,
                 _ => throw new NotImplementedException()
             };

@@ -26,10 +26,5 @@ namespace GarageManagementAPI.Shared.DataTransferObjects.Package
         public TimeUnit TimeUnit { get; set; }
 
         public int UsageLimit { get; set; }
-
-        public IEnumerable<Guid>? ServiceList { get; set; }
-
-        public IEnumerable<PackageConditionDtoForCreation>? PackageConditions { get; set; }
-
     }
 }
