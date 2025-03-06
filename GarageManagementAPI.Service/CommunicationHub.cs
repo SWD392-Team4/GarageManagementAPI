@@ -207,6 +207,11 @@ namespace api.Services
             await db.ListRightPushAsync(chatRoomKey, updatedMessages.Select(msg => (RedisValue)msg).ToArray());
         }
 
+        public async Task PingServer()
+        {
+            await Clients.Caller.SendAsync("KeepAlive");
+        }
+
 
         public override Task OnDisconnectedAsync(Exception exception)
         {

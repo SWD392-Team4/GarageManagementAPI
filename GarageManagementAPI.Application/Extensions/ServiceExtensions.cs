@@ -290,7 +290,7 @@ namespace GarageManagementAPI.Application.Extensions
             services.AddSignalR(options =>
             {
                 options.KeepAliveInterval = TimeSpan.FromSeconds(15); 
-                options.ClientTimeoutInterval = TimeSpan.FromHours(1); 
+                options.ClientTimeoutInterval = TimeSpan.FromSeconds(60); 
             });
         }
 
