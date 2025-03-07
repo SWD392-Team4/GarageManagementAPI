@@ -41,7 +41,7 @@ namespace GarageManagementAPI.Service
             goodsIssuedEntity.UpdatedAt = DateTimeOffset.UtcNow.SEAsiaStandardTime();
             goodsIssuedEntity.Status = GoodsIssuedStatus.Inactive;
 
-
+            Console.WriteLine(goodsIssuedEntity.InvoiceCode);
             await _repoManager.GoodsIssued.CreateGoodsIssuedAsync(goodsIssuedEntity);
             await _repoManager.SaveAsync();
             var goodsIssuedDtoToReturn = _mapper.Map<GoodsIssuedDto>(goodsIssuedEntity);

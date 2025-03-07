@@ -16,6 +16,7 @@ using GarageManagementAPI.Shared.DataTransferObjects.SupplierContact;
 using GarageManagementAPI.Shared.DataTransferObjects.GoodsReceived;
 using GarageManagementAPI.Shared.DataTransferObjects.GoodsReceivedDetail;
 using GarageManagementAPI.Shared.DataTransferObjects.GoodsIssued;
+using GarageManagementAPI.Shared.DataTransferObjects.GoodsIssuedDetail;
 
 namespace GarageManagementAPI.Service.Contracts
 {
@@ -38,6 +39,7 @@ namespace GarageManagementAPI.Service.Contracts
         IDataShaper<CarPartCategoryDto> CarPartCategory { get; }
         IDataShaper<ServiceFeedBackDto> ServiceFeedback { get; }
         IDataShaper<SupplierContactDto> SupplierContact { get; }
+        IDataShaper<GoodsIssuedDetailDto> GoodsIssuedDetail { get; }
         IDataShaper<GoodsReceivedDetailDto> GoodsReceivedDetail { get; }
     }
 }

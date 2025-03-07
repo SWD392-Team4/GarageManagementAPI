@@ -25,6 +25,7 @@
         IProductCategoryService ProductCategoryService { get; }
         ICarPartCategoryService CarPartCategoryService { get; }
         ISupplierContactService SupplierContactService { get; }
+        IGoodsIssuedDetailService GoodsIssuedDetailService { get; }
         IGoodsReceivedDetailService GoodsReceivedDetailService { get; }
 
     }

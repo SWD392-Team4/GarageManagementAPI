@@ -9,11 +9,10 @@ namespace GarageManagementAPI.Shared.ErrorsConstant.GoodsReceived
         public const string GoodsReceivedRequired = "The Goods Received name is required.";
         public const string GoodsReceivedReferenName = "The goods received reference name {0} already exist";
         public const string GoodsReceivedInvoiceCode = "The goods received invoiceCode {0} already exist";
-        public const string GoodsReceivedStatusRequired = "The Goods Received status is required";
-        public const string GoodsReceivedStatusInvalid = "Invalid Goods Received status.";
-        public const string GoodsReceivedNotFoundWithId = "Can not found Goods Received with id {0}.";
-        public const string GoodsReceivedNotFoundWithBarcode = "Can not found Goods Received with barcode {0}.";
         public const string GoodsReceivedFullAdressAlreadyExist = "Goods received with address {0}, province {1}, district {2} and wards {3} already existed.";
+        public const string GoodsReceivedWithSupplierContactIdExist = "Goods received with supplier contactId {0} doesn't exist.";
+        public const string WareHourseIsNotFound = "WareHourse with id {0} could not be found.";
+        public const string MangersNotFound = "CreatedWarehouseManager with id {0} could not be found.";
         #endregion
 
         #region static method
@@ -29,10 +28,30 @@ namespace GarageManagementAPI.Shared.ErrorsConstant.GoodsReceived
         public static ErrorsResult GetGoodsReceivedNotFoundIdError(Guid goodsReceivedId) =>
         new()
         {
-            Code = nameof(GoodsReceivedNotFoundWithId),
-            Description = string.Format(GoodsReceivedNotFoundWithId, goodsReceivedId)
+            Code = nameof(GoodsReceivedNotFound),
+            Description = string.Format(GoodsReceivedNotFound, goodsReceivedId)
         };
 
+        public static ErrorsResult GetGoodsReceivedWithSupplierContactNotFoundIdError(Guid supplierContactId) =>
+new()
+{
+    Code = nameof(GoodsReceivedWithSupplierContactIdExist),
+    Description = string.Format(GoodsReceivedWithSupplierContactIdExist, supplierContactId)
+};
+
+        public static ErrorsResult GetWareHourseIsNotFoundWithIdError(Guid wareHourseId) =>
+new()
+{
+Code = nameof(WareHourseIsNotFound),
+Description = string.Format(WareHourseIsNotFound, wareHourseId)
+};
+
+        public static ErrorsResult GetMangerIsNotFoundWithIdError(Guid managerId) =>
+   new()
+   {
+       Code = nameof(MangersNotFound),
+       Description = string.Format(MangersNotFound, managerId)
+   };
         public static ErrorsResult GetGoodsReceivedRefenrenNameIsExistError(string refenrenName) =>
          new()
          {
@@ -48,13 +67,13 @@ namespace GarageManagementAPI.Shared.ErrorsConstant.GoodsReceived
          };
 
         public static ErrorsResult GetGoodsReceivedRefenrenAddressIsExistError(string address, string province, string district, string wards) =>
-                new ()
+                new()
                 {
                     Code = nameof(GoodsReceivedFullAdressAlreadyExist),
                     Description = string.Format(GoodsReceivedFullAdressAlreadyExist, address, province, district, wards)
                 };
 
 
-    #endregion
-}
+        #endregion
+    }
 }

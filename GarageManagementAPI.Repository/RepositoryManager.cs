@@ -26,6 +26,7 @@ namespace GarageManagementAPI.Repository
         private readonly Lazy<ICarPartCategoryRepository> _carPartCategoryRepository;
         private readonly Lazy<IServiceFeedBackRepository> _serviceFeedBackRepository;
         private readonly Lazy<ISupplierContactRepository> _supplierContactRepository;
+        private readonly Lazy<IGoodsIssuedDetailRepository> _goodsIssuedDetaiRepository;
         private readonly Lazy<IGoodsReceivedDetailRepository> _goodsReceivedDetailRepository;
 
         public RepositoryManager(RepositoryContext repositoryContext)
@@ -51,6 +52,7 @@ namespace GarageManagementAPI.Repository
             _carPartCategoryRepository = new Lazy<ICarPartCategoryRepository>(() => new CarPartCategoryRepository(repositoryContext));
             _serviceFeedBackRepository = new Lazy<IServiceFeedBackRepository>(() => new ServiceFeedBackRepository(repositoryContext));
             _supplierContactRepository = new Lazy<ISupplierContactRepository>(() => new SupplierContactRepository(repositoryContext));
+            _goodsIssuedDetaiRepository = new Lazy<IGoodsIssuedDetailRepository>(() => new GoodsIssuedDetailRepository(repositoryContext));
             _goodsReceivedDetailRepository = new Lazy<IGoodsReceivedDetailRepository>(() => new GoodsReceivedDetailRepository(repositoryContext));
         }
 
@@ -74,6 +76,7 @@ namespace GarageManagementAPI.Repository
         public IProductCategoryRepository ProductCategory => _productCategoryRepository.Value;
         public ICarPartCategoryRepository CarPartCategory => _carPartCategoryRepository.Value;
         public ISupplierContactRepository SupplierContact => _supplierContactRepository.Value;
+        public IGoodsIssuedDetailRepository GoodsIssuedDetail => _goodsIssuedDetaiRepository.Value;
         public IGoodsReceivedDetailRepository GoodsReceivedDetail => _goodsReceivedDetailRepository.Value;
 
 
