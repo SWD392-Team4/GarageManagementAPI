@@ -15,6 +15,8 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
@@ -285,9 +287,12 @@ namespace GarageManagementAPI.Application.Extensions
             });
         }
 
-        public static void ConfigureSignalR(this IServiceCollection services)
+        public static void ConfigureSignalR(this IServiceCollection services, IConfiguration configuration) 
         {
-            services.AddSignalR().AddAzureSignalR();
+            services.AddSignalR().AddAzureSignalR(options =>
+            {
+                options.ConnectionString = configuration["Azure:SignalR:ConnectionString"];
+            });
         }
 
         public static void ConfigureValidator(this IServiceCollection services)
