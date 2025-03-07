@@ -8,7 +8,7 @@ namespace GarageManagementAPI.Repository.Contracts
         Task<GoodsIssued?> GetGoodsIssuedAsync(Guid goodsIssuedId, bool trackChanges, string? include = default);
         Task<GoodsIssued?> GetGoodsIssuedByIdAndReferenceNumberAsync(string referenceNumber, Guid? goodsIssuedId, bool trackChanges);
         Task<PagedList<GoodsIssued>> GetGoodsIssuedsAsync(GoodsIssuedParameters goodsIssuedParameters, bool trackChanges, string? include = default);
-        Task CreateGoodsIssuedAsync(GoodsIssued goodsIssued);
+        public Task CreateGoodsIssuedAsync(GoodsIssued goodsIssued);
         void UpdateGoodsIssuedAsync(GoodsIssued goodsIssued);
     }
 }

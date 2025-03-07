@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using GarageManagementAPI.Shared.Extension; 
+using GarageManagementAPI.Shared.Extension;
 using GarageManagementAPI.Service.Contracts;
 using GarageManagementAPI.Shared.RequestFeatures;
 using GarageManagementAPI.Shared.DataTransferObjects.GoodsIssued;
@@ -40,9 +40,9 @@ namespace GarageManagementAPI.Presentation.Controllers
 
 
         [HttpPost(Name = "CreateGoodsIssued")]
-        public async Task<IActionResult> CreateGoodsIssued([FromBody] GoodsIssuedDtoForCreation GoodsIssuedDtoForCreation)
+        public async Task<IActionResult> CreateGoodsIssued([FromBody] GoodsIssuedDtoForCreation goodsIssuedDtoForCreation)
         {
-            var goodsIssuedResult = await _service.GoodsIssuedService.CreateGoodsIssuedAsync(GoodsIssuedDtoForCreation);
+            var goodsIssuedResult = await _service.GoodsIssuedService.CreateGoodsIssuedAsync(goodsIssuedDtoForCreation);
 
             return goodsIssuedResult.Map(
                 onSuccess: result =>

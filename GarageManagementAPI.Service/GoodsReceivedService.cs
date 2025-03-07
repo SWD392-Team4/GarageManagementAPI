@@ -9,6 +9,9 @@ using GarageManagementAPI.Repository.Contracts;
 using GarageManagementAPI.Shared.RequestFeatures;
 using GarageManagementAPI.Shared.Enums.SystemStatuss;
 using GarageManagementAPI.Shared.DataTransferObjects.GoodsReceived;
+using GarageManagementAPI.Shared.DataTransferObjects.GoodsIssued;
+using GarageManagementAPI.Shared.ErrorsConstant.GoodsIssued;
+using GarageManagementAPI.Shared.ErrorsConstant.GoodsReceived;
 
 namespace GarageManagementAPI.Service
 {
@@ -28,7 +31,9 @@ namespace GarageManagementAPI.Service
         public async Task<Result<GoodsReceivedDto>> CreateGoodsReceivedAsync(GoodsReceivedDtoForCreation goodsReceivedDtoForCreation)
         {
             var goodsReceivedEntity = _mapper.Map<GoodsReceived>(goodsReceivedDtoForCreation);
-
+            var createdWarehouseManagerResult = await GetAndCheckIfCreatedWareHouseManagerIdNotExist(goodsReceivedDtoForCreation.CreatedWarehouseManagerId);
+            var wareHouseResult = await GetAndCheckIfWarehouseIdIsNotExist(goodsReceivedDtoForCreation.WarehouseId);
+            var supplierContactResult = await GetAndCheckIfSupplierContactIdNotExist(goodsReceivedDtoForCreation.SupplierContactId);
             var addressResult = await GetAndCheckIfGoodsReceivedExistByAddressCode(goodsReceivedEntity);
             var invoiceResult = await GetAndCheckIfGoodsReceivedExistByInvoiceCode(goodsReceivedEntity.InvoiceCode);
             var numberResult = await GetAndCheckIfGoodsReceivedExistByRefereneceNumber(goodsReceivedEntity.RefereneceNumber);
@@ -38,7 +43,9 @@ namespace GarageManagementAPI.Service
                 return Result<GoodsReceivedDto>.NotFound(invoiceResult.Errors!);
             if (!numberResult.IsSuccess)
                 return Result<GoodsReceivedDto>.NotFound(numberResult.Errors!);
-
+            if (wareHouseResult) return Result<GoodsReceivedDto>.BadRequest([GoodsReceivedErrors.GetMangerIsNotFoundWithIdError(goodsReceivedDtoForCreation.WarehouseId)]);
+            if (createdWarehouseManagerResult) return Result<GoodsReceivedDto>.BadRequest([GoodsReceivedErrors.GetMangerIsNotFoundWithIdError(goodsReceivedDtoForCreation.WarehouseId)]);
+            if (supplierContactResult) return Result<GoodsReceivedDto>.BadRequest([GoodsReceivedErrors.GetGoodsReceivedWithSupplierContactNotFoundIdError(goodsReceivedDtoForCreation.SupplierContactId)]);
             goodsReceivedEntity.CreatedAt = DateTimeOffset.UtcNow.SEAsiaStandardTime();
             goodsReceivedEntity.UpdatedAt = DateTimeOffset.UtcNow.SEAsiaStandardTime();
             goodsReceivedEntity.Status = GoodsReceivedStatus.Inactive;
@@ -81,7 +88,9 @@ namespace GarageManagementAPI.Service
         public async Task<Result> UpdateGoodsReceived(Guid goodsReceivedId, GoodsReceivedDtoForUpdate goodsReceivedDtoForUpdate, bool trackChanges)
         {
             var goodsReceived= _mapper.Map<GoodsReceived>(goodsReceivedDtoForUpdate);
-
+            var createdWarehouseManagerResult = await GetAndCheckIfCreatedWareHouseManagerIdNotExist(goodsReceivedDtoForUpdate.CreatedWarehouseManagerId);
+            var wareHouseResult = await GetAndCheckIfWarehouseIdIsNotExist(goodsReceivedDtoForUpdate.WarehouseId);
+            var supplierContactResult = await GetAndCheckIfSupplierContactIdNotExist(goodsReceivedDtoForUpdate.SupplierContactId);
             var addressResult = await GetAndCheckIfGoodsReceivedExistByAddressCode(goodsReceived, goodsReceivedId);
             var invoiceResult = await GetAndCheckIfGoodsReceivedExistByInvoiceCode(goodsReceived.InvoiceCode, goodsReceivedId);
             var numberResult = await GetAndCheckIfGoodsReceivedExistByRefereneceNumber(goodsReceived.RefereneceNumber, goodsReceivedId);
@@ -95,6 +104,9 @@ namespace GarageManagementAPI.Service
                 return Result<GoodsReceivedDto>.NotFound(invoiceResult.Errors!);
             if (!numberResult.IsSuccess)
                 return Result<GoodsReceivedDto>.NotFound(numberResult.Errors!);
+            if (wareHouseResult) return Result<GoodsReceivedDto>.BadRequest([GoodsReceivedErrors.GetMangerIsNotFoundWithIdError(goodsReceivedDtoForUpdate.WarehouseId)]);
+            if (createdWarehouseManagerResult) return Result<GoodsReceivedDto>.BadRequest([GoodsReceivedErrors.GetMangerIsNotFoundWithIdError(goodsReceivedDtoForUpdate.CreatedWarehouseManagerId)]);
+            if (supplierContactResult) return Result<GoodsReceivedDto>.BadRequest([GoodsReceivedErrors.GetGoodsReceivedWithSupplierContactNotFoundIdError(goodsReceivedDtoForUpdate.SupplierContactId)]);
             var goodsReceivedEntity = goodsReceivedResult.GetValue<GoodsReceived>();
 
             _mapper.Map(goodsReceivedDtoForUpdate, goodsReceivedEntity);
@@ -134,6 +146,27 @@ namespace GarageManagementAPI.Service
                 return goodsReceived.NotFound(goodsReceivedId);
 
             return goodsReceived.OkResult();
+        }
+
+        private async Task<bool> GetAndCheckIfWarehouseIdIsNotExist(Guid createdWareHouseManagerId)
+        {
+            var createdWareHouseManager = await _repoManager.Workplace.GetWorkplaceByIdAsync(createdWareHouseManagerId, false);
+            if (createdWareHouseManager == null) return true;
+            return false;
+        }
+
+        private async Task<bool> GetAndCheckIfCreatedWareHouseManagerIdNotExist(Guid createdWareHouseManagerId)
+        {
+            var createdWareHouseManager = await _repoManager.User.GetUserByIdAsync(createdWareHouseManagerId, false);
+            if (createdWareHouseManager == null) return true;
+            return false;
+        }
+
+        private async Task<bool> GetAndCheckIfSupplierContactIdNotExist(Guid supplierContactId)
+        {
+            var createdWareHouseManager = await _repoManager.SupplierContact.GetSupplierContactAsync(supplierContactId, false);
+            if (createdWareHouseManager == null) return true;
+            return false;
         }
     }
 }

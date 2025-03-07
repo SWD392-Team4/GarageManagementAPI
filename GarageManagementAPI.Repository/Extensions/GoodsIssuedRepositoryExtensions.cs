@@ -10,7 +10,7 @@ namespace GarageManagementAPI.Repository.Extensions
     {
         public static IQueryable<GoodsIssued> SearchByTotalCost(this IQueryable<GoodsIssued> goodsIssueds, decimal? minPrice, decimal? maxPrice)
         {
-            if (!minPrice.HasValue || !maxPrice.HasValue)
+            if (!maxPrice.HasValue)
             {
                 return goodsIssueds;
             }

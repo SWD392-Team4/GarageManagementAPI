@@ -34,6 +34,7 @@ namespace GarageManagementAPI.Service
         private readonly Lazy<ICarPartCategoryService> _carPartCategoryService;
         private readonly Lazy<ISupplierContactService> _supplierContactService;
         private readonly Lazy<IServiceFeedbackService> _serviceFeedbackService;
+        private readonly Lazy<IGoodsIssuedDetailService> _goodsIssuedDetailService;
         private readonly Lazy<IGoodsReceivedDetailService> _goodsReceivedDetailService;
 
         public ServiceManager(
@@ -189,6 +190,13 @@ namespace GarageManagementAPI.Service
               dataShaper));
             _mediaService = new Lazy<IMediaService>(() =>
             new MediaService(cloudinaryConfiguration));
+            _goodsIssuedDetailService = new Lazy<IGoodsIssuedDetailService>(() =>
+             new GoodsIssuedDetailService(
+             repositoryManager,
+             mapper,
+             dataShaper));
+            _mediaService = new Lazy<IMediaService>(() =>
+            new MediaService(cloudinaryConfiguration));
         }
 
         public IUserService UserService => _userService.Value;
@@ -214,6 +222,7 @@ namespace GarageManagementAPI.Service
         public IProductCategoryService ProductCategoryService => _productCategoryService.Value;
         public ICarPartCategoryService CarPartCategoryService => _carPartCategoryService.Value;
         public ISupplierContactService SupplierContactService => _supplierContactService.Value;
+        public IGoodsIssuedDetailService GoodsIssuedDetailService => _goodsIssuedDetailService.Value;
         public IGoodsReceivedDetailService GoodsReceivedDetailService => _goodsReceivedDetailService.Value;
 
     }
