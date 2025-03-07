@@ -19,6 +19,7 @@ builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 builder.Services.ConfigureActionFilter();
 builder.Services.ConfigureRateLimitingOptions();
 builder.Services.AddAuthentication();
+builder.Services.ConfigureSignalR(builder.Configuration);
 builder.Services.ConfigureIdentity();
 builder.Services.ConfigureJWT(builder.Configuration);
 builder.Services.AddJwtConfiguration(builder.Configuration);
@@ -27,7 +28,6 @@ builder.Services.AddCloudinaryConfiguration(builder.Configuration);
 builder.Services.ConfigureSwagger();
 builder.Services.ConfigureValidator();
 builder.Services.ConfigureRedis(builder.Configuration);
-builder.Services.ConfigureSignalR(builder.Configuration);
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
