@@ -1,8 +1,7 @@
-using GarageManagementAPI.Service;
+using Microsoft.AspNetCore.SignalR;
 using GarageManagementAPI.Service.Contracts;
 using GarageManagementAPI.Shared.DataTransferObjects.CommunicationHub;
 using GarageManagementAPI.Entities.Models;
-using Microsoft.AspNetCore.SignalR;
 using Newtonsoft.Json;
 using StackExchange.Redis;
 using System.Security.Claims;
@@ -23,6 +22,11 @@ namespace api.Services
 
         public override async Task OnConnectedAsync()
         {
+
+            var httpContext = Context.GetHttpContext();
+            var token = httpContext.Request.Query["access_token"];
+
+            Console.WriteLine($"Received Token: {token}");
             var userId = GetUserId();
             Console.WriteLine(userId);
             if (string.IsNullOrEmpty(userId))
