@@ -1,6 +1,7 @@
 ﻿using GarageManagementAPI.Entities.Models;
 using GarageManagementAPI.Repository.Contracts;
 using GarageManagementAPI.Repository.Extensions;
+using GarageManagementAPI.Shared.Enums;
 using GarageManagementAPI.Shared.RequestFeatures;
 using Microsoft.EntityFrameworkCore;
 
@@ -11,14 +12,30 @@ namespace GarageManagementAPI.Repository
         public PackageConditionRepository(RepositoryContext repositoryContext) : base(repositoryContext)
         {
         }
-        public async Task<PackageCondition?> GetPackageConditionByIdAsync(Guid id, bool trackChanges)
+
+        public async Task CreateAsync(Guid packageId, PackageCondition packageCondition)
         {
-            var packageCondition = await FindByCondition(p => p.Id.Equals(id), trackChanges).SingleOrDefaultAsync();
+            packageCondition.PackageId = packageId;
+            await base.CreateAsync(packageCondition);
+        }
+        public async Task<PackageCondition?> GetPackageConditionAsync(Guid packageId, Guid packageConditionId, bool trackChanges)
+        {
+            var packageCondition = await FindByCondition(p => p.Id.Equals(packageConditionId) && p.PackageId.Equals(packageId), trackChanges).SingleOrDefaultAsync();
             return packageCondition;
         }
-        public async Task<PagedList<PackageCondition>> GetPackageConditionsAsync(PackageConditionParameters packageConditionParameters, bool trackChanges)
+
+        public async Task<PackageCondition?> GetPackageConditionAsync(Guid packageId, bool trackChanges, PackageConditionType conditionType, int conditionValue)
         {
-            var packageConditions = await FindAll(trackChanges)
+            return await FindByCondition(
+                p => p.PackageId.Equals(packageId) && 
+                p.ConditionType.Equals(conditionType) && 
+                p.ConditionValue.Equals(conditionValue), trackChanges)
+                .SingleOrDefaultAsync();
+        }
+
+        public async Task<PagedList<PackageCondition>> GetPackageConditionsAsync(Guid packageId, PackageConditionParameters packageConditionParameters, bool trackChanges)
+        {
+            var packageConditions = await FindByCondition(p => p.PackageId.Equals(packageId), trackChanges)
                 .Sort(packageConditionParameters.OrderBy)
                 .Skip((packageConditionParameters.PageNumber - 1) * packageConditionParameters.PageSize)
                 .Take(packageConditionParameters.PageSize)
@@ -32,7 +49,7 @@ namespace GarageManagementAPI.Repository
                 packageConditionParameters.PageSize);
         }
 
-        public async Task<IEnumerable<PackageCondition>> GetPackageConditionsByPackageIdAsync(Guid packageId, bool trackChanges)
+        public async Task<IEnumerable<PackageCondition>> GetPackageConditionsAsync(Guid packageId, bool trackChanges)
         {
             return await FindByCondition(p => p.PackageId.Equals(packageId), trackChanges).ToListAsync();
         }

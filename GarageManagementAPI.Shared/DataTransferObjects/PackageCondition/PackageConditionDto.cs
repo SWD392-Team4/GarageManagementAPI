@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace GarageManagementAPI.Shared.DataTransferObjects.PackageCondition
 {
-    public record PackageConditionDto
+    public record PackageConditionDto : BaseDto<PackageConditionDto>
     {
         public Guid Id { get; set; }
 

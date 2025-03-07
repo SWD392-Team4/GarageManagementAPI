@@ -19,6 +19,7 @@ using GarageManagementAPI.Shared.DataTransferObjects.SupplierContact;
 using GarageManagementAPI.Shared.DataTransferObjects.GoodsReceivedDetail;
 using GarageManagementAPI.Shared.DataTransferObjects.PackageImage;
 using GarageManagementAPI.Shared.DataTransferObjects.Package;
+using GarageManagementAPI.Shared.DataTransferObjects.PackageCondition;
 
 namespace GarageManagementAPI.Service.DataShaping
 {
@@ -44,6 +45,7 @@ namespace GarageManagementAPI.Service.DataShaping
         private readonly Lazy<IDataShaper<GoodsReceivedDetailDto>> _goodsReceivedDetailShaper;
         private readonly Lazy<IDataShaper<PackageImageDto>> _packageImageShaper;
         private readonly Lazy<IDataShaper<PackageDto>> _packageShaper;
+        private readonly Lazy<IDataShaper<PackageConditionDto>> _packageConditionShaper;
         public DataShaperManager()
         {
             _workplaceShaper = new Lazy<IDataShaper<WorkplaceDto>>(
@@ -104,6 +106,9 @@ namespace GarageManagementAPI.Service.DataShaping
 
             _packageShaper = new Lazy<IDataShaper<PackageDto>>(
             () => new DataShaper<PackageDto>(PackageDto.PropertyInfos));
+
+            _packageConditionShaper = new Lazy<IDataShaper<PackageConditionDto>>(
+            () => new DataShaper<PackageConditionDto>(PackageConditionDto.PropertyInfos));
         }
         //.Value là thuộc tính của Lazy<T>, nó sẽ kích hoạt việc khởi tạo đối tượng nếu đối tượng đó chưa được khởi tạo trước đó. Nếu đối tượng đã được khởi tạo, thuộc tính .Value sẽ trả về đối tượng đó.
         public IDataShaper<UserDto> User => _userShaper.Value;
@@ -126,6 +131,7 @@ namespace GarageManagementAPI.Service.DataShaping
         public IDataShaper<GoodsReceivedDetailDto> GoodsReceivedDetail => _goodsReceivedDetailShaper.Value;
         public IDataShaper<PackageImageDto> PackageImage => _packageImageShaper.Value;
         public IDataShaper<PackageDto> Package => _packageShaper.Value;
+        public IDataShaper<PackageConditionDto> PackageCondition => _packageConditionShaper.Value;
 
     }
 }
