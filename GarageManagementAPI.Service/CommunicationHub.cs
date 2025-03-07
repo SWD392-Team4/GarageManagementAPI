@@ -20,6 +20,7 @@ namespace api.Services
             _repoManager = repoManager;
         }
 
+
         public override async Task OnConnectedAsync()
         {
 
@@ -60,7 +61,8 @@ namespace api.Services
             // Tạo đối tượng tin nhắn
             var chatMessage = new SignalRDto
             {
-                UserId = senderId,
+                SenderId = senderId,
+                ReceiverId = senderId,
                 Message = message,
                 Timestamp = DateTime.Now
             };
@@ -115,7 +117,8 @@ namespace api.Services
             string notificationKey = GetNotificationKey(receiver);
             var notification = new SignalRDto
             {
-                UserId = senderId,
+                SenderId = senderId,
+                ReceiverId = senderId,
                 Message = notificationMessage,
                 Timestamp = DateTime.Now
             };

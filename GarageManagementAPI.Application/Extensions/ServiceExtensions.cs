@@ -235,7 +235,7 @@ namespace GarageManagementAPI.Application.Extensions
                             context.HttpContext.Request.Path.StartsWithSegments("/chatHub"))
                         {
                             Console.WriteLine("accessToken: " + accessToken);
-                            context.Token = accessToken; // Gán token cho context
+                            context.Token = accessToken;
                             Console.WriteLine("Token: " + context.Token);
                         }
 

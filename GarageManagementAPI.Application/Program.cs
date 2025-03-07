@@ -2,6 +2,7 @@ using GarageManagementAPI.Application;
 using GarageManagementAPI.Application.Extensions;
 using Microsoft.AspNetCore.HttpOverrides;
 using api.Services;
+using GarageManagementAPI.Service;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -52,7 +53,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
 
-app.MapHub<CommunicationHub>("/chatHub").RequireCors("CorsPolicy");
+app.MapHub<CommunicationsHub>("/chatHub").RequireCors("CorsPolicy");     
 
 app.Run();
 
