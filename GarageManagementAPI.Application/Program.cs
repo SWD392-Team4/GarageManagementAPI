@@ -48,11 +48,11 @@ app.UseCors("CorsPolicy");
 app.UseRateLimiter();
 app.UseResponseCaching();
 
-app.MapHub<CommunicationHub>("/chatHub").RequireCors("CorsPolicy");
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
 
+app.MapHub<CommunicationHub>("/chatHub").RequireCors("CorsPolicy");
 
 app.Run();
 
