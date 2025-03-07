@@ -5,7 +5,7 @@ namespace GarageManagementAPI.Shared.RequestFeatures
 {
     public class GoodsIssuedDetailParameters : RequestParameters
     {
-        GoodsIssuedDetailParameters() => OrderBy = "Quantity";
+        public GoodsIssuedDetailParameters() => OrderBy = "Quantity";
         public int minQuantity { get; set; } = 0;
         public int? maxQuantity { get; set; } = null!;
         [EnumDataType(typeof(GoodsIssuedDetailStatus))]

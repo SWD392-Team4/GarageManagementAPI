@@ -5,6 +5,8 @@ namespace GarageManagementAPI.Entities.Models
 {
     public partial class ProductAtWarehouse : BaseEntity<ProductAtWarehouse>
     {
+        public Guid GoodsReceivedDetailId { get; set; }
+
         public int Quantity { get; set; }
 
         [EnumDataType(typeof(SystemStatus))]
