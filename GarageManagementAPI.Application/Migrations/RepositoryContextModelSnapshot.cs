@@ -2771,9 +2771,6 @@ namespace GarageManagementAPI.Application.Migrations
                     b.Property<Guid>("CreatedWareHouseManagerId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("GarageId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<string>("InvoiceCode")
                         .IsRequired()
                         .HasMaxLength(255)
@@ -2802,8 +2799,6 @@ namespace GarageManagementAPI.Application.Migrations
                         .HasName("goodsissued_id_primary");
 
                     b.HasIndex("CreatedWareHouseManagerId");
-
-                    b.HasIndex("GarageId");
 
                     b.HasIndex("WarehouseId");
 
@@ -3512,6 +3507,9 @@ namespace GarageManagementAPI.Application.Migrations
                     b.Property<DateTimeOffset>("CreatedAt")
                         .HasColumnType("datetimeoffset");
 
+                    b.Property<Guid>("GoodsIssuedDetailId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<string>("ProductBarcodeAtGarage")
                         .IsRequired()
                         .HasMaxLength(255)
@@ -3531,6 +3529,9 @@ namespace GarageManagementAPI.Application.Migrations
                     b.HasKey("Id")
                         .HasName("productatgarage_goodsissueddetailid_primary");
 
+                    b.HasIndex("GoodsIssuedDetailId")
+                        .IsUnique();
+
                     b.ToTable("ProductAtGarage", (string)null);
                 });
 
@@ -3543,6 +3544,9 @@ namespace GarageManagementAPI.Application.Migrations
 
                     b.Property<DateTimeOffset>("CreatedAt")
                         .HasColumnType("datetimeoffset");
+
+                    b.Property<Guid>("GoodsReceivedDetailId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<int>("Quantity")
                         .HasColumnType("int");
@@ -3557,6 +3561,9 @@ namespace GarageManagementAPI.Application.Migrations
 
                     b.HasKey("Id")
                         .HasName("productatwarehouse_goodsreceiveddetailid_primary");
+
+                    b.HasIndex("GoodsReceivedDetailId")
+                        .IsUnique();
 
                     b.ToTable("ProductAtWarehouse", (string)null);
                 });
@@ -6238,12 +6245,6 @@ namespace GarageManagementAPI.Application.Migrations
                         .IsRequired()
                         .HasConstraintName("goodsissued_createdwarehousemanagerid_foreign");
 
-                    b.HasOne("GarageManagementAPI.Entities.Models.Workplace", "Garage")
-                        .WithMany("GoodsIssuedGarages")
-                        .HasForeignKey("GarageId")
-                        .IsRequired()
-                        .HasConstraintName("goodsissued_garageid_foreign");
-
                     b.HasOne("GarageManagementAPI.Entities.Models.Workplace", "Warehouse")
                         .WithMany("GoodsIssuedWarehouses")
                         .HasForeignKey("WarehouseId")
@@ -6251,8 +6252,6 @@ namespace GarageManagementAPI.Application.Migrations
                         .HasConstraintName("goodsissued_warehouseid_foreign");
 
                     b.Navigation("CreatedWareHouseManager");
-
-                    b.Navigation("Garage");
 
                     b.Navigation("Warehouse");
                 });
@@ -6568,7 +6567,7 @@ namespace GarageManagementAPI.Application.Migrations
                 {
                     b.HasOne("GarageManagementAPI.Entities.Models.GoodsIssuedDetail", "GoodsIssuedDetail")
                         .WithOne("ProductAtGarage")
-                        .HasForeignKey("GarageManagementAPI.Entities.Models.ProductAtGarage", "Id")
+                        .HasForeignKey("GarageManagementAPI.Entities.Models.ProductAtGarage", "GoodsIssuedDetailId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
                         .HasConstraintName("productatgarage_goodsissueddetailid_foreign");
@@ -6580,7 +6579,7 @@ namespace GarageManagementAPI.Application.Migrations
                 {
                     b.HasOne("GarageManagementAPI.Entities.Models.GoodsReceivedDetail", "GoodsReceivedDetail")
                         .WithOne("ProductAtWarehouse")
-                        .HasForeignKey("GarageManagementAPI.Entities.Models.ProductAtWarehouse", "Id")
+                        .HasForeignKey("GarageManagementAPI.Entities.Models.ProductAtWarehouse", "GoodsReceivedDetailId")
                         .IsRequired()
                         .HasConstraintName("productatwarehouse_goodsreceiveddetailid_foreign");
 
@@ -7008,8 +7007,6 @@ namespace GarageManagementAPI.Application.Migrations
                     b.Navigation("Appointments");
 
                     b.Navigation("EmployeeInfos");
-
-                    b.Navigation("GoodsIssuedGarages");
 
                     b.Navigation("GoodsIssuedWarehouses");
 

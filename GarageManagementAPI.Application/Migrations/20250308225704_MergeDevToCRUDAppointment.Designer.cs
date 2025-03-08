@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GarageManagementAPI.Application.Migrations
 {
     [DbContext(typeof(RepositoryContext))]
-    [Migration("20250306201759_RemoveStatusFromPacakge")]
-    partial class RemoveStatusFromPacakge
+    [Migration("20250308225704_MergeDevToCRUDAppointment")]
+    partial class MergeDevToCRUDAppointment
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -47,10 +47,10 @@ namespace GarageManagementAPI.Application.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("CanceledReason")
-                        .HasColumnType("text");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("CarCondition")
-                        .HasColumnType("text");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("CarLicensePlateNumber")
                         .HasMaxLength(255)
@@ -136,7 +136,7 @@ namespace GarageManagementAPI.Application.Migrations
 
                     b.Property<string>("ServiceNote")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Status")
                         .IsRequired()
@@ -839,7 +839,7 @@ namespace GarageManagementAPI.Application.Migrations
 
                     b.Property<string>("Description")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Status")
                         .IsRequired()
@@ -2774,9 +2774,6 @@ namespace GarageManagementAPI.Application.Migrations
                     b.Property<Guid>("CreatedWareHouseManagerId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("GarageId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<string>("InvoiceCode")
                         .IsRequired()
                         .HasMaxLength(255)
@@ -2805,8 +2802,6 @@ namespace GarageManagementAPI.Application.Migrations
                         .HasName("goodsissued_id_primary");
 
                     b.HasIndex("CreatedWareHouseManagerId");
-
-                    b.HasIndex("GarageId");
 
                     b.HasIndex("WarehouseId");
 
@@ -3138,7 +3133,7 @@ namespace GarageManagementAPI.Application.Migrations
 
                     b.Property<string>("Description")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("PackageName")
                         .IsRequired()
@@ -3228,7 +3223,7 @@ namespace GarageManagementAPI.Application.Migrations
 
                     b.Property<string>("FeedBack")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<Guid>("PackageId")
                         .HasColumnType("uniqueidentifier");
@@ -3427,7 +3422,7 @@ namespace GarageManagementAPI.Application.Migrations
 
                     b.Property<string>("ProductDescription")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ProductName")
                         .IsRequired()
@@ -3515,6 +3510,9 @@ namespace GarageManagementAPI.Application.Migrations
                     b.Property<DateTimeOffset>("CreatedAt")
                         .HasColumnType("datetimeoffset");
 
+                    b.Property<Guid>("GoodsIssuedDetailId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<string>("ProductBarcodeAtGarage")
                         .IsRequired()
                         .HasMaxLength(255)
@@ -3534,6 +3532,9 @@ namespace GarageManagementAPI.Application.Migrations
                     b.HasKey("Id")
                         .HasName("productatgarage_goodsissueddetailid_primary");
 
+                    b.HasIndex("GoodsIssuedDetailId")
+                        .IsUnique();
+
                     b.ToTable("ProductAtGarage", (string)null);
                 });
 
@@ -3546,6 +3547,9 @@ namespace GarageManagementAPI.Application.Migrations
 
                     b.Property<DateTimeOffset>("CreatedAt")
                         .HasColumnType("datetimeoffset");
+
+                    b.Property<Guid>("GoodsReceivedDetailId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<int>("Quantity")
                         .HasColumnType("int");
@@ -3560,6 +3564,9 @@ namespace GarageManagementAPI.Application.Migrations
 
                     b.HasKey("Id")
                         .HasName("productatwarehouse_goodsreceiveddetailid_primary");
+
+                    b.HasIndex("GoodsReceivedDetailId")
+                        .IsUnique();
 
                     b.ToTable("ProductAtWarehouse", (string)null);
                 });
@@ -3921,7 +3928,7 @@ namespace GarageManagementAPI.Application.Migrations
 
                     b.Property<string>("Description")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("EstimatedHours")
                         .HasColumnType("int");
@@ -4583,7 +4590,7 @@ namespace GarageManagementAPI.Application.Migrations
 
                     b.Property<string>("FeedBack")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<Guid>("ServiceId")
                         .HasColumnType("uniqueidentifier");
@@ -6241,12 +6248,6 @@ namespace GarageManagementAPI.Application.Migrations
                         .IsRequired()
                         .HasConstraintName("goodsissued_createdwarehousemanagerid_foreign");
 
-                    b.HasOne("GarageManagementAPI.Entities.Models.Workplace", "Garage")
-                        .WithMany("GoodsIssuedGarages")
-                        .HasForeignKey("GarageId")
-                        .IsRequired()
-                        .HasConstraintName("goodsissued_garageid_foreign");
-
                     b.HasOne("GarageManagementAPI.Entities.Models.Workplace", "Warehouse")
                         .WithMany("GoodsIssuedWarehouses")
                         .HasForeignKey("WarehouseId")
@@ -6254,8 +6255,6 @@ namespace GarageManagementAPI.Application.Migrations
                         .HasConstraintName("goodsissued_warehouseid_foreign");
 
                     b.Navigation("CreatedWareHouseManager");
-
-                    b.Navigation("Garage");
 
                     b.Navigation("Warehouse");
                 });
@@ -6571,7 +6570,7 @@ namespace GarageManagementAPI.Application.Migrations
                 {
                     b.HasOne("GarageManagementAPI.Entities.Models.GoodsIssuedDetail", "GoodsIssuedDetail")
                         .WithOne("ProductAtGarage")
-                        .HasForeignKey("GarageManagementAPI.Entities.Models.ProductAtGarage", "Id")
+                        .HasForeignKey("GarageManagementAPI.Entities.Models.ProductAtGarage", "GoodsIssuedDetailId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
                         .HasConstraintName("productatgarage_goodsissueddetailid_foreign");
@@ -6583,7 +6582,7 @@ namespace GarageManagementAPI.Application.Migrations
                 {
                     b.HasOne("GarageManagementAPI.Entities.Models.GoodsReceivedDetail", "GoodsReceivedDetail")
                         .WithOne("ProductAtWarehouse")
-                        .HasForeignKey("GarageManagementAPI.Entities.Models.ProductAtWarehouse", "Id")
+                        .HasForeignKey("GarageManagementAPI.Entities.Models.ProductAtWarehouse", "GoodsReceivedDetailId")
                         .IsRequired()
                         .HasConstraintName("productatwarehouse_goodsreceiveddetailid_foreign");
 
@@ -7011,8 +7010,6 @@ namespace GarageManagementAPI.Application.Migrations
                     b.Navigation("Appointments");
 
                     b.Navigation("EmployeeInfos");
-
-                    b.Navigation("GoodsIssuedGarages");
 
                     b.Navigation("GoodsIssuedWarehouses");
 
