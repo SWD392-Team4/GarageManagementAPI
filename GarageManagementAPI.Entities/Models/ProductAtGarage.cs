@@ -5,7 +5,7 @@ namespace GarageManagementAPI.Entities.Models
 {
     public partial class ProductAtGarage : BaseEntity<ProductAtGarage>
     {
-        public int GoodsIssuedDetailId { get; set; }
+        public Guid GoodsIssuedDetailId { get; set; }
         public int Quantity { get; set; }
 
         public string ProductBarcodeAtGarage { get; set; } = null!;
