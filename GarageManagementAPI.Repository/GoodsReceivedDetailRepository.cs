@@ -33,7 +33,6 @@ namespace GarageManagementAPI.Repository
 
         public async Task<PagedList<GoodsReceivedDetail>> GetGoodsReceivedDetailsAsync(GoodsReceivedDetailParameters goodsReceivedDetailParameters, bool trackChanges, string? include = null)
         {
-            Console.WriteLine(include);
             var goodsReceivedDetails = await FindAll(trackChanges)
               .SearchByUnitPrice(goodsReceivedDetailParameters.MinUnitPrice, goodsReceivedDetailParameters.MaxUnitPrice)
               .SearchByTotalPrice(goodsReceivedDetailParameters.MiniTotalPrice,goodsReceivedDetailParameters.MaxTotalPrice)
@@ -42,13 +41,7 @@ namespace GarageManagementAPI.Repository
               .SearchByStatus(goodsReceivedDetailParameters.Status)
               .Sort(goodsReceivedDetailParameters.OrderBy)
               .IsInclude(include)
-              .Skip((goodsReceivedDetailParameters.PageNumber - 1) * goodsReceivedDetailParameters.PageSize)
-              .Take(goodsReceivedDetailParameters.PageSize)
               .ToListAsync();
-            foreach (var product in goodsReceivedDetails)
-            {
-                Console.WriteLine($"ID: {product.Id}, Name: {product.Product?.ProductName}, Status: {product.Status}");
-            }
 
             return PagedList<GoodsReceivedDetail>.ToPagedList(
                 goodsReceivedDetails,
@@ -59,7 +52,7 @@ namespace GarageManagementAPI.Repository
 
         public void UpdateGoodsReceivedDetailAsync(GoodsReceivedDetail goodsReceivedDetail)
         {
-            throw new NotImplementedException();
+            base.Update(goodsReceivedDetail);
         }
     }
 }

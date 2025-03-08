@@ -22,7 +22,7 @@ namespace GarageManagementAPI.Repository
             await base.CreateAsync(carModel);
         }
 
-        public async Task<PagedList<CarModel>> GetCarModelsAsync(CarModelParameters carModelParameters, bool trackChanges)
+        public async Task<PagedList<CarModel>> GetCarModelsAsync(CarModelParameters carModelParameters, bool trackChanges, string? include = null)
         {
             var carModels = await FindAll(trackChanges)
             .SearchByBrandId(carModelParameters.BrandId)
@@ -33,10 +33,7 @@ namespace GarageManagementAPI.Repository
             .FilterByCreatedAt(carModelParameters.CreatedAt)
             .FilterByUpdatedAt(carModelParameters.UpdatedAt)
             .Sort(carModelParameters.OrderBy)
-            .Skip((carModelParameters.PageNumber - 1) * carModelParameters.PageSize)
-            .Take(carModelParameters.PageSize)
-            .Include(e => e.Brand)
-            .Include(e => e.CarCategory)
+            .IsInclude(include)
             .ToListAsync();
 
             var count = await FindAll(trackChanges)
@@ -57,11 +54,10 @@ namespace GarageManagementAPI.Repository
                 carModelParameters.PageSize);
         }
 
-        public async Task<CarModel?> GetCarModelAsync(Guid id, bool trackChanges)
+        public async Task<CarModel?> GetCarModelAsync(Guid id, bool trackChanges, string? include = null)
         {
             return await FindByCondition(e => e.Id.Equals(id), trackChanges)
-                .Include(e => e.Brand)
-                .Include(e => e.CarCategory)
+                .IsInclude(include)
                 .SingleOrDefaultAsync();
         }
 

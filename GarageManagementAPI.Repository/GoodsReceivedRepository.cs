@@ -80,8 +80,6 @@ namespace GarageManagementAPI.Repository
                  .SearchBySourceWards(goodsReceivedParameters.SourceWards)
                  .SearchByStatus(goodsReceivedParameters.Status)
                  .IsInclude(include)
-                 .Skip((goodsReceivedParameters.PageNumber - 1) * goodsReceivedParameters.PageSize)
-                 .Take(goodsReceivedParameters.PageSize)
                  .ToListAsync();
 
             return PagedList<GoodsReceived>.ToPagedList(

@@ -8,6 +8,7 @@ namespace GarageManagementAPI.Shared.DataTransferObjects.CarPart
         public Guid Id { get; set; }
         public string PartName { get; set; } = null!;
         public string PartCategory { get; set; } = null!;
+        public Guid CarPartCategoryId { get; set; } 
 
         [EnumDataType(typeof(CarPartStatus))]
         public CarPartStatus Status { get; set; }

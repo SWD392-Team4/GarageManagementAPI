@@ -26,9 +26,9 @@ namespace GarageManagementAPI.Service
             _dataShaper = dataShaper;
         }
 
-        public async Task<Result<ExpandoObject>> GetCarModel(Guid id, bool trackChanges, string? fields)
+        public async Task<Result<ExpandoObject>> GetCarModel(Guid id, bool trackChanges, string? fields, string? include = null)
         {
-            var carModelEntity = await _repoManager.CarModel.GetCarModelAsync(id, trackChanges);
+            var carModelEntity = await _repoManager.CarModel.GetCarModelAsync(id, trackChanges, include);
             if (carModelEntity is null)
                 return Result<ExpandoObject>.NotFound([CarModelErrors.GetCarModelNotFoundError(id)]);
 
@@ -39,9 +39,9 @@ namespace GarageManagementAPI.Service
             return Result<ExpandoObject>.Ok(carModelDtoShaped);
         }
 
-        public async Task<Result<IEnumerable<ExpandoObject>>> GetCarModels(CarModelParameters carModeParameters, bool trackChanges)
+        public async Task<Result<IEnumerable<ExpandoObject>>> GetCarModels(CarModelParameters carModeParameters, bool trackChanges, string? include = null)
         {
-            var carModels = await _repoManager.CarModel.GetCarModelsAsync(carModeParameters, trackChanges);
+            var carModels = await _repoManager.CarModel.GetCarModelsAsync(carModeParameters, trackChanges, include);
 
             var carModelsDtos = _mapper.Map<IEnumerable<CarModelDto>>(carModels);
 

@@ -1,7 +1,9 @@
 ﻿using GarageManagementAPI.Entities.Models;
 using GarageManagementAPI.Repository.Extensions.Utility;
 using GarageManagementAPI.Shared.Enums.SystemStatuss;
+using Microsoft.EntityFrameworkCore;
 using System.Linq.Dynamic.Core;
+using System.Reflection;
 
 namespace GarageManagementAPI.Repository.Extensions
 {
@@ -88,6 +90,54 @@ namespace GarageManagementAPI.Repository.Extensions
             var dateOfYear = updatedAt.Value.DayOfYear;
 
             return carModels.Where(c => c.UpdatedAt.DayOfYear.Equals(updatedAt));
+        }
+
+        public static IQueryable<CarModel> IsInclude(this IQueryable<CarModel> carModel, string? fieldsString)
+        {
+            if (string.IsNullOrWhiteSpace(fieldsString))
+                return carModel;
+
+            var fields = fieldsString.Split(',', StringSplitOptions.RemoveEmptyEntries);
+
+            foreach (var field in fields)
+            {
+                var trimmedField = field.Trim();
+                var property = CarModel.PropertyInfos
+                    .FirstOrDefault(pi => pi.Name.Equals(trimmedField, StringComparison.InvariantCultureIgnoreCase));
+
+                if (property != null && IsLikelyNavigationProperty(property))
+                {
+                    carModel = carModel.Include(trimmedField);
+                }
+            }
+
+            return carModel;
+        }
+
+        private static bool IsLikelyNavigationProperty(PropertyInfo property)
+        {
+            var propertyType = property.PropertyType;
+
+            if (propertyType.IsPrimitive || propertyType == typeof(string) ||
+                propertyType == typeof(DateTime) || propertyType == typeof(decimal) ||
+                propertyType.IsValueType)
+            {
+                return false;
+            }
+
+            if (propertyType.IsClass)
+            {
+                return true;
+            }
+
+            // Check if it's a collection navigation
+            if (typeof(IEnumerable<>).IsAssignableFrom(propertyType) &&
+                propertyType != typeof(string))
+            {
+                return true;
+            }
+
+            return false;
         }
     }
 }

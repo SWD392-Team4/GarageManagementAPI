@@ -15,6 +15,7 @@
         ICarPartService CarPartService { get; }
         ISupplierService SupplierService { get; }
         ICarModelService CarModelService { get; }
+        IWorkplaceService WorkplaceService { get; }
         ICarCategoryService CarCategoryService { get; }
         IServiceFeedbackService ServiceFeedback { get; }
         IServiceImageService ServiceImageService { get; }
@@ -23,15 +24,16 @@
         IServiceHistoryService ServiceHistoryService { get; }
         ICarPartCategoryService CarPartCategoryService { get; }
         ISupplierContactService SupplierContactService { get; }
+        IGoodsIssuedDetailService GoodsIssuedDetailService { get; }
         IGoodsReceivedDetailService GoodsReceivedDetailService { get; }
         IAppointmentService AppointmentService { get; }
-        IWorkplaceService WorkplaceService { get; }
         IPackageService PackageService { get; }
         IPackageConditionService PackageConditionService { get; }
         IPackageFeedBackService PackageFeedBackService { get; }
         IPackageUsageService PackageUsageService { get; }
         IPackageUsageDetailService PackageUsageDetailService { get; }
         IPackageImageService PackageImageService { get; }
+        IGoodsIssuedService GoodsIssuedService { get; }
 
     }
 }

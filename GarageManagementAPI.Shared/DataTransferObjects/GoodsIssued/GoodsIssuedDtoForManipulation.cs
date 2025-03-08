@@ -1,24 +1,11 @@
-﻿using GarageManagementAPI.Shared.Enums;
-using System.ComponentModel.DataAnnotations;
-
-namespace GarageManagementAPI.Shared.DataTransferObjects.GoodsIssued
+﻿namespace GarageManagementAPI.Shared.DataTransferObjects.GoodsIssued
 {
     public record class GoodsIssuedDtoForManipulation
     {
         public decimal TotalCost { get; set; }
-
         public string ReferenceNumber { get; set; } = null!;
-
         public string InvoiceCode { get; set; } = null!;
-
-        [EnumDataType(typeof(SystemStatus))]
-        public SystemStatus Status { get; set; }
-
         public Guid CreatedWareHouseManagerId { get; set; }
-
         public Guid WarehouseId { get; set; }
-
-        public Guid GarageId { get; set; }
-
     }
 }

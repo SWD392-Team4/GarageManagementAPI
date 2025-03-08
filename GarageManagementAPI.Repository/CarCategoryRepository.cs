@@ -44,9 +44,8 @@ namespace GarageManagementAPI.Repository
                 .CountAsync();
 
 
-            return new PagedList<CarCategory>(
+            return PagedList<CarCategory>.ToPagedList(
                 carCategories,
-                count,
                 carCategoryParameters.PageNumber,
                 carCategoryParameters.PageSize);
         }

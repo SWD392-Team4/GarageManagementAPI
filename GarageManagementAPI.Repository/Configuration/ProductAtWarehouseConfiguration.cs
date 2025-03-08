@@ -16,7 +16,7 @@ namespace GarageManagementAPI.Repository.Configuration
             entity.Property(e => e.Status).HasMaxLength(255);
 
             entity.HasOne(d => d.GoodsReceivedDetail).WithOne(p => p.ProductAtWarehouse)
-                .HasForeignKey<ProductAtWarehouse>(d => d.Id)
+                .HasForeignKey<ProductAtWarehouse>(d => d.GoodsReceivedDetailId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("productatwarehouse_goodsreceiveddetailid_foreign");
 

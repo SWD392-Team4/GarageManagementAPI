@@ -10,7 +10,7 @@ namespace GarageManagementAPI.Repository.Extensions
     {
         public static IQueryable<GoodsReceivedDetail> SearchByQuantity(this IQueryable<GoodsReceivedDetail> goodsReceivedDetails, int? minQuantity, int? maxQuantity)
         {
-            if (!minQuantity.HasValue || !maxQuantity.HasValue)
+            if (!maxQuantity.HasValue)
             {
                 return goodsReceivedDetails;
             }

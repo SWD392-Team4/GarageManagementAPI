@@ -15,6 +15,8 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
@@ -227,13 +229,14 @@ namespace GarageManagementAPI.Application.Extensions
                 {
                     OnMessageReceived = context =>
                     {
-                        var accessToken = context.Request.Query["access_token"]; // Kiểm tra token từ query
+                        var accessToken = context.Request.Query["access_token"]; 
 
-                        // Kiểm tra nếu request là từ SignalR và có token trong query
                         if (!string.IsNullOrEmpty(accessToken) &&
-                            context.HttpContext.Request.Path.StartsWithSegments("/hub"))
+                            context.HttpContext.Request.Path.StartsWithSegments("/chatHub"))
                         {
-                            context.Token = accessToken; // Gán token cho context
+                            Console.WriteLine("accessToken: " + accessToken);
+                            context.Token = accessToken;
+                            Console.WriteLine("Token: " + context.Token);
                         }
 
                         return Task.CompletedTask;
@@ -284,9 +287,12 @@ namespace GarageManagementAPI.Application.Extensions
             });
         }
 
-        public static void ConfigureSignalR(this IServiceCollection services)
+        public static void ConfigureSignalR(this IServiceCollection services, IConfiguration configuration) 
         {
-            services.AddSignalR();
+            services.AddSignalR().AddAzureSignalR(options =>
+            {
+                options.ConnectionString = configuration["Azure:SignalR:ConnectionString"];
+            });
         }
 
         public static void ConfigureValidator(this IServiceCollection services)

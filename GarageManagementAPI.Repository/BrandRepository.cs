@@ -36,34 +36,21 @@ namespace GarageManagementAPI.Repository
 
         public async Task<PagedList<Brand>> GetBrandsAsync(BrandParameters brandParameters, bool trackChanges, string? include = null)
         {
-            var brandsQuery = brandParameters.PageSize == 0 ? 
-                await FindAll(trackChanges)
-                .SearchByName(brandParameters.BrandName) 
-                .SearchByDate(brandParameters.CreatedAt) 
-                .SearchByDate(brandParameters.UpdateAt) 
+            var brandsQuery = await 
+                 FindAll(trackChanges)
+                .SearchByName(brandParameters.BrandName)
+                .SearchByDate(brandParameters.CreatedAt)
+                .SearchByDate(brandParameters.UpdateAt)
                 .SearchByStatus(brandParameters.Status)
                 .Sort(brandParameters.OrderBy)
                 .IsInclude(include)
-                .ToListAsync()
-                : 
-                await FindAll(trackChanges)
-                .SearchByName(brandParameters.BrandName) 
-                .SearchByDate(brandParameters.CreatedAt) 
-                .SearchByDate(brandParameters.UpdateAt) 
-                .SearchByStatus(brandParameters.Status)
-                .Sort(brandParameters.OrderBy)
-                .IsInclude(include)
-                .Skip((brandParameters.PageNumber - 1) * brandParameters.PageSize)
-                .Take(brandParameters.PageSize)
                 .ToListAsync();
-            var count = await FindAll(trackChanges).CountAsync();
 
             // Trả về kết quả dưới dạng PagedList
-            return new PagedList<Brand>(
+            return PagedList<Brand>.ToPagedList(
                 brandsQuery,
-                count,
-                brandParameters.PageNumber == 0 ? 1 : brandParameters.PageNumber,
-                brandParameters.PageSize == 0 ? count : brandParameters.PageSize
+                brandParameters.PageNumber,
+                brandParameters.PageSize
             );
         }
 

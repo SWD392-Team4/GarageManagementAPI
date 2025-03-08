@@ -1,8 +1,8 @@
 using GarageManagementAPI.Application;
 using GarageManagementAPI.Application.Extensions;
 using Microsoft.AspNetCore.HttpOverrides;
-using GarageManagementAPI.Service;
 using api.Services;
+using GarageManagementAPI.Service;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -20,6 +20,7 @@ builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 builder.Services.ConfigureActionFilter();
 builder.Services.ConfigureRateLimitingOptions();
 builder.Services.AddAuthentication();
+builder.Services.ConfigureSignalR(builder.Configuration);
 builder.Services.ConfigureIdentity();
 builder.Services.ConfigureJWT(builder.Configuration);
 builder.Services.AddJwtConfiguration(builder.Configuration);
@@ -28,7 +29,6 @@ builder.Services.AddCloudinaryConfiguration(builder.Configuration);
 builder.Services.ConfigureSwagger();
 builder.Services.ConfigureValidator();
 builder.Services.ConfigureRedis(builder.Configuration);
-builder.Services.AddSignalR();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -52,8 +52,8 @@ app.UseResponseCaching();
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
-app.UseWebSockets();
-app.MapHub<CommunicationHub>("/hub").RequireCors("CorsPolicy");
+
+//app.MapHub<CommunicationsHub>("/chatHub").RequireCors("CorsPolicy");     
 
 app.Run();
 

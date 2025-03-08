@@ -1,8 +1,7 @@
-using GarageManagementAPI.Service;
+using Microsoft.AspNetCore.SignalR;
 using GarageManagementAPI.Service.Contracts;
 using GarageManagementAPI.Shared.DataTransferObjects.CommunicationHub;
 using GarageManagementAPI.Entities.Models;
-using Microsoft.AspNetCore.SignalR;
 using Newtonsoft.Json;
 using StackExchange.Redis;
 using System.Security.Claims;
@@ -21,10 +20,16 @@ namespace api.Services
             _repoManager = repoManager;
         }
 
-        // Khi người dùng kết nối, lưu Connection ID của họ
+
         public override async Task OnConnectedAsync()
         {
+
+            var httpContext = Context.GetHttpContext();
+            var token = httpContext.Request.Query["access_token"];
+
+            Console.WriteLine($"Received Token: {token}");
             var userId = GetUserId();
+            Console.WriteLine(userId);
             if (string.IsNullOrEmpty(userId))
             {
                 Context.Abort();
@@ -56,7 +61,8 @@ namespace api.Services
             // Tạo đối tượng tin nhắn
             var chatMessage = new SignalRDto
             {
-                UserId = senderId,
+                SenderId = senderId,
+                ReceiverId = senderId,
                 Message = message,
                 Timestamp = DateTime.Now
             };
@@ -111,7 +117,8 @@ namespace api.Services
             string notificationKey = GetNotificationKey(receiver);
             var notification = new SignalRDto
             {
-                UserId = senderId,
+                SenderId = senderId,
+                ReceiverId = senderId,
                 Message = notificationMessage,
                 Timestamp = DateTime.Now
             };
@@ -207,10 +214,16 @@ namespace api.Services
             await db.ListRightPushAsync(chatRoomKey, updatedMessages.Select(msg => (RedisValue)msg).ToArray());
         }
 
+        public async Task PingServer()
+        {
+            await Clients.Caller.SendAsync("KeepAlive");
+        }
+
 
         public override Task OnDisconnectedAsync(Exception? exception)
         {
             var userId = GetUserId();
+            Console.WriteLine($"Client {Context.ConnectionId} connected");
             if (_userConnections.ContainsKey(userId))
             {
                 _userConnections.Remove(userId);
@@ -273,10 +286,13 @@ namespace api.Services
         }
 
 
-        private string GetUserId()
+        private string? GetUserId()
         {
-            var userId = Context.User.FindFirstValue("UserId")!;
+            var userId = Context.User?.FindFirstValue("UserId"); 
+            Console.WriteLine($"UserId: {userId}");
+            Console.WriteLine($"UserName" + Context.User?.FindFirstValue("UserName"));
             return userId;
         }
+
     }
 }

@@ -40,7 +40,7 @@ namespace GarageManagementAPI.Repository
         public async Task<PagedList<ProductCategory>> GetProductCategoriesAsync(ProductCategoryParameters productCategoryParameters, bool trackChanges, string? include = null)
         {
             // Lọc và sắp xếp danh sách ProductCategorys theo các điều kiện
-            var productCategoriesQuery = FindByCondition(b =>
+            var productCategories = await FindByCondition(b =>
                     (string.IsNullOrEmpty(productCategoryParameters.Category) || b.Category.Contains(productCategoryParameters.Category)),
                     trackChanges)
                 .SearchByName(productCategoryParameters.Category) // Tìm kiếm theo tên sản phẩm
@@ -49,21 +49,12 @@ namespace GarageManagementAPI.Repository
                 .SearchByStatus(productCategoryParameters.Status)
                 .Sort(productCategoryParameters.OrderBy)
                 .IsInclude(include)
-                .AsQueryable();
-
-            // Lấy danh sách sản phẩm sau khi phân trang
-            var productCategories = await productCategoriesQuery
-                .Skip((productCategoryParameters.PageNumber - 1) * productCategoryParameters.PageSize)
-                .Take(productCategoryParameters.PageSize)
                 .ToListAsync();
 
-            // Lấy tổng số bản ghi để tính toán tổng số trang
-            var count = await productCategoriesQuery.CountAsync();
 
             // Trả về kết quả dưới dạng PagedList
-            return new PagedList<ProductCategory>(
+            return PagedList<ProductCategory>.ToPagedList(
                 productCategories,
-                count,
                 productCategoryParameters.PageNumber,
                 productCategoryParameters.PageSize
             );
