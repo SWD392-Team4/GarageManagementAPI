@@ -3,6 +3,7 @@ using GarageManagementAPI.Service.Contracts;
 using GarageManagementAPI.Shared.Constant.Request;
 using GarageManagementAPI.Shared.DataTransferObjects.Package;
 using GarageManagementAPI.Shared.Enums;
+using GarageManagementAPI.Shared.Enums.SystemStatuss;
 using GarageManagementAPI.Shared.Extension;
 using GarageManagementAPI.Shared.RequestFeatures;
 using GarageManagementAPI.Shared.ResultModel;
@@ -20,6 +21,34 @@ namespace GarageManagementAPI.Presentation.Controllers
     {
         public PackageController(IServiceManager service) : base(service)
         {
+        }
+
+        [HttpGet("type")]
+        public IActionResult GetPackageTypes()
+        {
+            var packageTypes = Enum.GetValues<PackageType>();
+            return Ok(Result<IList<PackageType>>.Ok(packageTypes));
+        }
+
+        [HttpGet("status")]
+        public IActionResult GetPackageStatus()
+        {
+            var packgeHistoryStatus = Enum.GetValues<PackageHistoryStatus>();
+            return Ok(Result<IList<PackageHistoryStatus>>.Ok(packgeHistoryStatus));
+        }
+
+        [HttpGet("timeUnit")]
+        public IActionResult GetPackageTimeUnit()
+        {
+            var timeUnits = Enum.GetValues<TimeUnit>();
+            return Ok(Result<IList<TimeUnit>>.Ok(timeUnits));
+        }
+
+        [HttpGet("ConditionType")]
+        public IActionResult GetPackageConditionType()
+        {
+            var conditionTypes = Enum.GetValues<PackageConditionType>();
+            return Ok(Result<IList<PackageConditionType>>.Ok(conditionTypes));
         }
 
         [HttpGet]
@@ -68,7 +97,7 @@ namespace GarageManagementAPI.Presentation.Controllers
                     imagePublicIds.Add(imgTuple);
                 }
             }
-            var result = await _service.PackageService.CreatePackage(packageDtoForCreationompany, imagePublicIds, fields);
+            var result = await _service.PackageService.CreatePackageAsync(packageDtoForCreationompany, imagePublicIds, fields);
 
             return result.Map(
                 onSuccess: result =>
@@ -87,7 +116,7 @@ namespace GarageManagementAPI.Presentation.Controllers
         [Authorize(Roles = nameof(SystemRole.Administrator))]
         public async Task<IActionResult> UpdatePackage(Guid packageId, [FromBody] PackageDtoForUpdate packageDtoForUpdate)
         {
-            var result = await _service.PackageService.UpdatePackage(packageId, packageDtoForUpdate);
+            var result = await _service.PackageService.UpdatePackageAsync(packageId, packageDtoForUpdate);
             return result.Map(
                 onSuccess: _ => NoContent(),
                 onFailure: ProcessError
@@ -98,7 +127,7 @@ namespace GarageManagementAPI.Presentation.Controllers
         [Authorize(Roles = nameof(SystemRole.Administrator))]
         public async Task<IActionResult> DeletePackage(Guid packageId)
         {
-            var result = await _service.PackageService.RemovePacakge(packageId);
+            var result = await _service.PackageService.RemovePacakgeAsync(packageId);
             return result.Map(
                 onSuccess: _ => NoContent(),
                 onFailure: ProcessError

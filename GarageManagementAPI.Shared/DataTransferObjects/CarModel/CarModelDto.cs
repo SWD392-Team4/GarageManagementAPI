@@ -1,6 +1,9 @@
-﻿namespace GarageManagementAPI.Shared.DataTransferObjects.CarModel
+﻿using GarageManagementAPI.Shared.Enums.SystemStatuss;
+using System.ComponentModel.DataAnnotations;
+
+namespace GarageManagementAPI.Shared.DataTransferObjects.CarModel
 {
-    public record CarModelDto
+    public record CarModelDto : BaseDto<CarModelDto>
     {
         public Guid Id { get; set; }
 
@@ -11,6 +14,9 @@
         public string? BrandName { get; set; }
 
         public string? BrandLinkLogo { get; set; }
+
+        [EnumDataType(typeof(CarModelStatus))]
+        public CarModelStatus? Status { get; set; }
 
         public string? Category { get; set; }
 

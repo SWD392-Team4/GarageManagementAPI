@@ -14,15 +14,9 @@ namespace GarageManagementAPI.Shared.ErrorsConstant.Brand
         #endregion
 
         #region static method
-        public static ErrorsResult GetBrandNotFoundError() =>
-            new()
-            {
-                Code = nameof(BrandNotFound),
-                Description = BrandNotFound
-            };
         public static ErrorsResult GetBrandNotFoundWithIdError(Guid brandId) =>
             new()
-             {
+            {
                 Code = nameof(BrandNotFound),
                 Description = string.Format(BrandNotFound, brandId)
             };

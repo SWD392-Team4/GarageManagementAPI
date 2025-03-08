@@ -1,5 +1,6 @@
 ﻿using GarageManagementAPI.Entities.Models;
 using GarageManagementAPI.Repository.Extensions.Utility;
+using GarageManagementAPI.Shared.Enums.SystemStatuss;
 using System.Linq.Dynamic.Core;
 
 namespace GarageManagementAPI.Repository.Extensions
@@ -59,6 +60,34 @@ namespace GarageManagementAPI.Repository.Extensions
             }
 
             return carModels.Where(c => c.ModelYear.Year.Equals(modelYear));
+        }
+
+        public static IQueryable<CarModel> FilterByStatus(this IQueryable<CarModel> carModels, CarModelStatus? status)
+        {
+            if (status is null)
+                return carModels;
+
+            return carModels.Where(c => c.Status.Equals(status));
+        }
+
+        public static IQueryable<CarModel> FilterByCreatedAt(this IQueryable<CarModel> carModels, DateTimeOffset? createAt)
+        {
+            if (createAt is null)
+                return carModels;
+
+            var dateOfYear = createAt.Value.DayOfYear;
+
+            return carModels.Where(c => c.CreatedAt.DayOfYear.Equals(dateOfYear));
+        }
+
+        public static IQueryable<CarModel> FilterByUpdatedAt(this IQueryable<CarModel> carModels, DateTimeOffset? updatedAt)
+        {
+            if (updatedAt is null)
+                return carModels;
+
+            var dateOfYear = updatedAt.Value.DayOfYear;
+
+            return carModels.Where(c => c.UpdatedAt.DayOfYear.Equals(updatedAt));
         }
     }
 }

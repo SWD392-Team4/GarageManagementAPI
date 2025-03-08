@@ -12,6 +12,7 @@ using GarageManagementAPI.Shared.ErrorsConstant.Service;
 using GarageManagementAPI.Shared.DataTransferObjects.Service;
 using GarageManagementAPI.Shared.ErrorsConstant.ServiceHisory;
 using GarageManagementAPI.Shared.DataTransferObjects.ServiceHistory;
+using GarageManagementAPI.Shared.DataTransferObjects.Package;
 
 namespace GarageManagementAPI.Service
 {
@@ -52,7 +53,7 @@ namespace GarageManagementAPI.Service
 
             //Create Service History
             await CreateServiceHistoryAsync(seviceEntity.Id, serviceDtoForCreation.ServicePrice);
- 
+
             var serviceDtoToReturn = _mapper.Map<ServiceDto>(seviceEntity);
 
             return serviceDtoToReturn.CreatedResult();
@@ -213,6 +214,17 @@ namespace GarageManagementAPI.Service
             if (category == null) return true;
 
             return false;
+        }
+
+        public async Task<Result<IEnumerable<ExpandoObject>>> GetPackgeOfServiceAsync(Guid serviceId, PackageParameters packageParameters)
+        {
+            var packages = await _repoManager.Package.GetPackagesByServiceIdAsync(serviceId, packageParameters, false);
+
+            var packageDto = _mapper.Map<IEnumerable<PackageDto>>(packages);
+
+            var packageDtoShaped = _dataShaper.Package.ShapeData(packageDto, packageParameters.Fields);
+
+            return Result<IEnumerable<ExpandoObject>>.Ok(packageDtoShaped, packages.MetaData);
         }
     }
 }

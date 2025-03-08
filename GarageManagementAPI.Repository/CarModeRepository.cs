@@ -1,6 +1,8 @@
 ﻿using GarageManagementAPI.Entities.Models;
 using GarageManagementAPI.Repository.Contracts;
 using GarageManagementAPI.Repository.Extensions;
+using GarageManagementAPI.Shared.Enums.SystemStatuss;
+using GarageManagementAPI.Shared.Extension;
 using GarageManagementAPI.Shared.RequestFeatures;
 using Microsoft.EntityFrameworkCore;
 
@@ -14,6 +16,9 @@ namespace GarageManagementAPI.Repository
 
         public async Task CreateCarModelsAsync(CarModel carModel)
         {
+            carModel.UpdatedAt = DateTimeOffset.Now.SEAsiaStandardTime();
+            carModel.CreatedAt = DateTimeOffset.Now.SEAsiaStandardTime();
+            carModel.Status = CarModelStatus.Active;
             await base.CreateAsync(carModel);
         }
 
@@ -24,6 +29,9 @@ namespace GarageManagementAPI.Repository
             .SearchByCarCategoryId(carModelParameters.CarCategoryId)
             .SearchByModelName(carModelParameters.ModelName)
             .SearchByModelYear(carModelParameters.ModelYear)
+            .FilterByStatus(carModelParameters.Status)
+            .FilterByCreatedAt(carModelParameters.CreatedAt)
+            .FilterByUpdatedAt(carModelParameters.UpdatedAt)
             .Sort(carModelParameters.OrderBy)
             .Skip((carModelParameters.PageNumber - 1) * carModelParameters.PageSize)
             .Take(carModelParameters.PageSize)
@@ -36,6 +44,9 @@ namespace GarageManagementAPI.Repository
                 .SearchByCarCategoryId(carModelParameters.CarCategoryId)
                 .SearchByModelName(carModelParameters.ModelName)
                 .SearchByModelYear(carModelParameters.ModelYear)
+                .FilterByStatus(carModelParameters.Status)
+                .FilterByCreatedAt(carModelParameters.CreatedAt)
+                .FilterByUpdatedAt(carModelParameters.UpdatedAt)
                 .CountAsync();
 
 
@@ -48,7 +59,19 @@ namespace GarageManagementAPI.Repository
 
         public async Task<CarModel?> GetCarModelAsync(Guid id, bool trackChanges)
         {
-            return await FindByCondition(e => e.Id.Equals(id), trackChanges).SingleOrDefaultAsync();
+            return await FindByCondition(e => e.Id.Equals(id), trackChanges)
+                .Include(e => e.Brand)
+                .Include(e => e.CarCategory)
+                .SingleOrDefaultAsync();
+        }
+
+        public async Task<CarModel?> GetCarModelAsync(string modelName, Guid brandId, Guid categoryId, DateOnly modelYear, bool trackChanges)
+        {
+            return await FindByCondition(
+                e => e.ModelName.Equals(modelName) &&
+                e.BrandId.Equals(brandId) &&
+                e.CarCategoryId.Equals(categoryId) &&
+                e.ModelYear.Equals(modelYear), trackChanges).FirstOrDefaultAsync();
         }
     }
 }

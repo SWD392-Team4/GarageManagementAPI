@@ -13,5 +13,11 @@ namespace GarageManagementAPI.Shared.RequestFeatures
 
         public int? ModelYear { get; set; }
 
+        [EnumDataType(typeof(CarModelStatus))]
+        public CarModelStatus? Status { get; set; }
+
+        public DateTimeOffset? CreatedAt { get; set; }
+
+        public DateTimeOffset? UpdatedAt { get; set; }
     }
 }

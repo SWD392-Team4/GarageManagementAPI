@@ -13,7 +13,7 @@ namespace GarageManagementAPI.Service.Contracts
 
         Task<Result<PackageImageDto>> GetPackageImageByIdAsync(Guid packageId, Guid id);
 
-        Task<Result> CreatePackageImageAsync(Guid packageId, IEnumerable<(string? ImageId, string? ImageLink)> imageTuples);
+        Task<Result<IEnumerable<PackageImageDto>>> CreatePackageImageAsync(Guid packageId, IEnumerable<(string? ImageId, string? ImageLink)> imageTuples);
 
         Task<Result> RemovePackageImageAsync(Guid packageId, Guid packageImageId);
 

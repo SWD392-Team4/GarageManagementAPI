@@ -10,6 +10,8 @@ using Microsoft.EntityFrameworkCore;
 using GarageManagementAPI.Service.Extension;
 using GarageManagementAPI.Shared.Enums.SystemStatuss;
 using GarageManagementAPI.Shared.Extension;
+using System.Xml.Linq;
+using System.Dynamic;
 
 namespace GarageManagementAPI.Service
 {
@@ -26,81 +28,64 @@ namespace GarageManagementAPI.Service
             _dataShaper = dataShaper;
         }
 
-        private async Task<Result<CarCategory>> GetByIdAndCheckIfExistAsync(Guid id, bool trackChanges)
+        public async Task<Result<ExpandoObject>> CreateCarCategoryAsync(CarCategoryDtoForCreate carCategoryDtoForCreate, string? fields = null)
         {
-            var carCategory = await _repoManager.CarCategory.GetCarCategoryAsync(id, trackChanges);
+            var checkIfCarCategoryExist = await _repoManager.CarCategory.GetCarCategoryAsync(carCategoryDtoForCreate.Category!, false);
 
-            if (carCategory is null)
-                return Result<CarCategory>.NotFound([CarCategoryErrors.GetCarCategoryNotFoundError(id)]);
-
-            return Result<CarCategory>.Ok(carCategory);
-        }
-
-        private async Task<Result> CheckIfCarCategoryExistByNameAsync(string name)
-        {
-            var carCategory = await _repoManager.CarCategory.FindByCondition(e => e.Category.Equals(name), false).FirstOrDefaultAsync();
-
-            if (carCategory is not null)
-                return Result.BadRequest([CarCategoryErrors.GetCarCategoryAlreadyExist(name)]);
-
-            return Result.Ok();
-        }
-
-        public async Task<Result<CarCategoryDto>> CreateCarCategoryAsync(CarCategoryDtoForCreate carCategoryDtoForCreate)
-        {
-            var checkIfCarCategoryExistResult = await CheckIfCarCategoryExistByNameAsync(carCategoryDtoForCreate.Category!);
-
-            if (!checkIfCarCategoryExistResult.IsSuccess)
-                return Result<CarCategoryDto>.BadRequest(checkIfCarCategoryExistResult.Errors!);
+            if (checkIfCarCategoryExist is not null)
+                return Result<ExpandoObject>.Conflict(CarCategoryErrors.GetCarCategoryAlreadyExist(carCategoryDtoForCreate.Category!));
 
             var carCategoryEntity = _mapper.Map<CarCategory>(carCategoryDtoForCreate);
 
-            carCategoryEntity.CreatedAt = DateTimeOffset.Now.SEAsiaStandardTime();
-            carCategoryEntity.UpdatedAt = DateTimeOffset.Now.SEAsiaStandardTime();
-            carCategoryEntity.Status = CarCategoryStatus.Active;
-            await _repoManager.CarCategory.CreateCarCategoryAsync(carCategoryEntity);
+            await _repoManager.CarCategory.CreateAsync(carCategoryEntity);
             await _repoManager.SaveAsync();
 
             var carCategoryDto = _mapper.Map<CarCategoryDto>(carCategoryEntity);
 
-            return Result<CarCategoryDto>.Ok(carCategoryDto);
+            var categoryDtoShaped = _dataShaper.CarCategory.ShapeData(carCategoryDto, fields);
+
+            return Result<ExpandoObject>.Ok(categoryDtoShaped);
         }
 
-        public async Task<Result<CarCategoryDto>> GetCarCategoryAsync(Guid id, bool trackChanges)
+        public async Task<Result<ExpandoObject>> GetCarCategoryAsync(Guid id, bool trackChanges, string? fields = null)
         {
-            var checkIfExistResult = await GetByIdAndCheckIfExistAsync(id, trackChanges);
+            var carCategory = await _repoManager.CarCategory.GetCarCategoryAsync(id, trackChanges);
 
-            if (!checkIfExistResult.IsSuccess)
-                return Result<CarCategoryDto>.NotFound(checkIfExistResult.Errors!);
-
-            var carCategory = checkIfExistResult.GetValue<CarCategory>();
+            if (carCategory is not null)
+                return Result<ExpandoObject>.NotFound(CarCategoryErrors.GetCarCategoryNotFoundError(id));
 
             var carCategoryDto = _mapper.Map<CarCategoryDto>(carCategory);
 
-            return Result<CarCategoryDto>.Ok(carCategoryDto);
+            var categoryDtoShaped = _dataShaper.CarCategory.ShapeData(carCategoryDto, fields);
+
+            return Result<ExpandoObject>.Ok(categoryDtoShaped);
         }
 
-        public async Task<Result<IEnumerable<CarCategoryDto>>> GetCarCategoriesAsync(CarCategoryParameters carCategoryParameters, bool trackChanges)
+        public async Task<Result<IEnumerable<ExpandoObject>>> GetCarCategoriesAsync(CarCategoryParameters carCategoryParameters, bool trackChanges)
         {
             var carCategories = await _repoManager.CarCategory.GetCarCategoriesAsync(carCategoryParameters, trackChanges);
+
             var carCategoriesDto = _mapper.Map<IEnumerable<CarCategoryDto>>(carCategories);
 
-            return Result<IEnumerable<CarCategoryDto>>.Ok(carCategoriesDto, carCategories.MetaData);
+            var carCategoriesDtoShaped = _dataShaper.CarCategory.ShapeData(carCategoriesDto, carCategoryParameters.Fields);
+
+            return Result<IEnumerable<ExpandoObject>>.Ok(carCategoriesDtoShaped, carCategories.MetaData);
         }
 
         public async Task<Result> UpdateCarCategoryAsync(Guid id, CarCategoryDtoForUpdate carCategoryDtoForUpdate, bool trackChanges)
         {
-            var checkIfExistResult = await GetByIdAndCheckIfExistAsync(id, trackChanges);
 
-            if (!checkIfExistResult.IsSuccess)
-                return Result.NotFound(checkIfExistResult.Errors!);
-            var carCategoryEntity = checkIfExistResult.GetValue<CarCategory>();
+            var carCategoryEntity = await _repoManager.CarCategory.GetCarCategoryAsync(id, trackChanges);
+
+            if (carCategoryEntity is null)
+                return Result<CarCategory>.NotFound([CarCategoryErrors.GetCarCategoryNotFoundError(id)]);
 
             if (!carCategoryEntity.Category.Equals(carCategoryDtoForUpdate.Category))
             {
-                var checkIfCarCategoryExistResult = await CheckIfCarCategoryExistByNameAsync(carCategoryDtoForUpdate.Category!);
-                if (!checkIfCarCategoryExistResult.IsSuccess)
-                    return checkIfCarCategoryExistResult;
+                var checkIfCarCategoryExist = await _repoManager.CarCategory.GetCarCategoryAsync(carCategoryDtoForUpdate.Category!, false);
+
+                if (checkIfCarCategoryExist is not null)
+                    return Result<CarCategoryDto>.Conflict(CarCategoryErrors.GetCarCategoryAlreadyExist(carCategoryDtoForUpdate.Category!));
             }
 
             _mapper.Map(carCategoryDtoForUpdate, carCategoryEntity);

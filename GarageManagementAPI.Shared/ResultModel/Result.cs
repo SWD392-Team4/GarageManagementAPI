@@ -75,6 +75,9 @@ namespace GarageManagementAPI.Shared.ResultModel
         public static Result Unauthorized(ErrorsResult errors)
             => new Result(HttpStatusCode.Unauthorized, errors);
 
+        public static Result Failure(Result result)
+            => new Result(result.StatusCode, result.Errors!);
+
         public static Result Conflict(ErrorsResult errors)
             => new Result(HttpStatusCode.Conflict, errors);
 
@@ -124,6 +127,12 @@ namespace GarageManagementAPI.Shared.ResultModel
             => new Result<T>(value, statusCode, paging);
         public static new Result<T> Failure(HttpStatusCode statusCode, List<ErrorsResult> errors)
            => new Result<T>(statusCode, errors);
+
+        public static new Result<T> Failure(Result result)
+            => new Result<T>(result.StatusCode, result.Errors!);
+
+        public Result<TOut> Failure<TOut>()
+           => new Result<TOut>(StatusCode, Errors!);
 
         public static Result<T> Ok(T value, MetaData? paging = null)
             => new Result<T>(value, HttpStatusCode.OK, paging);

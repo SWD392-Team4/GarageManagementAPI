@@ -18,6 +18,7 @@ namespace GarageManagementAPI.Repository
             packageCondition.PackageId = packageId;
             await base.CreateAsync(packageCondition);
         }
+
         public async Task<PackageCondition?> GetPackageConditionAsync(Guid packageId, Guid packageConditionId, bool trackChanges)
         {
             var packageCondition = await FindByCondition(p => p.Id.Equals(packageConditionId) && p.PackageId.Equals(packageId), trackChanges).SingleOrDefaultAsync();
@@ -27,8 +28,8 @@ namespace GarageManagementAPI.Repository
         public async Task<PackageCondition?> GetPackageConditionAsync(Guid packageId, bool trackChanges, PackageConditionType conditionType, int conditionValue)
         {
             return await FindByCondition(
-                p => p.PackageId.Equals(packageId) && 
-                p.ConditionType.Equals(conditionType) && 
+                p => p.PackageId.Equals(packageId) &&
+                p.ConditionType.Equals(conditionType) &&
                 p.ConditionValue.Equals(conditionValue), trackChanges)
                 .SingleOrDefaultAsync();
         }
@@ -36,12 +37,17 @@ namespace GarageManagementAPI.Repository
         public async Task<PagedList<PackageCondition>> GetPackageConditionsAsync(Guid packageId, PackageConditionParameters packageConditionParameters, bool trackChanges)
         {
             var packageConditions = await FindByCondition(p => p.PackageId.Equals(packageId), trackChanges)
+                .FilterByPackageConditionType(packageConditionParameters.ConditionType)
+                .FilterByConditionValue(packageConditionParameters.MinConditionValue, packageConditionParameters.MaxConditionValue)
                 .Sort(packageConditionParameters.OrderBy)
                 .Skip((packageConditionParameters.PageNumber - 1) * packageConditionParameters.PageSize)
                 .Take(packageConditionParameters.PageSize)
                 .ToListAsync();
             var count = await FindAll(trackChanges)
+                .FilterByPackageConditionType(packageConditionParameters.ConditionType)
+                .FilterByConditionValue(packageConditionParameters.MinConditionValue, packageConditionParameters.MaxConditionValue)
                 .CountAsync();
+
             return new PagedList<PackageCondition>(
                 packageConditions,
                 count,

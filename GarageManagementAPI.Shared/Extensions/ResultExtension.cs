@@ -20,6 +20,12 @@ namespace GarageManagementAPI.Shared.Extension
                 ? nextStep(result.Value!)
                 : Result<TOut>.Failure(result.StatusCode, result.Errors!);
         }
+        public static Result<TOut> ThenIf<TIn, TOut>(this Result<TIn> result, Func<TIn, bool> condition, Func<TIn, Result<TOut>> nextStep)
+        {
+            return result.IsSuccess && condition(result.Value!)
+                ? nextStep(result.Value!)
+                : Result<TOut>.Failure(result.StatusCode, result.Errors!);
+        }
 
         public static Result<TOut> SafeExecute<TIn, TOut>(this Result<TIn> result, Func<TIn, TOut> func, List<ErrorsResult> fallbackError)
         {

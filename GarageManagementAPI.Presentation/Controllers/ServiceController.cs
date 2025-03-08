@@ -7,6 +7,8 @@ using GarageManagementAPI.Service.Contracts;
 using GarageManagementAPI.Shared.RequestFeatures;
 using GarageManagementAPI.Presentation.Extensions;
 using GarageManagementAPI.Shared.DataTransferObjects.Service;
+using GarageManagementAPI.Shared.Enums;
+using GarageManagementAPI.Shared.ResultModel;
 
 namespace GarageManagementAPI.Presentation.Controllers
 {
@@ -17,6 +19,28 @@ namespace GarageManagementAPI.Presentation.Controllers
         public ServiceController(IServiceManager service) : base(service)
         {
         }
+
+        [HttpGet("categories")]
+        public IActionResult GetServiceCategory()
+        {
+            var serviceCategories = Enum.GetValues<ServiceCategory>();
+            return Ok(Result<IList<ServiceCategory>>.Ok(serviceCategories));
+        }
+
+        [HttpGet("actions")]
+        public IActionResult GetServiceActions()
+        {
+            var serviceActions = Enum.GetValues<ServiceAction>();
+            return Ok(Result<IList<ServiceAction>>.Ok(serviceActions));
+        }
+
+        [HttpGet("worknatures")]
+        public IActionResult GetWorkNatures()
+        {
+            var workNatures = Enum.GetValues<WorkNature>();
+            return Ok(Result<IList<WorkNature>>.Ok(workNatures));
+        }
+
         /// <summary>
         /// Get all service
         /// </summary>

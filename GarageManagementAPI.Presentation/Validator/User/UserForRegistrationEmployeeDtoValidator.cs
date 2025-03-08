@@ -95,15 +95,9 @@ namespace GarageManagementAPI.Presentation.Validator.User
                 .NotEmpty()
                 .WithMessage(UserErrors.RoleRequired)
                 .WithErrorCode(nameof(UserErrors.RoleRequired))
-                .Must(ValidRole)
+                .Must(r => Enum.IsDefined(r.GetType(), r!))
                 .WithMessage(UserErrors.RoleInvalid)
                 .WithErrorCode(nameof(UserErrors.RoleInvalid));
-        }
-
-
-        private bool ValidRole<T>(T role)
-        {
-            return Enum.IsDefined(typeof(T), role!);
         }
 
     }

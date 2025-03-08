@@ -2,8 +2,10 @@
 using GarageManagementAPI.Repository.Contracts;
 using GarageManagementAPI.Repository.Extensions;
 using GarageManagementAPI.Shared.Enums.SystemStatuss;
+using GarageManagementAPI.Shared.Extension;
 using GarageManagementAPI.Shared.RequestFeatures;
 using Microsoft.EntityFrameworkCore;
+using System.Runtime.Remoting;
 
 namespace GarageManagementAPI.Repository
 {
@@ -13,7 +15,7 @@ namespace GarageManagementAPI.Repository
         {
         }
 
-        public async Task<Package?> GetPacakgeByNameAsync(string packageName, bool trackChanges)
+        public async Task<Package?> GetPackageByNameAsync(string packageName, bool trackChanges)
         {
             var package = await FindByCondition(p => p.PackageName.Equals(packageName), trackChanges)
                 .Include(p => p.PackageImages)
@@ -40,6 +42,18 @@ namespace GarageManagementAPI.Repository
         public async Task<PagedList<Package>> GetPackagesAsync(PackageParameters packageParameters, bool trackChanges)
         {
             var pacakges = await FindAll(trackChanges)
+                .FilterByCarCategory(packageParameters.CarCategoryId)
+                .FilterByServiceCategory(packageParameters.ServiceCategory)
+                .FilterByPriceRange(packageParameters.MinPrice, packageParameters.MaxPrice)
+                .FilterByPackageName(packageParameters.PackageName)
+                .FilterByDescription(packageParameters.Description)
+                .FilterByPackageType(packageParameters.Type)
+                .FilterByPackageStatus(packageParameters.Status)
+                .FilterByValidityPeriod(packageParameters.ValidityPeriod)
+                .FilterByTimeUnit(packageParameters.TimeUnit)
+                .FilterByUsageLimit(packageParameters.UsageLimit)
+                .FilterByCreatedAt(packageParameters.CreatedAt)
+                .FilterByUpdatedAt(packageParameters.UpdatedAt)
                 .Sort(packageParameters.OrderBy)
                 .Skip((packageParameters.PageNumber - 1) * packageParameters.PageSize)
                 .Take(packageParameters.PageSize)
@@ -51,6 +65,74 @@ namespace GarageManagementAPI.Repository
                 .ToListAsync();
 
             var count = await FindAll(trackChanges)
+                .FilterByCarCategory(packageParameters.CarCategoryId)
+                .FilterByServiceCategory(packageParameters.ServiceCategory)
+                .FilterByPriceRange(packageParameters.MinPrice, packageParameters.MaxPrice)
+                .FilterByPackageName(packageParameters.PackageName)
+                .FilterByDescription(packageParameters.Description)
+                .FilterByPackageType(packageParameters.Type)
+                .FilterByPackageStatus(packageParameters.Status)
+                .FilterByValidityPeriod(packageParameters.ValidityPeriod)
+                .FilterByTimeUnit(packageParameters.TimeUnit)
+                .FilterByUsageLimit(packageParameters.UsageLimit)
+                .FilterByCreatedAt(packageParameters.CreatedAt)
+                .FilterByUpdatedAt(packageParameters.UpdatedAt)
+                .CountAsync();
+
+
+            return new PagedList<Package>(
+                pacakges,
+                count,
+                packageParameters.PageNumber,
+                packageParameters.PageSize);
+        }
+
+        public async new Task CreateAsync(Package package)
+        {
+            package.CreatedAt = DateTimeOffset.UtcNow.SEAsiaStandardTime();
+            package.UpdatedAt = DateTimeOffset.UtcNow.SEAsiaStandardTime();
+
+            await base.CreateAsync(package);
+        }
+
+        public async Task<PagedList<Package>> GetPackagesByServiceIdAsync(Guid serviceId, PackageParameters packageParameters, bool trackChanges)
+        {
+            var pacakges = await FindByCondition(p => p.PackageHistories.Any(ph => ph.Status.Equals(PackageHistoryStatus.Active) && ph.Services.Any(s => s.Id.Equals(serviceId))), trackChanges)
+                   .FilterByCarCategory(packageParameters.CarCategoryId)
+                .FilterByServiceCategory(packageParameters.ServiceCategory)
+                .FilterByPriceRange(packageParameters.MinPrice, packageParameters.MaxPrice)
+                .FilterByPackageName(packageParameters.PackageName)
+                .FilterByDescription(packageParameters.Description)
+                .FilterByPackageType(packageParameters.Type)
+                .FilterByPackageStatus(packageParameters.Status)
+                .FilterByValidityPeriod(packageParameters.ValidityPeriod)
+                .FilterByTimeUnit(packageParameters.TimeUnit)
+                .FilterByUsageLimit(packageParameters.UsageLimit)
+                .FilterByCreatedAt(packageParameters.CreatedAt)
+                .FilterByUpdatedAt(packageParameters.UpdatedAt)
+                .Sort(packageParameters.OrderBy)
+               .Skip((packageParameters.PageNumber - 1) * packageParameters.PageSize)
+               .Take(packageParameters.PageSize)
+               .Include(p => p.PackageImages)
+               .Include(p => p.PackageHistories.OrderByDescending(ph => ph.CreatedAt).Take(1))
+               .Include(p => p.PackageConditions)
+               .Include(p => p.CarCategory)
+               .AsSplitQuery()
+               .ToListAsync();
+
+            var count = await FindAll(trackChanges)
+                    .FilterByCarCategory(packageParameters.CarCategoryId)
+                .FilterByServiceCategory(packageParameters.ServiceCategory)
+                .FilterByPriceRange(packageParameters.MinPrice, packageParameters.MaxPrice)
+                .FilterByPackageName(packageParameters.PackageName)
+                .FilterByDescription(packageParameters.Description)
+                .FilterByPackageType(packageParameters.Type)
+                .FilterByPackageStatus(packageParameters.Status)
+                .FilterByValidityPeriod(packageParameters.ValidityPeriod)
+                .FilterByTimeUnit(packageParameters.TimeUnit)
+                .FilterByUsageLimit(packageParameters.UsageLimit)
+                .FilterByCreatedAt(packageParameters.CreatedAt)
+                .FilterByUpdatedAt(packageParameters.UpdatedAt)
                 .CountAsync();
 
 

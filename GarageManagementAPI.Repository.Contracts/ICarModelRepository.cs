@@ -9,6 +9,8 @@ namespace GarageManagementAPI.Repository.Contracts
 
         public Task<CarModel?> GetCarModelAsync(Guid id, bool trackChanges);
 
+        public Task<CarModel?> GetCarModelAsync(string modelName, Guid brandId, Guid categoryId, DateOnly modelYear, bool trackChanges);
+
         public Task CreateCarModelsAsync(CarModel carModel);
     }
 }

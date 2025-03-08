@@ -34,6 +34,7 @@ namespace GarageManagementAPI.Repository
         private readonly Lazy<IPackageImageRepository> _packageImageRepository;
         private readonly Lazy<IPackageUsageRepository> _packageUsageRepository;
         private readonly Lazy<IPackageUsageDetailRepository> _packageUsageDetailRepository;
+        private readonly Lazy<IPackageDetailRepository> _packageDetailRepository;
 
         public RepositoryManager(RepositoryContext repositoryContext)
         {
@@ -66,6 +67,7 @@ namespace GarageManagementAPI.Repository
             _packageImageRepository = new Lazy<IPackageImageRepository>(() => new PackageImageRepository(repositoryContext));
             _packageUsageRepository = new Lazy<IPackageUsageRepository>(() => new PackageUsageRepository(repositoryContext));
             _packageUsageDetailRepository = new Lazy<IPackageUsageDetailRepository>(() => new PackageUsageDetailRepository(repositoryContext));
+            _packageDetailRepository = new Lazy<IPackageDetailRepository>(() => new PackageDetailRepository(repositoryContext));
         }
 
         public IUserRepository User => _userRepository.Value;
@@ -96,6 +98,7 @@ namespace GarageManagementAPI.Repository
         public IPackageImageRepository PackageImage => _packageImageRepository.Value;
         public IPackageUsageRepository PackageUsage => _packageUsageRepository.Value;
         public IPackageUsageDetailRepository PackageUsageDetail => _packageUsageDetailRepository.Value;
+        public IPackageDetailRepository PackageDetail => _packageDetailRepository.Value;
 
         public async Task<IDbContextTransaction> BeginTransactionAsync()
         {

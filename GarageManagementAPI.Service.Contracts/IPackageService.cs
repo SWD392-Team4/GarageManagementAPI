@@ -8,14 +8,16 @@ namespace GarageManagementAPI.Service.Contracts
 {
     public interface IPackageService
     {
+        Task<Result<IEnumerable<ExpandoObject>>> GetServiceOfPackageAsync(Guid packgeId, ServiceParameters serviceParameters);
+
         Task<Result<IEnumerable<ExpandoObject>>> GetPackagesAsync(PackageParameters packageParameters, bool trackChanges);
 
-        Task<Result<ExpandoObject>> GetPackageByIdAsync(Guid id, bool trackChanges, string? fields = null);
+        Task<Result<ExpandoObject>> GetPackageByIdAsync(Guid packageId, bool trackChanges, string? fields = null);
 
-        Task<Result<ExpandoObject>> CreatePackage(PackageDtoForCreation packageDtoForCreation, List<(string? ImageId, string? ImageLink)>? imageTuples = null, string? fields = null);
+        Task<Result<ExpandoObject>> CreatePackageAsync(PackageDtoForCreation packageDtoForCreation, List<(string? imageId, string? imageLink)>? imageTuples = null, string? fields = null);
 
-        Task<Result> UpdatePackage(Guid id, PackageDtoForUpdate packageDtoForUpdate);
+        Task<Result> UpdatePackageAsync(Guid packageId, PackageDtoForUpdate packageDtoForUpdate);
 
-        Task<Result> RemovePacakge(Guid id);
+        Task<Result> RemovePacakgeAsync(Guid packageId);
     }
 }

@@ -58,7 +58,7 @@ namespace GarageManagementAPI.Repository.Extensions
                 return services;
             }
             // Thực hiện truy vấn
-            return services.Where(s => s.EstimatedHours == estimatedHours);
+            return services.Where(s => s.EstimatedHours.Equals(estimatedHours));
         }
 
 
@@ -69,7 +69,7 @@ namespace GarageManagementAPI.Repository.Extensions
                 return services;
             }
 
-            return services.Where(s => s.Status.ToString().Equals(status.ToString()));
+            return services.Where(s => s.Status.Equals(status));
         }
 
         public static IQueryable<Service> SearchByCreateAt(this IQueryable<Service> service, DateTimeOffset? createdAt)

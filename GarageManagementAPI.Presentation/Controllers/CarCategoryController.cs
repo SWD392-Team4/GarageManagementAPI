@@ -26,9 +26,9 @@ namespace GarageManagementAPI.Presentation.Controllers
         }
 
         [HttpGet("{id:Guid}", Name = "GetCarCategoryById")]
-        public async Task<IActionResult> GetCarCategoryById(Guid id)
+        public async Task<IActionResult> GetCarCategoryById(Guid id, [FromQuery] string? fields)
         {
-            var result = await _service.CarCategoryService.GetCarCategoryAsync(id, false);
+            var result = await _service.CarCategoryService.GetCarCategoryAsync(id, false, fields);
 
             return result.Map(
                 onSuccess: Ok,
@@ -37,9 +37,9 @@ namespace GarageManagementAPI.Presentation.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateCarCategory([FromBody] CarCategoryDtoForCreate carCategoryDtoForCreate)
+        public async Task<IActionResult> CreateCarCategory([FromBody] CarCategoryDtoForCreate carCategoryDtoForCreate, [FromQuery] string? fields)
         {
-            var result = await _service.CarCategoryService.CreateCarCategoryAsync(carCategoryDtoForCreate);
+            var result = await _service.CarCategoryService.CreateCarCategoryAsync(carCategoryDtoForCreate, fields);
 
             return result.Map(
                 onSuccess: result =>

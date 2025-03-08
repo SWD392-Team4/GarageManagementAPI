@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace GarageManagementAPI.Shared.DataTransferObjects.CarCategory
 {
-    public record CarCategoryDto
+    public record CarCategoryDto : BaseDto<CarCategoryDto>
     {
         public Guid Id { get; set; }
 

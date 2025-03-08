@@ -8,6 +8,7 @@ using GarageManagementAPI.Entities.Models;
 using GarageManagementAPI.Shared.RequestFeatures;
 using System.Dynamic;
 using Microsoft.EntityFrameworkCore;
+using GarageManagementAPI.Shared.DataTransferObjects.Package;
 
 namespace GarageManagementAPI.Service
 {
@@ -23,11 +24,11 @@ namespace GarageManagementAPI.Service
             _dataShaper = dataShaper;
         }
 
-        public async Task<Result> CreatePackageImageAsync(Guid packageId, IEnumerable<(string? ImageId, string? ImageLink)> imageTuples)
+        public async Task<Result<IEnumerable<PackageImageDto>>> CreatePackageImageAsync(Guid packageId, IEnumerable<(string? ImageId, string? ImageLink)> imageTuples)
         {
             var package = await _repoManager.Package.GetPackageByIdAsync(packageId, trackChanges: false);
             if (package is null)
-                return Result.NotFound(PackageErrors.GetPackageNotFoundError(packageId));
+                return Result<IEnumerable<PackageImageDto>>.NotFound(PackageErrors.GetPackageNotFoundError(packageId));
 
             var packageImages = new List<PackageImage>();
             foreach (var imageItem in imageTuples)
@@ -43,7 +44,9 @@ namespace GarageManagementAPI.Service
             await _repoManager.PackageImage.CreatesAsync(packageImages.ToArray());
             await _repoManager.SaveAsync();
 
-            return Result.Ok();
+            var packageImagesDto = _mapper.Map<IEnumerable<PackageImageDto>>(packageImages);
+
+            return Result<IEnumerable<PackageImageDto>>.Ok(packageImagesDto);
         }
 
         public async Task<Result<PackageImageDto>> GetPackageImageByIdAsync(Guid packageId, Guid id)

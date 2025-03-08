@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using GarageManagementAPI.Entities.Models;
+using GarageManagementAPI.Shared.DataTransferObjects.Package;
 using GarageManagementAPI.Shared.DataTransferObjects.PackageHistory;
 
 namespace GarageManagementAPI.Application.MappingProfile
@@ -9,6 +10,7 @@ namespace GarageManagementAPI.Application.MappingProfile
         public PackageHistoryMappingProfile()
         {
             CreateMap<PackageHistory, PackageHistoryDto>();
+            CreateMap<PackageHistory, PackageDto>();
         }
     }
 }

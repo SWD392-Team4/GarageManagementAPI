@@ -7,6 +7,7 @@ namespace GarageManagementAPI.Service.Contracts
 {
     public interface IServiceService
     {
+        public Task<Result<IEnumerable<ExpandoObject>>> GetPackgeOfServiceAsync(Guid serviceId, PackageParameters packageParameters);
         public Task<Result<ExpandoObject>> GetServiceAsync(Guid serviceId, bool trackChanges, string? include = null);
         public Task<Result<IEnumerable<ExpandoObject>>> GetServicesAsync(ServiceParameters serviceParameters, bool trackChanges, string? include = null);
         public Task<Result<ServiceDtoForUpdate>> GetServiceForPartiallyUpdate(Guid serviceId, bool trackChanges);

@@ -15,7 +15,7 @@ namespace GarageManagementAPI.Repository.Configuration
             entity.HasIndex(e => e.AppointmentId, "appointmentdetail_appointmentid_index");
 
             entity.Property(e => e.Id).ValueGeneratedOnAdd().HasDefaultValueSql("NEWID()"); ;
-            entity.Property(e => e.ServiceNote).HasColumnType("text");
+            entity.Property(e => e.ServiceNote).HasColumnType("nvarchar(max)");
             entity.Property(e => e.Status).HasMaxLength(255);
 
             entity.HasOne(d => d.Appointment).WithMany(p => p.AppointmentDetails)

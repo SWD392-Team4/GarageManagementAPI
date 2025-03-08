@@ -9,6 +9,6 @@ namespace GarageManagementAPI.Repository.Contracts
 
         public Task<CarCategory?> GetCarCategoryAsync(Guid id, bool trackChanges);
 
-        public Task CreateCarCategoryAsync(CarCategory carCategory);
+        public Task<CarCategory?> GetCarCategoryAsync(string category, bool trackChanges);
     }
 }

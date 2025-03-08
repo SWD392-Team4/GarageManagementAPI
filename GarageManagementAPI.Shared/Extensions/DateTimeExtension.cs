@@ -1,4 +1,4 @@
-﻿namespace GarageManagementAPI.Service.Extension
+﻿namespace GarageManagementAPI.Shared.Extension
 {
     public static class DateTimeExtension
     {

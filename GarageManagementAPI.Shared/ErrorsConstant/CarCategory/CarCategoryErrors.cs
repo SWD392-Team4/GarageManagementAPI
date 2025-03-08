@@ -4,6 +4,13 @@ namespace GarageManagementAPI.Shared.ErrorsConstant.CarCategory
 {
     public class CarCategoryErrors
     {
+        public const string BrandIdRequired = "Brand id is required.";
+        public const string CarCategoryIdRequired = "Car category id is required.";
+        public const string ModelNameRequired = "Model name is required.";
+        public const string ModelYearRequired = "Model year is required.";
+        public const string CarModelStatusRequired = "Car model status is required.";
+        public const string CarModelStatusInvalid = "Car model status is invalid.";
+
         public const string CarCategoryNotfound = "Car category with id {0} not found.";
 
         public const string CarCategoryAlreadyExist = "Car category with name {0} alreadyExist.";

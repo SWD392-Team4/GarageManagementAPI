@@ -18,7 +18,7 @@ namespace GarageManagementAPI.Repository.Configuration
 
             entity.Property(e => e.Id).ValueGeneratedOnAdd().HasDefaultValueSql("NEWID()");
             entity.Property(e => e.Emoji).HasMaxLength(255);
-            entity.Property(e => e.FeedBack).HasColumnType("text");
+            entity.Property(e => e.FeedBack).HasColumnType("nvarchar(max)");
             entity.Property(e => e.Status).HasMaxLength(255);
 
             entity.HasOne(d => d.Customer).WithMany(p => p.PackageFeedBacks)

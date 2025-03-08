@@ -44,10 +44,10 @@ namespace GarageManagementAPI.Application.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("CanceledReason")
-                        .HasColumnType("text");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("CarCondition")
-                        .HasColumnType("text");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("CarLicensePlateNumber")
                         .HasMaxLength(255)
@@ -133,7 +133,7 @@ namespace GarageManagementAPI.Application.Migrations
 
                     b.Property<string>("ServiceNote")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Status")
                         .IsRequired()
@@ -836,7 +836,7 @@ namespace GarageManagementAPI.Application.Migrations
 
                     b.Property<string>("Description")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Status")
                         .IsRequired()
@@ -3135,7 +3135,7 @@ namespace GarageManagementAPI.Application.Migrations
 
                     b.Property<string>("Description")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("PackageName")
                         .IsRequired()
@@ -3225,7 +3225,7 @@ namespace GarageManagementAPI.Application.Migrations
 
                     b.Property<string>("FeedBack")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<Guid>("PackageId")
                         .HasColumnType("uniqueidentifier");
@@ -3424,7 +3424,7 @@ namespace GarageManagementAPI.Application.Migrations
 
                     b.Property<string>("ProductDescription")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ProductName")
                         .IsRequired()
@@ -3918,7 +3918,7 @@ namespace GarageManagementAPI.Application.Migrations
 
                     b.Property<string>("Description")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("EstimatedHours")
                         .HasColumnType("int");
@@ -4580,7 +4580,7 @@ namespace GarageManagementAPI.Application.Migrations
 
                     b.Property<string>("FeedBack")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<Guid>("ServiceId")
                         .HasColumnType("uniqueidentifier");

@@ -32,6 +32,7 @@ namespace GarageManagementAPI.Repository.Contracts
         IPackageImageRepository PackageImage { get; }
         IPackageUsageRepository PackageUsage { get; }
         IPackageUsageDetailRepository PackageUsageDetail { get; }
+        IPackageDetailRepository PackageDetail { get; }
         Task<IDbContextTransaction> BeginTransactionAsync();
         IExecutionStrategy CreateExecutionStrategy();
         Task SaveAsync();

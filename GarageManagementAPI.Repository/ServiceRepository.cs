@@ -82,5 +82,43 @@ namespace GarageManagementAPI.Repository
         {
             return await FindByCondition(x => x.PackageHistories.Any(x => x.Id.Equals(pacakgeHistoryId)), trackChanges).ToListAsync();
         }
+
+        public async Task<PagedList<Service>> GetServiceByPackageHistoryIdAsync(Guid pacakgeHistoryId, bool trackChanges, ServiceParameters serviceParameters, string? include = default)
+        {
+            var services = await FindByCondition(s => s.PackageHistories.Any(p => p.Id.Equals(pacakgeHistoryId)), trackChanges)
+                    .SearchByName(serviceParameters.ServiceName)
+                    .SearchByCreateAt(serviceParameters.CreatedAt)
+                    .SearchByUpdateAt(serviceParameters.UpdatedAt)
+                    .SearchByWorkNature(serviceParameters.WorkNature)
+                    .SearchByServiceCategory(serviceParameters.ServiceCategory)
+                    .SearchByAction(serviceParameters.Action)
+                    .SearchByStatus(serviceParameters.Status)
+                    .SearchByCarCategory(serviceParameters.CarCategoryName)
+                    .SearchByCarPart(serviceParameters.CarPartName)
+                    .Sort(serviceParameters.OrderBy)
+                    .Skip((serviceParameters.PageNumber - 1) * serviceParameters.PageSize)
+                    .Take(serviceParameters.PageSize)
+                    .IsInclude(include)
+                    .ToListAsync();
+
+            var count = await FindAll(trackChanges)
+                    .SearchByName(serviceParameters.ServiceName)
+                    .SearchByCreateAt(serviceParameters.CreatedAt)
+                    .SearchByUpdateAt(serviceParameters.UpdatedAt)
+                    .SearchByWorkNature(serviceParameters.WorkNature)
+                    .SearchByServiceCategory(serviceParameters.ServiceCategory)
+                    .SearchByAction(serviceParameters.Action)
+                    .SearchByStatus(serviceParameters.Status)
+                    .SearchByCarCategory(serviceParameters.CarCategoryName)
+                    .SearchByCarPart(serviceParameters.CarPartName)
+                    .CountAsync();
+
+
+            return new PagedList<Service>(
+                services,
+                count,
+                serviceParameters.PageNumber,
+                serviceParameters.PageSize);
+        }
     }
 }

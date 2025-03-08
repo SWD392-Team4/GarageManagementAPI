@@ -6,8 +6,10 @@ namespace GarageManagementAPI.Repository.Contracts
 {
     public interface IPackageHistoryRepository : IRepositoryBase<PackageHistory>
     {
-        Task<PackageHistory?> GetPackageHistoryByIdAsync(Guid id, bool trackChanges);
-        Task<bool> CheckIfPackageHistoryExist(Guid packageId, decimal packagePrice, int validityPeriod, TimeUnit timeUnit, int usageLimit);
-        Task<PagedList<PackageHistory>> GetPackageHistoriesAsync(PackageHistoryParameters packageHistoryParameters, bool trackChanges);
+        Task<PackageHistory?> GetPackageHistoryAsync(Guid packageId, Guid packageHistoryId, bool trackChanges);
+        Task<PackageHistory?> GetPackageHistoryAsync(Guid packageId, decimal packagePrice, int validityPeriod, TimeUnit timeUnit, int usageLimit, bool trackChanges);
+        Task<PagedList<PackageHistory>> GetPackageHistoriesAsync(Guid packageId, PackageHistoryParameters packageHistoryParameters, bool trackChanges);
+        Task CreateAsync(Guid packageId, PackageHistory packageHistory);
+
     }
 }

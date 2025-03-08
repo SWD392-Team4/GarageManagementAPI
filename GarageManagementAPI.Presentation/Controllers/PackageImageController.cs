@@ -1,5 +1,6 @@
 ﻿using GarageManagementAPI.Service.Contracts;
 using GarageManagementAPI.Shared.Constant.Request;
+using GarageManagementAPI.Shared.DataTransferObjects.PackageCondition;
 using GarageManagementAPI.Shared.DataTransferObjects.PackageImage;
 using GarageManagementAPI.Shared.Enums;
 using GarageManagementAPI.Shared.Extension;
@@ -33,7 +34,7 @@ namespace GarageManagementAPI.Presentation.Controllers
         [Authorize(Roles = nameof(SystemRole.Administrator))]
         public async Task<IActionResult> CreatePackageImage(Guid packageId, [FromForm] IList<IFormFile> formFileDtos)
         {
-            if (formFileDtos is not null && formFileDtos.Count >= 5)
+            if (formFileDtos is not null && formFileDtos.Count > 5)
                 return BadRequest(Result.BadRequest(RequestErrors.GetTooManyImageUploadErrors()));
 
             var imagePublicIds = new List<(string? ImageId, string? ImageLink)>();
@@ -54,7 +55,10 @@ namespace GarageManagementAPI.Presentation.Controllers
             var result = await _service.PackageImageService.CreatePackageImageAsync(packageId, imagePublicIds!);
 
             return result.Map(
-                onSuccess: _ => Created(),
+                onSuccess: result =>
+                {
+                    return CreatedAtAction(nameof(GetPackageImages), new { packageId }, result);
+                },
                 onFailure: ProcessError
                 );
         }

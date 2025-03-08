@@ -20,8 +20,8 @@ namespace GarageManagementAPI.Repository.Configuration
 
             entity.Property(e => e.Id).ValueGeneratedOnAdd().HasDefaultValueSql("NEWID()");
             entity.Property(e => e.AppointmentType).HasMaxLength(255);
-            entity.Property(e => e.CanceledReason).HasColumnType("text");
-            entity.Property(e => e.CarCondition).HasColumnType("text");
+            entity.Property(e => e.CanceledReason).HasColumnType("nvarchar(max)");
+            entity.Property(e => e.CarCondition).HasColumnType("nvarchar(max)");
             entity.Property(e => e.CarLicensePlateNumber).HasMaxLength(255);
             entity.Property(e => e.CustomerEmail).HasMaxLength(255);
             entity.Property(e => e.CustomerName).HasMaxLength(255);

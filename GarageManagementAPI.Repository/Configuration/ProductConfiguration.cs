@@ -22,7 +22,7 @@ namespace GarageManagementAPI.Repository.Configuration
 
             entity.Property(e => e.Id).ValueGeneratedOnAdd().HasDefaultValueSql("NEWID()");
             entity.Property(e => e.ProductBarcode).HasMaxLength(255);
-            entity.Property(e => e.ProductDescription).HasColumnType("text");
+            entity.Property(e => e.ProductDescription).HasColumnType("nvarchar(max)");
             entity.Property(e => e.ProductName).HasMaxLength(255);
             entity.Property(e => e.Status).HasMaxLength(255);
 
