@@ -37,6 +37,7 @@ namespace GarageManagementAPI.Repository
         private readonly Lazy<IPackageUsageRepository> _packageUsageRepository;
         private readonly Lazy<IPackageUsageDetailRepository> _packageUsageDetailRepository;
         private readonly Lazy<IPackageDetailRepository> _packageDetailRepository;
+        private readonly Lazy<IProductAtWarehouseRepository> _productAtWarehouseRepository;
 
         public RepositoryManager(RepositoryContext repositoryContext)
         {
@@ -72,6 +73,7 @@ namespace GarageManagementAPI.Repository
             _packageUsageRepository = new Lazy<IPackageUsageRepository>(() => new PackageUsageRepository(repositoryContext));
             _packageUsageDetailRepository = new Lazy<IPackageUsageDetailRepository>(() => new PackageUsageDetailRepository(repositoryContext));
             _packageDetailRepository = new Lazy<IPackageDetailRepository>(() => new PackageDetailRepository(repositoryContext));
+            _productAtWarehouseRepository = new Lazy<IProductAtWarehouseRepository>(() => new ProductAtWarehouseRepository(repositoryContext));
         }
 
         public IUserRepository User => _userRepository.Value;
@@ -95,6 +97,7 @@ namespace GarageManagementAPI.Repository
         public ICarPartCategoryRepository CarPartCategory => _carPartCategoryRepository.Value;
         public ISupplierContactRepository SupplierContact => _supplierContactRepository.Value;
         public IGoodsIssuedDetailRepository GoodsIssuedDetail => _goodsIssuedDetaiRepository.Value;
+        public IProductAtWarehouseRepository ProductAtWarehouse => _productAtWarehouseRepository.Value;
         public IGoodsReceivedDetailRepository GoodsReceivedDetail => _goodsReceivedDetailRepository.Value;
         public IAppointmentRepository Appointment => _appointmentRepository.Value;
         public IPackageRepository Package => _packageRepository.Value;

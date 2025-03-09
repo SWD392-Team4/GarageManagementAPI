@@ -14,7 +14,6 @@ namespace GarageManagementAPI.Repository.Contracts
         IWorkplaceRepository Workplace { get; }
         IGoodsIssuedRepository GoodsIssued { get; }
         ICarCategoryRepository CarCategory { get; }
-        IGoodsIssuedDetailRepository GoodsIssuedDetail { get; }
         IServiceImageRepository ServiceImage { get; }
         IProductImageRepository ProductImage { get; }
         IEmployeeInfoRepository EmployeeInfo { get; }
@@ -25,6 +24,8 @@ namespace GarageManagementAPI.Repository.Contracts
         IProductCategoryRepository ProductCategory { get; }
         ICarPartCategoryRepository CarPartCategory { get; }
         ISupplierContactRepository SupplierContact { get; }
+        IGoodsIssuedDetailRepository GoodsIssuedDetail { get; }
+        IProductAtWarehouseRepository ProductAtWarehouse { get; }
         IGoodsReceivedDetailRepository GoodsReceivedDetail { get; }
         IAppointmentRepository Appointment { get; }
         IPackageRepository Package { get; }
