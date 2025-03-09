@@ -18,12 +18,22 @@ namespace GarageManagementAPI.Repository.Configuration
             entity.Property(e => e.Description).HasColumnType("nvarchar(max)");
             entity.Property(e => e.PackageName).HasMaxLength(255);
             entity.Property(e => e.ServiceCategory).HasMaxLength(255);
+            entity.Property(e => e.PackagePrice).HasColumnType("decimal(18, 2)");
 
             entity.HasOne(d => d.CarCategory).WithMany(p => p.Packages)
                 .HasForeignKey(d => d.CarCategoryId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("package_carcategoryid_foreign");
 
+
+            entity.Property(e => e.Status)
+                .HasConversion<string>();
+
+            entity.Property(e => e.TimeUnit)
+                .HasConversion<string>();
+
+            entity.Property(e => e.ServiceCategory)
+                .HasConversion<string>();
 
             entity.Property(e => e.Type)
                 .HasConversion<string>();

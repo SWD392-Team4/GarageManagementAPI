@@ -10,39 +10,17 @@ namespace GarageManagementAPI.Application.MappingProfile
         public PackageMappingProfile()
         {
             CreateMap<PackageDtoForCreation, Package>();
-            CreateMap<PackageDtoForCreation, PackageHistory>();
-            CreateMap<PackageDtoForUpdate, PackageHistory>();
             CreateMap<PackageDtoForUpdate, Package>();
             CreateMap<Package, PackageDto>()
                 .ForMember(dest => dest.Category, opts =>
                 {
                     opts.PreCondition(src => src.CarCategory != null);
                     opts.MapFrom(src => src.CarCategory.Category);
-                })
-                .ForMember(dest => dest.PackagePrice, opts =>
-                {
-                    opts.PreCondition(src => src.PackageHistories.Count > 0 && src.PackageHistories.OrderByDescending(e => e.CreatedAt).First().Status.Equals(PackageHistoryStatus.Active));
-                    opts.MapFrom(src => src.PackageHistories.First().PackagePrice);
-                })
-                .ForMember(dest => dest.UsageLimit, opts =>
-                {
-                    opts.PreCondition(src => src.PackageHistories.Count > 0 && src.PackageHistories.OrderByDescending(e => e.CreatedAt).First().Status.Equals(PackageHistoryStatus.Active));
-                    opts.MapFrom(src => src.PackageHistories.First().UsageLimit);
-                })
-                .ForMember(dest => dest.ValidityPeriod, opts =>
-                {
-                    opts.PreCondition(src => src.PackageHistories.Count > 0 && src.PackageHistories.OrderByDescending(e => e.CreatedAt).First().Status.Equals(PackageHistoryStatus.Active));
-                    opts.MapFrom(src => src.PackageHistories.First().ValidityPeriod);
-                })
-                .ForMember(dest => dest.TimeUnit, opts =>
-                {
-                    opts.PreCondition(src => src.PackageHistories.Count > 0 && src.PackageHistories.OrderByDescending(e => e.CreatedAt).First().Status.Equals(PackageHistoryStatus.Active));
-                    opts.MapFrom(src => src.PackageHistories.First().TimeUnit);
-                }).ForMember(dest => dest.Status, opts =>
-                {
-                    opts.PreCondition(src => src.PackageHistories.Count > 0);
-                    opts.MapFrom(src => src.PackageHistories.First().Status);
                 });
+            CreateMap<Package, PackageHistory>()
+                .ForMember(dest => dest.PackageId, opt => opt.MapFrom(src => src.Id))
+                .ForMember(dest => dest.Id, opt => opt.Ignore());
+
         }
     }
 }

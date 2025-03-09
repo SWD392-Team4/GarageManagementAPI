@@ -1,10 +1,8 @@
 ﻿using System.Linq.Dynamic.Core;
-using Microsoft.EntityFrameworkCore;
 using GarageManagementAPI.Entities.Models;
 using GarageManagementAPI.Repository.Extensions.Utility;
 using GarageManagementAPI.Shared.Enums;
 using GarageManagementAPI.Shared.Enums.SystemStatuss;
-using System.Linq.Expressions;
 
 namespace GarageManagementAPI.Repository.Extensions
 {
@@ -56,29 +54,15 @@ namespace GarageManagementAPI.Repository.Extensions
             if (packageType is null)
                 return packages;
 
-            // More explicit comparison for enum values
-            var typeValue = packageType.Value;
-            return packages.Where(p => p.Type == typeValue);
+            return packages.Where(p => p.Type.Equals(packageType));
         }
 
-        // Using a more efficient approach for filtering by latest package history properties
-        public static IQueryable<Package> FilterByPackageStatus(this IQueryable<Package> packages, PackageHistoryStatus? packageStatus)
+        public static IQueryable<Package> FilterByPackageStatus(this IQueryable<Package> packages, PackageStatus? packageStatus)
         {
             if (packageStatus is null)
                 return packages;
 
-            // More efficient query that avoids multiple evaluations of the same pattern
-            return packages.Where(p => p.PackageHistories.Any())
-                .Select(p => new
-                {
-                    Package = p,
-                    LatestStatus = p.PackageHistories
-                        .OrderByDescending(ph => ph.CreatedAt)
-                        .Select(ph => ph.Status)
-                        .FirstOrDefault()
-                })
-                .Where(x => x.LatestStatus == packageStatus)
-                .Select(x => x.Package);
+            return packages.Where(p => p.Status.Equals(packageStatus));
         }
 
         public static IQueryable<Package> FilterByValidityPeriod(this IQueryable<Package> packages, int? validityPeriod)
@@ -86,17 +70,7 @@ namespace GarageManagementAPI.Repository.Extensions
             if (validityPeriod is null)
                 return packages;
 
-            return packages.Where(p => p.PackageHistories.Any())
-                .Select(p => new
-                {
-                    Package = p,
-                    ValidityPeriod = p.PackageHistories
-                        .OrderByDescending(ph => ph.CreatedAt)
-                        .Select(ph => ph.ValidityPeriod)
-                        .FirstOrDefault()
-                })
-                .Where(x => x.ValidityPeriod == validityPeriod)
-                .Select(x => x.Package);
+            return packages.Where(p => p.ValidityPeriod.Equals(validityPeriod));
         }
 
         public static IQueryable<Package> FilterByTimeUnit(this IQueryable<Package> packages, TimeUnit? timeUnit)
@@ -104,17 +78,7 @@ namespace GarageManagementAPI.Repository.Extensions
             if (timeUnit is null)
                 return packages;
 
-            return packages.Where(p => p.PackageHistories.Any())
-                .Select(p => new
-                {
-                    Package = p,
-                    TimeUnit = p.PackageHistories
-                        .OrderByDescending(ph => ph.CreatedAt)
-                        .Select(ph => ph.TimeUnit)
-                        .FirstOrDefault()
-                })
-                .Where(x => x.TimeUnit == timeUnit)
-                .Select(x => x.Package);
+            return packages.Where(p => p.TimeUnit.Equals(timeUnit));
         }
 
         public static IQueryable<Package> FilterByUsageLimit(this IQueryable<Package> packages, int? usageLimit)
@@ -122,17 +86,7 @@ namespace GarageManagementAPI.Repository.Extensions
             if (usageLimit is null)
                 return packages;
 
-            return packages.Where(p => p.PackageHistories.Any())
-                .Select(p => new
-                {
-                    Package = p,
-                    UsageLimit = p.PackageHistories
-                        .OrderByDescending(ph => ph.CreatedAt)
-                        .Select(ph => ph.UsageLimit)
-                        .FirstOrDefault()
-                })
-                .Where(x => x.UsageLimit == usageLimit)
-                .Select(x => x.Package);
+            return packages.Where(p => p.UsageLimit.Equals(usageLimit));
         }
 
         public static IQueryable<Package> FilterByCreatedAt(this IQueryable<Package> packages, DateTimeOffset? createdAt)
@@ -141,7 +95,7 @@ namespace GarageManagementAPI.Repository.Extensions
                 return packages;
 
             var createdAtDate = createdAt.Value.Date.DayOfYear;
-            return packages.Where(p => p.CreatedAt.Date.DayOfYear == createdAtDate);
+            return packages.Where(p => p.CreatedAt.Date.DayOfYear.Equals(createdAtDate));
         }
 
         public static IQueryable<Package> FilterByUpdatedAt(this IQueryable<Package> packages, DateTimeOffset? updatedAt)
@@ -153,41 +107,9 @@ namespace GarageManagementAPI.Repository.Extensions
             return packages.Where(p => p.UpdatedAt.Date.DayOfYear == updatedAtDate);
         }
 
-        public static IQueryable<Package> FilterByPriceRange(this IQueryable<Package> packages, decimal? minPrice, decimal? maxPrice)
+        public static IQueryable<Package> FilterByPriceRange(this IQueryable<Package> packages, decimal minPrice, decimal maxPrice)
         {
-            if (minPrice is null && maxPrice is null)
-                return packages;
-
-            // First ensure we only work with packages that have history records
-            var packagesWithHistory = packages.Where(p => p.PackageHistories.Any());
-
-            if (minPrice.HasValue && maxPrice.HasValue)
-            {
-                // When both min and max are provided
-                return packagesWithHistory.Where(p =>
-                    p.PackageHistories.OrderByDescending(ph => ph.CreatedAt)
-                        .Select(ph => ph.PackagePrice)
-                        .FirstOrDefault() >= minPrice.Value &&
-                    p.PackageHistories.OrderByDescending(ph => ph.CreatedAt)
-                        .Select(ph => ph.PackagePrice)
-                        .FirstOrDefault() <= maxPrice.Value);
-            }
-            else if (minPrice.HasValue)
-            {
-                // Only min price filter
-                return packagesWithHistory.Where(p =>
-                    p.PackageHistories.OrderByDescending(ph => ph.CreatedAt)
-                        .Select(ph => ph.PackagePrice)
-                        .FirstOrDefault() >= minPrice.Value);
-            }
-            else
-            {
-                // Only max price filter
-                return packagesWithHistory.Where(p =>
-                    p.PackageHistories.OrderByDescending(ph => ph.CreatedAt)
-                        .Select(ph => ph.PackagePrice)
-                        .FirstOrDefault() <= maxPrice!.Value);
-            }
+            return packages.Where(p => p.PackagePrice >= minPrice && p.PackagePrice <= maxPrice);
         }
 
         public static IQueryable<Package> FilterByDescription(this IQueryable<Package> packages, string? description)

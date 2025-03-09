@@ -4,6 +4,7 @@ using GarageManagementAPI.Repository;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GarageManagementAPI.Application.Migrations
 {
     [DbContext(typeof(RepositoryContext))]
-    partial class RepositoryContextModelSnapshot : ModelSnapshot
+    [Migration("20250309074122_changePackageAndPackageHistory")]
+    partial class changePackageAndPackageHistory
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -3292,6 +3295,11 @@ namespace GarageManagementAPI.Application.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
                     b.Property<string>("TimeUnit")
                         .IsRequired()
                         .HasMaxLength(255)
@@ -3310,11 +3318,9 @@ namespace GarageManagementAPI.Application.Migrations
                     b.HasKey("Id")
                         .HasName("packagehistory_id_primary");
 
-                    b.HasIndex("CarCategoryId");
-
-                    b.HasIndex("CreatedAt");
-
                     b.HasIndex(new[] { "PackageId" }, "packagehistory_packageid_index");
+
+                    b.HasIndex(new[] { "PackageId", "PackagePrice", "ValidityPeriod", "TimeUnit", "UsageLimit" }, "packagehistory_packageid_packageprice_validityperiod_timeunit_usagelimit");
 
                     b.ToTable("PackageHistory", (string)null);
                 });
@@ -6512,19 +6518,11 @@ namespace GarageManagementAPI.Application.Migrations
 
             modelBuilder.Entity("GarageManagementAPI.Entities.Models.PackageHistory", b =>
                 {
-                    b.HasOne("GarageManagementAPI.Entities.Models.CarCategory", "CarCategory")
-                        .WithMany("PackageHistories")
-                        .HasForeignKey("CarCategoryId")
-                        .IsRequired()
-                        .HasConstraintName("packagehistory_carcategoryid_foreign");
-
                     b.HasOne("GarageManagementAPI.Entities.Models.Package", "Package")
                         .WithMany("PackageHistories")
                         .HasForeignKey("PackageId")
                         .IsRequired()
                         .HasConstraintName("packagehistory_packageid_foreign");
-
-                    b.Navigation("CarCategory");
 
                     b.Navigation("Package");
                 });
@@ -6859,8 +6857,6 @@ namespace GarageManagementAPI.Application.Migrations
             modelBuilder.Entity("GarageManagementAPI.Entities.Models.CarCategory", b =>
                 {
                     b.Navigation("CarModels");
-
-                    b.Navigation("PackageHistories");
 
                     b.Navigation("Packages");
 

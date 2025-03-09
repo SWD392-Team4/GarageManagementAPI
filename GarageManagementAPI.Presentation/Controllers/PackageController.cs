@@ -33,8 +33,8 @@ namespace GarageManagementAPI.Presentation.Controllers
         [HttpGet("status")]
         public IActionResult GetPackageStatus()
         {
-            var packgeHistoryStatus = Enum.GetValues<PackageHistoryStatus>();
-            return Ok(Result<IList<PackageHistoryStatus>>.Ok(packgeHistoryStatus));
+            var packgeHistoryStatus = Enum.GetValues<PackageStatus>();
+            return Ok(Result<IList<PackageStatus>>.Ok(packgeHistoryStatus));
         }
 
         [HttpGet("timeUnit")]

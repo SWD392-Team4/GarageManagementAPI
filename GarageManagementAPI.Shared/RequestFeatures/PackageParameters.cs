@@ -1,5 +1,4 @@
-﻿using GarageManagementAPI.Shared.DataTransferObjects.PackageImage;
-using GarageManagementAPI.Shared.Enums;
+﻿using GarageManagementAPI.Shared.Enums;
 using GarageManagementAPI.Shared.Enums.SystemStatuss;
 using System.ComponentModel.DataAnnotations;
 
@@ -19,8 +18,8 @@ namespace GarageManagementAPI.Shared.RequestFeatures
         [EnumDataType(typeof(PackageType))]
         public PackageType? Type { get; set; }
 
-        [EnumDataType(typeof(PackageHistoryStatus))]
-        public PackageHistoryStatus? Status { get; set; }
+        [EnumDataType(typeof(PackageStatus))]
+        public PackageStatus? Status { get; set; }
 
         public int? ValidityPeriod { get; set; }
 
@@ -33,9 +32,9 @@ namespace GarageManagementAPI.Shared.RequestFeatures
 
         public DateTimeOffset? UpdatedAt { get; set; }
 
-        public decimal? MinPrice { get; set; } = 0;
+        public decimal MinPrice { get; set; } = 0;
 
-        public decimal? MaxPrice { get; set; } = int.MaxValue;
+        public decimal MaxPrice { get; set; } = int.MaxValue;
 
         public bool ValidatePriceRange => MinPrice < MaxPrice;
     }

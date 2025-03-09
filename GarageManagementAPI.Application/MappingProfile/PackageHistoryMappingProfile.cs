@@ -9,8 +9,12 @@ namespace GarageManagementAPI.Application.MappingProfile
     {
         public PackageHistoryMappingProfile()
         {
-            CreateMap<PackageHistory, PackageHistoryDto>();
-            CreateMap<PackageHistory, PackageDto>();
+            CreateMap<PackageHistory, PackageHistoryDto>()
+                .ForMember(dest => dest.Category, opts =>
+            {
+                opts.PreCondition(src => src.CarCategory != null);
+                opts.MapFrom(src => src.CarCategory.Category);
+            }); ;
         }
     }
 }

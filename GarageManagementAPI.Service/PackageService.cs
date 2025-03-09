@@ -6,12 +6,12 @@ using GarageManagementAPI.Shared.DataTransferObjects.Package;
 using GarageManagementAPI.Entities.Models;
 using GarageManagementAPI.Shared.ErrorsConstant.CarCategory;
 using GarageManagementAPI.Shared.RequestFeatures;
-using GarageManagementAPI.Shared.Enums.SystemStatuss;
 using GarageManagementAPI.Shared.ErrorsConstant.Service;
 using GarageManagementAPI.Shared.ErrorsConstant.Package;
 using System.Dynamic;
 using GarageManagementAPI.Shared.Extension;
 using GarageManagementAPI.Shared.DataTransferObjects.Service;
+using GarageManagementAPI.Shared.DataTransferObjects.PackageHistory;
 
 namespace GarageManagementAPI.Service
 {
@@ -41,7 +41,7 @@ namespace GarageManagementAPI.Service
                 trackChanges: true);
 
             if (services.Count() != packageDtoForCreation.ServiceList!.Count())
-                return Result<(CarCategory carCategory, IEnumerable<Entities.Models.Service> services)>.NotFound(
+                return Result<(CarCategory carCategory, IEnumerable<Entities.Models.Service> services)>.BadRequest(
                     ServiceErrors.GetServicesFoundNotMatchWithIdsError(packageDtoForCreation.ServiceList!));
 
             var existingPackage = await _repoManager.Package.GetPackageByNameAsync(
@@ -55,36 +55,7 @@ namespace GarageManagementAPI.Service
             return Result<(CarCategory carCategory, IEnumerable<Entities.Models.Service> services)>.Ok((carCategory, services));
         }
 
-        private async Task<Result<Package>> ValidatePackageInputsForUpdate(Guid packageId, PackageDtoForUpdate packageDtoForUpdate)
-        {
-            var package = await _repoManager.Package.GetPackageByIdAsync(packageId, true);
-            if (package is null)
-                return Result<Package>.NotFound(PackageErrors.GetPackageNotFoundError(packageId));
 
-            var carCategory = await _repoManager.CarCategory.GetCarCategoryAsync(
-                packageDtoForUpdate.CarCategoryId!.Value,
-                trackChanges: false);
-
-            if (carCategory is null)
-                return Result<Package>.NotFound(
-                    CarCategoryErrors.GetCarCategoryNotFoundError(packageDtoForUpdate.CarCategoryId!.Value));
-
-            var existingPackage = await _repoManager.Package.GetPackageByNameAsync(
-                packageDtoForUpdate.PackageName!,
-                trackChanges: false);
-
-            if (existingPackage is not null && !existingPackage.Id.Equals(packageId))
-                return Result<Package>.Conflict(
-                    PackageErrors.GetPackageAlreadyExistError(packageDtoForUpdate.PackageName!));
-
-            return Result<Package>.Ok(package);
-        }
-
-        private bool CheckIfPackageHistoryIsChanged(PackageHistory currentPackageHistory, PackageHistory newPackageHistory)
-         => !currentPackageHistory.PackagePrice.Equals(newPackageHistory.PackagePrice) ||
-            !currentPackageHistory.TimeUnit.Equals(newPackageHistory.TimeUnit) ||
-            !currentPackageHistory.UsageLimit.Equals(newPackageHistory.UsageLimit) ||
-            !currentPackageHistory.ValidityPeriod.Equals(newPackageHistory.ValidityPeriod);
 
         private static IEnumerable<PackageImage>? CreatePackageImages(List<(string? imageId, string? imageLink)>? imageTuples, Guid packageId)
         {
@@ -120,7 +91,7 @@ namespace GarageManagementAPI.Service
             var services = validationResult.Value.services;
 
             var package = _mapper.Map<Package>(packageDtoForCreation);
-            var packageHistory = _mapper.Map<PackageHistory>(packageDtoForCreation);
+            var packageHistory = _mapper.Map<PackageHistory>(package);
 
             packageHistory.Services = [.. services];
             var packageImages = CreatePackageImages(imageTuples, package.Id);
@@ -183,38 +154,154 @@ namespace GarageManagementAPI.Service
             if (!validationResult.IsSuccess)
                 return validationResult;
 
-            var package = validationResult.Value!;
-            var currentPackageHistory = package.PackageHistories.FirstOrDefault();
+            var package = validationResult.Value!.package;
+            var currentPackageHistory = validationResult.Value!.currentPackageHistory;
+            var currentServices = validationResult.Value!.currentServices;
 
-            if (currentPackageHistory is null)
-                return Result.Conflict(PackageErrors.GetPackageDoesNotHaveAnyPackageHistoryError(packageId));
+            var isPackageChanged = IsPackageChanged(package, packageDtoForUpdate);
+            bool shouldCreateNewHistory =
+                (packageDtoForUpdate.AddServices != null && packageDtoForUpdate.AddServices.Any()) ||
+                (packageDtoForUpdate.RemoveServices != null && packageDtoForUpdate.RemoveServices.Any());
 
-            var packageHistoryForUpdate = _mapper.Map<PackageHistory>(packageDtoForUpdate);
-
-            bool shouldCreateNewHistory = CheckIfPackageHistoryIsChanged(currentPackageHistory, packageHistoryForUpdate) || currentPackageHistory.Status.Equals(PackageHistoryStatus.Inactive);
+            if (isPackageChanged)
+            {
+                _mapper.Map(packageDtoForUpdate, package);
+                package.UpdatedAt = DateTimeOffset.UtcNow.SEAsiaStandardTime();
+            }
 
             if (shouldCreateNewHistory)
             {
-                await CreateNewPackageHistory(package, currentPackageHistory, packageHistoryForUpdate);
+                await CreateNewPackageHistory(package, currentPackageHistory, currentServices, packageDtoForUpdate.AddServices, packageDtoForUpdate.RemoveServices);
             }
 
-            _mapper.Map(packageDtoForUpdate, package);
-            package.UpdatedAt = DateTimeOffset.UtcNow.SEAsiaStandardTime();
             await _repoManager.SaveAsync();
 
             return Result.Ok();
         }
 
-        private async Task CreateNewPackageHistory(Package package, PackageHistory currentPackageHistory, PackageHistory newPackageHistory)
+        private async Task<Result<(Package package, PackageHistory? currentPackageHistory, List<Entities.Models.Service> currentServices)>> ValidatePackageInputsForUpdate(Guid packageId, PackageDtoForUpdate packageDtoForUpdate)
         {
-            var currentServices = await _repoManager.Service.GetServiceByPackageHistoryIdAsync(
-                currentPackageHistory.Id,
+            var package = await _repoManager.Package.GetPackageByIdAsync(packageId, true);
+            if (package is null)
+                return Result<(Package package, PackageHistory? currentPackageHistory, List<Entities.Models.Service> currentServices)>.NotFound(PackageErrors.GetPackageNotFoundError(packageId));
+
+            var carCategory = await _repoManager.CarCategory.GetCarCategoryAsync(
+                packageDtoForUpdate.CarCategoryId!.Value,
+                trackChanges: false);
+            if (carCategory is null)
+                return Result<(Package package, PackageHistory? currentPackageHistory, List<Entities.Models.Service> currentServices)>.NotFound(
+                    CarCategoryErrors.GetCarCategoryNotFoundError(packageDtoForUpdate.CarCategoryId!.Value));
+
+            var existingPackage = await _repoManager.Package.GetPackageByNameAsync(
+                packageDtoForUpdate.PackageName!,
+                trackChanges: false);
+            if (existingPackage is not null && !existingPackage.Id.Equals(packageId))
+                return Result<(Package package, PackageHistory? currentPackageHistory, List<Entities.Models.Service> currentServices)>.Conflict(
+                    PackageErrors.GetPackageAlreadyExistError(packageDtoForUpdate.PackageName!));
+
+            var currentPackageHistory = await _repoManager.PackageHistory.GetPackageHistoryAsync(package.Id, true);
+            var currentServices = new List<Entities.Models.Service>();
+
+            if (currentPackageHistory is not null)
+            {
+                var services = await _repoManager.Service.GetServiceByPackageHistoryIdAsync(
+                    currentPackageHistory.Id,
+                    trackChanges: true);
+
+                currentServices.AddRange(services);
+            }
+
+            if (packageDtoForUpdate.AddServices != null && packageDtoForUpdate.AddServices.Any())
+            {
+                var servicesForAdd = await _repoManager.Service.GetServiceByIdsAsync(
+                packageDtoForUpdate.AddServices!,
+                trackChanges: false);
+
+                if (servicesForAdd.Count() != packageDtoForUpdate.AddServices!.Count())
+                    return Result<(Package package, PackageHistory? currentPackageHistory, List<Entities.Models.Service> currentServices)>.BadRequest(
+                        ServiceErrors.GetServicesFoundNotMatchWithIdsError(packageDtoForUpdate.AddServices!));
+
+                if (currentServices.Count != 0)
+                {
+                    var serviceExistInPackage = packageDtoForUpdate.AddServices.Where(id => currentServices.Any(s => s.Id.Equals(id))).FirstOrDefault();
+                    if (!serviceExistInPackage.Equals(default))
+                        return Result<(Package package, PackageHistory? currentPackageHistory, List<Entities.Models.Service> currentServices)>.Conflict(
+                           PackageErrors.GetServiceAlreadyExistInPackageError(serviceExistInPackage!, packageId));
+                }
+            }
+
+            if (packageDtoForUpdate.RemoveServices != null && packageDtoForUpdate.RemoveServices.Any())
+            {
+                var servicesForRemove = await _repoManager.Service.GetServiceByIdsAsync(
+                packageDtoForUpdate.RemoveServices!,
                 trackChanges: true);
+
+                if (servicesForRemove.Count() != packageDtoForUpdate.RemoveServices!.Count())
+                    return Result<(Package package, PackageHistory? currentPackageHistory, List<Entities.Models.Service> currentServices)>.BadRequest(
+                        ServiceErrors.GetServicesFoundNotMatchWithIdsError(packageDtoForUpdate.RemoveServices!));
+
+                if (currentServices.Count != 0)
+                {
+                    var serviceNotExistInPackage = packageDtoForUpdate.RemoveServices.Where(id => !currentServices.Any(s => s.Id.Equals(id))).FirstOrDefault();
+                    if (!serviceNotExistInPackage.Equals(default))
+                        return Result<(Package package, PackageHistory? currentPackageHistory, List<Entities.Models.Service> currentServices)>.Conflict(
+                       PackageErrors.GetServiceNotExistInPackage(serviceNotExistInPackage!, packageId));
+                }
+
+            }
+
+
+            return Result<(Package package, PackageHistory? currentPackageHistory, List<Entities.Models.Service> currentServices)>.Ok((package, currentPackageHistory, currentServices));
+        }
+
+        private bool IsPackageChanged(Package originalPackage, PackageDtoForUpdate updateDto)
+        {
+            return (updateDto.ServiceCategory.HasValue && originalPackage.ServiceCategory != updateDto.ServiceCategory.Value) ||
+                   (updateDto.CarCategoryId.HasValue && originalPackage.CarCategoryId != updateDto.CarCategoryId.Value) ||
+                   (updateDto.PackageName != null && !string.Equals(originalPackage.PackageName, updateDto.PackageName, StringComparison.OrdinalIgnoreCase)) ||
+                   (updateDto.Description != null && !string.Equals(originalPackage.Description?.Trim(), updateDto.Description?.Trim(), StringComparison.OrdinalIgnoreCase)) ||
+                   (updateDto.Type.HasValue && originalPackage.Type != updateDto.Type.Value) ||
+                   (updateDto.PackagePrice.HasValue && originalPackage.PackagePrice != updateDto.PackagePrice.Value) ||
+                   (updateDto.ValidityPeriod.HasValue && originalPackage.ValidityPeriod != updateDto.ValidityPeriod.Value) ||
+                   (updateDto.TimeUnit.HasValue && originalPackage.TimeUnit != updateDto.TimeUnit.Value) ||
+                   (updateDto.UsageLimit.HasValue && originalPackage.UsageLimit != updateDto.UsageLimit.Value) ||
+                   (updateDto.Status.HasValue && originalPackage.Status != updateDto.Status.Value);
+        }
+
+        private async Task CreateNewPackageHistory(Package package, PackageHistory? currentPackageHistory, List<Entities.Models.Service> currentServices, Guid[]? addServices, Guid[]? removeServices)
+        {
+            var newPackageHistory = _mapper.Map<PackageHistory>(package);
+
+            if (currentPackageHistory is not null)
+            {
+                var services = await _repoManager.Service.GetServiceByPackageHistoryIdAsync(
+                    currentPackageHistory.Id,
+                    trackChanges: true);
+
+                currentServices.AddRange(services);
+            }
+
+            if (addServices != null && addServices.Any())
+            {
+                var servicesForAdd = await _repoManager.Service.GetServiceByIdsAsync(
+                addServices,
+                trackChanges: true);
+
+                currentServices.AddRange(servicesForAdd);
+            }
+
+            if (removeServices != null && removeServices.Any())
+            {
+                var servicesForRemove = await _repoManager.Service.GetServiceByIdsAsync(
+                    removeServices,
+                    trackChanges: true);
+
+                currentServices = [.. currentServices.Except(servicesForRemove)];
+            }
 
             newPackageHistory.Services = [.. currentServices];
 
             await _repoManager.PackageHistory.CreateAsync(package.Id, newPackageHistory);
-            _repoManager.PackageHistory.Update(currentPackageHistory);
         }
 
         public async Task<Result<IEnumerable<ExpandoObject>>> GetServiceOfPackageAsync(Guid packageId, ServiceParameters serviceParameters)
@@ -223,7 +310,7 @@ namespace GarageManagementAPI.Service
             if (package is null)
                 return Result<IEnumerable<ExpandoObject>>.NotFound(PackageErrors.GetPackageNotFoundError(packageId));
 
-            var currentPackageHistory = package.PackageHistories.FirstOrDefault();
+            var currentPackageHistory = await _repoManager.PackageHistory.GetPackageHistoryAsync(package.Id, true);
 
             if (currentPackageHistory is null)
                 return Result<IEnumerable<ExpandoObject>>.Conflict(PackageErrors.GetPackageDoesNotHaveAnyPackageHistoryError(packageId));
@@ -235,6 +322,21 @@ namespace GarageManagementAPI.Service
             var serviceDtoShaped = _dataShaper.Service.ShapeData(serviceDto, serviceParameters.Fields);
 
             return Result<IEnumerable<ExpandoObject>>.Ok(serviceDtoShaped, services.MetaData);
+        }
+
+        public async Task<Result<IEnumerable<ExpandoObject>>> GetHistoriesOfPackageAsync(Guid packageId, PackageHistoryParameters packageHistoryParameters, bool trackChanges)
+        {
+            var package = await _repoManager.Package.GetPackageByIdAsync(packageId, false);
+            if (package is null)
+                return Result<IEnumerable<ExpandoObject>>.NotFound(PackageErrors.GetPackageNotFoundError(packageId));
+
+            var packageHistories = await _repoManager.PackageHistory.GetPackageHistoriesAsync(packageId, packageHistoryParameters, false);
+
+            var packageHistoryDto = _mapper.Map<IEnumerable<PackageHistoryDto>>(packageHistories);
+
+            var packageHistoryDtoShaped = _dataShaper.PackageHistory.ShapeData(packageHistoryDto, packageHistoryParameters.Fields);
+
+            return Result<IEnumerable<ExpandoObject>>.Ok(packageHistoryDtoShaped, packageHistories.MetaData);
         }
     }
 }

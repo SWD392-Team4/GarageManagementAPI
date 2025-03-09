@@ -9,6 +9,7 @@ using GarageManagementAPI.Shared.RequestFeatures;
 using System.Dynamic;
 using Microsoft.EntityFrameworkCore;
 using GarageManagementAPI.Shared.DataTransferObjects.Package;
+using GarageManagementAPI.Shared.ErrorsConstant.PackageImages;
 
 namespace GarageManagementAPI.Service
 {

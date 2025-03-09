@@ -5,7 +5,11 @@ namespace GarageManagementAPI.Shared.DataTransferObjects.Package
 {
     public record PackageDtoForUpdate : PackageDtoForManipulation
     {
-        [EnumDataType(typeof(PackageHistoryStatus))]
-        public PackageHistoryStatus Status { get; set; }
+        [EnumDataType(typeof(PackageStatus))]
+        public PackageStatus? Status { get; set; }
+
+        public Guid[]? AddServices { get; set; }
+
+        public Guid[]? RemoveServices { get; set; }
     }
 }

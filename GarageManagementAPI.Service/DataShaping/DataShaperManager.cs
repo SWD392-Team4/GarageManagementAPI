@@ -23,6 +23,7 @@ using GarageManagementAPI.Shared.DataTransferObjects.PackageCondition;
 using GarageManagementAPI.Shared.DataTransferObjects.CarCategory;
 using GarageManagementAPI.Shared.DataTransferObjects.CarModel;
 using GarageManagementAPI.Shared.DataTransferObjects.GoodsIssuedDetail;
+using GarageManagementAPI.Shared.DataTransferObjects.PackageHistory;
 
 namespace GarageManagementAPI.Service.DataShaping
 {
@@ -51,7 +52,9 @@ namespace GarageManagementAPI.Service.DataShaping
         private readonly Lazy<IDataShaper<GoodsReceivedDetailDto>> _goodsReceivedDetailShaper;
         private readonly Lazy<IDataShaper<PackageImageDto>> _packageImageShaper;
         private readonly Lazy<IDataShaper<PackageDto>> _packageShaper;
+        private readonly Lazy<IDataShaper<PackageHistoryDto>> _packageHistoryShaper;
         private readonly Lazy<IDataShaper<PackageConditionDto>> _packageConditionShaper;
+
         public DataShaperManager()
         {
             _workplaceShaper = new Lazy<IDataShaper<WorkplaceDto>>(
@@ -119,8 +122,12 @@ namespace GarageManagementAPI.Service.DataShaping
             _packageShaper = new Lazy<IDataShaper<PackageDto>>(
             () => new DataShaper<PackageDto>(PackageDto.PropertyInfos));
 
+            _packageHistoryShaper = new Lazy<IDataShaper<PackageHistoryDto>>(
+            () => new DataShaper<PackageHistoryDto>(PackageHistoryDto.PropertyInfos));
+
             _packageConditionShaper = new Lazy<IDataShaper<PackageConditionDto>>(
             () => new DataShaper<PackageConditionDto>(PackageConditionDto.PropertyInfos));
+
             _goodsIssuedDetailShaper = new Lazy<IDataShaper<GoodsIssuedDetailDto>>(
            () => new DataShaper<GoodsIssuedDetailDto>(GoodsIssuedDetailDto.PropertyInfos));
         }
@@ -147,6 +154,8 @@ namespace GarageManagementAPI.Service.DataShaping
         public IDataShaper<GoodsReceivedDetailDto> GoodsReceivedDetail => _goodsReceivedDetailShaper.Value;
         public IDataShaper<PackageImageDto> PackageImage => _packageImageShaper.Value;
         public IDataShaper<PackageDto> Package => _packageShaper.Value;
+
+        public IDataShaper<PackageHistoryDto> PackageHistory => _packageHistoryShaper.Value;
         public IDataShaper<PackageConditionDto> PackageCondition => _packageConditionShaper.Value;
         public IDataShaper<CarCategoryDto> CarCategory => _carCategoryShaper.Value;
     }

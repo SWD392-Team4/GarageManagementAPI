@@ -15,23 +15,29 @@ namespace GarageManagementAPI.Repository.Configuration
 
             entity.HasIndex(e => e.PackageId, "packagehistory_packageid_index");
 
-            entity.HasIndex(e => new { e.PackageId, e.PackagePrice, e.ValidityPeriod, e.TimeUnit, e.UsageLimit }, "packagehistory_packageid_packageprice_validityperiod_timeunit_usagelimit");
+            entity.HasIndex(e => e.CreatedAt);
 
             entity.Property(e => e.Id).ValueGeneratedOnAdd().HasDefaultValueSql("NEWID()");
             entity.Property(e => e.PackagePrice).HasColumnType("decimal(18, 2)");
-            entity.Property(e => e.Status).HasMaxLength(255);
             entity.Property(e => e.TimeUnit).HasMaxLength(255);
-
+            entity.Property(e => e.Description).HasColumnType("nvarchar(max)");
             entity.HasOne(d => d.Package).WithMany(p => p.PackageHistories)
                 .HasForeignKey(d => d.PackageId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("packagehistory_packageid_foreign");
 
-
-            entity.Property(e => e.Status)
-                .HasConversion<string>();
+            entity.HasOne(d => d.CarCategory).WithMany(p => p.PackageHistories)
+                .HasForeignKey(d => d.CarCategoryId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("packagehistory_carcategoryid_foreign");
 
             entity.Property(e => e.TimeUnit)
+                .HasConversion<string>();
+
+            entity.Property(e => e.ServiceCategory)
+                .HasConversion<string>();
+
+            entity.Property(e => e.Type)
                 .HasConversion<string>();
 
             entity.HasMany(p => p.Services)
