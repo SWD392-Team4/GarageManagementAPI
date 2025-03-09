@@ -8,6 +8,18 @@ namespace GarageManagementAPI.Entities.Models
     {
         public Guid PackageId { get; set; }
 
+        [EnumDataType(typeof(ServiceCategory))]
+        public ServiceCategory ServiceCategory { get; set; }
+
+        public Guid CarCategoryId { get; set; }
+
+        public string PackageName { get; set; } = null!;
+
+        public string Description { get; set; } = null!;
+
+        [EnumDataType(typeof(PackageType))]
+        public PackageType Type { get; set; }
+
         public decimal PackagePrice { get; set; }
 
         public int ValidityPeriod { get; set; }
@@ -17,14 +29,13 @@ namespace GarageManagementAPI.Entities.Models
 
         public int UsageLimit { get; set; }
 
-        [EnumDataType(typeof(PackageHistoryStatus))]
-        public PackageHistoryStatus Status { get; set; }
-
         public DateTimeOffset CreatedAt { get; set; }
 
         public virtual ICollection<AppointmentDetailPackage> AppointmentDetailPackages { get; set; } = new List<AppointmentDetailPackage>();
 
         public virtual ICollection<InvoicePackageDetail> InvoicePackageDetails { get; set; } = new List<InvoicePackageDetail>();
+
+        public virtual CarCategory CarCategory { get; set; } = null!;
 
         public virtual Package Package { get; set; } = null!;
 

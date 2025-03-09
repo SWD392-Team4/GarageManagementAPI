@@ -1,4 +1,5 @@
 ﻿using GarageManagementAPI.Service.Contracts;
+using GarageManagementAPI.Shared.DataTransferObjects.PackageDetail;
 using GarageManagementAPI.Shared.RequestFeatures;
 using Microsoft.AspNetCore.Mvc;
 
@@ -21,6 +22,7 @@ namespace GarageManagementAPI.Presentation.Controllers
                 onFailure: ProcessError
                 );
         }
+
 
         [HttpGet("api/services/{serviceId:guid}/packages")]
         public async Task<IActionResult> GetPackagesOfService(Guid serviceId, [FromQuery] PackageParameters packageParameters)

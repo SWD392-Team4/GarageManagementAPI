@@ -101,7 +101,7 @@ namespace GarageManagementAPI.Repository
                     .IsInclude(include)
                     .ToListAsync();
 
-            var count = await FindAll(trackChanges)
+            var count = await FindByCondition(s => s.PackageHistories.Any(p => p.Id.Equals(pacakgeHistoryId)), trackChanges)
                     .SearchByName(serviceParameters.ServiceName)
                     .SearchByCreateAt(serviceParameters.CreatedAt)
                     .SearchByUpdateAt(serviceParameters.UpdatedAt)

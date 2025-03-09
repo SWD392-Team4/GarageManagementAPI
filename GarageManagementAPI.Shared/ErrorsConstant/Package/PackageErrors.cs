@@ -27,6 +27,9 @@ namespace GarageManagementAPI.Shared.ErrorsConstant.Package
         public const string PackageAlreadyExist = "Package with name '{0}' already exists.";
         public const string PackageDoesNotHaveAnyPackageHistory = "The package with ID {0} does not have any package history or does not have any active package history. Please create a new package history for it.";
 
+        public const string ServiceAlreadyExistInPackage = "Service with ID {0} already exists in the package have id {0}.";
+        public const string ServiceNotExistInPackage = "Service with ID {0} not exist in package have id {0}.";
+
         public static ErrorsResult GetPackageNotFoundError(Guid id)
             => new()
             {
@@ -51,19 +54,23 @@ namespace GarageManagementAPI.Shared.ErrorsConstant.Package
                 Description = string.Format(PackageDoesNotHaveAnyPackageHistory, id)
             };
         }
-    }
 
-    public class PackageImageErrors
-    {
-        public const string PackageImageNotFound = "Package image with id {0} not found.";
-
-        public static ErrorsResult GetPackageImageNotFoundError(Guid id)
-            => new()
+        public static ErrorsResult GetServiceAlreadyExistInPackageError(Guid serviceId, Guid packageId)
+        {
+            return new()
             {
-                Code = nameof(PackageImageNotFound),
-                Description = string.Format(PackageImageNotFound, id)
+                Code = nameof(ServiceAlreadyExistInPackage),
+                Description = string.Format(ServiceAlreadyExistInPackage, serviceId, packageId)
             };
+        }
 
+        public static ErrorsResult GetServiceNotExistInPackage(Guid serviceId, Guid packageId)
+        {
+            return new()
+            {
+                Code = nameof(ServiceNotExistInPackage),
+                Description = string.Format(ServiceNotExistInPackage, serviceId, packageId)
+            };
+        }
     }
-
 }

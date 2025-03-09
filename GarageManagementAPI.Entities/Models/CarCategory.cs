@@ -13,6 +13,7 @@ namespace GarageManagementAPI.Entities.Models
         public DateTimeOffset UpdatedAt { get; set; }
         public virtual ICollection<CarModel> CarModels { get; set; } = new List<CarModel>();
         public virtual ICollection<Package> Packages { get; set; } = new List<Package>();
+        public virtual ICollection<PackageHistory> PackageHistories { get; set; } = new List<PackageHistory>();
         public virtual ICollection<Service> Services { get; set; } = new List<Service>();
     }
 

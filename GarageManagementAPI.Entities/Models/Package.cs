@@ -1,4 +1,5 @@
 ﻿using GarageManagementAPI.Shared.Enums;
+using GarageManagementAPI.Shared.Enums.SystemStatuss;
 using System.ComponentModel.DataAnnotations;
 
 namespace GarageManagementAPI.Entities.Models
@@ -16,6 +17,18 @@ namespace GarageManagementAPI.Entities.Models
 
         [EnumDataType(typeof(PackageType))]
         public PackageType Type { get; set; }
+
+        public decimal PackagePrice { get; set; }
+
+        public int ValidityPeriod { get; set; }
+
+        [EnumDataType(typeof(TimeUnit))]
+        public TimeUnit TimeUnit { get; set; }
+
+        public int UsageLimit { get; set; }
+
+        [EnumDataType(typeof(PackageStatus))]
+        public PackageStatus Status { get; set; }
 
         public DateTimeOffset CreatedAt { get; set; }
 

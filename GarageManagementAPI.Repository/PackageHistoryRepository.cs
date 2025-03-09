@@ -21,24 +21,45 @@ namespace GarageManagementAPI.Repository
             return packageHistory;
         }
 
-        public async Task<PackageHistory?> GetPackageHistoryAsync(Guid packageId, decimal packagePrice, int validityPeriod, TimeUnit timeUnit, int usageLimit, bool trackChanges)
-            => await FindByCondition(p =>
-                p.PackageId.Equals(packageId) &&
-                p.PackagePrice.Equals(packagePrice) &&
-                p.ValidityPeriod.Equals(validityPeriod) &&
-                p.TimeUnit.Equals(timeUnit) &&
-                p.UsageLimit.Equals(usageLimit), trackChanges)
-                .SingleOrDefaultAsync();
+        public async Task<PackageHistory?> GetPackageHistoryAsync(Guid packageId, bool trackChanges)
+        {
+            var packageHistory = await FindByCondition(p => p.PackageId.Equals(packageId), trackChanges)
+                .OrderByDescending(p => p.CreatedAt)
+                .FirstOrDefaultAsync();
+            return packageHistory;
+        }
 
         public async Task<PagedList<PackageHistory>> GetPackageHistoriesAsync(Guid packageId, PackageHistoryParameters packageHistoryParameters, bool trackChanges)
         {
             var packageHistories = await FindByCondition(p => p.PackageId.Equals(packageId), trackChanges)
+                .FilterByCarCategory(packageHistoryParameters.CarCategoryId)
+                .FilterByServiceCategory(packageHistoryParameters.ServiceCategory)
+                .FilterByPriceRange(packageHistoryParameters.MinPrice, packageHistoryParameters.MaxPrice)
+                .FilterByPackageName(packageHistoryParameters.PackageName)
+                .FilterByDescription(packageHistoryParameters.Description)
+                .FilterByPackageType(packageHistoryParameters.Type)
+                .FilterByValidityPeriod(packageHistoryParameters.ValidityPeriod)
+                .FilterByTimeUnit(packageHistoryParameters.TimeUnit)
+                .FilterByUsageLimit(packageHistoryParameters.UsageLimit)
+                .FilterByCreatedAt(packageHistoryParameters.CreatedAt)
                 .Sort(packageHistoryParameters.OrderBy)
                 .Skip((packageHistoryParameters.PageNumber - 1) * packageHistoryParameters.PageSize)
                 .Take(packageHistoryParameters.PageSize)
+                .Include(p => p.CarCategory)
                 .ToListAsync();
 
             var count = await FindByCondition(p => p.PackageId.Equals(packageId), trackChanges)
+                .FilterByCarCategory(packageHistoryParameters.CarCategoryId)
+                .FilterByServiceCategory(packageHistoryParameters.ServiceCategory)
+                .FilterByPriceRange(packageHistoryParameters.MinPrice, packageHistoryParameters.MaxPrice)
+                .FilterByPackageName(packageHistoryParameters.PackageName)
+                .FilterByDescription(packageHistoryParameters.Description)
+                .FilterByPackageType(packageHistoryParameters.Type)
+                .FilterByValidityPeriod(packageHistoryParameters.ValidityPeriod)
+                .FilterByTimeUnit(packageHistoryParameters.TimeUnit)
+                .FilterByUsageLimit(packageHistoryParameters.UsageLimit)
+                .FilterByCreatedAt(packageHistoryParameters.CreatedAt)
+                .Include(p => p.CarCategory)
                 .CountAsync();
 
             return new PagedList<PackageHistory>(
@@ -51,16 +72,8 @@ namespace GarageManagementAPI.Repository
         public async Task CreateAsync(Guid packageId, PackageHistory packageHistory)
         {
             packageHistory.PackageId = packageId;
-            packageHistory.Status = PackageHistoryStatus.Active;
             packageHistory.CreatedAt = DateTimeOffset.UtcNow.SEAsiaStandardTime();
-
             await base.CreateAsync(packageHistory);
-        }
-
-        public new void Update(PackageHistory packageHistory)
-        {
-            packageHistory.Status = PackageHistoryStatus.Inactive;
-            base.Update(packageHistory);
         }
     }
 }

@@ -2,8 +2,8 @@
 {
     public enum PackageConditionType
     {
-        Mileage = 0,
-        Days = 1,
-        Months = 2,
+        Mileage = 1,
+        Days = 2,
+        Months = 3,
     }
 }

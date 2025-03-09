@@ -23,8 +23,8 @@ namespace GarageManagementAPI.Shared.DataTransferObjects.Package
         [EnumDataType(typeof(PackageType))]
         public PackageType? Type { get; set; }
 
-        [EnumDataType(typeof(PackageHistoryStatus))]
-        public PackageHistoryStatus? Status { get; set; }
+        [EnumDataType(typeof(PackageStatus))]
+        public PackageStatus? Status { get; set; }
 
         public decimal? PackagePrice { get; set; }
 
