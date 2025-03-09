@@ -15,9 +15,9 @@ namespace GarageManagementAPI.Presentation.Controllers
         {
         }
         [HttpGet("{productAtWarehouseId:guid}", Name = "GetProduAtWarehouse")]
-        public async Task<IActionResult> GetProductAtWarehouse(Guid productAtHouseId)
+        public async Task<IActionResult> GetProductAtWarehouse(Guid productAtWarehouseId)
         {
-            var productAtHouseResult = await _service.ProductAtWarehouseService.GetProductAtWarehouse(productAtHouseId, false);
+            var productAtHouseResult = await _service.ProductAtWarehouseService.GetProductAtWarehouse(productAtWarehouseId, false);
             return productAtHouseResult.Map(
                 onSuccess: Ok,
                 onFailure: ProcessError
@@ -46,7 +46,7 @@ namespace GarageManagementAPI.Presentation.Controllers
                 );
         }
 
-        [HttpPut("{productAtWarehouseId: guid}")]
+        [HttpPut("{productAtWarehouseId:guid}")]
         public async Task<IActionResult> UpdateProductAtWareHouse(Guid productAtWarehouseId, ProductAtWarehouseDtoForUpdate productAtWarehouseDtoForUpdate)
         {
             var productAtWarehouseResult = await _service.ProductAtWarehouseService.UpdateProductAtWareHouse(productAtWarehouseId, productAtWarehouseDtoForUpdate, true);

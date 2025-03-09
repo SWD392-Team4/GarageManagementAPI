@@ -274,7 +274,10 @@ namespace api.Services
 
             return chattedUsers;
         }
-
+        public async Task Ping()
+        {
+            await Clients.Caller.SendAsync("Pong");
+        }
         // Hàm tạo key cho cuộc trò chuyện giữa hai người
         private string GetChatRoomKey(string user1Id, string user2Id)
         {
