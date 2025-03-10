@@ -19,7 +19,12 @@ namespace GarageManagementAPI.Application.MappingProfile
                     opt.PreCondition(e => e.Brand != null);
                     opt.MapFrom(e => e.Brand.ImageLink);
                 })
-                .ForMember(dest => dest.Category, opt =>
+                .ForMember(dest => dest.CarCategoryId, otp =>
+                {
+                    otp.PreCondition(e => e.CarCategory != null);
+                    otp.MapFrom(e => e.CarCategory.Id);
+                })
+                .ForMember(dest => dest.CarCategory, opt =>
                 {
                     opt.PreCondition(e => e.CarCategory != null);
                     opt.MapFrom(e => e.CarCategory.Category);

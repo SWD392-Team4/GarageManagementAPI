@@ -9,10 +9,20 @@ namespace GarageManagementAPI.Application.MappingProfile
         public ProductMappingProfile()
         {
             CreateMap<Product, ProductDto>()
+                .ForMember(dest => dest.BrandNameId, otps =>
+                {
+                    otps.PreCondition(src => src.Brand != null);
+                    otps.MapFrom(src => src.Brand!.Id);
+                })
                  .ForMember(dest => dest.BrandName, opts =>
                  {
                      opts.PreCondition(src => src.Brand != null);
                      opts.MapFrom(src => src.Brand!.BrandName);
+                 })
+                 .ForMember(dest => dest.CategoryId, otps =>
+                 {
+                     otps.PreCondition(src => src.ProductCategory != null);
+                     otps.MapFrom(src => src.ProductCategory!.Id);
                  })
                    .ForMember(dest => dest.Category, opts =>
                    {

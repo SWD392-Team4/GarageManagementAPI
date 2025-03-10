@@ -15,9 +15,10 @@ namespace GarageManagementAPI.Shared.DataTransferObjects.Service
 
         public Guid CarPartId { get; set; }
 
-        public string? PartName { get; set; }
+        public string? CarPart { get; set; }
+        public Guid CarCategoryId { get; set; }
 
-        public string? Category { get; set; }
+        public string? CarCategory { get; set; }
 
         public decimal Price { get; set; } = 0;
 

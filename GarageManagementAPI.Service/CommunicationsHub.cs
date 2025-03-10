@@ -31,19 +31,18 @@ namespace GarageManagementAPI.Service
 
             var db = _redis.GetDatabase();
 
-            // 🧹 Xóa tất cả ConnectionId cũ để tránh lỗi "Invalid connection id"
             await db.KeyDeleteAsync($"connected_users:{userId}");
 
             // ✅ Lưu ConnectionId mới nhất vào Redis
             await db.SetAddAsync($"connected_users:{userId}", Context.ConnectionId);
-            await db.KeyExpireAsync($"connected_users:{userId}", TimeSpan.FromHours(1)); // Set TTL để tránh lưu ConnectionId quá lâu
+            await db.KeyExpireAsync($"connected_users:{userId}", TimeSpan.FromHours(1)); 
 
 
             await base.OnConnectedAsync();
         }
 
 
-        public async Task SendMessage(string receiverId, string message)
+       /* public async Task SendMessage(string receiverId, string message)
         {
             var httpContext = Context.GetHttpContext();
             var token = httpContext.Request.Query["access_token"];
@@ -109,7 +108,7 @@ namespace GarageManagementAPI.Service
                     await db.SetRemoveAsync($"connected_users:{receiverId}", connectionId);
                 }
             }
-        }
+        }*/
         public async Task<List<SignalRDto>> GetChatHistory(string receiverId)
         {
             var senderId = GetUserId();
