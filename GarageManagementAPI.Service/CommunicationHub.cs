@@ -23,11 +23,6 @@ namespace api.Services
 
         public override async Task OnConnectedAsync()
         {
-
-            var httpContext = Context.GetHttpContext();
-            var token = httpContext.Request.Query["access_token"];
-
-            Console.WriteLine($"Received Token: {token}");
             var userId = GetUserId();
             Console.WriteLine(userId);
             if (string.IsNullOrEmpty(userId))
@@ -46,8 +41,9 @@ namespace api.Services
         {
             var senderId = GetUserId();
 
-            string chatRoomKey = GetChatRoomKey(senderId, receiverId);
-
+            string chatRoomKey = GetChatRoomKey(senderId!, receiverId);
+            Console.WriteLine("senderId: " + senderId);
+            Console.WriteLine("receiverId: " + receiverId);
             // Lấy database Redis
             var db = _redis.GetDatabase();
             var type = await db.KeyTypeAsync(chatRoomKey);
@@ -76,7 +72,7 @@ namespace api.Services
                 var receiverConnectionId = _userConnections[receiverId];
                 await Clients.Client(receiverConnectionId).SendAsync("receiveMessage", chatMessage);
             }
-            if (_userConnections.ContainsKey(senderId))
+            if (_userConnections.ContainsKey(senderId!))
             {
                 var senderConnectionId = _userConnections[senderId];
                 await Clients.Client(senderConnectionId).SendAsync("receiveMessage", chatMessage);
@@ -292,8 +288,6 @@ namespace api.Services
         private string? GetUserId()
         {
             var userId = Context.User?.FindFirstValue("UserId"); 
-            Console.WriteLine($"UserId: {userId}");
-            Console.WriteLine($"UserName" + Context.User?.FindFirstValue("UserName"));
             return userId;
         }
 
