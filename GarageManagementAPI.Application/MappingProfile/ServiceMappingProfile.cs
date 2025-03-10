@@ -8,13 +8,25 @@ namespace GarageManagementAPI.Application.MappingProfile
         public ServiceMappingProfile()
         {
             CreateMap<Entities.Models.Service, ServiceDto>()
-                .ForMember(dest => dest.Category,
+                .ForMember(dest => dest.CarCategoryId,
+                otps =>
+                {
+                    otps.PreCondition(c => c.CarCategory != null);
+                    otps.MapFrom(c => c.CarCategory.Id);
+                })
+                .ForMember(dest => dest.CarCategory,
                            otps =>
                            {
                                otps.PreCondition(s => s.CarCategory != null && s.CarCategory.Category != null);
                                otps.MapFrom(s => s.CarCategory!.Category);
                            })
-                .ForMember(dest => dest.PartName,
+                .ForMember(dest => dest.CarPartId,
+                otps =>
+                {
+                    otps.PreCondition(c => c.CarPart != null);
+                    otps.MapFrom(c => c.CarPart.Id);
+                })
+                .ForMember(dest => dest.CarPart,
                            otps =>
                            {
                                otps.PreCondition(s => s.CarPart != null && s.CarPart.PartName != null);

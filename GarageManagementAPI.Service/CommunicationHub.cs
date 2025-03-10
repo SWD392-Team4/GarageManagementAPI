@@ -6,6 +6,8 @@ using Newtonsoft.Json;
 using StackExchange.Redis;
 using System.Security.Claims;
 using GarageManagementAPI.Repository.Contracts;
+using AutoMapper;
+using GarageManagementAPI.Shared.DataTransferObjects.User;
 namespace api.Services
 {
     public class CommunicationHub : Hub, ICommunicationHub
@@ -13,11 +15,13 @@ namespace api.Services
         private readonly IConnectionMultiplexer _redis;
         private static Dictionary<string, string> _userConnections = new Dictionary<string, string>();
         private readonly IRepositoryManager _repoManager;
+        private readonly IMapper _mapper;
 
-        public CommunicationHub(IConnectionMultiplexer redis, IRepositoryManager repoManager)
+        public CommunicationHub(IConnectionMultiplexer redis, IRepositoryManager repoManager, IMapper mapper)
         {
             _redis = redis;
             _repoManager = repoManager;
+            _mapper = mapper;
         }
 
 
@@ -27,8 +31,7 @@ namespace api.Services
             Console.WriteLine(userId);
             if (string.IsNullOrEmpty(userId))
             {
-                Context.Abort();
-                throw new HubException("Unauthorized: JWT is missing or expired.");
+                throw new HubException("403 Forbidden: JWT is missing or expired.");
             }
 
             _userConnections[userId] = Context.ConnectionId;
@@ -42,8 +45,6 @@ namespace api.Services
             var senderId = GetUserId();
 
             string chatRoomKey = GetChatRoomKey(senderId!, receiverId);
-            Console.WriteLine("senderId: " + senderId);
-            Console.WriteLine("receiverId: " + receiverId);
             // Lấy database Redis
             var db = _redis.GetDatabase();
             var type = await db.KeyTypeAsync(chatRoomKey);
@@ -54,11 +55,15 @@ namespace api.Services
                 await db.KeyDeleteAsync(chatRoomKey);
             }
 
+            var sender = await this.GetUserAsync(Guid.Parse(senderId!));
+            var senderDto = _mapper.Map<UserDto>(sender);
+            var receiver = await this.GetUserAsync(Guid.Parse(receiverId!));
+            var receiverDto = _mapper.Map<UserDto>(receiver);
             // Tạo đối tượng tin nhắn
             var chatMessage = new SignalRDto
             {
-                SenderId = senderId,
-                ReceiverId = senderId,
+                SenderId = senderDto,
+                ReceiverId = receiverDto,
                 Message = message,
                 Timestamp = DateTime.Now
             };
@@ -106,26 +111,30 @@ namespace api.Services
         }
 
         // Phương thức gửi thông báo cho người dùng
-        public async Task SendNotification(string receiver, string notificationMessage)
+        public async Task SendNotification(string receiverId, string notificationMessage)
         {
             var senderId = GetUserId();
             var db = _redis.GetDatabase();
-            string notificationKey = GetNotificationKey(receiver);
+            string notificationKey = GetNotificationKey(receiverId);
+            var sender = await this.GetUserAsync(Guid.Parse(senderId!));
+            var senderDto = _mapper.Map<UserDto>(sender);
+            var receiver = await this.GetUserAsync(Guid.Parse(receiverId!));
+            var receiverDto = _mapper.Map<UserDto>(receiver);
             var notification = new SignalRDto
             {
-                SenderId = senderId,
-                ReceiverId = senderId,
+                SenderId = senderDto,
+                ReceiverId = receiverDto,
                 Message = notificationMessage,
                 Timestamp = DateTime.Now
             };
             string jsonNotification = JsonConvert.SerializeObject(notification);
             await db.ListRightPushAsync(notificationKey, jsonNotification);
-            if (_userConnections.ContainsKey(receiver))
+            if (_userConnections.ContainsKey(receiverId))
             {
-                var connectionId = _userConnections[receiver];
+                var connectionId = _userConnections[receiverId];
                 await Clients.Client(connectionId).SendAsync("receiveNotification", notification);
             }
-            await Clients.User(receiver!.ToString()).SendAsync("receiveNotification", notification);
+            await Clients.User(receiverId!.ToString()).SendAsync("receiveNotification", notification);
         }
 
         public async Task<List<SignalRDto>> GetNotifications()
@@ -210,11 +219,25 @@ namespace api.Services
             await db.ListRightPushAsync(chatRoomKey, updatedMessages.Select(msg => (RedisValue)msg).ToArray());
         }
 
-        public async Task PingServer()
+        public async Task<List<UserDto>> GetChattedUsersWithDetails()
         {
-            await Clients.Caller.SendAsync("KeepAlive");
+            var chattedUserIds = GetChattedUsers();
+            var users = new List<UserDto>();
+            foreach (var userId in chattedUserIds)
+            {
+                if (Guid.TryParse(userId, out var userGuid))
+                {
+                    var user = await _repoManager.User.GetUserByIdAsync(userGuid, trackChanges: false);
+                    if (user != null)
+                    {
+                        var userDto = _mapper.Map<UserDto>(user);
+                        users.Add(userDto);
+                    }
+                }
+            }
+           
+            return users;
         }
-
 
         public override Task OnDisconnectedAsync(Exception? exception)
         {
@@ -225,25 +248,6 @@ namespace api.Services
                 _userConnections.Remove(userId);
             }
             return base.OnDisconnectedAsync(exception);
-        }
-
-        public async Task<List<User>> GetChattedUsersWithDetails()
-        {
-            var chattedUserIds = GetChattedUsers();
-            var users = new List<User>();
-            foreach (var userId in chattedUserIds)
-            {
-                if (Guid.TryParse(userId, out var userGuid))
-                {
-                    var user = await _repoManager.User.GetUserByIdAsync(userGuid, trackChanges: false);
-                    if (user != null)
-                    {
-                        users.Add(user);
-                    }
-                }
-            }
-
-            return users;
         }
 
         private List<string> GetChattedUsers()
@@ -270,10 +274,13 @@ namespace api.Services
 
             return chattedUsers;
         }
-        public async Task Ping()
+
+        private async Task<User> GetUserAsync(Guid userId)
         {
-            await Clients.Caller.SendAsync("Pong");
+            var user = await _repoManager.User.GetUserByIdAsync(userId, false);
+            return user!;
         }
+
         // Hàm tạo key cho cuộc trò chuyện giữa hai người
         private string GetChatRoomKey(string user1Id, string user2Id)
         {
