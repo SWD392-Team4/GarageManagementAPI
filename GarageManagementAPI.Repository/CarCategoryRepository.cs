@@ -31,17 +31,7 @@ namespace GarageManagementAPI.Repository
                 .FilterByCreatedAt(carCategoryParameters.CreatedAt)
                 .FilterByUpdatedAt(carCategoryParameters.UpdatedAt)
                 .Sort(carCategoryParameters.OrderBy)
-                .Skip((carCategoryParameters.PageNumber - 1) * carCategoryParameters.PageSize)
-                .Take(carCategoryParameters.PageSize)
                 .ToListAsync();
-
-            var count = await FindAll(trackChanges)
-                .FilterByCategory(carCategoryParameters.Category)
-                .FilterByDescription(carCategoryParameters.Description)
-                .FilterByStatus(carCategoryParameters.Status)
-                .FilterByCreatedAt(carCategoryParameters.CreatedAt)
-                .FilterByUpdatedAt(carCategoryParameters.UpdatedAt)
-                .CountAsync();
 
 
             return PagedList<CarCategory>.ToPagedList(

@@ -7,7 +7,6 @@ namespace GarageManagementAPI.Shared.DataTransferObjects.Service
     public record class ServiceDto : BaseDto<ServiceDto>
     {
         public Guid Id { get; set; }
-
         public string? ServiceName { get; set; }
 
         [EnumDataType(typeof(ServiceCategory))]
