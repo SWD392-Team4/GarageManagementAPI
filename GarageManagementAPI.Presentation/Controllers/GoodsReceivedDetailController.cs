@@ -28,7 +28,20 @@ namespace GarageManagementAPI.Presentation.Controllers
                 onFailure: ProcessError
                 );
         }
-        
+
+        [HttpGet("{goodsReceivedId:guid}/details")]
+        //[Authorize(Roles = $"{nameof(SystemRole.Administrator)}, {nameof(SystemRole.Cashier)}")]
+        public async Task<IActionResult> GetGoodsReceivedDetailsByGoodsReceived(Guid goodsReceivedId, [FromQuery] GoodsReceivedDetailParameters goodsReceivedDetailParameters)
+        {
+            var isInclude = "GoodsReceived,Product";
+            var goodsReceivedDetailResult = await _service.GoodsReceivedDetailService.GetGoodsReceivedDetailsAsync(goodsReceivedId, goodsReceivedDetailParameters, trackChanges: false, isInclude);
+
+            return goodsReceivedDetailResult.Map(
+                onSuccess: Ok,
+                onFailure: ProcessError
+                );
+        }
+
         [HttpGet("{goodsReceivedDetailId:guid}", Name = "GetGoodsReceivedDetailById")]
         //[Authorize(Roles = $"{nameof(SystemRole.Administrator)},{nameof(SystemRole.Cashier)}")]
         public async Task<IActionResult> GetGoodsReceivedDetailById(Guid goodsReceivedDetailId, [FromQuery] GoodsReceivedDetailParameters goodsReceivedDetailParameters)

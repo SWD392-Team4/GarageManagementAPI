@@ -9,6 +9,7 @@ namespace GarageManagementAPI.Service.Contracts
     {
         public Task<Result<ExpandoObject>> GetGoodsReceivedDetailAsync(Guid goodsReceivedDetailId, GoodsReceivedDetailParameters goodsReceivedDetailParameterdParameters, bool trackChanges, string? include = null);
         public Task<Result<IEnumerable<ExpandoObject>>> GetGoodsReceivedDetailsAsync(GoodsReceivedDetailParameters goodsReceivedDetails, bool trackChanges, string? include = null);
+        public Task<Result<IEnumerable<ExpandoObject>>> GetGoodsReceivedDetailsAsync(Guid goodsReceivedId, GoodsReceivedDetailParameters goodsReceivedDetails, bool trackChanges, string? include = null);
         public Task<Result<GoodsReceivedDetailDto>> CreateGoodsReceivedDetailAsync(GoodsReceivedDetailDtoForCreation goodsReceivedDetailDtoForCreation);
         public Task<Result> UpdateGoodsReceivedDetail(Guid GoodsReceivedDetailId, GoodsReceivedDetailDtoForUpdate goodsReceivedDetailDtoForUpdate, bool trackChanges);
     }

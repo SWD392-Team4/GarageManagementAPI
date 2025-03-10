@@ -13,6 +13,7 @@ using GarageManagementAPI.Shared.DataTransferObjects.Service;
 using GarageManagementAPI.Shared.ErrorsConstant.ServiceHisory;
 using GarageManagementAPI.Shared.DataTransferObjects.ServiceHistory;
 using GarageManagementAPI.Shared.DataTransferObjects.Package;
+using GarageManagementAPI.Shared.Enums;
 
 namespace GarageManagementAPI.Service
 {
@@ -34,15 +35,15 @@ namespace GarageManagementAPI.Service
             var serviceResult = await GetAndCheckIServiceExistByName(serviceDtoForCreation.ServiceName);
             var carPartResult = await GetAndCheckIfCarPartIsExist(serviceDtoForCreation.CarPartId);
             var carCategoryResult = await GetAndCheckIfCarCategoryIsExist(serviceDtoForCreation.CarCategoryId);
-            var serviceCarCategoryResult = await GetAndCheckIfCategoryByCarCategory(serviceDtoForCreation.CarCategoryId);
+            var serviceCarCategoryResult = await GetAndCheckIfCategoryByCarCategoryAndCarPart(serviceDtoForCreation.CarCategoryId, serviceDtoForCreation.CarPartId, serviceDtoForCreation.WorkNature, serviceDtoForCreation.Action);
             if (serviceResult)
                 return Result<ServiceDto>.BadRequest([ServiceErrors.GetServiceNameAlreadyExistError(serviceDtoForCreation)]);
             if (carPartResult)
                 return Result<ServiceDto>.BadRequest([ServiceErrors.GetCarPartNotFoundError(serviceDtoForCreation.CarPartId)]);
             if (carCategoryResult)
                 return Result<ServiceDto>.BadRequest([ServiceErrors.GetCarCategoryNotFoundError(serviceDtoForCreation.CarCategoryId)]);
-            if (serviceCarCategoryResult)
-                return Result<ServiceDto>.BadRequest([ServiceErrors.GetCategoryAlreadyExistError(serviceDtoForCreation.CarCategoryId)]);
+                if (serviceCarCategoryResult)
+               return Result<ServiceDto>.BadRequest([ServiceErrors.GetCategoryAndCarPartAlreadyExistError(serviceDtoForCreation.CarCategoryId, serviceDtoForCreation.CarPartId, nameof(serviceDtoForCreation.WorkNature), nameof(serviceDtoForCreation.Action))]);
             var seviceEntity = _mapper.Map<Entities.Models.Service>(serviceDtoForCreation);
             seviceEntity.CreatedAt = DateTimeOffset.UtcNow.SEAsiaStandardTime();
             seviceEntity.UpdatedAt = DateTimeOffset.UtcNow.SEAsiaStandardTime();
@@ -65,7 +66,7 @@ namespace GarageManagementAPI.Service
             var carPartResult = await GetAndCheckIfCarPartIsExist(serviceDtoForUpdate.CarPartId);
             var carCategoryResult = await GetAndCheckIfCarCategoryIsExist(serviceDtoForUpdate.CarCategoryId);
             var serviceNameResult = await GetAndCheckIServiceExistByName(serviceDtoForUpdate.ServiceName, serviceId);
-            var serviceCarCategoryResult = await GetAndCheckIfCategoryByCarCategory(serviceDtoForUpdate.CarCategoryId, serviceId);
+            var serviceCarCategoryResult = await GetAndCheckIfCategoryByCarCategoryAndCarPart(serviceDtoForUpdate.CarCategoryId, serviceDtoForUpdate.CarPartId, serviceDtoForUpdate.WorkNature, serviceDtoForUpdate.Action);
             if (serviceNameResult)
                 return Result<ServiceDto>.BadRequest([ServiceErrors.GetServiceNameUpdateAlreadyExistError(serviceDtoForUpdate)]);
             if (carPartResult)
@@ -73,7 +74,7 @@ namespace GarageManagementAPI.Service
             if (carCategoryResult)
                 return Result<ServiceDto>.BadRequest([ServiceErrors.GetCarCategoryNotFoundError(serviceDtoForUpdate.CarCategoryId)]);
             if (serviceCarCategoryResult)
-                return Result<ServiceDto>.BadRequest([ServiceErrors.GetCategoryAlreadyExistError(serviceDtoForUpdate.CarCategoryId)]);
+                return Result<ServiceDto>.BadRequest([ServiceErrors.GetCategoryAndCarPartAlreadyExistError(serviceDtoForUpdate.CarCategoryId, serviceDtoForUpdate.CarPartId, nameof(serviceDtoForUpdate.WorkNature), nameof(serviceDtoForUpdate.Action))]);
             if (!serviceResult.IsSuccess)
                 return Result<ServiceDto>.Failure(serviceResult.StatusCode, serviceResult.Errors!);
             var serviceEntity = serviceResult.GetValue<Entities.Models.Service>();
@@ -189,9 +190,9 @@ namespace GarageManagementAPI.Service
             return false;
         }
 
-        private async Task<bool> GetAndCheckIfCategoryByCarCategory(Guid carCategoryId, Guid? serviceId = null)
+        private async Task<bool> GetAndCheckIfCategoryByCarCategoryAndCarPart(Guid carCategoryId, Guid carPartId, WorkNature workNature, ServiceAction action, Guid? serviceId = null)
         {
-            var service = await _repoManager.Service.GetServiceByCarCategoryId(serviceId, carCategoryId, false);
+            var service = await _repoManager.Service.GetServiceByCarCategoryAnCarPartId(serviceId, carPartId, carCategoryId, workNature, action, false);
 
             if (service == null) return false;
 

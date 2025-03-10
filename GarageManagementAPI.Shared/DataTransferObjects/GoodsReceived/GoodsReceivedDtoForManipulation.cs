@@ -4,7 +4,6 @@ namespace GarageManagementAPI.Shared.DataTransferObjects.GoodsReceived
 {
     public record class GoodsReceivedDtoForManipulation
     {
-        public Guid CreatedWarehouseManagerId { get; set; }
 
         public Guid SupplierContactId { get; set; }
 

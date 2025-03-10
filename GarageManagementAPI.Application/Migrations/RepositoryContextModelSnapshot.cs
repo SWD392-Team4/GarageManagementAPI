@@ -230,7 +230,7 @@ namespace GarageManagementAPI.Application.Migrations
                         .HasColumnType("datetimeoffset");
 
                     b.HasKey("Id")
-                        .HasName("appointmentperday_id_primary");
+                        .HasName("appointmentperdayy_id_primary");
 
                     b.ToTable("AppointmentPerDay", (string)null);
                 });
@@ -2952,7 +2952,9 @@ namespace GarageManagementAPI.Application.Migrations
 
                     b.HasIndex("ProductId");
 
-                    b.HasIndex(new[] { "GoodsReceivedId" }, "goodsreceiveddetail_goodsreceivedid_index");
+                    b.HasIndex("GoodsReceivedId", "ProductId")
+                        .IsUnique()
+                        .HasDatabaseName("UX_GoodsReceived_Product");
 
                     b.ToTable("GoodsReceivedDetail", (string)null);
                 });
@@ -6341,14 +6343,16 @@ namespace GarageManagementAPI.Application.Migrations
                     b.HasOne("GarageManagementAPI.Entities.Models.GoodsReceived", "GoodsReceived")
                         .WithMany("GoodsReceivedDetails")
                         .HasForeignKey("GoodsReceivedId")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
-                        .HasConstraintName("goodsreceiveddetail_goodsreceivedid_foreign");
+                        .HasConstraintName("FK_GoodsReceivedDetail_GoodsReceived");
 
                     b.HasOne("GarageManagementAPI.Entities.Models.Product", "Product")
                         .WithMany("GoodsReceivedDetails")
                         .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired()
-                        .HasConstraintName("goodsreceiveddetail_productid_foreign");
+                        .HasConstraintName("FK_GoodsReceivedDetail_Product");
 
                     b.Navigation("GoodsReceived");
 

@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GarageManagementAPI.Application.Migrations
 {
     [DbContext(typeof(RepositoryContext))]
-    [Migration("20250309074122_changePackageAndPackageHistory")]
-    partial class changePackageAndPackageHistory
+    [Migration("20250310164056_AddInitDb")]
+    partial class AddInitDb
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -233,7 +233,7 @@ namespace GarageManagementAPI.Application.Migrations
                         .HasColumnType("datetimeoffset");
 
                     b.HasKey("Id")
-                        .HasName("appointmentperday_id_primary");
+                        .HasName("appointmentperdayy_id_primary");
 
                     b.ToTable("AppointmentPerDay", (string)null);
                 });
@@ -2955,7 +2955,9 @@ namespace GarageManagementAPI.Application.Migrations
 
                     b.HasIndex("ProductId");
 
-                    b.HasIndex(new[] { "GoodsReceivedId" }, "goodsreceiveddetail_goodsreceivedid_index");
+                    b.HasIndex("GoodsReceivedId", "ProductId")
+                        .IsUnique()
+                        .HasDatabaseName("UX_GoodsReceived_Product");
 
                     b.ToTable("GoodsReceivedDetail", (string)null);
                 });
@@ -3295,11 +3297,6 @@ namespace GarageManagementAPI.Application.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Status")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
-
                     b.Property<string>("TimeUnit")
                         .IsRequired()
                         .HasMaxLength(255)
@@ -3318,9 +3315,11 @@ namespace GarageManagementAPI.Application.Migrations
                     b.HasKey("Id")
                         .HasName("packagehistory_id_primary");
 
-                    b.HasIndex(new[] { "PackageId" }, "packagehistory_packageid_index");
+                    b.HasIndex("CarCategoryId");
 
-                    b.HasIndex(new[] { "PackageId", "PackagePrice", "ValidityPeriod", "TimeUnit", "UsageLimit" }, "packagehistory_packageid_packageprice_validityperiod_timeunit_usagelimit");
+                    b.HasIndex("CreatedAt");
+
+                    b.HasIndex(new[] { "PackageId" }, "packagehistory_packageid_index");
 
                     b.ToTable("PackageHistory", (string)null);
                 });
@@ -6347,14 +6346,16 @@ namespace GarageManagementAPI.Application.Migrations
                     b.HasOne("GarageManagementAPI.Entities.Models.GoodsReceived", "GoodsReceived")
                         .WithMany("GoodsReceivedDetails")
                         .HasForeignKey("GoodsReceivedId")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
-                        .HasConstraintName("goodsreceiveddetail_goodsreceivedid_foreign");
+                        .HasConstraintName("FK_GoodsReceivedDetail_GoodsReceived");
 
                     b.HasOne("GarageManagementAPI.Entities.Models.Product", "Product")
                         .WithMany("GoodsReceivedDetails")
                         .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired()
-                        .HasConstraintName("goodsreceiveddetail_productid_foreign");
+                        .HasConstraintName("FK_GoodsReceivedDetail_Product");
 
                     b.Navigation("GoodsReceived");
 
@@ -6518,11 +6519,19 @@ namespace GarageManagementAPI.Application.Migrations
 
             modelBuilder.Entity("GarageManagementAPI.Entities.Models.PackageHistory", b =>
                 {
+                    b.HasOne("GarageManagementAPI.Entities.Models.CarCategory", "CarCategory")
+                        .WithMany("PackageHistories")
+                        .HasForeignKey("CarCategoryId")
+                        .IsRequired()
+                        .HasConstraintName("packagehistory_carcategoryid_foreign");
+
                     b.HasOne("GarageManagementAPI.Entities.Models.Package", "Package")
                         .WithMany("PackageHistories")
                         .HasForeignKey("PackageId")
                         .IsRequired()
                         .HasConstraintName("packagehistory_packageid_foreign");
+
+                    b.Navigation("CarCategory");
 
                     b.Navigation("Package");
                 });
@@ -6857,6 +6866,8 @@ namespace GarageManagementAPI.Application.Migrations
             modelBuilder.Entity("GarageManagementAPI.Entities.Models.CarCategory", b =>
                 {
                     b.Navigation("CarModels");
+
+                    b.Navigation("PackageHistories");
 
                     b.Navigation("Packages");
 

@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace GarageManagementAPI.Application.Migrations
 {
     /// <inheritdoc />
-    public partial class MergeDevToCRUDAppointment : Migration
+    public partial class AddInitDb : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -25,7 +25,7 @@ namespace GarageManagementAPI.Application.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("appointmentperday_id_primary", x => x.Id);
+                    table.PrimaryKey("appointmentperdayy_id_primary", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -214,11 +214,16 @@ namespace GarageManagementAPI.Application.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false, defaultValueSql: "NEWID()"),
-                    ServiceCategory = table.Column<int>(type: "int", maxLength: 255, nullable: false),
+                    ServiceCategory = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
                     CarCategoryId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     PackageName = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Type = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    PackagePrice = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    ValidityPeriod = table.Column<int>(type: "int", nullable: false),
+                    TimeUnit = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    UsageLimit = table.Column<int>(type: "int", nullable: false),
+                    Status = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     CreatedAt = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
                     UpdatedAt = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false)
                 },
@@ -605,16 +610,25 @@ namespace GarageManagementAPI.Application.Migrations
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false, defaultValueSql: "NEWID()"),
                     PackageId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    ServiceCategory = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CarCategoryId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    PackageName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Type = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     PackagePrice = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     ValidityPeriod = table.Column<int>(type: "int", nullable: false),
                     TimeUnit = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
                     UsageLimit = table.Column<int>(type: "int", nullable: false),
-                    Status = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
                     CreatedAt = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("packagehistory_id_primary", x => x.Id);
+                    table.ForeignKey(
+                        name: "packagehistory_carcategoryid_foreign",
+                        column: x => x.CarCategoryId,
+                        principalTable: "CarCategory",
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "packagehistory_packageid_foreign",
                         column: x => x.PackageId,
@@ -992,15 +1006,17 @@ namespace GarageManagementAPI.Application.Migrations
                 {
                     table.PrimaryKey("goodsreceiveddetail_id_primary", x => x.Id);
                     table.ForeignKey(
-                        name: "goodsreceiveddetail_goodsreceivedid_foreign",
+                        name: "FK_GoodsReceivedDetail_GoodsReceived",
                         column: x => x.GoodsReceivedId,
                         principalTable: "GoodsReceived",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "goodsreceiveddetail_productid_foreign",
+                        name: "FK_GoodsReceivedDetail_Product",
                         column: x => x.ProductId,
                         principalTable: "Product",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -2033,14 +2049,15 @@ namespace GarageManagementAPI.Application.Migrations
                 column: "CreatedWarehouseManagerId");
 
             migrationBuilder.CreateIndex(
-                name: "goodsreceiveddetail_goodsreceivedid_index",
-                table: "GoodsReceivedDetail",
-                column: "GoodsReceivedId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_GoodsReceivedDetail_ProductId",
                 table: "GoodsReceivedDetail",
                 column: "ProductId");
+
+            migrationBuilder.CreateIndex(
+                name: "UX_GoodsReceived_Product",
+                table: "GoodsReceivedDetail",
+                columns: new[] { "GoodsReceivedId", "ProductId" },
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_Invoice_CustomerId",
@@ -2137,14 +2154,19 @@ namespace GarageManagementAPI.Application.Migrations
                 column: "PackageId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_PackageHistory_CarCategoryId",
+                table: "PackageHistory",
+                column: "CarCategoryId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_PackageHistory_CreatedAt",
+                table: "PackageHistory",
+                column: "CreatedAt");
+
+            migrationBuilder.CreateIndex(
                 name: "packagehistory_packageid_index",
                 table: "PackageHistory",
                 column: "PackageId");
-
-            migrationBuilder.CreateIndex(
-                name: "packagehistory_packageid_packageprice_validityperiod_timeunit_usagelimit",
-                table: "PackageHistory",
-                columns: new[] { "PackageId", "PackagePrice", "ValidityPeriod", "TimeUnit", "UsageLimit" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_PackageImage_PackageId",

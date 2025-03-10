@@ -4,6 +4,7 @@ using GarageManagementAPI.Shared.RequestFeatures;
 using GarageManagementAPI.Repository.Extensions;
 using Microsoft.EntityFrameworkCore;
 using Bogus.DataSets;
+using GarageManagementAPI.Shared.Enums;
 
 namespace GarageManagementAPI.Repository
 {
@@ -69,10 +70,10 @@ namespace GarageManagementAPI.Repository
             );
         }
 
-        public async Task<Service?> GetServiceByCarCategoryId(Guid? serviceId, Guid carparCategoryId, bool trackChanges, string? include = null)
+        public async Task<Service?> GetServiceByCarCategoryAnCarPartId(Guid? serviceId, Guid carPartId, Guid carparCategoryId, WorkNature workNature, ServiceAction action, bool trackChanges, string? include = null)
         {
             var service =
-                await FindByCondition(s => s.CarCategoryId.Equals(carparCategoryId) && !s.Id.Equals(serviceId), trackChanges).SingleOrDefaultAsync();
+                await FindByCondition(s => s.CarCategoryId.Equals(carparCategoryId) && s.CarPartId.Equals(carPartId) && s.WorkNature.Equals(workNature) && s.Action.Equals(action) && !s.Id.Equals(serviceId), trackChanges).SingleOrDefaultAsync();
             Console.WriteLine("service " + service);
             Console.WriteLine("service " + carparCategoryId);
             return service;

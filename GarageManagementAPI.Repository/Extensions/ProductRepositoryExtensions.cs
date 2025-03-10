@@ -19,7 +19,7 @@ namespace GarageManagementAPI.Repository.Extensions
         }
         public static IQueryable<Product> SearchByPrice(this IQueryable<Product> products, decimal? minPrice, decimal? maxPrice)
         {
-            if (!minPrice.HasValue || !maxPrice.HasValue)
+            if (minPrice == 0 && !maxPrice.HasValue)
             {
                 return products;
             }

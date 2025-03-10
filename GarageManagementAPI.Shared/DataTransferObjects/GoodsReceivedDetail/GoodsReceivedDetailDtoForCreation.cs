@@ -2,5 +2,6 @@
 {
     public record class GoodsReceivedDetailDtoForCreation : GoodsReceivedDetailDtoForManipulation
     {
+        public Guid GoodsReceivedId { get; set; }
     }
 }
