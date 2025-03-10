@@ -13,6 +13,8 @@ namespace GarageManagementAPI.Shared.DataTransferObjects.ServiceFeeback
         public DateTimeOffset CreatedAt { get; set; }
         public DateTimeOffset UpdatedAt { get; set; }
         public Guid CustomerId { get; set; }
+        public string? CustumerName { get; set; }
         public Guid ServiceId { get; set; }
+        public string? NameService { get; set; }
     }
 }

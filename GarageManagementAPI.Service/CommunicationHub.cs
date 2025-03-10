@@ -8,6 +8,11 @@ using System.Security.Claims;
 using GarageManagementAPI.Repository.Contracts;
 using AutoMapper;
 using GarageManagementAPI.Shared.DataTransferObjects.User;
+using GarageManagementAPI.Shared.Extension;
+using GarageManagementAPI.Shared.ResultModel;
+using GarageManagementAPI.Shared.Constant.Authentication;
+using Newtonsoft.Json.Converters;
+
 namespace api.Services
 {
     public class CommunicationHub : Hub, ICommunicationHub
@@ -28,7 +33,7 @@ namespace api.Services
         public override async Task OnConnectedAsync()
         {
             var userId = GetUserId();
-            Console.WriteLine(userId);
+
             if (string.IsNullOrEmpty(userId))
             {
                 throw new HubException("403 Forbidden: JWT is missing or expired.");
@@ -40,7 +45,7 @@ namespace api.Services
         }
 
 
-        public async Task NewMessage(string receiverId, string message)
+        public async Task NewMessage(string message, string receiverId)
         {
             var senderId = GetUserId();
 
@@ -56,9 +61,11 @@ namespace api.Services
             }
 
             var sender = await this.GetUserAsync(Guid.Parse(senderId!));
-            var senderDto = _mapper.Map<UserDto>(sender);
+            var senderEntity = sender.GetValue<User>();
+            var senderDto = _mapper.Map<UserDto>(senderEntity);
             var receiver = await this.GetUserAsync(Guid.Parse(receiverId!));
-            var receiverDto = _mapper.Map<UserDto>(receiver);
+            var receiverEntity = receiver.GetValue<User>();
+            var receiverDto = _mapper.Map<UserDto>(receiverEntity);
             // Tạo đối tượng tin nhắn
             var chatMessage = new SignalRDto
             {
@@ -110,16 +117,93 @@ namespace api.Services
             return chats!;
         }
 
-        // Phương thức gửi thông báo cho người dùng
-        public async Task SendNotification(string receiverId, string notificationMessage)
+        public async Task SendMessageToManagers(string message, string? receiverId = null)
+        {
+            var senderId = GetUserId();
+
+            var sender = await this.GetUserAsync(Guid.Parse(senderId!));
+            var senderEntity = sender.GetValue<User>();
+            var senderDto = _mapper.Map<UserDto>(senderEntity);
+
+            Result<User>? receiver = null;
+            if (receiverId != null)
+            {
+                receiver = await this.GetUserAsync(Guid.Parse(receiverId));
+            }
+            var userEntity = receiver != null ? receiver.GetValue<User>() : null;
+
+            var receiverDto = userEntity != null ? _mapper.Map<UserDto>(userEntity) : null;
+
+            var senderManager = await this.GetUserByRoleCashier(Guid.Parse(senderId));
+
+            string managerChatRoomKey = receiverId == null ? $"chat:managers:{senderId}" : $"chat:managers:{receiverId}";
+
+            var db = _redis.GetDatabase();
+
+            var chatMessage = new SignalRDto
+            {
+                SenderId = senderDto,
+                ReceiverId = receiverDto!, 
+                Message = message,
+                Timestamp = DateTime.Now
+            };
+
+            // Lưu tin nhắn vào Redis với key chung
+
+            string jsonMessage = JsonConvert.SerializeObject(chatMessage, new StringEnumConverter());
+            await db.ListRightPushAsync(managerChatRoomKey, jsonMessage);
+
+            // Gửi tin nhắn đến tất cả manager đang online
+            foreach (var managerId in _userConnections.Keys)
+            {
+                var manager = await GetUserByRoleCashier(Guid.Parse(managerId));
+                if(manager != null)
+                {
+                    var connectionId = _userConnections[managerId];
+                    await Clients.Client(connectionId).SendAsync("receiveMessage", chatMessage);
+                }
+            }
+
+            if(receiverId == null && _userConnections.ContainsKey(senderId!))
+            {
+                var senderIdConnectionId = _userConnections[senderId];
+                await Clients.Client(senderIdConnectionId).SendAsync("receiveMessage", chatMessage);
+            }
+        }
+
+        public async Task<List<SignalRDto>> GetManagerChatHistory(string? receiverId = null)
+        {
+            var senderId = GetUserId();
+            var db = _redis.GetDatabase();
+            string managerChatRoomKey = receiverId == null ? $"chat:managers:{senderId}" : $"chat:managers:{receiverId}";
+            Console.WriteLine("managerChatRoomKey: " + managerChatRoomKey);
+            bool chatExists = await db.KeyExistsAsync(managerChatRoomKey);
+            if (!chatExists)
+            {
+                return new List<SignalRDto>();
+            }
+
+            var chatHistoryJson = await db.ListRangeAsync(managerChatRoomKey, 0, 50);
+
+            var chatHistory = chatHistoryJson
+                .Select(message => JsonConvert.DeserializeObject<SignalRDto>(message.ToString()))
+                .ToList();
+
+            return chatHistory!;
+        }
+
+
+        public async Task SendNotification(string notificationMessage, string receiverId)
         {
             var senderId = GetUserId();
             var db = _redis.GetDatabase();
             string notificationKey = GetNotificationKey(receiverId);
             var sender = await this.GetUserAsync(Guid.Parse(senderId!));
-            var senderDto = _mapper.Map<UserDto>(sender);
+            var senderEntity = sender.GetValue<User>();
+            var senderDto = _mapper.Map<UserDto>(senderEntity);
             var receiver = await this.GetUserAsync(Guid.Parse(receiverId!));
-            var receiverDto = _mapper.Map<UserDto>(receiver);
+            var receiverEntity = receiver.GetValue<User>();
+            var receiverDto = _mapper.Map<UserDto>(receiverEntity);
             var notification = new SignalRDto
             {
                 SenderId = senderDto,
@@ -219,6 +303,45 @@ namespace api.Services
             await db.ListRightPushAsync(chatRoomKey, updatedMessages.Select(msg => (RedisValue)msg).ToArray());
         }
 
+        public async Task MarkMessageManagerAsRead(string? receiverId =null)
+        {
+            var senderId = GetUserId();
+
+
+            string managerChatRoomKey = receiverId == null ? $"chat:managers:{senderId}" : $"chat:managers:{receiverId}";
+            var db = _redis.GetDatabase();
+
+            var chatHistoryJson = await db.ListRangeAsync(managerChatRoomKey, 0, -1);
+            if (chatHistoryJson == null || chatHistoryJson.Length == 0)
+            {
+                return;
+            }
+
+            var updatedMessages = new List<string>();
+
+            foreach (var msg in chatHistoryJson)
+            {
+                try
+                {
+                    var chatMessage = JsonConvert.DeserializeObject<dynamic>(msg.ToString());
+                    if (chatMessage!.UserId.ToString().Trim() != senderId.ToString().Trim() && chatMessage.IsRead == false)
+                    {
+                        chatMessage.isRead = true;
+                    }
+
+                    updatedMessages.Add(JsonConvert.SerializeObject(chatMessage));
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Error processing message: {ex.Message}");
+                }
+            }
+
+            await db.KeyDeleteAsync(managerChatRoomKey);
+            await db.ListRightPushAsync(managerChatRoomKey, updatedMessages.Select(msg => (RedisValue)msg).ToArray());
+        }
+
+
         public async Task<List<UserDto>> GetChattedUsersWithDetails()
         {
             var chattedUserIds = GetChattedUsers();
@@ -275,11 +398,31 @@ namespace api.Services
             return chattedUsers;
         }
 
-        private async Task<User> GetUserAsync(Guid userId)
+        private async Task<Result<User>> GetUserAsync(Guid userId)
         {
-            var user = await _repoManager.User.GetUserByIdAsync(userId, false);
+            var user = await _repoManager.User.GetUserByIdAsync(userId, false, "EmployeeInfo,Roles");
+
+            if (user is null)
+                return Result<User>.NotFound([UserErrors.GetUserNotFoundWithIdError()]);
+
+            return Result<User>.Ok(user);
+        }
+
+
+        private Task<User> GetUserByRoleCashier(Guid userId)
+        {
+            var user = _repoManager.User.GetUserByRoleAsync(userId, trackChanges: false);
+            if (user == null) Console.WriteLine("hello bagia");
             return user!;
         }
+
+        private Task<IEnumerable<User>> GetUsersByRoleAdmin()
+        {
+            var user = _repoManager.User.GetUsersByRoleAsync();
+            if (user == null) Console.WriteLine("hello bagia");
+            return user!;
+        }
+
 
         // Hàm tạo key cho cuộc trò chuyện giữa hai người
         private string GetChatRoomKey(string user1Id, string user2Id)

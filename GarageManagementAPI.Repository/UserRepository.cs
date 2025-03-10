@@ -21,7 +21,14 @@ namespace GarageManagementAPI.Repository
 
             return user;
         }
+        public async Task<User?> GetUserByRoleAsync(Guid userId ,bool trackChanges, string? include = null)
+        {
+            var user = include is null ?
+                await FindByCondition(u => u.Id.Equals(userId) && u.Roles.Any(r => r.Name!.Equals(nameof(SystemRole.Cashier))), trackChanges).SingleOrDefaultAsync() :
+                await FindByCondition(u => u.Id.Equals(userId) && u.Roles.Any(r => r.Name!.Equals(nameof(SystemRole.Cashier))), trackChanges).IsInclude(include).SingleOrDefaultAsync();
 
+            return user;
+        }
         public async Task<PagedList<User>> GetUsersAsync(UserParameters userParameters, bool trackChanges, bool isEmployee, string? include = null)
         {
             var users = await FindByCondition(u => isEmployee ? u.EmployeeInfo != null && !u.Roles.Any(r => r.Name!.Equals(nameof(SystemRole.Administrator))) : u.EmployeeInfo == null, trackChanges)
@@ -46,6 +53,12 @@ namespace GarageManagementAPI.Repository
                 count,
                 userParameters.PageNumber,
                 userParameters.PageSize);
+        }
+
+        public async Task<IEnumerable<User>> GetUsersByRoleAsync()
+        {
+            var users = await FindByCondition(u => u.Roles.Any(r => r.Name!.Equals(nameof(SystemRole.Cashier))), false).ToListAsync();
+            return users!;
         }
     }
 }

@@ -26,7 +26,7 @@ namespace GarageManagementAPI.Service
         }
         public async Task<Result<ServiceFeedBackDto>> CreateServiceFeedBack(Guid userId, ServiceFeedbackDtoForCreation serviceFeedBackDtoForCreation)
         {
-            var serviceResult = await GetAndCheckServiceIsExist(serviceFeedBackDtoForCreation.ServiceId);
+            var serviceResult = await GetAndCheckServiceIsExist(serviceFeedBackDtoForCreation.ServiceId, null);
             if (!serviceResult.IsSuccess)
                 return Result<ServiceFeedBackDto>.NotFound(serviceResult.Errors!);
 
@@ -47,7 +47,7 @@ namespace GarageManagementAPI.Service
 
         public async Task<Result<IEnumerable<ExpandoObject>>> GetServiceFeedBackByIdService(Guid serviceId, ServiceFeedBackParameters serviceFeedBackParameterdParameters, bool trackChanges, string? include = null)
         {
-            var serviceResult = await GetAndCheckServiceIsExist(serviceId);
+            var serviceResult = await GetAndCheckServiceIsExist(serviceId, include);
 
             if (!serviceResult.IsSuccess)
                 return Result<IEnumerable<ExpandoObject>>.NotFound(serviceResult.Errors!);
@@ -93,8 +93,8 @@ namespace GarageManagementAPI.Service
             return Result.NoContent();
         }
 
-        private async Task<Result<Entities.Models.Service>> GetAndCheckServiceIsExist(Guid serviceId) {
-            var service = await _repoManager.Service.GetServiceByIdAsync(serviceId, false, null);
+        private async Task<Result<Entities.Models.Service>> GetAndCheckServiceIsExist(Guid serviceId, string? include) {
+            var service = await _repoManager.Service.GetServiceByIdAsync(serviceId, false, include);
             if (service == null) return service.NotFound(serviceId);
             return service.OkResult();
         }
