@@ -25,7 +25,7 @@ namespace GarageManagementAPI.Repository
             return goodsReceivedDetail;
         }
 
-        public async Task<GoodsReceivedDetail?> GetGoodsReceivedDetailByProductAndGoodsReceivedAsync(Guid? productId, Guid? goodsReceivedId, Guid? goodsReceivedDetailId,bool trackChanges)
+        public async Task<GoodsReceivedDetail?> GetGoodsReceivedDetailByProductAndGoodsReceivedAsync(Guid? productId, Guid? goodsReceivedId, Guid? goodsReceivedDetailId, bool trackChanges)
         {
             var goodsReceivedDetail = await FindByCondition(b => b.ProductId.Equals(productId) && b.GoodsReceivedId.Equals(goodsReceivedId) && !b.Id.Equals(goodsReceivedDetailId), trackChanges).SingleOrDefaultAsync();
             return goodsReceivedDetail;
@@ -36,6 +36,26 @@ namespace GarageManagementAPI.Repository
             var goodsReceivedDetails = await FindAll(trackChanges)
               .SearchByUnitPrice(goodsReceivedDetailParameters.MinUnitPrice, goodsReceivedDetailParameters.MaxUnitPrice)
               .SearchByTotalPrice(goodsReceivedDetailParameters.MiniTotalPrice,goodsReceivedDetailParameters.MaxTotalPrice)
+              .SearchByDate(goodsReceivedDetailParameters.CreatedAt)
+              .SearchByDate(goodsReceivedDetailParameters.UpdatedAt)
+              .SearchByStatus(goodsReceivedDetailParameters.Status)
+              .Sort(goodsReceivedDetailParameters.OrderBy)
+              .IsInclude(include)
+              .ToListAsync();
+
+            return PagedList<GoodsReceivedDetail>.ToPagedList(
+                goodsReceivedDetails,
+                goodsReceivedDetailParameters.PageNumber,
+                goodsReceivedDetailParameters.PageSize
+                );
+        }
+
+        public async Task<PagedList<GoodsReceivedDetail>> GetGoodsReceivedDetailsAsync(Guid goodsReceivedId, GoodsReceivedDetailParameters goodsReceivedDetailParameters, bool trackChanges, string? include = null)
+        {
+
+            var goodsReceivedDetails = await FindByCondition(g => g.GoodsReceivedId.Equals(goodsReceivedId), trackChanges)
+              .SearchByUnitPrice(goodsReceivedDetailParameters.MinUnitPrice, goodsReceivedDetailParameters.MaxUnitPrice)
+              .SearchByTotalPrice(goodsReceivedDetailParameters.MiniTotalPrice, goodsReceivedDetailParameters.MaxTotalPrice)
               .SearchByDate(goodsReceivedDetailParameters.CreatedAt)
               .SearchByDate(goodsReceivedDetailParameters.UpdatedAt)
               .SearchByStatus(goodsReceivedDetailParameters.Status)

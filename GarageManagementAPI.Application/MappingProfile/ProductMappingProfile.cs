@@ -9,7 +9,7 @@ namespace GarageManagementAPI.Application.MappingProfile
         public ProductMappingProfile()
         {
             CreateMap<Product, ProductDto>()
-                .ForMember(dest => dest.BrandNameId, otps =>
+                .ForMember(dest => dest.BrandId, otps =>
                 {
                     otps.PreCondition(src => src.Brand != null);
                     otps.MapFrom(src => src.Brand!.Id);
@@ -19,7 +19,7 @@ namespace GarageManagementAPI.Application.MappingProfile
                      opts.PreCondition(src => src.Brand != null);
                      opts.MapFrom(src => src.Brand!.BrandName);
                  })
-                 .ForMember(dest => dest.CategoryId, otps =>
+                 .ForMember(dest => dest.ProductCategoryId, otps =>
                  {
                      otps.PreCondition(src => src.ProductCategory != null);
                      otps.MapFrom(src => src.ProductCategory!.Id);

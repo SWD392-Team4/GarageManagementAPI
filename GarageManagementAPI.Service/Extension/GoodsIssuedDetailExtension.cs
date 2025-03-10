@@ -5,7 +5,7 @@ using GarageManagementAPI.Shared.ErrorsConstant.GoodsIssued;
 using GarageManagementAPI.Shared.ErrorsConstant.GoodsIssuedDetail;
 using GarageManagementAPI.Shared.ResultModel;
 
-namespace GarageManagementAPI.Service
+namespace GarageManagementAPI.Service.Extension
 {
     public static class GoodsIssuedDetailExtension
     {

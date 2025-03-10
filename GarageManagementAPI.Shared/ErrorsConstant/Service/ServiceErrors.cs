@@ -1,4 +1,5 @@
 ﻿using GarageManagementAPI.Shared.DataTransferObjects.Service;
+using GarageManagementAPI.Shared.Enums;
 using GarageManagementAPI.Shared.ErrorModel;
 
 namespace GarageManagementAPI.Shared.ErrorsConstant.Service
@@ -10,7 +11,7 @@ namespace GarageManagementAPI.Shared.ErrorsConstant.Service
         public const string ServiceName = "Service with name already existed.";
         public const string ServicesNotFoundWithIds = "Can not found any service with list id {0}.)";
         public const string ServicesFoundNotMatchWithIds = "Service found not match with list id {0}.)";
-        public const string ServiceCarCategory = "Service with car category id {0} already existed.";
+        public const string ServiceCarCategory = "Service with car category id {0} and car part id {1} and work nature and action already existed.";
         public const string CarCategoryExist = "Car category with id {0} not found.";
         public const string CarPartExist = "Car part with id {0} not found.";
         #endregion
@@ -47,11 +48,11 @@ namespace GarageManagementAPI.Shared.ErrorsConstant.Service
                  Code = nameof(ServiceName),
                  Description = string.Format(ServiceName, serviceDtoForCreation.ServiceName)
              };
-        public static ErrorsResult GetCategoryAlreadyExistError(Guid carCategoryId) =>
+        public static ErrorsResult GetCategoryAndCarPartAlreadyExistError(Guid carCategoryId, Guid carPartId, string workNature, string action) =>
        new()
        {
            Code = nameof(ServiceCarCategory),
-           Description = string.Format(ServiceCarCategory, carCategoryId)
+           Description = string.Format(ServiceCarCategory, carCategoryId, carPartId)
        };
         public static ErrorsResult GetServiceNameUpdateAlreadyExistError(ServiceDtoForUpdate serviceDtoForUpdate) =>
              new()

@@ -34,11 +34,10 @@ namespace GarageManagementAPI.Entities.Models
 
         public virtual User CreatedWarehouseManager { get; set; } = null!;
 
-        public virtual ICollection<GoodsReceivedDetail> GoodsReceivedDetails { get; set; } = new List<GoodsReceivedDetail>();
-
         public virtual SupplierContact SupplierContact { get; set; } = null!;
 
         public virtual Workplace Warehouse { get; set; } = null!;
+        public virtual ICollection<GoodsReceivedDetail> GoodsReceivedDetails { get; set; } = new List<GoodsReceivedDetail>();
     }
 
 }
