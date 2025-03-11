@@ -45,7 +45,7 @@ namespace GarageManagementAPI.Repository.Extensions
                 );
         }
 
-        public static IQueryable<GoodsReceivedDetail> SearchByStatus(this IQueryable<GoodsReceivedDetail> goodsReceivedDetails, GoodsReceivedDetailStatus? status)
+        public static IQueryable<GoodsReceivedDetail> SearchByStatus(this IQueryable<GoodsReceivedDetail> goodsReceivedDetails, GoodsReceivedStatus? status)
         {
             if (status is null)
             {

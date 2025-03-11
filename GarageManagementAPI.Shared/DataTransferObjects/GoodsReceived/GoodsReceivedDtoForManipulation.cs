@@ -21,6 +21,5 @@ namespace GarageManagementAPI.Shared.DataTransferObjects.GoodsReceived
 
         public string SourceWards { get; set; } = null!;
 
-        public decimal TotalPrice { get; set; }
     }
 }

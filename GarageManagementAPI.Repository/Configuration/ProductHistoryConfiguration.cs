@@ -27,7 +27,7 @@ namespace GarageManagementAPI.Repository.Configuration
             entity.Property(e => e.Status)
                 .HasConversion<string>();
         }
-        protected override void SeedData(EntityTypeBuilder<ProductHistory> entity)
+       /* protected override void SeedData(EntityTypeBuilder<ProductHistory> entity)
         {
             entity.HasData(
                 new ProductHistory()
@@ -73,7 +73,7 @@ namespace GarageManagementAPI.Repository.Configuration
                     CreatedAt = DateTimeOffset.Parse("2025-02-25T00:36:40Z")
                 }
             );
-        }
+        }*/
     }
 }
 

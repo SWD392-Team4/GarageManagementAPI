@@ -9,7 +9,7 @@ namespace GarageManagementAPI.Service.Contracts
     {
         public Task<Result<ExpandoObject>> GetProductAtWarehouse(Guid productId, bool trackChanges, string? include = null);
         public Task<Result<IEnumerable<ExpandoObject>>> GetProductAtWarehouses(ProductAtWarehouseParameters productAtWarehouseParameters, bool trackChanges, string? include = null);
-        public Task<Result<ProductAtWarehouseDto>> CreateProductAtWareHouse(ProductAtWarehouseDtoForCreation productAtWarehouseDtoForCreation);
+       // public Task<Result<ProductAtWarehouseDto>> CreateProductAtWareHouse(ProductAtWarehouseDtoForCreation productAtWarehouseDtoForCreation);
         public Task<Result> UpdateProductAtWareHouse(Guid productIdAtWarehouse,ProductAtWarehouseDtoForUpdate productAtWarehouseDtoForUpdate, bool trackChanges);
     }
 }

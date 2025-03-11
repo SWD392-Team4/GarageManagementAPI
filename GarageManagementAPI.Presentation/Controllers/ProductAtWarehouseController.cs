@@ -1,13 +1,11 @@
-﻿using GarageManagementAPI.Service.Contracts;
-using GarageManagementAPI.Shared.DataTransferObjects.ProductAtWarehouse;
-using GarageManagementAPI.Shared.Extension;
+﻿using Microsoft.AspNetCore.Mvc;
+using GarageManagementAPI.Service.Contracts;
 using GarageManagementAPI.Shared.RequestFeatures;
-using GarageManagementAPI.Shared.ResultModel;
-using Microsoft.AspNetCore.Mvc;
+using GarageManagementAPI.Shared.DataTransferObjects.ProductAtWarehouse;
 
 namespace GarageManagementAPI.Presentation.Controllers
 {
-    [Route("api/product-at-warehouse")]
+    [Route("api/product-at-warehouses")]
     [ApiController]
     public class ProductAtWarehouseController : ApiControllerBase
     {
@@ -24,24 +22,11 @@ namespace GarageManagementAPI.Presentation.Controllers
                 );
         }
         [HttpGet]
-        public async Task<IActionResult> GetProductWarehouses(ProductAtWarehouseParameters productAtWarehouseParameters)
+        public async Task<IActionResult> GetProductWarehouses([FromQuery] ProductAtWarehouseParameters productAtWarehouseParameters)
         {
             var productAtWarehouses = await _service.ProductAtWarehouseService.GetProductAtWarehouses(productAtWarehouseParameters, false);
             return productAtWarehouses.Map(
                 onSuccess: Ok,
-                onFailure: ProcessError
-                );
-        }
-        [HttpPost]
-        public async Task<IActionResult> CreateProductAtWareHouse(ProductAtWarehouseDtoForCreation productAtWarehouseDtoForCreation)
-        {
-            var productAtWarehouseResult = await _service.ProductAtWarehouseService.CreateProductAtWareHouse(productAtWarehouseDtoForCreation);
-            return productAtWarehouseResult.Map(
-                onSuccess: result =>
-                {
-                    var createdProduct = productAtWarehouseResult.GetValue<ProductAtWarehouseDto>();
-                    return CreatedAtRoute("GetProduAtWarehouse", new { productAtWarehouseId = createdProduct.Id }, productAtWarehouseResult);
-                },
                 onFailure: ProcessError
                 );
         }

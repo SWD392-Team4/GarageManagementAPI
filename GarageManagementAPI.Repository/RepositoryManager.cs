@@ -38,6 +38,7 @@ namespace GarageManagementAPI.Repository
         private readonly Lazy<IPackageUsageDetailRepository> _packageUsageDetailRepository;
         private readonly Lazy<IPackageDetailRepository> _packageDetailRepository;
         private readonly Lazy<IProductAtWarehouseRepository> _productAtWarehouseRepository;
+        private readonly Lazy<IGoodsTransactionRepository> _goodsTransactionRepository;
 
         public RepositoryManager(RepositoryContext repositoryContext)
         {
@@ -62,6 +63,7 @@ namespace GarageManagementAPI.Repository
             _carPartCategoryRepository = new Lazy<ICarPartCategoryRepository>(() => new CarPartCategoryRepository(repositoryContext));
             _serviceFeedBackRepository = new Lazy<IServiceFeedBackRepository>(() => new ServiceFeedBackRepository(repositoryContext));
             _supplierContactRepository = new Lazy<ISupplierContactRepository>(() => new SupplierContactRepository(repositoryContext));
+            _goodsTransactionRepository = new Lazy<IGoodsTransactionRepository>(() => new GoodsTransactionRepository(repositoryContext));
             _goodsIssuedDetaiRepository = new Lazy<IGoodsIssuedDetailRepository>(() => new GoodsIssuedDetailRepository(repositoryContext));
             _goodsReceivedDetailRepository = new Lazy<IGoodsReceivedDetailRepository>(() => new GoodsReceivedDetailRepository(repositoryContext));
             _appointmentRepository = new Lazy<IAppointmentRepository>(() => new AppointmentRepository(repositoryContext));
@@ -96,6 +98,7 @@ namespace GarageManagementAPI.Repository
         public IProductCategoryRepository ProductCategory => _productCategoryRepository.Value;
         public ICarPartCategoryRepository CarPartCategory => _carPartCategoryRepository.Value;
         public ISupplierContactRepository SupplierContact => _supplierContactRepository.Value;
+        public IGoodsTransactionRepository GoodsTransaction => _goodsTransactionRepository.Value;
         public IGoodsIssuedDetailRepository GoodsIssuedDetail => _goodsIssuedDetaiRepository.Value;
         public IProductAtWarehouseRepository ProductAtWarehouse => _productAtWarehouseRepository.Value;
         public IGoodsReceivedDetailRepository GoodsReceivedDetail => _goodsReceivedDetailRepository.Value;

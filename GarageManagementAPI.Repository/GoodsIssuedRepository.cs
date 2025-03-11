@@ -42,8 +42,6 @@ namespace GarageManagementAPI.Repository
              .SearchByUpdateAt(goodsIssuedParameters.UpdatedAt)
              .Sort(goodsIssuedParameters.OrderBy)
              .IsInclude(include)
-             .Skip((goodsIssuedParameters.PageNumber - 1) * goodsIssuedParameters.PageSize)
-             .Take(goodsIssuedParameters.PageSize)
              .ToListAsync();
 
             return PagedList<GoodsIssued>.ToPagedList(

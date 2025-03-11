@@ -10,7 +10,6 @@ namespace GarageManagementAPI.Service.Contracts
     {
         public Task<Result<ExpandoObject>> GetGoodsIssuedDetailAsync(Guid goodsIssuedDetailId, GoodsIssuedDetailParameters goodsIssuedDetailParameters, string? include);
         public Task<Result<IEnumerable<ExpandoObject>>> GetGoodsIssuedDetailsAsync(GoodsIssuedDetailParameters goodsIssuedDetailParameters, string? include);
-        public Task<Result<GoodsIssuedDetailDto>> CreateGoodsIssuedDetailAsync(GoodsIssuedDetailDtoForCreation goodsIssuedDetailDto);
-        public Task<Result> UpdateGoodsIssuedDetailAsync(Guid goodsIssuedDetailId, GoodsIssuedDetailDtoForUpdate goodsIssuedDetailDto);
+        public Task<Result<IEnumerable<ExpandoObject>>> GetGoodsIssuedDetailsAsync(Guid goodGoodsIssued, GoodsIssuedDetailParameters goodsIssuedDetailParameters, string? include);
     }
 }

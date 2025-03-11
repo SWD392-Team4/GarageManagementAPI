@@ -1,10 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using GarageManagementAPI.Shared.Enums;
-using Microsoft.AspNetCore.Authorization;
-using GarageManagementAPI.Shared.Extension;
 using GarageManagementAPI.Service.Contracts;
 using GarageManagementAPI.Shared.RequestFeatures;
-using GarageManagementAPI.Shared.DataTransferObjects.GoodsReceivedDetail;
 
 namespace GarageManagementAPI.Presentation.Controllers
 {
@@ -53,42 +49,6 @@ namespace GarageManagementAPI.Presentation.Controllers
                 onSuccess: Ok,
                 onFailure: ProcessError
                 );
-        }
-
-   
-        [HttpPost(Name = "CreateGoodsReceivedDetail")]
-        public async Task<IActionResult> CreateGoodsReceivedDetail([FromBody] GoodsReceivedDetailDtoForCreation GoodsReceivedDetailDtoForCreation)
-        {
-            var result = await _service.GoodsReceivedDetailService.CreateGoodsReceivedDetailAsync(GoodsReceivedDetailDtoForCreation);
-
-            return result.Map(
-                onSuccess: result =>
-                {
-                    var createdGoodsReceivedDetail = result.GetValue<GoodsReceivedDetailDto>();
-
-                    return CreatedAtRoute("GetGoodsReceivedDetailById", new { goodsReceivedDetailId = createdGoodsReceivedDetail.Id }, result);
-                },
-                onFailure: ProcessError
-                );
-        }
-
-  
-        //[Authorize(Roles = $"{nameof(SystemRole.Administrator)}")]
-        [HttpPut("{goodsReceivedDetailId:guid}")]
-        public async Task<IActionResult> UpdateGoodsReceivedDetail(Guid goodsReceivedDetailId, [FromBody] GoodsReceivedDetailDtoForUpdate goodsReceivedDetailDtoForUpdate)
-        {
-            Console.WriteLine("Hello");
-            var result = await _service.GoodsReceivedDetailService
-                .UpdateGoodsReceivedDetail(
-                goodsReceivedDetailId,
-                goodsReceivedDetailDtoForUpdate,
-                trackChanges: true
-                );
-
-            return result.Map(
-                 onSuccess: Ok,
-                 onFailure: ProcessError
-                 );
         }
     }
 }

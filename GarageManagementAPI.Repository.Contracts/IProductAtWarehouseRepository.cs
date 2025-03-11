@@ -5,7 +5,7 @@ namespace GarageManagementAPI.Repository.Contracts
 {
     public interface IProductAtWarehouseRepository
     {
-        Task<ProductAtWarehouse?> GetProductAtWarehouse(Guid productId, bool trackChanges, string? include = null);
+        Task<ProductAtWarehouse?> GetProductAtWarehouse(Guid productAtWarehouseId, bool trackChanges, string? include = null);
         Task<PagedList<ProductAtWarehouse>> GetProductAtWarehouses(ProductAtWarehouseParameters productAtWarehouseParameters, bool trackChanges, string? include = null);
         Task CreateProductAtWarehouse(ProductAtWarehouse productAtWarehouse);
         void UpdateProductAtWarehouse(ProductAtWarehouse productAtWarehouse);

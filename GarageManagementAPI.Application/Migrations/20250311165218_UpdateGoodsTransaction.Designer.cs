@@ -4,6 +4,7 @@ using GarageManagementAPI.Repository;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GarageManagementAPI.Application.Migrations
 {
     [DbContext(typeof(RepositoryContext))]
-    partial class RepositoryContextModelSnapshot : ModelSnapshot
+    [Migration("20250311165218_UpdateGoodsTransaction")]
+    partial class UpdateGoodsTransaction
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -2771,9 +2774,6 @@ namespace GarageManagementAPI.Application.Migrations
                     b.Property<Guid>("CreatedWareHouseManagerId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("GarageId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<string>("InvoiceCode")
                         .IsRequired()
                         .HasMaxLength(255)
@@ -2802,8 +2802,6 @@ namespace GarageManagementAPI.Application.Migrations
                         .HasName("goodsissued_id_primary");
 
                     b.HasIndex("CreatedWareHouseManagerId");
-
-                    b.HasIndex("GarageId");
 
                     b.HasIndex("WarehouseId");
 
@@ -6258,12 +6256,6 @@ namespace GarageManagementAPI.Application.Migrations
                         .IsRequired()
                         .HasConstraintName("goodsissued_createdwarehousemanagerid_foreign");
 
-                    b.HasOne("GarageManagementAPI.Entities.Models.Workplace", "Garage")
-                        .WithMany("GoodsIssuedGarages")
-                        .HasForeignKey("GarageId")
-                        .IsRequired()
-                        .HasConstraintName("goodsissued_garageid_foreign");
-
                     b.HasOne("GarageManagementAPI.Entities.Models.Workplace", "Warehouse")
                         .WithMany("GoodsIssuedWarehouses")
                         .HasForeignKey("WarehouseId")
@@ -6271,8 +6263,6 @@ namespace GarageManagementAPI.Application.Migrations
                         .HasConstraintName("goodsissued_warehouseid_foreign");
 
                     b.Navigation("CreatedWareHouseManager");
-
-                    b.Navigation("Garage");
 
                     b.Navigation("Warehouse");
                 });
@@ -7063,8 +7053,6 @@ namespace GarageManagementAPI.Application.Migrations
                     b.Navigation("Appointments");
 
                     b.Navigation("EmployeeInfos");
-
-                    b.Navigation("GoodsIssuedGarages");
 
                     b.Navigation("GoodsIssuedWarehouses");
 

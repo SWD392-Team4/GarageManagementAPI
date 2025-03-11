@@ -9,7 +9,6 @@ using GarageManagementAPI.Repository.Contracts;
 using GarageManagementAPI.Shared.RequestFeatures;
 using GarageManagementAPI.Shared.Enums.SystemStatuss;
 using GarageManagementAPI.Shared.DataTransferObjects.GoodsReceivedDetail;
-using GarageManagementAPI.Shared.DataTransferObjects.GoodsReceived;
 
 namespace GarageManagementAPI.Service
 {
@@ -27,16 +26,16 @@ namespace GarageManagementAPI.Service
         }
         public async Task<Result<GoodsReceivedDetailDto>> CreateGoodsReceivedDetailAsync(GoodsReceivedDetailDtoForCreation goodsReceivedDetailDtoForCreation)
         {
-            var goodsReceivedAndProductIsExist = await GetAndCheckIfGoodsReceivedDetailByGoodReceivedAndProductExist(goodsReceivedDetailDtoForCreation.GoodsReceivedId, goodsReceivedDetailDtoForCreation.ProductId, false);
+          /*  var goodsReceivedAndProductIsExist = await GetAndCheckIfGoodsReceivedDetailByGoodReceivedAndProductExist(goodsReceivedDetailDtoForCreation.GoodsReceivedId, goodsReceivedDetailDtoForCreation.ProductId, false);
             if (!goodsReceivedAndProductIsExist.IsSuccess)
-                return Result<GoodsReceivedDetailDto>.Failure(goodsReceivedAndProductIsExist.StatusCode, goodsReceivedAndProductIsExist.Errors!);
+                return Result<GoodsReceivedDetailDto>.Failure(goodsReceivedAndProductIsExist.StatusCode, goodsReceivedAndProductIsExist.Errors!);*/
 
             var goodsReceivedDetailEntity = _mapper.Map<GoodsReceivedDetail>(goodsReceivedDetailDtoForCreation);
 
             goodsReceivedDetailEntity.TotalPrice = goodsReceivedDetailDtoForCreation.UnitPrice * goodsReceivedDetailDtoForCreation.Quantity;
             goodsReceivedDetailEntity.CreatedAt = DateTimeOffset.UtcNow.SEAsiaStandardTime();
             goodsReceivedDetailEntity.UpdatedAt = DateTimeOffset.UtcNow.SEAsiaStandardTime();
-            goodsReceivedDetailEntity.Status = GoodsReceivedDetailStatus.Inactive;
+            goodsReceivedDetailEntity.Status = GoodsReceivedStatus.Inactive;
 
             await _repoManager.GoodsReceivedDetail.CreateGoodsReceivedDetailAsync(goodsReceivedDetailEntity);
             await _repoManager.SaveAsync();

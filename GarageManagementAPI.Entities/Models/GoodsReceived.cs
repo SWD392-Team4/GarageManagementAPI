@@ -38,6 +38,7 @@ namespace GarageManagementAPI.Entities.Models
 
         public virtual Workplace Warehouse { get; set; } = null!;
         public virtual ICollection<GoodsReceivedDetail> GoodsReceivedDetails { get; set; } = new List<GoodsReceivedDetail>();
+        public virtual ICollection<GoodsTransaction> GoodsTransactions { get; set; } = new List<GoodsTransaction>();
     }
 
 }

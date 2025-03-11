@@ -28,16 +28,11 @@ namespace GarageManagementAPI.Repository
         public async Task<PagedList<ProductAtWarehouse>> GetProductAtWarehouses(ProductAtWarehouseParameters productAtWarehouseParameters, bool trackChanges, string? include = null)
         {
             var productAtWareHouses = await FindAll(trackChanges)
-                .SearchByQuantity(productAtWarehouseParameters.minQuantity, productAtWarehouseParameters.maxQuantity)
-                .SerchByCreatedAt(productAtWarehouseParameters.CreatedAt)
-                .SerchByUpdatedAt(productAtWarehouseParameters.UpdatedAt)
-                .Sort(productAtWarehouseParameters.OrderBy)
-                .IsInclude(include!)
                 .ToListAsync();
             return PagedList<ProductAtWarehouse>.ToPagedList(
                 productAtWareHouses,
-                productAtWarehouseParameters.PageSize,
-                productAtWarehouseParameters.PageNumber
+                productAtWarehouseParameters.PageNumber,
+                productAtWarehouseParameters.PageSize
                 );
         }
 
