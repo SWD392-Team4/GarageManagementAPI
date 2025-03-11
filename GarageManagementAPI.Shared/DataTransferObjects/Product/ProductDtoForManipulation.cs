@@ -6,7 +6,6 @@ namespace GarageManagementAPI.Shared.DataTransferObjects.Product
     public record ProductDtoForManipulation
     {
         public required string ProductName { get; set; }
-        public required string ProductBarcode { get; set; }
         public string ProductDescription { get; set; } = null!;
         public Guid ProductCategoryId { get; set; } 
         public Guid BrandId { get; set; }

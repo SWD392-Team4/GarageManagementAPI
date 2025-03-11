@@ -8,6 +8,7 @@ namespace GarageManagementAPI.Entities.Models
     {
         public Guid CreatedWareHouseManagerId { get; set; }
         public Guid WarehouseId { get; set; }
+        public Guid GarageId { get; set; }
         public decimal TotalCost { get; set; }
         public string ReferenceNumber { get; set; } = null!;
         public string InvoiceCode { get; set; } = null!;
@@ -19,6 +20,7 @@ namespace GarageManagementAPI.Entities.Models
         public virtual User CreatedWareHouseManager { get; set; } = null!;
         public virtual Workplace Warehouse { get; set; } = null!;
         public virtual ICollection<GoodsIssuedDetail> GoodsIssuedDetails { get; set; } = new List<GoodsIssuedDetail>();
+        public virtual Workplace Garage { get; set; } = null!;
 
     }
 

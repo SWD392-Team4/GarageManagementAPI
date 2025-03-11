@@ -3,6 +3,9 @@ using GarageManagementAPI.Shared.Extension;
 using GarageManagementAPI.Service.Contracts;
 using GarageManagementAPI.Shared.RequestFeatures;
 using GarageManagementAPI.Shared.DataTransferObjects.GoodsIssued;
+using System.Security.Claims;
+using GarageManagementAPI.Shared.Enums;
+using Microsoft.AspNetCore.Authorization;
 
 namespace GarageManagementAPI.Presentation.Controllers
 {
@@ -38,11 +41,12 @@ namespace GarageManagementAPI.Presentation.Controllers
                 );
         }
 
-
+        [Authorize(Roles = $"{nameof(SystemRole.Cashier)}, {nameof(SystemRole.Administrator)}")]
         [HttpPost(Name = "CreateGoodsIssued")]
         public async Task<IActionResult> CreateGoodsIssued([FromBody] GoodsIssuedDtoForCreation goodsIssuedDtoForCreation)
         {
-            var goodsIssuedResult = await _service.GoodsIssuedService.CreateGoodsIssuedAsync(goodsIssuedDtoForCreation);
+            var userId = HttpContext.User.FindFirstValue("UserId");
+            var goodsIssuedResult = await _service.GoodsIssuedService.CreateGoodsIssuedAsync(goodsIssuedDtoForCreation, Guid.Parse(userId!));
 
             return goodsIssuedResult.Map(
                 onSuccess: result =>

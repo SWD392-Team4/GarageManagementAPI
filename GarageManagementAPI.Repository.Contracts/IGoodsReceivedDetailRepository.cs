@@ -9,7 +9,6 @@ namespace GarageManagementAPI.Repository.Contracts
         Task<GoodsReceivedDetail?> GetGoodsReceivedDetailByProductAndGoodsReceivedAsync(Guid? productId, Guid? goodsReceivedId, Guid? goodsReceivedDetailId, bool trackChanges);
         Task<PagedList<GoodsReceivedDetail>> GetGoodsReceivedDetailsAsync(GoodsReceivedDetailParameters goodsReceivedDetailParameters, bool trackChanges, string? include = default);
         Task<PagedList<GoodsReceivedDetail>> GetGoodsReceivedDetailsAsync(Guid goodsReceivedId, GoodsReceivedDetailParameters goodsReceivedDetailParameters, bool trackChanges, string? include = default);
-        Task CreateGoodsReceivedDetailAsync(GoodsReceivedDetail goodsReceivedDetail);
-        void UpdateGoodsReceivedDetailAsync(GoodsReceivedDetail goodsReceivedDetail);
+        public Task CreateGoodsReceivedDetailAsync(GoodsReceivedDetail goodsReceivedDetail);
     }
 }

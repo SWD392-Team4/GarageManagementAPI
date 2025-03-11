@@ -15,6 +15,8 @@ namespace GarageManagementAPI.Service.Extension
             =>  Result<ProductAtWarehouseDto>.Created(productAtWarehouseDto);
         public static Result<ProductAtWarehouse> NotFoundResult(this ProductAtWarehouse? productAtWarehouse, Guid productAtWarehouseId)
             => Result<ProductAtWarehouse>.NotFound([ProductAtWarehouseErrors.ProductAtWarehouseNotFoundError(productAtWarehouseId)]);
+        public static Result<ProductAtWarehouse> NotFoundResult(this ProductAtWarehouse? productAtWarehouse, string barcode)
+    => Result<ProductAtWarehouse>.NotFound([ProductAtWarehouseErrors.ProductAtWarehouseBarcodeNotFound(barcode)]);
         public static Result<ProductAtWarehouse> NotFoundWithGoodsReceidResult(this ProductAtWarehouse? productAtWarehouse, Guid goodsreceived)     
             => Result<ProductAtWarehouse>.NotFound([ProductAtWarehouseErrors.GoodsReceivedDetailNotFoundError(goodsreceived)]);
         

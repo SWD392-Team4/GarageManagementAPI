@@ -48,12 +48,6 @@ namespace GarageManagementAPI.Shared.ErrorsConstant.Product
                  Description = string.Format(ProductNameOrBarCode, productDtoForCreation.ProductName)
              };
 
-        public static ErrorsResult GetProductNameUpdateAlreadyExistError(ProductDtoForUpdate productDtoForUpdate) =>
-            new()
-            {
-                Code = nameof(ProductNameOrBarCode),
-                Description = string.Format(ProductNameOrBarCode, productDtoForUpdate.ProductBarcode)
-            };
         public static ErrorsResult GetProductCategoryIsNotFound(Guid productCategoryId) =>
             new() { Code = nameof(ProductCategoryNotFoundWithId), Description = string.Format(ProductCategoryNotFoundWithId, productCategoryId) };
         public static ErrorsResult GetBrandIsNotFound(Guid brandId) =>

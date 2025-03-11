@@ -1,8 +1,8 @@
-﻿using GarageManagementAPI.Entities.Models;
+﻿using Microsoft.EntityFrameworkCore;
+using GarageManagementAPI.Entities.Models;
 using GarageManagementAPI.Repository.Contracts;
-using GarageManagementAPI.Shared.RequestFeatures;
-using Microsoft.EntityFrameworkCore;
 using GarageManagementAPI.Repository.Extensions;
+using GarageManagementAPI.Shared.RequestFeatures;
 
 namespace GarageManagementAPI.Repository
 {
@@ -12,9 +12,10 @@ namespace GarageManagementAPI.Repository
         {
             
         }
-        public async Task CreatedGoodsIssuedDetailAsync(GoodsIssuedDetail goodsIssuedDetail)
+
+        public async Task CreateGoodsIssuedDetailAsync(GoodsIssuedDetail goodsIssuedDetail)
         {
-          await base.CreateAsync(goodsIssuedDetail);
+            await base.CreateAsync(goodsIssuedDetail);
         }
 
         public async Task<GoodsIssuedDetail?> GetGoodsIssuedDetailAsync(Guid goodsIssusedDetailId, bool trackChanges, string? include = null)
@@ -40,9 +41,14 @@ namespace GarageManagementAPI.Repository
                 );
         }
 
+        public Task<PagedList<GoodsIssuedDetail>> GetGoodsIssuedDetailsAsync(Guid goodsReceived, GoodsIssuedDetailParameters goodsReceivedParameters, string? include = null)
+        {
+            throw new NotImplementedException();
+        }
+
         public void UpdateGoodsIssuedDetailAsync(GoodsIssuedDetail goodsIssuedDetail)
         {
-           base.Update(goodsIssuedDetail);
+            base.Update(goodsIssuedDetail);
         }
     }
 }

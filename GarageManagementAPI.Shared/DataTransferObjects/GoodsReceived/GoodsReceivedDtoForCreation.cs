@@ -4,6 +4,6 @@ namespace GarageManagementAPI.Shared.DataTransferObjects.GoodsReceived
 {
     public record class GoodsReceivedDtoForCreation : GoodsReceivedDtoForManipulation
     {
-       public List<GoodsReceivedDetailDtoForCreationGoods> goodsIssuedDetailDtoForCreations { get; set; } = new List<GoodsReceivedDetailDtoForCreationGoods>();
+       public List<GoodsReceivedDetailDtoForCreationGoods> goodsReceivedDetailDtoForCreations { get; set; } = new List<GoodsReceivedDetailDtoForCreationGoods>();
     }
 }

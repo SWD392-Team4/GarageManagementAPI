@@ -17,7 +17,7 @@ namespace GarageManagementAPI.Repository.Extensions
         public static IQueryable<GoodsIssuedDetail> SearchByStatus(this IQueryable<GoodsIssuedDetail> goodsIssuedDetails, GoodsIssuedDetailStatus? goodsIssuedDetailStatus)
         {
             if (goodsIssuedDetailStatus == null) return goodsIssuedDetails;
-            return goodsIssuedDetails.Where(g => g.Status == goodsIssuedDetailStatus);
+            return goodsIssuedDetails.Where(g => g.Status.Equals(goodsIssuedDetailStatus));
         }
         public static IQueryable<GoodsIssuedDetail> SearchByCreatedAt(this IQueryable<GoodsIssuedDetail> goodsIssuedDetails, DateTimeOffset? createdAt) {
             if (!createdAt.HasValue || createdAt.Value == DateTimeOffset.MinValue)

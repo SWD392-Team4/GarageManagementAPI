@@ -48,7 +48,7 @@ namespace GarageManagementAPI.Presentation.Controllers
         public async Task<IActionResult> CreateGoodsReceived([FromBody] GoodsReceivedDtoForCreation goodsReceivedDtoForCreation)
         {
             var userId = HttpContext.User.FindFirstValue("UserId");
-            var result = await _service.GoodsReceivedService.CreateGoodsReceivedAsync(goodsReceivedDtoForCreation, Guid.Parse(userId));
+            var result = await _service.GoodsReceivedService.CreateGoodsReceivedAsync(goodsReceivedDtoForCreation, Guid.Parse(userId!));
 
             return result.Map(
                 onSuccess: result =>
