@@ -1,9 +1,9 @@
 ﻿using GarageManagementAPI.Shared.Enums.SystemStatuss;
 using System.ComponentModel.DataAnnotations;
 
-namespace GarageManagementAPI.Entities.Models
+namespace GarageManagementAPI.Shared.DataTransferObjects.AppointmentReplacementPart
 {
-    public partial class AppointmentReplacementPart : BaseEntity<AppointmentReplacementPart>
+    public record ReplacementPartDto
     {
         public Guid AppointmentDetailId { get; set; }
 
@@ -19,13 +19,5 @@ namespace GarageManagementAPI.Entities.Models
         public DateTimeOffset CreatedAt { get; set; }
 
         public DateTimeOffset UpdatedAt { get; set; }
-
-        public virtual AppointmentDetail AppointmentDetail { get; set; } = null!;
-
-        public virtual ProductAtGarage ProductAtGarage { get; set; } = null!;
-
-        public virtual ProductHistory ProductHistory { get; set; } = null!;
     }
-
 }
-

@@ -5,6 +5,8 @@
         ServiceBooking,       // Booking để sử dụng một hoặc nhiều service
         ServicePackageBooking, // Booking để đăng ký/sử dụng một hoặc nhiều gói dịch vụ
         ScheduledMaintenance,   // Booking để đi bảo dưỡng định kỳ (đã có gói dịch vụ đăng ký trước)
-        SellingProduct
+        SellingProduct,       // Booking để mua một hoặc nhiều sản phẩm
+        SellingProductWithService, // Booking để mua sản phẩm và sử dụng dịch vụ
+        SellingProductWithServicePackage, // Booking để mua sản phẩm và sử dụng gói dịch vụ
     }
 }

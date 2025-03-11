@@ -33,6 +33,8 @@ namespace GarageManagementAPI.Repository
             .FilterByCreatedAt(carModelParameters.CreatedAt)
             .FilterByUpdatedAt(carModelParameters.UpdatedAt)
             .Sort(carModelParameters.OrderBy)
+            .Skip((carModelParameters.PageNumber - 1) * carModelParameters.PageSize)
+            .Take(carModelParameters.PageSize)
             .IsInclude(include)
             .ToListAsync();
 
@@ -44,6 +46,8 @@ namespace GarageManagementAPI.Repository
                 .FilterByStatus(carModelParameters.Status)
                 .FilterByCreatedAt(carModelParameters.CreatedAt)
                 .FilterByUpdatedAt(carModelParameters.UpdatedAt)
+                .Skip((carModelParameters.PageNumber - 1) * carModelParameters.PageSize)
+                .Take(carModelParameters.PageSize)
                 .CountAsync();
 
 

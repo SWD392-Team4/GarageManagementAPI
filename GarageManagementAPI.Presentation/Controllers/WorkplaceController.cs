@@ -80,7 +80,7 @@ namespace GarageManagementAPI.Presentation.Controllers
                 );
 
             return result.Map(
-                 onSuccess: Ok,
+                 onSuccess: _ => NoContent(),
                  onFailure: ProcessError
                  );
         }

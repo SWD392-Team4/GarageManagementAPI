@@ -8,7 +8,7 @@ namespace GarageManagementAPI.Repository.Contracts
         Task<PackageHistory?> GetPackageHistoryAsync(Guid packageId, Guid packageHistoryId, bool trackChanges);
         Task<PackageHistory?> GetPackageHistoryAsync(Guid packageId, bool trackChanges);
         Task<PagedList<PackageHistory>> GetPackageHistoriesAsync(Guid packageId, PackageHistoryParameters packageHistoryParameters, bool trackChanges);
-        Task CreateAsync(Guid packageId, PackageHistory packageHistory);
+        Task CreateAsync(Package package, PackageHistory packageHistory);
 
     }
 }

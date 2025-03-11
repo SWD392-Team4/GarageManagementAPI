@@ -19,7 +19,7 @@ namespace GarageManagementAPI.Shared.ErrorsConstant.Workplace
         public const string WorkplaceStatusInvalid = "Invalid work place status.";
         public const string WorkplaceTypeRequired = "The work place type is required";
         public const string WorkplaceTypeInvalid = "Invalid work place type value.";
-
+        public const string GarageNotFound = "Garage with id {0} doesn't exist.";
         #endregion
 
         #region static method
@@ -29,6 +29,15 @@ namespace GarageManagementAPI.Shared.ErrorsConstant.Workplace
                 Code = nameof(WorkplaceNotFound),
                 Description = string.Format(WorkplaceNotFound, workplaceId)
             };
+
+        public static ErrorsResult GetGarageNotFound(Guid id)
+        {
+            return new()
+            {
+                Code = nameof(GarageNotFound),
+                Description = string.Format(GarageNotFound, id)
+            };
+        }
 
         public static ErrorsResult GetWorkplaceAlreadyExistError(WorkplaceDtoForCreation workplaceDtoForCreation)
         {

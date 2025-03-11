@@ -73,7 +73,7 @@ namespace GarageManagementAPI.Service
         private async Task SavePackageWithRelatedEntitiesAsync(Package package, PackageHistory packageHistory, IEnumerable<PackageImage>? packageImages)
         {
             await _repoManager.Package.CreateAsync(package);
-            await _repoManager.PackageHistory.CreateAsync(package.Id, packageHistory);
+            await _repoManager.PackageHistory.CreateAsync(package, packageHistory);
 
             if (packageImages?.Any() == true)
                 await _repoManager.PackageImage.CreatesAsync([.. packageImages]);
@@ -171,6 +171,7 @@ namespace GarageManagementAPI.Service
 
             if (shouldCreateNewHistory)
             {
+                package.UpdatedAt = DateTimeOffset.UtcNow.SEAsiaStandardTime();
                 await CreateNewPackageHistory(package, currentPackageHistory, currentServices, packageDtoForUpdate.AddServices, packageDtoForUpdate.RemoveServices);
             }
 
@@ -301,7 +302,7 @@ namespace GarageManagementAPI.Service
 
             newPackageHistory.Services = [.. currentServices];
 
-            await _repoManager.PackageHistory.CreateAsync(package.Id, newPackageHistory);
+            await _repoManager.PackageHistory.CreateAsync(package, newPackageHistory);
         }
 
         public async Task<Result<IEnumerable<ExpandoObject>>> GetServiceOfPackageAsync(Guid packageId, ServiceParameters serviceParameters)

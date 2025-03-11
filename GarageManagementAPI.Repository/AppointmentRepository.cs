@@ -1,6 +1,8 @@
 ﻿using GarageManagementAPI.Entities.Models;
 using GarageManagementAPI.Repository.Contracts;
 using GarageManagementAPI.Repository.Extensions;
+using GarageManagementAPI.Shared.Enums.SystemStatuss;
+using GarageManagementAPI.Shared.Extension;
 using GarageManagementAPI.Shared.RequestFeatures;
 using Microsoft.EntityFrameworkCore;
 
@@ -15,6 +17,15 @@ namespace GarageManagementAPI.Repository
         public async Task<Appointment?> GetAppointmentAsync(Guid id, bool trackChanges)
         {
             return await FindByCondition(e => e.Id.Equals(id), trackChanges).SingleOrDefaultAsync();
+        }
+
+        public new async Task CreateAsync(Appointment entity)
+        {
+            entity.CreatedAt = DateTimeOffset.UtcNow.SEAsiaStandardTime();
+            entity.UpdatedAt = DateTimeOffset.UtcNow.SEAsiaStandardTime();
+            entity.Status = AppointmentStatus.Pending;
+
+            await base.CreateAsync(entity);
         }
 
         public async Task<PagedList<Appointment>> GetAppointmentsAsync(AppointmentParameters appointmentParameters, bool trackChanges)
@@ -48,6 +59,12 @@ namespace GarageManagementAPI.Repository
                 count,
                 appointmentParameters.PageNumber,
                 appointmentParameters.PageSize);
+        }
+
+        public new void Update(Appointment entity)
+        {
+            entity.UpdatedAt = DateTimeOffset.UtcNow.SEAsiaStandardTime();
+            base.Update(entity);
         }
     }
 }

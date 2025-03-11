@@ -13,7 +13,7 @@ namespace GarageManagementAPI.Entities.Models
 
         public Guid GarageId { get; set; }
 
-        public int Mileage { get; set; }
+        public int? Mileage { get; set; }
 
         public string CustomerName { get; set; } = null!;
 
@@ -25,7 +25,7 @@ namespace GarageManagementAPI.Entities.Models
 
         public DateTimeOffset? ActualAppointmentTime { get; set; }
 
-        public DateTimeOffset EstimatedEndTime { get; set; }
+        public DateTimeOffset? EstimatedEndTime { get; set; }
 
         public DateTimeOffset? ActualEndTime { get; set; }
 
@@ -35,8 +35,6 @@ namespace GarageManagementAPI.Entities.Models
         public AppointmentType AppointmentType { get; set; }
 
         public string? CarLicensePlateNumber { get; set; }
-
-        public string? CarCondition { get; set; } = "None";
 
         public string? CanceledReason { get; set; } = "None";
 
