@@ -6,11 +6,7 @@ using GarageManagementAPI.Shared.DataTransferObjects.CarCategory;
 using GarageManagementAPI.Shared.RequestFeatures;
 using GarageManagementAPI.Entities.Models;
 using GarageManagementAPI.Shared.ErrorsConstant.CarCategory;
-using Microsoft.EntityFrameworkCore;
-using GarageManagementAPI.Service.Extension;
-using GarageManagementAPI.Shared.Enums.SystemStatuss;
 using GarageManagementAPI.Shared.Extension;
-using System.Xml.Linq;
 using System.Dynamic;
 
 namespace GarageManagementAPI.Service
@@ -51,7 +47,7 @@ namespace GarageManagementAPI.Service
         {
             var carCategory = await _repoManager.CarCategory.GetCarCategoryAsync(id, trackChanges);
 
-            if (carCategory is not null)
+            if (carCategory is null)
                 return Result<ExpandoObject>.NotFound(CarCategoryErrors.GetCarCategoryNotFoundError(id));
 
             var carCategoryDto = _mapper.Map<CarCategoryDto>(carCategory);
