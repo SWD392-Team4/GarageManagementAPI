@@ -110,7 +110,7 @@ namespace GarageManagementAPI.Presentation.Controllers
             }
             var createdService = createServiceResult.GetValue<ServiceDto>();
 
-            return CreatedAtRoute("GetServiceById", new { serviceId = createdService.Id }, createdService);
+            return CreatedAtRoute("GetServiceById", new { serviceId = createdService.Id }, createServiceResult);
         }
 
         [HttpPost("{serviceId:guid}/images", Name = "Create service image")]
