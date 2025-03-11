@@ -51,7 +51,7 @@ namespace GarageManagementAPI.Repository
         public async Task<PagedList<ServiceHistory>> GetServiceHistoryAsync(ServiceHistoryParameters ServiceHistoryParameters, bool trackChanges, string? include = null)
         {
             var services = await FindAll(trackChanges)
-                .SearchByPrice(ServiceHistoryParameters.Price) 
+                .SearchByPrice(ServiceHistoryParameters.Price)
                 .SearchByStatus(ServiceHistoryParameters.Status)
                 .Sort(ServiceHistoryParameters.OrderBy)
                 .IsInclude(include)
@@ -77,6 +77,18 @@ namespace GarageManagementAPI.Repository
             var serviceHistory = FindByCondition(s => s.Status == ServiceHistoryStatus.Active && s.ServiceId == serviceId, false).OrderByDescending(p => p.UpdatedAt)
                                    .FirstOrDefaultAsync();
             return serviceHistory;
+        }
+
+        public async Task<IEnumerable<ServiceHistory>> GetServiceHistoriesAsync(IEnumerable<Guid> ids, bool trackChanges)
+        {
+            var serviceHistories = await FindByCondition(s => ids.Contains(s.ServiceId), trackChanges)
+                  .GroupBy(s => s.ServiceId)
+                  .Select(g => g.OrderByDescending(s => s.CreatedAt).FirstOrDefault())
+                  .Where(s => s != null)
+                  .Select(s => s!)
+                  .ToListAsync();
+
+            return serviceHistories;
         }
     }
 }

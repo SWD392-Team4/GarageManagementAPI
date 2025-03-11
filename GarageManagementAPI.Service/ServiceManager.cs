@@ -176,11 +176,11 @@ namespace GarageManagementAPI.Service
             mapper,
             dataShaper));
 
-            // _appointmentService = new Lazy<IAppointmentService>(() =>
-            //new AppointmentService(
-            // repositoryManager,
-            // mapper,
-            // dataShaper));
+            _appointmentService = new Lazy<IAppointmentService>(() =>
+           new AppointmentService(
+            repositoryManager,
+            mapper,
+            dataShaper));
 
             _supplierService = new Lazy<ISupplierService>(() =>
             new SupplierService(

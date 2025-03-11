@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
 using GarageManagementAPI.Entities.Models;
 using GarageManagementAPI.Shared.DataTransferObjects.Appointment;
-using GarageManagementAPI.Shared.DataTransferObjects.Appointment.Customer;
 
 namespace GarageManagementAPI.Application.MappingProfile
 {
@@ -9,7 +8,8 @@ namespace GarageManagementAPI.Application.MappingProfile
     {
         public AppointmentMappingProfile()
         {
-            CreateMap<CustomerCreateAppointmentDto, Appointment>();
+            CreateMap<AppointmentDtoCreation, Appointment>();
+            CreateMap<AppointmentDtoCreationWIthFullInformation, Appointment>();
         }
     }
 }

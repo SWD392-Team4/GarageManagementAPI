@@ -169,12 +169,12 @@ namespace GarageManagementAPI.Shared.Constant.Authentication
             };
         }
 
-        public static ErrorsResult GetUserNotFoundWithIdError()
+        public static ErrorsResult GetUserNotFoundWithIdError(Guid id)
         {
             return new()
             {
                 Code = nameof(UserNotFoundWithId),
-                Description = UserNotFoundWithId
+                Description = string.Format(UserNotFoundWithId, id)
             };
         }
     }

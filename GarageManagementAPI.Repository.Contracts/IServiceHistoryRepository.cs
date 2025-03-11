@@ -9,6 +9,8 @@ namespace GarageManagementAPI.Repository.Contracts
         Task<ServiceHistory?> GetServiceHistoryByPriceAndIdServiceAsync(Guid serviceId, decimal price, bool trackChanges, string? include = default);
         Task<ServiceHistory?> GetServiceHistoryByStatusAndIdServiceAsync(Guid serviceId, bool trackChanges, string? include = default);
         Task<PagedList<ServiceHistory>> GetServiceHistoryAsync(ServiceHistoryParameters ServiceHistoryParameters, bool trackChanges, string? include = default);
+        Task<IEnumerable<ServiceHistory>> GetServiceHistoriesAsync(IEnumerable<Guid> ids, bool trackChanges);
+
         Task CreateServicetHisotoryAsync(ServiceHistory productHisotry);
         void UpdateServiceHistory(ServiceHistory ServiceHistory);
     }

@@ -34,7 +34,7 @@ namespace GarageManagementAPI.Service
             var user = await _repoManager.User.GetUserByIdAsync(userId, trackChanges, include);
 
             if (user is null)
-                return Result<User>.NotFound([UserErrors.GetUserNotFoundWithIdError()]);
+                return Result<User>.NotFound([UserErrors.GetUserNotFoundWithIdError(userId)]);
 
             return Result<User>.Ok(user);
         }
