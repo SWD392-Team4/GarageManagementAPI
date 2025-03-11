@@ -14,7 +14,8 @@ namespace GarageManagementAPI.Shared.DataTransferObjects.CarModel
         [EnumDataType(typeof(CarModelStatus))]
         public CarModelStatus? Status { get; set; }
 
-        public string? Category { get; set; }
+        public Guid CarCategoryId { get; set; }
+        public string? CarCategory { get; set; }
 
         public string? ModelName { get; set; }
 

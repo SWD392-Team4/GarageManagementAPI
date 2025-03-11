@@ -8,7 +8,7 @@ namespace GarageManagementAPI.Repository.Configuration
     {
         protected override void ModelCreating(EntityTypeBuilder<AppointmentPerDay> entity)
         {
-            entity.HasKey(e => e.Id).HasName("appointmentperday_id_primary");
+            entity.HasKey(e => e.Id).HasName("appointmentperdayy_id_primary");
 
             entity.ToTable("AppointmentPerDay");
 

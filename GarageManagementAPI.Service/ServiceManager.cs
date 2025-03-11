@@ -43,6 +43,7 @@ namespace GarageManagementAPI.Service
         private readonly Lazy<IPackageUsageService> _packageUsageService;
         private readonly Lazy<IPackageUsageDetailService> _packageUsageDetailService;
         private readonly Lazy<IPackageImageService> _packageImageService;
+        private readonly Lazy<IProductAtWarehouseService> _productAtWarehouseService;
 
         public ServiceManager(
             IRepositoryManager repositoryManager,
@@ -207,7 +208,11 @@ namespace GarageManagementAPI.Service
             repositoryManager,
             mapper,
             dataShaper));
-
+            _productAtWarehouseService = new Lazy<IProductAtWarehouseService>(() =>
+            new ProductAtWarehouseService(
+            repositoryManager,
+            mapper,
+            dataShaper));
             _goodsIssuedService = new Lazy<IGoodsIssuedService>(() =>
               new GoodsIssuedService(
               repositoryManager,
@@ -268,5 +273,6 @@ namespace GarageManagementAPI.Service
         public IPackageUsageService PackageUsageService => _packageUsageService.Value;
         public IPackageUsageDetailService PackageUsageDetailService => _packageUsageDetailService.Value;
         public IPackageImageService PackageImageService => _packageImageService.Value;
+        public IProductAtWarehouseService ProductAtWarehouseService => _productAtWarehouseService.Value;
     }
 }

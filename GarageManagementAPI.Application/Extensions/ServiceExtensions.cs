@@ -234,9 +234,7 @@ namespace GarageManagementAPI.Application.Extensions
                         if (!string.IsNullOrEmpty(accessToken) &&
                             context.HttpContext.Request.Path.StartsWithSegments("/chatHub"))
                         {
-                            Console.WriteLine("accessToken: " + accessToken);
                             context.Token = accessToken;
-                            Console.WriteLine("Token: " + context.Token);
                         }
 
                         return Task.CompletedTask;
@@ -289,10 +287,15 @@ namespace GarageManagementAPI.Application.Extensions
 
         public static void ConfigureSignalR(this IServiceCollection services, IConfiguration configuration) 
         {
-            services.AddSignalR().AddAzureSignalR(options =>
-            {
-                options.ConnectionString = configuration["Azure:SignalR:ConnectionString"];
-            });
+              services.AddSignalR(options =>
+              {
+                  options.KeepAliveInterval = TimeSpan.FromSeconds(15); // Gửi ping mỗi 15 giây
+                  options.HandshakeTimeout = TimeSpan.FromSeconds(30);  // Thời gian chờ bắt tay tối đa
+              });
+            /* services.AddSignalR().AddAzureSignalR(options =>
+              {
+                  options.ConnectionString = configuration["Azure:SignalR:ConnectionString"];
+              });*/
         }
 
         public static void ConfigureValidator(this IServiceCollection services)

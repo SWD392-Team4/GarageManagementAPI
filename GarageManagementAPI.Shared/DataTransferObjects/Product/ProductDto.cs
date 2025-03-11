@@ -1,5 +1,4 @@
-﻿using GarageManagementAPI.Shared.DataTransferObjects.ProductImage;
-using GarageManagementAPI.Shared.Enums.SystemStatuss;
+﻿using GarageManagementAPI.Shared.Enums.SystemStatuss;
 using System.ComponentModel.DataAnnotations;
 
 namespace GarageManagementAPI.Shared.DataTransferObjects.Product
@@ -9,7 +8,9 @@ namespace GarageManagementAPI.Shared.DataTransferObjects.Product
         public required Guid Id { get; set; }
         public required string ProductName { get; set; }
         public required string ProductBarcode { get; set; }
+        public Guid ProductCategoryId { get; set; }
         public string Category { get; set; } = null!;
+        public Guid BrandId { get; set; }
         public string BrandName { get; set; } = null!;
         public decimal? ProductPrice { get; set; }
         public List<string>? ImageLink { get; set; }

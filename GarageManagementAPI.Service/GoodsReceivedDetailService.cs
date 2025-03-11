@@ -26,16 +26,16 @@ namespace GarageManagementAPI.Service
         }
         public async Task<Result<GoodsReceivedDetailDto>> CreateGoodsReceivedDetailAsync(GoodsReceivedDetailDtoForCreation goodsReceivedDetailDtoForCreation)
         {
-            var goodsReceivedAndProductIsExist = await GetAndCheckIfGoodsReceivedByGoodReceivedAndProductExist(goodsReceivedDetailDtoForCreation.GoodsReceivedId, goodsReceivedDetailDtoForCreation.ProductId, false);
+          /*  var goodsReceivedAndProductIsExist = await GetAndCheckIfGoodsReceivedDetailByGoodReceivedAndProductExist(goodsReceivedDetailDtoForCreation.GoodsReceivedId, goodsReceivedDetailDtoForCreation.ProductId, false);
             if (!goodsReceivedAndProductIsExist.IsSuccess)
-                return Result<GoodsReceivedDetailDto>.Failure(goodsReceivedAndProductIsExist.StatusCode, goodsReceivedAndProductIsExist.Errors!);
+                return Result<GoodsReceivedDetailDto>.Failure(goodsReceivedAndProductIsExist.StatusCode, goodsReceivedAndProductIsExist.Errors!);*/
 
             var goodsReceivedDetailEntity = _mapper.Map<GoodsReceivedDetail>(goodsReceivedDetailDtoForCreation);
 
             goodsReceivedDetailEntity.TotalPrice = goodsReceivedDetailDtoForCreation.UnitPrice * goodsReceivedDetailDtoForCreation.Quantity;
             goodsReceivedDetailEntity.CreatedAt = DateTimeOffset.UtcNow.SEAsiaStandardTime();
             goodsReceivedDetailEntity.UpdatedAt = DateTimeOffset.UtcNow.SEAsiaStandardTime();
-            goodsReceivedDetailEntity.Status = GoodsReceivedDetailStatus.Inactive;
+            goodsReceivedDetailEntity.Status = GoodsReceivedStatus.Inactive;
 
             await _repoManager.GoodsReceivedDetail.CreateGoodsReceivedDetailAsync(goodsReceivedDetailEntity);
             await _repoManager.SaveAsync();
@@ -47,7 +47,7 @@ namespace GarageManagementAPI.Service
 
         public async Task<Result<ExpandoObject>> GetGoodsReceivedDetailAsync(Guid goodsReceivedDetailId, GoodsReceivedDetailParameters goodsReceivedDetailParameterdParameters, bool trackChanges, string? include = null)
         {
-            var goodsReceivedResult = await GetAndCheckIfGoodsReceivedExist(goodsReceivedDetailId, trackChanges, include);
+            var goodsReceivedResult = await GetAndCheckIfGoodsReceivedDetailExist(goodsReceivedDetailId, trackChanges, include);
 
             if (!goodsReceivedResult.IsSuccess)
                 return Result<ExpandoObject>.NotFound(goodsReceivedResult.Errors!);
@@ -73,19 +73,26 @@ namespace GarageManagementAPI.Service
             return Result<IEnumerable<ExpandoObject>>.Ok(goodsReceivedsShaped, goodsReceivedsWithMetadata.MetaData);
         }
 
+        public async Task<Result<IEnumerable<ExpandoObject>>> GetGoodsReceivedDetailsAsync(Guid goodsReceivedId, GoodsReceivedDetailParameters goodsReceivedDetails, bool trackChanges, string? include = null)
+        {
+            var goodsReceivedsWithMetadata = await _repoManager.GoodsReceivedDetail.GetGoodsReceivedDetailsAsync(goodsReceivedId, goodsReceivedDetails, trackChanges, include);
+
+            var goodsReceivedsDto = _mapper.Map<IEnumerable<GoodsReceivedDetailDto>>(goodsReceivedsWithMetadata);
+
+            var goodsReceivedsShaped = _dataShaper.GoodsReceivedDetail.ShapeData(goodsReceivedsDto, goodsReceivedDetails.Fields);
+
+            return Result<IEnumerable<ExpandoObject>>.Ok(goodsReceivedsShaped, goodsReceivedsWithMetadata.MetaData);
+        }
+
         public async Task<Result> UpdateGoodsReceivedDetail(Guid goodsReceivedDetailId, GoodsReceivedDetailDtoForUpdate goodsReceivedDetailDtoForUpdate, bool trackChanges)
         {
-            var goodsReceivedDetailResult = await GetAndCheckIfGoodsReceivedExist(goodsReceivedDetailId, trackChanges);
-            var goodsReceivedAndProductIsExist = await GetAndCheckIfGoodsReceivedByGoodReceivedAndProductExist(goodsReceivedDetailDtoForUpdate.GoodsReceivedId, goodsReceivedDetailDtoForUpdate.ProductId, false, goodsReceivedDetailId);
-            if (!goodsReceivedAndProductIsExist.IsSuccess)
-                return Result<GoodsReceivedDetailDto>.Failure(goodsReceivedAndProductIsExist.StatusCode, goodsReceivedAndProductIsExist.Errors!);
+            var goodsReceivedDetailResult = await GetAndCheckIfGoodsReceivedDetailExist(goodsReceivedDetailId, trackChanges);
             if (!goodsReceivedDetailResult.IsSuccess)
                 return Result<GoodsReceivedDetailDto>.Failure(goodsReceivedDetailResult.StatusCode, goodsReceivedDetailResult.Errors!);
             var goodsReceivedDetailEntity = goodsReceivedDetailResult.GetValue<GoodsReceivedDetail>();
 
             _mapper.Map(goodsReceivedDetailDtoForUpdate, goodsReceivedDetailEntity);
 
-            goodsReceivedDetailEntity.TotalPrice = goodsReceivedDetailDtoForUpdate.UnitPrice * goodsReceivedDetailDtoForUpdate.Quantity;
             goodsReceivedDetailEntity.UpdatedAt = DateTimeOffset.UtcNow.SEAsiaStandardTime();
 
             await _repoManager.SaveAsync();
@@ -93,7 +100,7 @@ namespace GarageManagementAPI.Service
             return Result.NoContent();
         }
 
-        private async Task<Result<GoodsReceivedDetail>> GetAndCheckIfGoodsReceivedExist(Guid goodReceivedId, bool trackChanges, string? include =null)
+        private async Task<Result<GoodsReceivedDetail>> GetAndCheckIfGoodsReceivedDetailExist(Guid goodReceivedId, bool trackChanges, string? include =null)
         {
             var goodReceived = await _repoManager.GoodsReceivedDetail.GetGoodsReceivedDetailAsync(goodReceivedId, trackChanges, include);
             if (goodReceived == null)
@@ -102,13 +109,25 @@ namespace GarageManagementAPI.Service
             return goodReceived.OkResult();
         }
 
-        private async Task<Result<GoodsReceivedDetail>> GetAndCheckIfGoodsReceivedByGoodReceivedAndProductExist(Guid goodReceivedId, Guid productId,bool trackChanges, Guid? goodsReceivedDetailId = null,string? include = null)
+        private async Task<Result<GoodsReceivedDetail>> GetAndCheckIfGoodsReceivedDetailByGoodReceivedAndProductExist(Guid goodReceivedId, Guid productId,bool trackChanges, Guid? goodsReceivedDetailId = null, string? include = null)
         {
             var goodReceived = await _repoManager.GoodsReceivedDetail.GetGoodsReceivedDetailByProductAndGoodsReceivedAsync(productId, goodReceivedId, goodsReceivedDetailId, trackChanges);
+
             if (goodReceived != null)
                 return goodReceived.ExistedWithId(productId, goodReceivedId);
 
             return goodReceived!.OkResult();
         }
+
+        private async Task<Result<GoodsReceived>> GetAndCheckIfGoodsReceivedExist(Guid goodReceivedId, bool trackChanges, string? include = null)
+        {
+            var goodReceived = await _repoManager.GoodsReceived.GetGoodsReceivedAsync(goodReceivedId, trackChanges, include);
+            if (goodReceived == null)
+                return goodReceived.NotFound(goodReceivedId);
+
+            return goodReceived.OkResult();
+        }
+
+
     }
 }

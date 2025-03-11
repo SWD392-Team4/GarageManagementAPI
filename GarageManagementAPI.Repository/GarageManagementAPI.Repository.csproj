@@ -17,4 +17,12 @@
     <ProjectReference Include="..\GarageManagementAPI.Repository.Contracts\GarageManagementAPI.Repository.Contracts.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <EditorConfigFiles Remove="D:\Net\core\GarageManagementAPI\GarageManagementAPI.Repository\.editorconfig" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="D:\Net\core\GarageManagementAPI\GarageManagementAPI.Repository\.editorconfig" />
+  </ItemGroup>
+
 </Project>

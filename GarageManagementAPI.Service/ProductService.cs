@@ -36,7 +36,7 @@ namespace GarageManagementAPI.Service
             var productCategoryResult = await GetAndCheckIfProductCategoryIsExist(productDtoForCreation.ProductCategoryId);
             if (productNameAndBarCodeResult)
                 return Result<ProductDto>.BadRequest([ProductErrors.GetProductNameAlreadyExistError(productDtoForCreation)]);
-            if(productCategoryResult)
+            if (productCategoryResult)
                 return Result<ProductDto>.BadRequest([ProductErrors.GetProductCategoryIsNotFound(productDtoForCreation.ProductCategoryId)]);
             if (brandResult)
                 return Result<ProductDto>.BadRequest([ProductErrors.GetBrandIsNotFound(productDtoForCreation.BrandId)]);
@@ -46,6 +46,7 @@ namespace GarageManagementAPI.Service
             productEntity.UpdatedAt = DateTimeOffset.UtcNow.SEAsiaStandardTime();
             productEntity.Status = ProductStatus.Inactive;
 
+            if (string.IsNullOrWhiteSpace(productEntity.ProductBarcode)) productEntity.ProductBarcode = this.GenerateBarcode();
 
             await _repoManager.Product.CreateProductAsync(productEntity);
             await _repoManager.SaveAsync();
@@ -61,11 +62,8 @@ namespace GarageManagementAPI.Service
         public async Task<Result> UpdateProduct(Guid productId, ProductDtoForUpdate productDtoForUpdate, bool trackChanges, string? include = null)
         {
             var productResult = await GetAndCheckIfProductExist(productId, trackChanges);
-            var productNameAndBarcodeResult = await CheckIfProductExistByNameAndBrandOrBarCodeForUpdate(productDtoForUpdate, productId);
             var brandResult = await GetAndCheckIfBrandIsExist(productDtoForUpdate.BrandId);
             var productCategoryResult = await GetAndCheckIfProductCategoryIsExist(productDtoForUpdate.ProductCategoryId);
-            if (productNameAndBarcodeResult)
-                return Result<ProductDtoForUpdate>.BadRequest([ProductErrors.GetProductNameUpdateAlreadyExistError(productDtoForUpdate)]);
             if (!productResult.IsSuccess)
                 return Result<ProductDtoForUpdate>.Failure(productResult.StatusCode, productResult.Errors!);
             if (productCategoryResult)
@@ -146,13 +144,11 @@ namespace GarageManagementAPI.Service
         {
             var brandId = productDtoForCreation.BrandId;
             var productCategoryId = productDtoForCreation.ProductCategoryId;
-            var barcode = productDtoForCreation.ProductBarcode!.ToLower();
             var name = productDtoForCreation.ProductName!.ToLower();
 
             var exists = await _repoManager.Product.FindByCondition(p =>
                 p.BrandId.Equals(brandId) && p.ProductCategoryId.Equals(productCategoryId) &&
-                 p.ProductName.ToLower().Equals(name) ||
-                 p.ProductBarcode.Equals(barcode),
+                 p.ProductName.ToLower().Equals(name),
                 false).AnyAsync();
 
             return exists;
@@ -172,22 +168,6 @@ namespace GarageManagementAPI.Service
             return false;
         }
 
-        private async Task<bool> CheckIfProductExistByNameAndBrandOrBarCodeForUpdate(ProductDtoForUpdate productDtoForUpdate, Guid productId)
-        {
-            var brandId = productDtoForUpdate.BrandId;
-            var barcode = productDtoForUpdate.ProductBarcode!.Trim();
-            var name = productDtoForUpdate.ProductName!.Trim();
-
-            var exists = await _repoManager.Product.FindByCondition(p =>
-            !p.Id.Equals(productId) &&
-               (p.BrandId.Equals(brandId) &&
-                 p.ProductName.Trim().Equals(name) ||
-                 p.ProductBarcode.Trim().Equals(barcode)),
-                false).AnyAsync();
-
-            return exists;
-        }
-
         private async Task<Result<Product>> GetAndCheckIfProductExist(Guid productId, bool trackChanges, string? include = null)
         {
             var product = await _repoManager.Product.GetProductByIdAsync(productId, trackChanges, include);
@@ -205,7 +185,7 @@ namespace GarageManagementAPI.Service
 
             return product.OkResult();
         }
-        public async Task<Result<ProductHistoryDto>> CreateProductHistoryAsync(Guid productId, decimal price)
+        private async Task<Result<ProductHistoryDto>> CreateProductHistoryAsync(Guid productId, decimal price)
         {
             var checkPrice = await GetAndCheckIfProductHistoryByIdAndPrice(productId, price);
             if (checkPrice)
@@ -228,19 +208,6 @@ namespace GarageManagementAPI.Service
             var productHistoryDtoToReturn = _mapper.Map<ProductHistoryDto>(productEntity);
 
             return productHistoryDtoToReturn.CreatedResult();
-        }
-
-        private async Task UpdateStatusProductImage(Guid productId)
-        {
-            var productEntity = await _repoManager.ProductImage.GetProductImgByStatusAndIdProductAsync(productId, false);
-
-            if (productEntity != null)
-            {
-                productEntity.Status = ProductImageStatus.Inactive;
-                productEntity.UpdatedAt = DateTimeOffset.UtcNow;
-                _repoManager.ProductImage.UpdateProductImg(productEntity);
-                await _repoManager.SaveAsync();
-            }
         }
 
 
@@ -266,6 +233,11 @@ namespace GarageManagementAPI.Service
                 return true;
             }
             return false;
+        }
+
+        private string GenerateBarcode()
+        {
+            return $"GID-{Guid.NewGuid().ToString().Substring(0, 8)}";
         }
     }
 }

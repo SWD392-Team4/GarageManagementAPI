@@ -219,7 +219,7 @@ namespace GarageManagementAPI.Application.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("Id")
-                        .HasName("appointmentperday_id_primary");
+                        .HasName("appointmentperdayy_id_primary");
 
                     b.ToTable("AppointmentPerDay", (string)null);
                 });
@@ -2760,6 +2760,9 @@ namespace GarageManagementAPI.Application.Migrations
                     b.Property<Guid>("CreatedWareHouseManagerId")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<Guid>("GarageId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<string>("InvoiceCode")
                         .IsRequired()
                         .HasMaxLength(255)
@@ -2789,6 +2792,8 @@ namespace GarageManagementAPI.Application.Migrations
 
                     b.HasIndex("CreatedWareHouseManagerId");
 
+                    b.HasIndex("GarageId");
+
                     b.HasIndex("WarehouseId");
 
                     b.ToTable("GoodsIssued", (string)null);
@@ -2817,6 +2822,9 @@ namespace GarageManagementAPI.Application.Migrations
                         .IsRequired()
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
+
+                    b.Property<decimal>("UnitPrice")
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<DateTimeOffset>("UpdatedAt")
                         .HasColumnType("datetimeoffset");
@@ -2939,11 +2947,35 @@ namespace GarageManagementAPI.Application.Migrations
                     b.HasKey("Id")
                         .HasName("goodsreceiveddetail_id_primary");
 
+                    b.HasIndex("GoodsReceivedId");
+
                     b.HasIndex("ProductId");
 
-                    b.HasIndex(new[] { "GoodsReceivedId" }, "goodsreceiveddetail_goodsreceivedid_index");
-
                     b.ToTable("GoodsReceivedDetail", (string)null);
+                });
+
+            modelBuilder.Entity("GarageManagementAPI.Entities.Models.GoodsTransaction", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<Guid>("GoodsIssuedDetailId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("GoodsReceivedId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("GoodsIssuedDetailId");
+
+                    b.HasIndex("GoodsReceivedId");
+
+                    b.ToTable("GoodsTransaction");
                 });
 
             modelBuilder.Entity("GarageManagementAPI.Entities.Models.Invoice", b =>
@@ -3579,6 +3611,9 @@ namespace GarageManagementAPI.Application.Migrations
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
 
+                    b.Property<decimal>("UnitPrice")
+                        .HasColumnType("decimal(18,2)");
+
                     b.Property<DateTimeOffset>("UpdatedAt")
                         .HasColumnType("datetimeoffset");
 
@@ -3679,62 +3714,6 @@ namespace GarageManagementAPI.Application.Migrations
                     b.HasIndex(new[] { "ProductId" }, "producthistory_productid_index");
 
                     b.ToTable("ProductHistory", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            Id = new Guid("e9a0d0d3-3a43-406a-b465-b630c5d93f6f"),
-                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 0, 36, 40, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
-                            ProductId = new Guid("f5fd6ee3-a8b6-452c-9042-146e8afc875f"),
-                            ProductPrice = 500m,
-                            Status = "None",
-                            UpdatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0))
-                        },
-                        new
-                        {
-                            Id = new Guid("22d61e55-50e5-4dcd-bf40-209fc2fcae12"),
-                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 0, 36, 40, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
-                            ProductId = new Guid("cee5a4d8-de84-4482-9da9-302e2290cb0f"),
-                            ProductPrice = 520m,
-                            Status = "None",
-                            UpdatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0))
-                        },
-                        new
-                        {
-                            Id = new Guid("72d247fb-5249-4ce1-a400-fce2559e7db0"),
-                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 0, 36, 40, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
-                            ProductId = new Guid("e9a7beda-ff63-4ac5-92cb-b7fa152c41c2"),
-                            ProductPrice = 1200m,
-                            Status = "None",
-                            UpdatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0))
-                        },
-                        new
-                        {
-                            Id = new Guid("e5e319f9-ef2a-4ab7-a847-5f0d3c7a1caf"),
-                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 0, 36, 40, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
-                            ProductId = new Guid("1c1ffd05-3b06-48bf-b78c-86b6ef2d3cef"),
-                            ProductPrice = 150m,
-                            Status = "None",
-                            UpdatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0))
-                        },
-                        new
-                        {
-                            Id = new Guid("537c1813-334d-41c0-987b-0ed1509475f7"),
-                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 0, 36, 40, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
-                            ProductId = new Guid("e9a7beda-ff63-4ac5-92cb-b7fa152c41c2"),
-                            ProductPrice = 200m,
-                            Status = "None",
-                            UpdatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0))
-                        },
-                        new
-                        {
-                            Id = new Guid("2254581b-c244-4c41-b5e4-c353629c2105"),
-                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 0, 36, 40, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
-                            ProductId = new Guid("1c1ffd05-3b06-48bf-b78c-86b6ef2d3cef"),
-                            ProductPrice = 300m,
-                            Status = "None",
-                            UpdatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0))
-                        });
                 });
 
             modelBuilder.Entity("GarageManagementAPI.Entities.Models.ProductImage", b =>
@@ -6268,6 +6247,12 @@ namespace GarageManagementAPI.Application.Migrations
                         .IsRequired()
                         .HasConstraintName("goodsissued_createdwarehousemanagerid_foreign");
 
+                    b.HasOne("GarageManagementAPI.Entities.Models.Workplace", "Garage")
+                        .WithMany("GoodsIssuedGarages")
+                        .HasForeignKey("GarageId")
+                        .IsRequired()
+                        .HasConstraintName("goodsissued_garageid_foreign");
+
                     b.HasOne("GarageManagementAPI.Entities.Models.Workplace", "Warehouse")
                         .WithMany("GoodsIssuedWarehouses")
                         .HasForeignKey("WarehouseId")
@@ -6275,6 +6260,8 @@ namespace GarageManagementAPI.Application.Migrations
                         .HasConstraintName("goodsissued_warehouseid_foreign");
 
                     b.Navigation("CreatedWareHouseManager");
+
+                    b.Navigation("Garage");
 
                     b.Navigation("Warehouse");
                 });
@@ -6330,18 +6317,39 @@ namespace GarageManagementAPI.Application.Migrations
                     b.HasOne("GarageManagementAPI.Entities.Models.GoodsReceived", "GoodsReceived")
                         .WithMany("GoodsReceivedDetails")
                         .HasForeignKey("GoodsReceivedId")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
-                        .HasConstraintName("goodsreceiveddetail_goodsreceivedid_foreign");
+                        .HasConstraintName("FK_GoodsReceivedDetail_GoodsReceived");
 
                     b.HasOne("GarageManagementAPI.Entities.Models.Product", "Product")
                         .WithMany("GoodsReceivedDetails")
                         .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired()
-                        .HasConstraintName("goodsreceiveddetail_productid_foreign");
+                        .HasConstraintName("FK_GoodsReceivedDetail_Product");
 
                     b.Navigation("GoodsReceived");
 
                     b.Navigation("Product");
+                });
+
+            modelBuilder.Entity("GarageManagementAPI.Entities.Models.GoodsTransaction", b =>
+                {
+                    b.HasOne("GarageManagementAPI.Entities.Models.GoodsIssuedDetail", "GoodsIssuedDetail")
+                        .WithMany("GoodsTransactions")
+                        .HasForeignKey("GoodsIssuedDetailId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("GarageManagementAPI.Entities.Models.GoodsReceived", "GoodsReceived")
+                        .WithMany("GoodsTransactions")
+                        .HasForeignKey("GoodsReceivedId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("GoodsIssuedDetail");
+
+                    b.Navigation("GoodsReceived");
                 });
 
             modelBuilder.Entity("GarageManagementAPI.Entities.Models.Invoice", b =>
@@ -6885,12 +6893,16 @@ namespace GarageManagementAPI.Application.Migrations
 
             modelBuilder.Entity("GarageManagementAPI.Entities.Models.GoodsIssuedDetail", b =>
                 {
+                    b.Navigation("GoodsTransactions");
+
                     b.Navigation("ProductAtGarage");
                 });
 
             modelBuilder.Entity("GarageManagementAPI.Entities.Models.GoodsReceived", b =>
                 {
                     b.Navigation("GoodsReceivedDetails");
+
+                    b.Navigation("GoodsTransactions");
                 });
 
             modelBuilder.Entity("GarageManagementAPI.Entities.Models.GoodsReceivedDetail", b =>
@@ -7040,6 +7052,8 @@ namespace GarageManagementAPI.Application.Migrations
                     b.Navigation("Appointments");
 
                     b.Navigation("EmployeeInfos");
+
+                    b.Navigation("GoodsIssuedGarages");
 
                     b.Navigation("GoodsIssuedWarehouses");
 

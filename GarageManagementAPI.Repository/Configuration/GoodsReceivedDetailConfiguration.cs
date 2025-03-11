@@ -12,22 +12,23 @@ namespace GarageManagementAPI.Repository.Configuration
 
             entity.ToTable("GoodsReceivedDetail");
 
-            entity.HasIndex(e => e.GoodsReceivedId, "goodsreceiveddetail_goodsreceivedid_index");
-
             entity.Property(e => e.Id).ValueGeneratedOnAdd().HasDefaultValueSql("NEWID()");
             entity.Property(e => e.Status).HasMaxLength(255);
             entity.Property(e => e.TotalPrice).HasColumnType("decimal(18, 2)");
             entity.Property(e => e.UnitPrice).HasColumnType("decimal(18, 2)");
 
-            entity.HasOne(d => d.GoodsReceived).WithMany(p => p.GoodsReceivedDetails)
-                .HasForeignKey(d => d.GoodsReceivedId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("goodsreceiveddetail_goodsreceivedid_foreign");
+            entity.HasOne(d => d.GoodsReceived)
+            .WithMany(p => p.GoodsReceivedDetails)
+            .HasForeignKey(d => d.GoodsReceivedId)
+            .OnDelete(DeleteBehavior.Cascade)  // Xóa GoodsReceived => Xóa toàn bộ GoodsReceivedDetail
+            .HasConstraintName("FK_GoodsReceivedDetail_GoodsReceived");
 
-            entity.HasOne(d => d.Product).WithMany(p => p.GoodsReceivedDetails)
-                .HasForeignKey(d => d.ProductId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("goodsreceiveddetail_productid_foreign");
+            entity.HasOne(d => d.Product)
+             .WithMany(p => p.GoodsReceivedDetails)
+             .HasForeignKey(d => d.ProductId)
+             .OnDelete(DeleteBehavior.Restrict)  // Không cho xóa Product nếu có GoodsReceivedDetail liên quan
+             .HasConstraintName("FK_GoodsReceivedDetail_Product");
+
 
 
             entity.Property(e => e.Status)

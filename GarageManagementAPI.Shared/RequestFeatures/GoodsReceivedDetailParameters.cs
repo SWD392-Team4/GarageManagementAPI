@@ -13,8 +13,8 @@ namespace GarageManagementAPI.Shared.RequestFeatures
         public decimal? MiniTotalPrice { get; set; } = 0;
         public decimal? MaxTotalPrice { get; set; }
 
-        [EnumDataType(typeof(GoodsReceivedDetailStatus))]
-        public GoodsReceivedDetailStatus Status { get; set; }
+        [EnumDataType(typeof(GoodsReceivedStatus))]
+        public GoodsReceivedStatus Status { get; set; }
 
         public DateTimeOffset CreatedAt { get; set; }
 

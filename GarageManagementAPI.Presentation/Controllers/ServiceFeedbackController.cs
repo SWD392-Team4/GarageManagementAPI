@@ -26,7 +26,8 @@ namespace GarageManagementAPI.Presentation.Controllers
         //[Authorize(Roles = $"{nameof(SystemRole.Administrator)},{nameof(SystemRole.Cashier)}")]
         public async Task<IActionResult> GetFeedbackByServiceId(Guid serviceId, [FromQuery] ServiceFeedBackParameters serviceFeedbackParameters)
         {
-            var productResult = await _service.ServiceFeedback.GetServiceFeedBackByIdService(serviceId, serviceFeedbackParameters, trackChanges: false);
+            var include = "Customer, Service";
+            var productResult = await _service.ServiceFeedback.GetServiceFeedBackByIdService(serviceId, serviceFeedbackParameters, trackChanges: false, include);
 
             return productResult.Map(
                 onSuccess: Ok,

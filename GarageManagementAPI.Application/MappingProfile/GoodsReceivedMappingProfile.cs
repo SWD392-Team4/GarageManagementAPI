@@ -24,6 +24,7 @@ namespace GarageManagementAPI.Application.MappingProfile
                       opts.PreCondition(src => src.CreatedWarehouseManager != null);
                       opts.MapFrom(src => src.CreatedWarehouseManager!.FirstName + " " + src.CreatedWarehouseManager!.LastName);
                   });
+                 
             CreateMap<GoodsReceivedDtoForCreation, GoodsReceived>();
             CreateMap<GoodsReceivedDtoForUpdate, GoodsReceived>().ReverseMap();
             CreateMap<GoodsReceivedDtoForManipulation, GoodsReceived>();

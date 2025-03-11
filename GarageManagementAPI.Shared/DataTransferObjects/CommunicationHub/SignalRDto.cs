@@ -1,15 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using GarageManagementAPI.Shared.DataTransferObjects.User;
 
 namespace GarageManagementAPI.Shared.DataTransferObjects.CommunicationHub
 {
     public class SignalRDto
     {
-        public string? SenderId { get; set; }
-        public string? ReceiverId { get; set; }
+        public UserDto SenderId { get; set; } = null!;
+        public UserDto? ReceiverId { get; set; } = null!;
         public string? Message { get; set; }
         public DateTime Timestamp { get; set; }
         public bool IsRead { get; set; } = false;

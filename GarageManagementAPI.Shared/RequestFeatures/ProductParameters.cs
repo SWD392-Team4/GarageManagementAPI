@@ -14,7 +14,7 @@ namespace GarageManagementAPI.Shared.RequestFeatures
         public decimal? MinPrice { get; set; } = 0;
         public decimal? MaxPrice { get; set; }
 
-        [EnumDataType(typeof(SystemStatus))]
+        [EnumDataType(typeof(ProductStatus))]
         public ProductStatus? ProductStatus { get; set; } = null;
     }
 }

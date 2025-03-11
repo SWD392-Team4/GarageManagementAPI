@@ -9,6 +9,8 @@ namespace GarageManagementAPI.Entities.Models
 
         public int Quantity { get; set; }
 
+        public decimal UnitPrice { get; set; }
+
         [EnumDataType(typeof(SystemStatus))]
         public SystemStatus Status { get; set; }
 

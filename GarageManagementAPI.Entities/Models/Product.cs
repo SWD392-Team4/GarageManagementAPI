@@ -1,5 +1,6 @@
-﻿using GarageManagementAPI.Shared.Enums.SystemStatuss;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using GarageManagementAPI.Shared.Enums.SystemStatuss;
 
 namespace GarageManagementAPI.Entities.Models
 {
@@ -11,6 +12,7 @@ namespace GarageManagementAPI.Entities.Models
 
         public string ProductName { get; set; } = null!;
 
+        [DatabaseGenerated(DatabaseGeneratedOption.None)] // Tránh EF tự sinh giá trị
         public string ProductBarcode { get; set; } = null!;
 
         public string ProductDescription { get; set; } = null!;
