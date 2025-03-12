@@ -10,17 +10,11 @@ namespace GarageManagementAPI.Repository.Extensions
     {
         public static IQueryable<ServiceHistory> SearchByPrice(this IQueryable<ServiceHistory> services, decimal? price)
         {
-            if (price == 0 || price < 0)
+            if (price is null || price == 0 || price < 0)
             {
                 return services;
             }
             return services.Where(s => s.Price == price);
-        }
-
-        public static IQueryable<ServiceHistory> SearchByStatus(this IQueryable<ServiceHistory> services, ServiceHistoryStatus? status)
-        {
-            if (status is null) return services;
-            return services.Where(p => p.Status == status);
         }
 
         public static IQueryable<ServiceHistory> IsInclude(this IQueryable<ServiceHistory> service, string? fieldsString)

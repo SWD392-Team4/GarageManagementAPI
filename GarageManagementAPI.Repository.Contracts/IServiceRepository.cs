@@ -4,7 +4,7 @@ using GarageManagementAPI.Shared.RequestFeatures;
 
 namespace GarageManagementAPI.Repository.Contracts
 {
-    public interface IServiceRepository
+    public interface IServiceRepository : IRepositoryBase<Service>
     {
         Task<IEnumerable<Service>> GetServiceByPackageHistoryIdAsync(Guid pacakgeHistoryId, bool trackChanges);
         Task<PagedList<Service>> GetServiceByPackageHistoryIdAsync(Guid pacakgeHistoryId, bool trackChanges, ServiceParameters serviceParameters, string? include = default);
@@ -13,7 +13,5 @@ namespace GarageManagementAPI.Repository.Contracts
         public Task<Service?> GetServiceByIdAndNameAsync(string name, Guid? serviceId, bool trackChanges);
         public Task<Service?> GetServiceByCarCategoryAnCarPartId(Guid? serviceId, Guid carPartId, Guid carparCategoryId, WorkNature workNature, ServiceAction action, bool trackChanges, string? include = default);
         Task<PagedList<Service>> GetServicesAsync(ServiceParameters serviceParameters, bool trackChanges, string? include = default);
-        Task CreateServiceAsync(Service service);
-        void UpdateServiceAsync(Service service);
     }
 }

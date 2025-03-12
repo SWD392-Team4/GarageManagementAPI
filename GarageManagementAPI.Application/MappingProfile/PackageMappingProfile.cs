@@ -19,7 +19,8 @@ namespace GarageManagementAPI.Application.MappingProfile
                 });
             CreateMap<Package, PackageHistory>()
                 .ForMember(dest => dest.PackageId, opt => opt.MapFrom(src => src.Id))
-                .ForMember(dest => dest.Id, opt => opt.Ignore());
+                .ForMember(dest => dest.Id, opt => opt.Ignore())
+                .ForMember(dest => dest.CreatedAt, opt => opt.Ignore());
 
         }
     }

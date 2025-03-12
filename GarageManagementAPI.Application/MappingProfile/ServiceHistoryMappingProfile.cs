@@ -9,7 +9,10 @@ namespace GarageManagementAPI.Application.MappingProfile
         public ServiceHistoryMappingProfile()
         {
             CreateMap<ServiceHistory, ServiceHistoryDto>();
-            CreateMap<ServiceHistoryDtoForCreation, ServiceHistory>();
+            CreateMap<Entities.Models.Service, ServiceHistory>()
+                .ForMember(dest => dest.Id, opt => opt.Ignore())
+                .ForMember(dest => dest.ServiceId, opt => opt.MapFrom(src => src.Id))
+                .ForMember(dest => dest.CreatedAt, opt => opt.Ignore());
         }
     }
 }

@@ -16,16 +16,11 @@ namespace GarageManagementAPI.Repository.Configuration
 
             entity.Property(e => e.Id).ValueGeneratedOnAdd().HasDefaultValueSql("NEWID()");
             entity.Property(e => e.Price).HasColumnType("decimal(18, 2)");
-            entity.Property(e => e.Status).HasMaxLength(255);
 
             entity.HasOne(d => d.Service).WithMany(p => p.ServiceHistories)
                 .HasForeignKey(d => d.ServiceId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("servicehistory_serviceid_foreign");
-
-
-            entity.Property(e => e.Status)
-                .HasConversion<string>();
         }
     }
 }

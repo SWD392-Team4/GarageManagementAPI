@@ -9,20 +9,10 @@ namespace GarageManagementAPI.Application.MappingProfile
         public ProductMappingProfile()
         {
             CreateMap<Product, ProductDto>()
-                .ForMember(dest => dest.BrandId, otps =>
-                {
-                    otps.PreCondition(src => src.Brand != null);
-                    otps.MapFrom(src => src.Brand!.Id);
-                })
                  .ForMember(dest => dest.BrandName, opts =>
                  {
                      opts.PreCondition(src => src.Brand != null);
                      opts.MapFrom(src => src.Brand!.BrandName);
-                 })
-                 .ForMember(dest => dest.ProductCategoryId, otps =>
-                 {
-                     otps.PreCondition(src => src.ProductCategory != null);
-                     otps.MapFrom(src => src.ProductCategory!.Id);
                  })
                    .ForMember(dest => dest.Category, opts =>
                    {
@@ -33,17 +23,7 @@ namespace GarageManagementAPI.Application.MappingProfile
                  {
                      otp.PreCondition(src => src.ProductImages != null && src.ProductImages.Any());
                      otp.MapFrom(src => src.ProductImages.Select(e => e.ImageLink).ToList());
-                 })
-                .ForMember(dest => dest.ProductPrice, opt =>
-                {
-                    //Any() checks whether there is at least one item in the ProductHistories collection of the src object. Specifically, it returns a boolean value (true or false): LINQ 
-                    opt.PreCondition(src => src.ProductHistories != null && src.ProductHistories.Any());
-                    opt.MapFrom(src => src.ProductHistories
-                        .OrderByDescending(h => h.CreatedAt)
-                        .First()
-                        .ProductPrice
-                    );
-                });
+                 });
 
 
             CreateMap<ProductDtoForCreation, Product>();

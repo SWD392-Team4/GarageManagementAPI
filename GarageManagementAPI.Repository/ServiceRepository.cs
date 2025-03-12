@@ -5,6 +5,7 @@ using GarageManagementAPI.Repository.Extensions;
 using Microsoft.EntityFrameworkCore;
 using Bogus.DataSets;
 using GarageManagementAPI.Shared.Enums;
+using GarageManagementAPI.Shared.Extension;
 
 namespace GarageManagementAPI.Repository
 {
@@ -14,13 +15,16 @@ namespace GarageManagementAPI.Repository
         {
 
         }
-        public async Task CreateServiceAsync(Service service)
+        public async new Task CreateAsync(Service entity)
         {
-            await base.CreateAsync(service);
+            entity.CreatedAt = DateTimeOffset.UtcNow.SEAsiaStandardTime();
+            entity.UpdatedAt = DateTimeOffset.UtcNow.SEAsiaStandardTime();
+            await base.CreateAsync(entity);
         }
-        public void UpdateServiceAsync(Service service)
+        public new void Update(Service entity)
         {
-            base.Update(service);
+            entity.UpdatedAt = DateTimeOffset.UtcNow.SEAsiaStandardTime();
+            base.Update(entity);
         }
 
         public async Task<IEnumerable<Service>> GetServiceByIdsAsync(IEnumerable<Guid> ids, bool trackChanges)

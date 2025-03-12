@@ -13,8 +13,5 @@ namespace GarageManagementAPI.Shared.RequestFeatures
         public ProductHistoryParameters() => OrderBy = "ProductPrice";
 
         public decimal ProductPrice { get; set; }
-
-        [EnumDataType(typeof(ProductHistoryStatus))]
-        public ProductHistoryStatus? Status { get; set; } = null;
     }
 }

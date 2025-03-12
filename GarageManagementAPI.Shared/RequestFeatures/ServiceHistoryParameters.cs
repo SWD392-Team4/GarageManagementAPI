@@ -8,7 +8,5 @@ namespace GarageManagementAPI.Shared.RequestFeatures
         public ServiceHistoryParameters() => OrderBy = "Price";
         public decimal Price { get; set; }
 
-        [EnumDataType(typeof(ServiceHistoryStatus))]
-        public ServiceHistoryStatus? Status { get; set; } = null;
     }
 }
