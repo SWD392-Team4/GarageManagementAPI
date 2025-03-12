@@ -5,13 +5,22 @@
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
 	</PropertyGroup>
+
+	<ItemGroup>
+	  <Compile Remove="DataTransferObjects\AppointmentDetail\Cashier\**" />
+	  <Compile Remove="DataTransferObjects\AppointmentDetail\Customer\**" />
+	  <Compile Remove="DataTransferObjects\AppointmentDetail\Mechanic\**" />
+	  <EmbeddedResource Remove="DataTransferObjects\AppointmentDetail\Cashier\**" />
+	  <EmbeddedResource Remove="DataTransferObjects\AppointmentDetail\Customer\**" />
+	  <EmbeddedResource Remove="DataTransferObjects\AppointmentDetail\Mechanic\**" />
+	  <None Remove="DataTransferObjects\AppointmentDetail\Cashier\**" />
+	  <None Remove="DataTransferObjects\AppointmentDetail\Customer\**" />
+	  <None Remove="DataTransferObjects\AppointmentDetail\Mechanic\**" />
+	</ItemGroup>
 	<ItemGroup>
 		<PackageReference Include="Microsoft.AspNetCore.Mvc.Abstractions" Version="2.3.0" />
 	</ItemGroup>
 	<ItemGroup>
-	  <Folder Include="DataTransferObjects\AppointmentDetail\Mechanic\" />
-	  <Folder Include="DataTransferObjects\AppointmentDetail\Customer\" />
-	  <Folder Include="DataTransferObjects\AppointmentDetail\Cashier\" />
 	  <Folder Include="DataTransferObjects\CarPart\" />
 	</ItemGroup>
 </Project>

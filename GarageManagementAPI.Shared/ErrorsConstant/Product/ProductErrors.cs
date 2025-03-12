@@ -15,6 +15,7 @@ namespace GarageManagementAPI.Shared.ErrorsConstant.Product
         public const string ProductNotFoundWithBarcode = "Can not found Product with barcode {0}.";
         public const string ProductCategoryNotFoundWithId = "Can not found product category with id {0}.";
         public const string BrandNotFoundWithId = "Can not found brand with id {0}.";
+        public const string ProductsFoundNotMatchWithIds = "Products found not match with ids {0}.";
         #endregion
 
         #region static method
@@ -28,18 +29,18 @@ namespace GarageManagementAPI.Shared.ErrorsConstant.Product
         }
 
         public static ErrorsResult GetProductNotFoundIdError(Guid productId) =>
-    new()
-    {
-        Code = nameof(ProductNotFoundWithId),
-        Description = string.Format(ProductNotFoundWithId, productId)
-    };
+            new()
+            {
+                Code = nameof(ProductNotFoundWithId),
+                Description = string.Format(ProductNotFoundWithId, productId)
+            };
 
         public static ErrorsResult GetProductByBarcodeNotFoundError(string barcode) =>
-        new()
-        {
-            Code = nameof(ProductNotFoundWithBarcode),
-            Description = string.Format(ProductNotFoundWithBarcode, barcode)
-        };
+            new()
+            {
+                Code = nameof(ProductNotFoundWithBarcode),
+                Description = string.Format(ProductNotFoundWithBarcode, barcode)
+            };
 
         public static ErrorsResult GetProductNameAlreadyExistError(ProductDtoForCreation productDtoForCreation) =>
              new()
@@ -49,9 +50,26 @@ namespace GarageManagementAPI.Shared.ErrorsConstant.Product
              };
 
         public static ErrorsResult GetProductCategoryIsNotFound(Guid productCategoryId) =>
-            new() { Code = nameof(ProductCategoryNotFoundWithId), Description = string.Format(ProductCategoryNotFoundWithId, productCategoryId) };
+            new()
+            {
+                Code = nameof(ProductCategoryNotFoundWithId),
+                Description = string.Format(ProductCategoryNotFoundWithId, productCategoryId)
+            };
         public static ErrorsResult GetBrandIsNotFound(Guid brandId) =>
-            new() { Code = nameof(BrandNotFoundWithId), Description = string.Format(BrandNotFoundWithId, brandId) };
+            new()
+            {
+                Code = nameof(BrandNotFoundWithId),
+                Description = string.Format(BrandNotFoundWithId, brandId)
+            };
+
+        public static ErrorsResult GetProductsFoundNotMatchWithIdsError(IEnumerable<Guid> notFoundProductIds)
+        {
+            return new()
+            {
+                Code = nameof(ProductsFoundNotMatchWithIds),
+                Description = string.Format(ProductsFoundNotMatchWithIds, string.Join(", ", notFoundProductIds))
+            };
+        }
         #endregion
     }
 }

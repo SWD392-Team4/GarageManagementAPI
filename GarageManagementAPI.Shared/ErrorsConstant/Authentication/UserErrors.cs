@@ -88,6 +88,8 @@ namespace GarageManagementAPI.Shared.Constant.Authentication
 
         //Wrong enpoint to create customer
         public const string InvalidEndpoint = "The endpoint used is incorrect for creating a customer. Please verify the URL and try again.";
+
+        public const string NotAllowToDoThisAction = "You are not allowed to do this action.";
         public static ErrorsResult GetUnAuthorizedToCreateUserErrors()
         {
             return new()
@@ -175,6 +177,15 @@ namespace GarageManagementAPI.Shared.Constant.Authentication
             {
                 Code = nameof(UserNotFoundWithId),
                 Description = string.Format(UserNotFoundWithId, id)
+            };
+        }
+
+        public static ErrorsResult GetUnAuthorizeUserError()
+        {
+            return new()
+            {
+                Code = nameof(NotAllowToDoThisAction),
+                Description = NotAllowToDoThisAction
             };
         }
     }

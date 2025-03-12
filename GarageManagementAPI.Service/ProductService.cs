@@ -45,13 +45,11 @@ namespace GarageManagementAPI.Service
 
             var productEntity = _mapper.Map<Product>(productDtoForCreation);
 
-            productEntity.CreatedAt = DateTimeOffset.UtcNow.SEAsiaStandardTime();
-            productEntity.UpdatedAt = DateTimeOffset.UtcNow.SEAsiaStandardTime();
             productEntity.Status = ProductStatus.Inactive;
 
             if (string.IsNullOrWhiteSpace(productEntity.ProductBarcode)) productEntity.ProductBarcode = this.GenerateBarcode();
 
-            await _repoManager.Product.CreateProductAsync(productEntity);
+            await _repoManager.Product.CreateAsync(productEntity);
             await CreateProductHistoryAsync(productEntity);
 
             await _repoManager.SaveAsync();

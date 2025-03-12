@@ -21,5 +21,9 @@ namespace GarageManagementAPI.Shared.RequestFeatures
 
         [EnumDataType(typeof(AppointmentStatus))]
         public AppointmentStatus? AppointmentStatus { get; set; }
+
+        public DateTimeOffset? FromTime { get; set; }
+
+        public DateTimeOffset? ToTime { get; set; }
     }
 }

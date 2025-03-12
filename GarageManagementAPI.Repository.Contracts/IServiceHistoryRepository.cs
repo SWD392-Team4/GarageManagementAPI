@@ -9,7 +9,7 @@ namespace GarageManagementAPI.Repository.Contracts
 
         Task<PagedList<ServiceHistory>> GetServiceHistoryAsync(ServiceHistoryParameters ServiceHistoryParameters, bool trackChanges, string? include = default);
 
-        Task<IEnumerable<ServiceHistory>> GetServiceHistoriesAsync(IEnumerable<Guid> ids, bool trackChanges);
+        Task<IEnumerable<ServiceHistory>> GetServiceHistoriesAsync(IEnumerable<Guid> serviceIds, bool trackChanges);
 
         Task<ServiceHistory?> GetServiceHistory(Guid serviceId, bool trackChanges, string? include = null);
     }

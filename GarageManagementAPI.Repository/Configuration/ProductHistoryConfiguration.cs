@@ -22,53 +22,94 @@ namespace GarageManagementAPI.Repository.Configuration
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("producthistory_productid_foreign");
         }
-        /* protected override void SeedData(EntityTypeBuilder<ProductHistory> entity)
-         {
-             entity.HasData(
-                 new ProductHistory()
-                 {
-                     Id = new Guid("e9a0d0d3-3a43-406a-b465-b630c5d93f6f"),
-                     ProductId = new Guid("F5FD6EE3-A8B6-452C-9042-146E8AFC875F"), // Electronics
-                     ProductPrice = 500,
-                     CreatedAt = DateTimeOffset.Parse("2025-02-25T00:36:40Z")
-                 },
-                 new ProductHistory()
-                 {
-                     Id = new Guid("22d61e55-50e5-4dcd-bf40-209fc2fcae12"),
-                     ProductId = new Guid("CEE5A4D8-DE84-4482-9DA9-302E2290CB0F"), // Electronics
-                     ProductPrice = 520,
-                     CreatedAt = DateTimeOffset.Parse("2025-02-25T00:36:40Z")
-                 },
-                 new ProductHistory()
-                 {
-                     Id = new Guid("72d247fb-5249-4ce1-a400-fce2559e7db0"),
-                     ProductId = new Guid("e9a7beda-ff63-4ac5-92cb-b7fa152c41c2"), // Clothing
-                     ProductPrice = 1200,
-                     CreatedAt = DateTimeOffset.Parse("2025-02-25T00:36:40Z")
-                 },
-                 new ProductHistory()
-                 {
-                     Id = new Guid("e5e319f9-ef2a-4ab7-a847-5f0d3c7a1caf"),
-                     ProductId = new Guid("1C1FFD05-3B06-48BF-B78C-86B6EF2D3CEF"), // Home & Kitchen
-                     ProductPrice = 150,
-                     CreatedAt = DateTimeOffset.Parse("2025-02-25T00:36:40Z")
-                 },
-                 new ProductHistory()
-                 {
-                     Id = new Guid("537c1813-334d-41c0-987b-0ed1509475f7"),
-                     ProductId = new Guid("E9A7BEDA-FF63-4AC5-92CB-B7FA152C41C2"), // Home & Kitchen
-                     ProductPrice = 200,
-                     CreatedAt = DateTimeOffset.Parse("2025-02-25T00:36:40Z")
-                 },
-                 new ProductHistory()
-                 {
-                     Id = new Guid("2254581b-c244-4c41-b5e4-c353629c2105"),
-                     ProductId = new Guid("1C1FFD05-3B06-48BF-B78C-86B6EF2D3CEF"), // Clothing
-                     ProductPrice = 300,
-                     CreatedAt = DateTimeOffset.Parse("2025-02-25T00:36:40Z")
-                 }
-             );
-         }*/
+        protected override void SeedData(EntityTypeBuilder<ProductHistory> entity)
+        {
+            entity.HasData(
+                new ProductHistory()
+                {
+                    Id = new Guid("77f4ebf6-ed84-4fc2-8a58-3419d1464ee4"),
+                    ProductId = new Guid("1c1ffd05-3b06-48bf-b78c-86b6ef2d3cef"),
+                    ProductPrice = 1500,
+                    CreatedAt = DateTimeOffset.Parse("2/25/2025 12:40:40 AM +07:00")
+                },
+                new ProductHistory()
+                {
+                    Id = new Guid("423c3aa7-0281-4de1-95f2-53fe332417f2"),
+                    ProductId = new Guid("1c1ffd05-3b06-48bf-b78c-86b6ef2d3cef"),
+                    ProductPrice = 120,
+                    CreatedAt = DateTimeOffset.Parse("2/25/2025 12:38:40 AM +07:00")
+                },
+                new ProductHistory()
+                {
+                    Id = new Guid("15516af1-3245-4926-8dfe-bea85b6ec125"),
+                    ProductId = new Guid("1c1ffd05-3b06-48bf-b78c-86b6ef2d3cef"),
+                    ProductPrice = 1300,
+                    CreatedAt = DateTimeOffset.Parse("2/25/2025 12:36:40 AM +07:00")
+                },
+                new ProductHistory()
+                {
+                    Id = new Guid("a660df09-451d-4f1e-bf73-152cd2ede38e"),
+                    ProductId = new Guid("cee5a4d8-de84-4482-9da9-302e2290cb0f"),
+                    ProductPrice = 1500,
+                    CreatedAt = DateTimeOffset.Parse("2/25/2025 12:40:40 AM +07:00")
+                },
+                new ProductHistory()
+                {
+                    Id = new Guid("1b17747e-ae0a-4c6e-9ff7-d6539c6cd6b6"),
+                    ProductId = new Guid("cee5a4d8-de84-4482-9da9-302e2290cb0f"),
+                    ProductPrice = 120,
+                    CreatedAt = DateTimeOffset.Parse("2/25/2025 12:38:40 AM +07:00")
+                },
+                new ProductHistory()
+                {
+                    Id = new Guid("5047c4b3-458a-4fbe-8df4-35f4b23dc439"),
+                    ProductId = new Guid("cee5a4d8-de84-4482-9da9-302e2290cb0f"),
+                    ProductPrice = 1300,
+                    CreatedAt = DateTimeOffset.Parse("2/25/2025 12:36:40 AM +07:00")
+                }, new ProductHistory()
+                {
+                    Id = new Guid("913522ad-480e-4bc8-8932-79e3b4178016"),
+                    ProductId = new Guid("e9a7beda-ff63-4ac5-92cb-b7fa152c41c2"),
+                    ProductPrice = 1500,
+                    CreatedAt = DateTimeOffset.Parse("2/25/2025 12:40:40 AM +07:00")
+                },
+                new ProductHistory()
+                {
+                    Id = new Guid("d806f85f-da06-4030-b98c-3c5561c14305"),
+                    ProductId = new Guid("e9a7beda-ff63-4ac5-92cb-b7fa152c41c2"),
+                    ProductPrice = 120,
+                    CreatedAt = DateTimeOffset.Parse("2/25/2025 12:38:40 AM +07:00")
+                },
+                new ProductHistory()
+                {
+                    Id = new Guid("8258d59b-2955-4d2f-bced-ce747d6f303f"),
+                    ProductId = new Guid("e9a7beda-ff63-4ac5-92cb-b7fa152c41c2"),
+                    ProductPrice = 1300,
+                    CreatedAt = DateTimeOffset.Parse("2/25/2025 12:36:40 AM +07:00")
+                }
+                , new ProductHistory()
+                {
+                    Id = new Guid("f28b16c7-781c-4c11-9c31-1a3152c335e5"),
+                    ProductId = new Guid("f5fd6ee3-a8b6-452c-9042-146e8afc875f"),
+                    ProductPrice = 1500,
+                    CreatedAt = DateTimeOffset.Parse("2/25/2025 12:40:40 AM +07:00")
+                },
+                new ProductHistory()
+                {
+                    Id = new Guid("de79c933-78d0-4498-becf-97d7228d39fd"),
+                    ProductId = new Guid("f5fd6ee3-a8b6-452c-9042-146e8afc875f"),
+                    ProductPrice = 120,
+                    CreatedAt = DateTimeOffset.Parse("2/25/2025 12:38:40 AM +07:00")
+                },
+                new ProductHistory()
+                {
+                    Id = new Guid("fb7c7840-f5d2-4f36-97f8-e722e45ef441"),
+                    ProductId = new Guid("f5fd6ee3-a8b6-452c-9042-146e8afc875f"),
+                    ProductPrice = 1300,
+                    CreatedAt = DateTimeOffset.Parse("2/25/2025 12:36:40 AM +07:00")
+                }
+            );
+        }
     }
 }
 

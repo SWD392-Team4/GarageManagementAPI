@@ -25,6 +25,7 @@ using GarageManagementAPI.Shared.DataTransferObjects.CarModel;
 using GarageManagementAPI.Shared.DataTransferObjects.GoodsIssuedDetail;
 using GarageManagementAPI.Shared.DataTransferObjects.PackageHistory;
 using GarageManagementAPI.Shared.DataTransferObjects.ProductAtWarehouse;
+using GarageManagementAPI.Shared.DataTransferObjects.Appointment;
 
 namespace GarageManagementAPI.Service.DataShaping
 {
@@ -56,6 +57,7 @@ namespace GarageManagementAPI.Service.DataShaping
         private readonly Lazy<IDataShaper<PackageHistoryDto>> _packageHistoryShaper;
         private readonly Lazy<IDataShaper<PackageConditionDto>> _packageConditionShaper;
         private readonly Lazy<IDataShaper<ProductAtWarehouseDto>> _productAtWarehouseShaper;
+        private readonly Lazy<IDataShaper<AppointmentDto>> _appointmentShaper;
 
         public DataShaperManager()
         {
@@ -135,6 +137,9 @@ namespace GarageManagementAPI.Service.DataShaping
 
             _productAtWarehouseShaper = new Lazy<IDataShaper<ProductAtWarehouseDto>>(
            () => new DataShaper<ProductAtWarehouseDto>(ProductAtWarehouseDto.PropertyInfos));
+
+            _appointmentShaper = new Lazy<IDataShaper<AppointmentDto>>(
+           () => new DataShaper<AppointmentDto>(AppointmentDto.PropertyInfos));
         }
         //.Value là thuộc tính của Lazy<T>, nó sẽ kích hoạt việc khởi tạo đối tượng nếu đối tượng đó chưa được khởi tạo trước đó. Nếu đối tượng đã được khởi tạo, thuộc tính .Value sẽ trả về đối tượng đó.
         public IDataShaper<UserDto> User => _userShaper.Value;
@@ -163,5 +168,6 @@ namespace GarageManagementAPI.Service.DataShaping
         public IDataShaper<PackageHistoryDto> PackageHistory => _packageHistoryShaper.Value;
         public IDataShaper<PackageConditionDto> PackageCondition => _packageConditionShaper.Value;
         public IDataShaper<CarCategoryDto> CarCategory => _carCategoryShaper.Value;
+        public IDataShaper<AppointmentDto> Appointment => _appointmentShaper.Value;
     }
 }

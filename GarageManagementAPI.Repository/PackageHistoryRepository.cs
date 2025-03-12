@@ -72,5 +72,15 @@ namespace GarageManagementAPI.Repository
             packageHistory.CreatedAt = package.UpdatedAt;
             await base.CreateAsync(packageHistory);
         }
+
+        public async Task<IEnumerable<PackageHistory>> GetPackageHistoriesAsync(IEnumerable<Guid> packageId, bool trackChanges)
+        {
+            var packageHistories = await FindByCondition(p => packageId.Contains(p.PackageId), trackChanges)
+                .GroupBy(p => p.PackageId)
+                .Select(g => g.OrderByDescending(e => e.CreatedAt).First())
+                .ToListAsync();
+
+            return packageHistories;
+        }
     }
 }

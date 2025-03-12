@@ -28,6 +28,8 @@ namespace GarageManagementAPI.Entities.Models
 
         public DateTimeOffset UpdatedAt { get; set; }
 
+        public AppointmentPerDay? AppointmentPerDay { get; set; }
+
         public virtual ICollection<Appointment> Appointments { get; set; } = new List<Appointment>();
 
         public virtual ICollection<EmployeeInfo> EmployeeInfos { get; set; } = new List<EmployeeInfo>();

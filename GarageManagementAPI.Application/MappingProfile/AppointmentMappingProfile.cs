@@ -8,8 +8,10 @@ namespace GarageManagementAPI.Application.MappingProfile
     {
         public AppointmentMappingProfile()
         {
-            CreateMap<AppointmentDtoCreation, Appointment>();
-            CreateMap<AppointmentDtoCreationWIthFullInformation, Appointment>();
+            CreateMap<AppointmentDtoForCreation, Appointment>();
+            CreateMap<AppointmentDtoForUpdate, Appointment>();
+            CreateMap<Appointment, AppointmentDto>();
+
         }
     }
 }

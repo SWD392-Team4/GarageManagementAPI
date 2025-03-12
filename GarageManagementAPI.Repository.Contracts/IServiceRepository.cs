@@ -7,6 +7,7 @@ namespace GarageManagementAPI.Repository.Contracts
     public interface IServiceRepository : IRepositoryBase<Service>
     {
         Task<IEnumerable<Service>> GetServiceByPackageHistoryIdAsync(Guid pacakgeHistoryId, bool trackChanges);
+        Task<IEnumerable<Service>> GetServiceByPackageHistoryIdsAsync(IEnumerable<Guid> pacakgeHistoryIds, bool trackChanges);
         Task<PagedList<Service>> GetServiceByPackageHistoryIdAsync(Guid pacakgeHistoryId, bool trackChanges, ServiceParameters serviceParameters, string? include = default);
         Task<IEnumerable<Service>> GetServiceByIdsAsync(IEnumerable<Guid> ids, bool trackChanges);
         Task<Service?> GetServiceByIdAsync(Guid serviceId, bool trackChanges, string? include = default);

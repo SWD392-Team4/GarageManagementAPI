@@ -7,8 +7,6 @@ namespace GarageManagementAPI.Entities.Models
     {
         public Guid EmployeeId { get; set; }
 
-        public Guid? CustomerId { get; set; }
-
         public Guid GarageId { get; set; }
 
         [EnumDataType(typeof(InvoiceType))]
@@ -30,8 +28,6 @@ namespace GarageManagementAPI.Entities.Models
         public DateTimeOffset UpdatedAt { get; set; }
 
         public virtual Appointment? Appointment { get; set; }
-
-        public virtual User? Customer { get; set; }
 
         public virtual User? Employee { get; set; }
 

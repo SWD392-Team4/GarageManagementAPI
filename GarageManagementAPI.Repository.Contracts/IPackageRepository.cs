@@ -8,6 +8,9 @@ namespace GarageManagementAPI.Repository.Contracts
         Task<Package?> GetPackageByIdAsync(Guid id, bool trackChanges);
         Task<Package?> GetPackageByNameAsync(string packageName, bool trackChanges);
         Task<PagedList<Package>> GetPackagesAsync(PackageParameters packageParameters, bool trackChanges);
+
+        Task<IEnumerable<Package>> GetPackagesAsync(IEnumerable<Guid> packageIds, bool trackChanges);
+
         Task<PagedList<Package>> GetPackagesByServiceIdAsync(Guid serviceId, PackageParameters packageParameters, bool trackChanges);
     }
 }

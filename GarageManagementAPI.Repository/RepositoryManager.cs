@@ -29,6 +29,10 @@ namespace GarageManagementAPI.Repository
         private readonly Lazy<IGoodsIssuedDetailRepository> _goodsIssuedDetaiRepository;
         private readonly Lazy<IGoodsReceivedDetailRepository> _goodsReceivedDetailRepository;
         private readonly Lazy<IAppointmentRepository> _appointmentRepository;
+        private readonly Lazy<IAppointmentPerDayRepository> _appointmentPerDayRepository;
+        private readonly Lazy<IAppointmentDetailRepository> _appointmentDetailRepository;
+        private readonly Lazy<IAppointmentDetailPackageRepository> _appointmentDetailPackageRepository;
+        private readonly Lazy<IAppointmentReplacementPartRepository> _appointmentReplacementPartRepository;
         private readonly Lazy<IPackageRepository> _packageRepository;
         private readonly Lazy<IPackageConditionRepository> _packageConditionRepository;
         private readonly Lazy<IPackageFeedBackRepository> _packageFeedBackRepository;
@@ -67,6 +71,10 @@ namespace GarageManagementAPI.Repository
             _goodsIssuedDetaiRepository = new Lazy<IGoodsIssuedDetailRepository>(() => new GoodsIssuedDetailRepository(repositoryContext));
             _goodsReceivedDetailRepository = new Lazy<IGoodsReceivedDetailRepository>(() => new GoodsReceivedDetailRepository(repositoryContext));
             _appointmentRepository = new Lazy<IAppointmentRepository>(() => new AppointmentRepository(repositoryContext));
+            _appointmentPerDayRepository = new Lazy<IAppointmentPerDayRepository>(() => new AppointmentPerDayRepository(repositoryContext));
+            _appointmentDetailRepository = new Lazy<IAppointmentDetailRepository>(() => new AppointmentDetailRepository(repositoryContext));
+            _appointmentDetailPackageRepository = new Lazy<IAppointmentDetailPackageRepository>(() => new AppointmentDetailPackageRepository(repositoryContext));
+            _appointmentReplacementPartRepository = new Lazy<IAppointmentReplacementPartRepository>(() => new AppointmentReplacementPartRepository(repositoryContext));
             _packageRepository = new Lazy<IPackageRepository>(() => new PackageRepository(repositoryContext));
             _packageConditionRepository = new Lazy<IPackageConditionRepository>(() => new PackageConditionRepository(repositoryContext));
             _packageFeedBackRepository = new Lazy<IPackageFeedBackRepository>(() => new PackageFeedBackRepository(repositoryContext));
@@ -103,6 +111,10 @@ namespace GarageManagementAPI.Repository
         public IProductAtWarehouseRepository ProductAtWarehouse => _productAtWarehouseRepository.Value;
         public IGoodsReceivedDetailRepository GoodsReceivedDetail => _goodsReceivedDetailRepository.Value;
         public IAppointmentRepository Appointment => _appointmentRepository.Value;
+        public IAppointmentDetailPackageRepository AppointmentDetailPackage => _appointmentDetailPackageRepository.Value;
+        public IAppointmentDetailRepository AppointmentDetail => _appointmentDetailRepository.Value;
+        public IAppointmentPerDayRepository AppointmentPerDay => _appointmentPerDayRepository.Value;
+        public IAppointmentReplacementPartRepository AppointmentReplacementPart => _appointmentReplacementPartRepository.Value;
         public IPackageRepository Package => _packageRepository.Value;
         public IPackageConditionRepository PackageCondition => _packageConditionRepository.Value;
         public IPackageFeedBackRepository PackageFeedBack => _packageFeedBackRepository.Value;
@@ -111,6 +123,7 @@ namespace GarageManagementAPI.Repository
         public IPackageUsageRepository PackageUsage => _packageUsageRepository.Value;
         public IPackageUsageDetailRepository PackageUsageDetail => _packageUsageDetailRepository.Value;
         public IPackageDetailRepository PackageDetail => _packageDetailRepository.Value;
+
 
         public async Task<IDbContextTransaction> BeginTransactionAsync()
         {

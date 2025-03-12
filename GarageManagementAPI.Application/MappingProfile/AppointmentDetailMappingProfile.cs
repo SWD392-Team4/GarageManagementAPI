@@ -6,7 +6,6 @@ namespace GarageManagementAPI.Application.MappingProfile
     {
         public AppointmentDetailMappingProfile()
         {
-
         }
     }
 }

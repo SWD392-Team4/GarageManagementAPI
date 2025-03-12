@@ -25,10 +25,6 @@ namespace GarageManagementAPI.Repository.Configuration
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("invoice_appointmentid_foreign");
 
-            entity.HasOne(d => d.Customer).WithMany(p => p.InvoiceCustomers)
-                .HasForeignKey(d => d.CustomerId)
-                .HasConstraintName("invoice_customerid_foreign");
-
             entity.HasOne(d => d.Employee).WithMany(p => p.InvoiceEmployees)
                 .HasForeignKey(d => d.EmployeeId)
                 .OnDelete(DeleteBehavior.ClientSetNull)

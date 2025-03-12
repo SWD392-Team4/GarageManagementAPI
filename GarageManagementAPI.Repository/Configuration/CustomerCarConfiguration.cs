@@ -14,8 +14,6 @@ namespace GarageManagementAPI.Repository.Configuration
 
             entity.HasIndex(e => e.CreatedByEmployeeId, "customercar_createdbyemployeeid_index");
 
-            entity.HasIndex(e => e.CustomerId, "customercar_customerid_index");
-
             entity.HasIndex(e => e.LicensePlateNumber, "customercar_licenseplatenumber_unique").IsUnique();
 
             entity.HasIndex(e => e.VehicleIdentificationNumber, "customercar_vehicleidentificationnumber_unique").IsUnique();
@@ -38,10 +36,6 @@ namespace GarageManagementAPI.Repository.Configuration
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("customercar_createdbyemployeeid_foreign");
 
-            entity.HasOne(d => d.Customer).WithMany(p => p.CustomerCarCustomers)
-                .HasForeignKey(d => d.CustomerId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("customercar_customerid_foreign");
 
 
             entity.Property(e => e.Status)

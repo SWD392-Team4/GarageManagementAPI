@@ -38,6 +38,11 @@ namespace GarageManagementAPI.Repository.Configuration
             entity.Property(e => e.Type)
                 .HasConversion<string>();
         }
+
+        protected override void SeedData(EntityTypeBuilder<Package> entity)
+        {
+            base.SeedData(entity);
+        }
     }
 }
 

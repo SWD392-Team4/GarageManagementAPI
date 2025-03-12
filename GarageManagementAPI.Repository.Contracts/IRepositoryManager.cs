@@ -29,6 +29,10 @@ namespace GarageManagementAPI.Repository.Contracts
         IProductAtWarehouseRepository ProductAtWarehouse { get; }
         IGoodsReceivedDetailRepository GoodsReceivedDetail { get; }
         IAppointmentRepository Appointment { get; }
+        IAppointmentPerDayRepository AppointmentPerDay { get; }
+        IAppointmentDetailPackageRepository AppointmentDetailPackage { get; }
+        IAppointmentDetailRepository AppointmentDetail { get; }
+        IAppointmentReplacementPartRepository AppointmentReplacementPart { get; }
         IPackageRepository Package { get; }
         IPackageConditionRepository PackageCondition { get; }
         IPackageFeedBackRepository PackageFeedBack { get; }

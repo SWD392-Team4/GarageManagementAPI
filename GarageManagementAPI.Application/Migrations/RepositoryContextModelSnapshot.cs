@@ -129,7 +129,6 @@ namespace GarageManagementAPI.Application.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("ServiceNote")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Status")
@@ -137,23 +136,23 @@ namespace GarageManagementAPI.Application.Migrations
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
 
-                    b.Property<Guid?>("UpdateByCustomerId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid?>("UpdateByEmployeeId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<DateTimeOffset>("UpdatedAt")
                         .HasColumnType("datetimeoffset");
+
+                    b.Property<Guid?>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("UserId1")
+                        .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id")
                         .HasName("appointmentdetail_id_primary");
 
                     b.HasIndex("ServiceHistoryId");
 
-                    b.HasIndex("UpdateByCustomerId");
+                    b.HasIndex("UserId");
 
-                    b.HasIndex("UpdateByEmployeeId");
+                    b.HasIndex("UserId1");
 
                     b.HasIndex(new[] { "AppointmentId" }, "appointmentdetail_appointmentid_index");
 
@@ -181,23 +180,23 @@ namespace GarageManagementAPI.Application.Migrations
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
 
-                    b.Property<Guid?>("UpdateByCustomerId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid?>("UpdateByEmployeeId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<DateTimeOffset>("UpdatedAt")
                         .HasColumnType("datetimeoffset");
+
+                    b.Property<Guid?>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("UserId1")
+                        .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id")
                         .HasName("appointmentdetailpackage_id_primary");
 
                     b.HasIndex("AppointmentId");
 
-                    b.HasIndex("UpdateByCustomerId");
+                    b.HasIndex("UserId");
 
-                    b.HasIndex("UpdateByEmployeeId");
+                    b.HasIndex("UserId1");
 
                     b.HasIndex(new[] { "PackageHistoryId", "AppointmentId" }, "appointmentdetailpackage_packagehistoryid_appointmentid_unique")
                         .IsUnique();
@@ -215,10 +214,30 @@ namespace GarageManagementAPI.Application.Migrations
                     b.Property<int>("CountPerDay")
                         .HasColumnType("int");
 
+                    b.Property<Guid>("GarageId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.HasKey("Id")
                         .HasName("appointmentperdayy_id_primary");
 
+                    b.HasIndex("GarageId")
+                        .IsUnique();
+
                     b.ToTable("AppointmentPerDay", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("c637eb36-0dee-4190-9338-3c5053ea3ea6"),
+                            CountPerDay = 10,
+                            GarageId = new Guid("c1aeb9e5-8c74-4b09-bc57-d4c3df7857f9")
+                        },
+                        new
+                        {
+                            Id = new Guid("fa657400-f856-4a91-965d-b20dc194ac66"),
+                            CountPerDay = 5,
+                            GarageId = new Guid("6760cbb7-f1fa-445f-a175-97e3f060c861")
+                        });
                 });
 
             modelBuilder.Entity("GarageManagementAPI.Entities.Models.AppointmentReplacementPart", b =>
@@ -2457,9 +2476,6 @@ namespace GarageManagementAPI.Application.Migrations
                     b.Property<Guid>("CreatedByEmployeeId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("CustomerId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<string>("EngineNumber")
                         .IsRequired()
                         .HasMaxLength(255)
@@ -2500,8 +2516,6 @@ namespace GarageManagementAPI.Application.Migrations
                     b.HasIndex("CarModelId");
 
                     b.HasIndex(new[] { "CreatedByEmployeeId" }, "customercar_createdbyemployeeid_index");
-
-                    b.HasIndex(new[] { "CustomerId" }, "customercar_customerid_index");
 
                     b.HasIndex(new[] { "LicensePlateNumber" }, "customercar_licenseplatenumber_unique")
                         .IsUnique();
@@ -2990,9 +3004,6 @@ namespace GarageManagementAPI.Application.Migrations
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
 
-                    b.Property<Guid?>("CustomerId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<string>("CustomerName")
                         .IsRequired()
                         .HasMaxLength(255)
@@ -3025,14 +3036,17 @@ namespace GarageManagementAPI.Application.Migrations
                     b.Property<DateTimeOffset>("UpdatedAt")
                         .HasColumnType("datetimeoffset");
 
+                    b.Property<Guid?>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.HasKey("Id")
                         .HasName("invoice_appointmentid_primary");
-
-                    b.HasIndex("CustomerId");
 
                     b.HasIndex("EmployeeId");
 
                     b.HasIndex("GarageId");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("Invoice", (string)null);
                 });
@@ -3511,9 +3525,9 @@ namespace GarageManagementAPI.Application.Migrations
                             ProductCategoryId = new Guid("3a891899-546f-4380-aee2-81c7939a0f99"),
                             ProductDescription = "The Smartphone XYZ Pro is a premium device featuring a 6.7-inch AMOLED display with 4K resolution and HDR10+ technology. Powered by the Snapdragon 888 chipset, 12GB of RAM, and 256GB of internal storage, this phone delivers smooth performance for all tasks. The 108MP main camera supports 8K video recording, and the 5000mAh battery supports 65W fast charging.",
                             ProductName = "Toyota Camry",
-                            ProductPrice = 0m,
+                            ProductPrice = 1500m,
                             Status = "Active",
-                            UpdatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 0, 36, 40, 0, DateTimeKind.Unspecified), new TimeSpan(0, 7, 0, 0, 0))
+                            UpdatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 0, 40, 40, 0, DateTimeKind.Unspecified), new TimeSpan(0, 7, 0, 0, 0))
                         },
                         new
                         {
@@ -3524,7 +3538,7 @@ namespace GarageManagementAPI.Application.Migrations
                             ProductCategoryId = new Guid("3a891899-546f-4380-aee2-81c7939a0f99"),
                             ProductDescription = "The UltraBook 2023 is an ultra-thin and lightweight laptop, weighing just 1.2kg, with a 14-inch 2.5K resolution display. It is equipped with a 12th Gen Intel Core i7 processor, 16GB of RAM, and a 512GB SSD. With up to 12 hours of battery life and Thunderbolt 4 connectivity, it is perfect for mobile work and entertainment.",
                             ProductName = "Ford Mustang",
-                            ProductPrice = 0m,
+                            ProductPrice = 1200m,
                             Status = "Active",
                             UpdatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 0, 36, 40, 0, DateTimeKind.Unspecified), new TimeSpan(0, 7, 0, 0, 0))
                         },
@@ -3537,7 +3551,7 @@ namespace GarageManagementAPI.Application.Migrations
                             ProductCategoryId = new Guid("3a891899-546f-4380-aee2-81c7939a0f99"),
                             ProductDescription = "The Mirrorless Alpha Z9 is the perfect choice for professional photographers. With a 45MP full-frame sensor, 6K video recording, and 5-axis image stabilization, this camera delivers sharp and true-to-life image quality. It also offers a continuous shooting speed of up to 20 frames per second.",
                             ProductName = "Volkswagen Golf",
-                            ProductPrice = 0m,
+                            ProductPrice = 800m,
                             Status = "Active",
                             UpdatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 0, 36, 40, 0, DateTimeKind.Unspecified), new TimeSpan(0, 7, 0, 0, 0))
                         },
@@ -3550,7 +3564,7 @@ namespace GarageManagementAPI.Application.Migrations
                             ProductCategoryId = new Guid("3a891899-546f-4380-aee2-81c7939a0f99"),
                             ProductDescription = "The SoundWave 360 Smart Speaker features an integrated AI virtual assistant and supports voice control. With 360-degree surround sound and 50W of power, it delivers an immersive audio experience. It connects wirelessly via Bluetooth 5.0 and Wi-Fi, and is compatible with smart home devices.",
                             ProductName = "Honda Civic",
-                            ProductPrice = 0m,
+                            ProductPrice = 300m,
                             Status = "Active",
                             UpdatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 0, 36, 40, 0, DateTimeKind.Unspecified), new TimeSpan(0, 7, 0, 0, 0))
                         });
@@ -3710,6 +3724,92 @@ namespace GarageManagementAPI.Application.Migrations
                     b.HasIndex(new[] { "ProductId" }, "producthistory_productid_index");
 
                     b.ToTable("ProductHistory", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("77f4ebf6-ed84-4fc2-8a58-3419d1464ee4"),
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 0, 40, 40, 0, DateTimeKind.Unspecified), new TimeSpan(0, 7, 0, 0, 0)),
+                            ProductId = new Guid("1c1ffd05-3b06-48bf-b78c-86b6ef2d3cef"),
+                            ProductPrice = 1500m
+                        },
+                        new
+                        {
+                            Id = new Guid("423c3aa7-0281-4de1-95f2-53fe332417f2"),
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 0, 38, 40, 0, DateTimeKind.Unspecified), new TimeSpan(0, 7, 0, 0, 0)),
+                            ProductId = new Guid("1c1ffd05-3b06-48bf-b78c-86b6ef2d3cef"),
+                            ProductPrice = 120m
+                        },
+                        new
+                        {
+                            Id = new Guid("15516af1-3245-4926-8dfe-bea85b6ec125"),
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 0, 36, 40, 0, DateTimeKind.Unspecified), new TimeSpan(0, 7, 0, 0, 0)),
+                            ProductId = new Guid("1c1ffd05-3b06-48bf-b78c-86b6ef2d3cef"),
+                            ProductPrice = 1300m
+                        },
+                        new
+                        {
+                            Id = new Guid("a660df09-451d-4f1e-bf73-152cd2ede38e"),
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 0, 40, 40, 0, DateTimeKind.Unspecified), new TimeSpan(0, 7, 0, 0, 0)),
+                            ProductId = new Guid("cee5a4d8-de84-4482-9da9-302e2290cb0f"),
+                            ProductPrice = 1500m
+                        },
+                        new
+                        {
+                            Id = new Guid("1b17747e-ae0a-4c6e-9ff7-d6539c6cd6b6"),
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 0, 38, 40, 0, DateTimeKind.Unspecified), new TimeSpan(0, 7, 0, 0, 0)),
+                            ProductId = new Guid("cee5a4d8-de84-4482-9da9-302e2290cb0f"),
+                            ProductPrice = 120m
+                        },
+                        new
+                        {
+                            Id = new Guid("5047c4b3-458a-4fbe-8df4-35f4b23dc439"),
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 0, 36, 40, 0, DateTimeKind.Unspecified), new TimeSpan(0, 7, 0, 0, 0)),
+                            ProductId = new Guid("cee5a4d8-de84-4482-9da9-302e2290cb0f"),
+                            ProductPrice = 1300m
+                        },
+                        new
+                        {
+                            Id = new Guid("913522ad-480e-4bc8-8932-79e3b4178016"),
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 0, 40, 40, 0, DateTimeKind.Unspecified), new TimeSpan(0, 7, 0, 0, 0)),
+                            ProductId = new Guid("e9a7beda-ff63-4ac5-92cb-b7fa152c41c2"),
+                            ProductPrice = 1500m
+                        },
+                        new
+                        {
+                            Id = new Guid("d806f85f-da06-4030-b98c-3c5561c14305"),
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 0, 38, 40, 0, DateTimeKind.Unspecified), new TimeSpan(0, 7, 0, 0, 0)),
+                            ProductId = new Guid("e9a7beda-ff63-4ac5-92cb-b7fa152c41c2"),
+                            ProductPrice = 120m
+                        },
+                        new
+                        {
+                            Id = new Guid("8258d59b-2955-4d2f-bced-ce747d6f303f"),
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 0, 36, 40, 0, DateTimeKind.Unspecified), new TimeSpan(0, 7, 0, 0, 0)),
+                            ProductId = new Guid("e9a7beda-ff63-4ac5-92cb-b7fa152c41c2"),
+                            ProductPrice = 1300m
+                        },
+                        new
+                        {
+                            Id = new Guid("f28b16c7-781c-4c11-9c31-1a3152c335e5"),
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 0, 40, 40, 0, DateTimeKind.Unspecified), new TimeSpan(0, 7, 0, 0, 0)),
+                            ProductId = new Guid("f5fd6ee3-a8b6-452c-9042-146e8afc875f"),
+                            ProductPrice = 1500m
+                        },
+                        new
+                        {
+                            Id = new Guid("de79c933-78d0-4498-becf-97d7228d39fd"),
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 0, 38, 40, 0, DateTimeKind.Unspecified), new TimeSpan(0, 7, 0, 0, 0)),
+                            ProductId = new Guid("f5fd6ee3-a8b6-452c-9042-146e8afc875f"),
+                            ProductPrice = 120m
+                        },
+                        new
+                        {
+                            Id = new Guid("fb7c7840-f5d2-4f36-97f8-e722e45ef441"),
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 0, 36, 40, 0, DateTimeKind.Unspecified), new TimeSpan(0, 7, 0, 0, 0)),
+                            ProductId = new Guid("f5fd6ee3-a8b6-452c-9042-146e8afc875f"),
+                            ProductPrice = 1300m
+                        });
                 });
 
             modelBuilder.Entity("GarageManagementAPI.Entities.Models.ProductImage", b =>
@@ -6084,23 +6184,17 @@ namespace GarageManagementAPI.Application.Migrations
                         .IsRequired()
                         .HasConstraintName("appointmentdetail_servicehistoryid_foreign");
 
-                    b.HasOne("GarageManagementAPI.Entities.Models.User", "UpdateByCustomer")
+                    b.HasOne("GarageManagementAPI.Entities.Models.User", null)
                         .WithMany("AppointmentDetailUpdateByCustomers")
-                        .HasForeignKey("UpdateByCustomerId")
-                        .HasConstraintName("appointmentdetail_updatebycustomerid_foreign");
+                        .HasForeignKey("UserId");
 
-                    b.HasOne("GarageManagementAPI.Entities.Models.User", "UpdateByEmployee")
+                    b.HasOne("GarageManagementAPI.Entities.Models.User", null)
                         .WithMany("AppointmentDetailUpdateByEmployees")
-                        .HasForeignKey("UpdateByEmployeeId")
-                        .HasConstraintName("appointmentdetail_updatebyemployeeid_foreign");
+                        .HasForeignKey("UserId1");
 
                     b.Navigation("Appointment");
 
                     b.Navigation("ServiceHistory");
-
-                    b.Navigation("UpdateByCustomer");
-
-                    b.Navigation("UpdateByEmployee");
                 });
 
             modelBuilder.Entity("GarageManagementAPI.Entities.Models.AppointmentDetailPackage", b =>
@@ -6117,23 +6211,29 @@ namespace GarageManagementAPI.Application.Migrations
                         .IsRequired()
                         .HasConstraintName("appointmentdetailpackage_packagehistoryid_foreign");
 
-                    b.HasOne("GarageManagementAPI.Entities.Models.User", "UpdateByCustomer")
+                    b.HasOne("GarageManagementAPI.Entities.Models.User", null)
                         .WithMany("AppointmentDetailPackageUpdateByCustomers")
-                        .HasForeignKey("UpdateByCustomerId")
-                        .HasConstraintName("appointmentdetailpackage_updatebycustomerid_foreign");
+                        .HasForeignKey("UserId");
 
-                    b.HasOne("GarageManagementAPI.Entities.Models.User", "UpdateByEmployee")
+                    b.HasOne("GarageManagementAPI.Entities.Models.User", null)
                         .WithMany("AppointmentDetailPackageUpdateByEmployees")
-                        .HasForeignKey("UpdateByEmployeeId")
-                        .HasConstraintName("appointmentdetailpackage_updatebyemployeeid_foreign");
+                        .HasForeignKey("UserId1");
 
                     b.Navigation("Appointment");
 
                     b.Navigation("PackageHistory");
+                });
 
-                    b.Navigation("UpdateByCustomer");
+            modelBuilder.Entity("GarageManagementAPI.Entities.Models.AppointmentPerDay", b =>
+                {
+                    b.HasOne("GarageManagementAPI.Entities.Models.Workplace", "Garage")
+                        .WithOne("AppointmentPerDay")
+                        .HasForeignKey("GarageManagementAPI.Entities.Models.AppointmentPerDay", "GarageId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("appointmentperday_garageid_foreign");
 
-                    b.Navigation("UpdateByEmployee");
+                    b.Navigation("Garage");
                 });
 
             modelBuilder.Entity("GarageManagementAPI.Entities.Models.AppointmentReplacementPart", b =>
@@ -6217,17 +6317,9 @@ namespace GarageManagementAPI.Application.Migrations
                         .IsRequired()
                         .HasConstraintName("customercar_createdbyemployeeid_foreign");
 
-                    b.HasOne("GarageManagementAPI.Entities.Models.User", "Customer")
-                        .WithMany("CustomerCarCustomers")
-                        .HasForeignKey("CustomerId")
-                        .IsRequired()
-                        .HasConstraintName("customercar_customerid_foreign");
-
                     b.Navigation("CarModel");
 
                     b.Navigation("CreatedByEmployee");
-
-                    b.Navigation("Customer");
                 });
 
             modelBuilder.Entity("GarageManagementAPI.Entities.Models.EmployeeInfo", b =>
@@ -6384,11 +6476,6 @@ namespace GarageManagementAPI.Application.Migrations
 
             modelBuilder.Entity("GarageManagementAPI.Entities.Models.Invoice", b =>
                 {
-                    b.HasOne("GarageManagementAPI.Entities.Models.User", "Customer")
-                        .WithMany("InvoiceCustomers")
-                        .HasForeignKey("CustomerId")
-                        .HasConstraintName("invoice_customerid_foreign");
-
                     b.HasOne("GarageManagementAPI.Entities.Models.User", "Employee")
                         .WithMany("InvoiceEmployees")
                         .HasForeignKey("EmployeeId")
@@ -6407,9 +6494,11 @@ namespace GarageManagementAPI.Application.Migrations
                         .IsRequired()
                         .HasConstraintName("invoice_appointmentid_foreign");
 
-                    b.Navigation("Appointment");
+                    b.HasOne("GarageManagementAPI.Entities.Models.User", null)
+                        .WithMany("InvoiceCustomers")
+                        .HasForeignKey("UserId");
 
-                    b.Navigation("Customer");
+                    b.Navigation("Appointment");
 
                     b.Navigation("Employee");
 
@@ -7058,8 +7147,6 @@ namespace GarageManagementAPI.Application.Migrations
 
                     b.Navigation("CustomerCarCreatedByEmployees");
 
-                    b.Navigation("CustomerCarCustomers");
-
                     b.Navigation("EmployeeInfo");
 
                     b.Navigation("EmployeeSchedules");
@@ -7079,6 +7166,8 @@ namespace GarageManagementAPI.Application.Migrations
 
             modelBuilder.Entity("GarageManagementAPI.Entities.Models.Workplace", b =>
                 {
+                    b.Navigation("AppointmentPerDay");
+
                     b.Navigation("Appointments");
 
                     b.Navigation("EmployeeInfos");
