@@ -14,8 +14,6 @@ namespace GarageManagementAPI.Repository.Configuration
 
             entity.HasIndex(e => e.GoodsIssuedId, "goodsissueddetail_goodsissuedid_index");
 
-            entity.HasIndex(e => e.ProductAtWareHouseId, "goodsissueddetail_productatwarehouseid_index");
-
 
             entity.Property(e => e.Id).ValueGeneratedOnAdd().HasDefaultValueSql("NEWID()");
             entity.Property(e => e.Status).HasMaxLength(255);
@@ -24,11 +22,6 @@ namespace GarageManagementAPI.Repository.Configuration
                 .HasForeignKey(d => d.GoodsIssuedId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("goodsissueddetail_goodsissuedid_foreign");
-
-            entity.HasOne(d => d.ProductAtWareHouse).WithMany(p => p.GoodsIssuedDetails)
-                .HasForeignKey(d => d.ProductAtWareHouseId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("goodsissueddetail_productatwarehouseid_foreign");
 
 
             entity.Property(e => e.Status)

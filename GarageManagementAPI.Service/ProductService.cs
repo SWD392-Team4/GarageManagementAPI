@@ -150,16 +150,35 @@ namespace GarageManagementAPI.Service
             return Result<IEnumerable<ExpandoObject>>.Ok(productsShaped, productsWithMetadata.MetaData);
         }
 
-        public async Task<Result<IEnumerable<ExpandoObject>>> GetProductsAsync(Guid warehouseId, ProductParameters productParameters, bool trackChanges, string? include = null)
+        public async Task<IEnumerable<ProductWithQuantityDto>> GetProductsByWarehouseIdWithQuantityAsync(
+      Guid warehouseId, bool trackChanges, string? include = null)
         {
-            var productsWithMetadata = await _repoManager.Product.GetProductsByWarehouseIdAsync(warehouseId, productParameters, trackChanges, include);
+            var productsPagedList = await _repoManager.Product.GetProductsByWarehouseIdAsync(warehouseId, false);
 
-            var productsDto = _mapper.Map<IEnumerable<ProductDto>>(productsWithMetadata);
+            var productIds = productsPagedList.Select(p => p.Id).ToList();
 
-            var productsShaped = _dataShaper.Product.ShapeData(productsDto, productParameters.Fields);
+            var productQuantities = await _repoManager.ProductAtWarehouse.GetTotalStockByProductIdsAsync(productIds, warehouseId);
 
-            return Result<IEnumerable<ExpandoObject>>.Ok(productsShaped, productsWithMetadata.MetaData);
+            var productsWithQuantities = productsPagedList
+                .Select(product => new ProductWithQuantityDto
+                {
+                    Id = product.Id,
+                    ProductName = product.ProductName,
+                    ProductBarcode = product.ProductBarcode,
+                    ProductCategoryId = product.ProductCategoryId,
+                    BrandId = product.BrandId,
+                    ProductPrice = product.ProductPrice,
+                    ProductDescription = product.ProductDescription,
+                    Status = product.Status,
+                    CreatedAt = product.CreatedAt,
+                    UpdatedAt = product.UpdatedAt,
+                    TotalQuantity = productQuantities.ContainsKey(product.Id) ? productQuantities[product.Id] : 0
+                })
+                .ToList();
+
+            return productsWithQuantities;
         }
+
 
         private async Task<bool> CheckIfProductExistByNameAndBrandOrBarCode(ProductDtoForCreation productDtoForCreation)
         {

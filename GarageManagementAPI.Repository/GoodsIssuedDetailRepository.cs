@@ -41,16 +41,6 @@ namespace GarageManagementAPI.Repository
                 );
         }
 
-        public async Task<GoodsIssuedDetail?> GetGoodsIssuedDetailsAsync(Guid goodsIssuedDetailId, bool trackChanges)
-        {
-            var goodsIssuedDetail = await FindAll(trackChanges)
-                                        .Include(g => g.ProductAtWareHouse)
-                                        .ThenInclude(pw => pw.GoodsReceivedDetail)
-                                        .Where(gid => gid.Id == goodsIssuedDetailId)
-                                        .FirstOrDefaultAsync();
-            return goodsIssuedDetail;
-            }
-
         public async Task<PagedList<GoodsIssuedDetail>> GetGoodsIssuedDetailsAsync(Guid goodsIssuedId, GoodsIssuedDetailParameters goodsReceivedParameters, bool trackChanges, string? include)
         {
 
