@@ -8,7 +8,7 @@ namespace GarageManagementAPI.Repository.Contracts
         Task<Product?> GetProductByIdAsync(Guid productId, bool trackChanges, string? include = default);
         Task<Product?> GetProductByBarCodeAsync(string barcode, bool trackChanges, string? include = default);
         Task<PagedList<Product>> GetProductsAsync(ProductParameters productParameters, bool trackChanges, string? include = default);
-        public Task<PagedList<Product>> GetProductsByWarehouseIdAsync(Guid warehouseId, ProductParameters productParameters, bool trackChanges, string? include = default);
+        public Task<IEnumerable<Product>> GetProductsByWarehouseIdAsync(Guid warehouseId, bool trackChanges, string? include = default);
         Task CreateProductAsync(Product product);
         void UpdateProductAsync(Product product);
     }

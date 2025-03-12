@@ -60,7 +60,7 @@ namespace GarageManagementAPI.Repository
             );
         }
 
-        public async Task<PagedList<Product>> GetProductsByWarehouseIdAsync(Guid warehouseId, ProductParameters productParameters, bool trackChanges, string? include = default)
+        public async Task<IEnumerable<Product>> GetProductsByWarehouseIdAsync(Guid warehouseId, bool trackChanges, string? include = default)
         {
             var products = await (from p in RepositoryContext.Products
                                  join grd in RepositoryContext.GoodsReceivedDetails on p.Id equals grd.ProductId
@@ -70,11 +70,7 @@ namespace GarageManagementAPI.Repository
                          .Distinct()
                          .ToListAsync();
 
-            return PagedList<Product>.ToPagedList(
-                products,
-                productParameters.PageNumber,
-                productParameters.PageSize
-                );
+            return products;
         }
     }
 }

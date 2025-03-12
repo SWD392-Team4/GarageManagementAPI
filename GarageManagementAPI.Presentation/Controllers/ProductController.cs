@@ -57,12 +57,9 @@ namespace GarageManagementAPI.Presentation.Controllers
         //[Authorize(Roles = $"{nameof(SystemRole.Administrator)},{nameof(SystemRole.Cashier)}")]
         public async Task<IActionResult> GetProductByWarehouse(Guid warehouseId, [FromQuery] ProductParameters productParameters)
         {
-            var productResult = await _service.ProductService.GetProductsAsync(warehouseId, productParameters, trackChanges: false);
+            var productResult = await _service.ProductService.GetProductsByWarehouseIdWithQuantityAsync(warehouseId, trackChanges: false);
 
-            return productResult.Map(
-                onSuccess: Ok,
-                onFailure: ProcessError
-                );
+            return Ok(productResult);
         }
         /// <summary>
         /// Get all products

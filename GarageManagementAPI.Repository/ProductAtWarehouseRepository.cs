@@ -91,7 +91,15 @@ namespace GarageManagementAPI.Repository
         }
 
 
-
+        public async Task<Dictionary<Guid, int>> GetTotalStockByProductIdsAsync(List<Guid> productIds, Guid warehouseId)
+        {
+            return await RepositoryContext.ProductAtWarehouses
+                .Where(paw => productIds.Contains(paw.GoodsReceivedDetail.ProductId) &&
+                              paw.GoodsReceivedDetail.GoodsReceived.WarehouseId == warehouseId)
+                .GroupBy(paw => paw.GoodsReceivedDetail.ProductId)
+                .Select(g => new { ProductId = g.Key, TotalQuantity = g.Sum(paw => paw.Quantity) })
+                .ToDictionaryAsync(x => x.ProductId, x => x.TotalQuantity);
+        }
         public void UpdateProductAtWarehouse(ProductAtWarehouse productAtWarehouse)
         {
             base.Update(productAtWarehouse);

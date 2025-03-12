@@ -87,7 +87,6 @@ namespace GarageManagementAPI.Service
 
                     var goodsIssuedDetailEntity = new GoodsIssuedDetail
                     {
-                        ProductAtWareHouseId = productAtWarehouseId,
                         GoodsIssuedId = goodsIssuedEntity.Id,
                         Quantity = deductedQuantity,
                         UnitPrice = productHistory == null ? 0 :  productHistory.ProductPrice,
@@ -97,10 +96,20 @@ namespace GarageManagementAPI.Service
                     };
 
                     await _repoManager.GoodsIssuedDetail.CreateGoodsIssuedDetailAsync(goodsIssuedDetailEntity);
-                    goodsIssuedEntity.TotalCost += deductedQuantity * productHistory.ProductPrice;
+
+                    goodsIssuedEntity.TotalCost += deductedQuantity * (productHistory?.ProductPrice ?? 0);
+
+                    var goodsIssuedDetail_ProductAtWarehouse = new GoodsIssuedDetail_ProductAtWarehouse
+                    {
+                        GoodsIssuedDetailId = goodsIssuedDetailEntity.Id,
+                        ProductAtWarehouseId = productAtWarehouseId,
+                        QuantityUsed = deductedQuantity
+                    };
+
+                    await _repoManager.GoodsIssuedDetailProductAtWarehouse.CreateGoodsIssuedDetailProductAtWarehouse(goodsIssuedDetail_ProductAtWarehouse);
                 }
             }
-
+            await _repoManager.SaveAsync();
             return goodsIssuedDtoToReturn.CreatedResult();
         }
         public async Task<Result> UpdateGoodsIssued(Guid goodsIssuedId, GoodsIssuedDtoForUpdate goodsIssuedDtoForUpdate, bool trackChanges)

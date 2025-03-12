@@ -18,7 +18,7 @@ namespace GarageManagementAPI.Entities.Models
 
         public DateTimeOffset UpdatedAt { get; set; }
 
-        public virtual ICollection<GoodsIssuedDetail> GoodsIssuedDetails { get; set; } = new List<GoodsIssuedDetail>();
+        public virtual ICollection<GoodsIssuedDetail_ProductAtWarehouse> GoodsIssuedDetail_ProductAtWarehouse { get; set; } = new List<GoodsIssuedDetail_ProductAtWarehouse>();
 
         public virtual GoodsReceivedDetail GoodsReceivedDetail { get; set; } = null!;
     }
