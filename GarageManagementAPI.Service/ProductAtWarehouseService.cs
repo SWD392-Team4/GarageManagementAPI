@@ -22,7 +22,6 @@ namespace GarageManagementAPI.Service
             _mapper = mapper;
             _dataShaper = dataShaper;
         }
-      
 
         public async Task<Result<ExpandoObject>> GetProductAtWarehouse(Guid productId, bool trackChanges, string? include = null)
         {

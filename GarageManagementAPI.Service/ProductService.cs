@@ -11,8 +11,6 @@ using GarageManagementAPI.Shared.RequestFeatures;
 using GarageManagementAPI.Shared.Enums.SystemStatuss;
 using GarageManagementAPI.Shared.ErrorsConstant.Product;
 using GarageManagementAPI.Shared.DataTransferObjects.Product;
-using GarageManagementAPI.Shared.ErrorsConstant.ProductHistory;
-using GarageManagementAPI.Shared.DataTransferObjects.ProductHistory;
 
 namespace GarageManagementAPI.Service
 {
@@ -144,6 +142,17 @@ namespace GarageManagementAPI.Service
         public async Task<Result<IEnumerable<ExpandoObject>>> GetProductsAsync(ProductParameters productParameters, bool trackChanges, string? include = null)
         {
             var productsWithMetadata = await _repoManager.Product.GetProductsAsync(productParameters, trackChanges, include);
+
+            var productsDto = _mapper.Map<IEnumerable<ProductDto>>(productsWithMetadata);
+
+            var productsShaped = _dataShaper.Product.ShapeData(productsDto, productParameters.Fields);
+
+            return Result<IEnumerable<ExpandoObject>>.Ok(productsShaped, productsWithMetadata.MetaData);
+        }
+
+        public async Task<Result<IEnumerable<ExpandoObject>>> GetProductsAsync(Guid warehouseId, ProductParameters productParameters, bool trackChanges, string? include = null)
+        {
+            var productsWithMetadata = await _repoManager.Product.GetProductsByWarehouseIdAsync(warehouseId, productParameters, trackChanges, include);
 
             var productsDto = _mapper.Map<IEnumerable<ProductDto>>(productsWithMetadata);
 

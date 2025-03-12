@@ -97,7 +97,7 @@ namespace GarageManagementAPI.Service
         public async Task<Result<IEnumerable<ExpandoObject>>> GetGoodsReceivedsAsync(Guid warehouseId, GoodsReceivedParameters goodsReceivedParameterdParameters, bool trackChanges, string? include = null)
         {
             var goodsReceivedsWithMetadata = await _repoManager.GoodsReceived.GetGoodsReceivedsAsync(warehouseId, goodsReceivedParameterdParameters, trackChanges, include);
-
+            
             var goodsReceivedsDto = _mapper.Map<IEnumerable<GoodsReceivedDto>>(goodsReceivedsWithMetadata);
 
             var goodsReceivedsShaped = _dataShaper.GoodsReceived.ShapeData(goodsReceivedsDto, goodsReceivedParameterdParameters.Fields);

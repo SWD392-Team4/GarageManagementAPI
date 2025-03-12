@@ -35,6 +35,62 @@ namespace GarageManagementAPI.Repository
                 productAtWarehouseParameters.PageSize
                 );
         }
+        public async Task<List<(Guid ProductAtWarehouseId, int DeductedQuantity)>> DeductProductQuantityFromWarehouseAsync(
+      Guid productId, Guid warehouseId, int quantity)
+        {
+            var productEntries = await RepositoryContext.ProductAtWarehouses
+                .Where(pw => pw.GoodsReceivedDetail.ProductId == productId &&
+                             pw.GoodsReceivedDetail.GoodsReceived.WarehouseId == warehouseId &&
+                             pw.Quantity > 0)
+                .OrderBy(pw => pw.CreatedAt)
+                .ToListAsync();
+
+            int totalStock = productEntries.Sum(pw => pw.Quantity);
+            if (totalStock < quantity)
+            {
+                return new List<(Guid, int)>();
+            }
+
+            int remainingQuantity = quantity;
+            var deductedList = new List<(Guid ProductAtWarehouseId, int DeductedQuantity)>();
+
+            foreach (var entry in productEntries)
+            {
+                if (remainingQuantity <= 0)
+                    break;
+
+                int deducted = 0;
+                if (entry.Quantity >= remainingQuantity)
+                {
+                    deducted = remainingQuantity;
+                    entry.Quantity -= remainingQuantity;
+                    remainingQuantity = 0;
+                }
+                else
+                {
+                    deducted = entry.Quantity;
+                    remainingQuantity -= entry.Quantity;
+                    entry.Quantity = 0;
+                }
+
+                deductedList.Add((entry.Id, deducted));
+                RepositoryContext.ProductAtWarehouses.Update(entry);
+            }
+
+            await RepositoryContext.SaveChangesAsync();
+            return deductedList;
+        }
+
+        public async Task<int> GetTotalStockForProduct(Guid productId, Guid warehouseId)
+        {
+            return await RepositoryContext.ProductAtWarehouses
+                .Where(pw => pw.GoodsReceivedDetail.ProductId == productId &&
+                             pw.GoodsReceivedDetail.GoodsReceived.WarehouseId == warehouseId &&
+                             pw.Quantity > 0)
+                .SumAsync(pw => pw.Quantity);
+        }
+
+
 
         public void UpdateProductAtWarehouse(ProductAtWarehouse productAtWarehouse)
         {
