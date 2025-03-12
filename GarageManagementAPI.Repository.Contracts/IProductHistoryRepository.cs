@@ -7,11 +7,8 @@ namespace GarageManagementAPI.Repository.Contracts
     public interface IProductHistoryRepository : IRepositoryBase<ProductHistory>
     {
         Task<PagedList<ProductHistory>> GetProductHistoryByIdProductAsync(Guid productHistoryId, ProductHistoryParameters productHistoryParameters, bool trackChanges, string? include = default);
-        Task<ProductHistory?> GetProductHistoryByPriceAndIdProductAsync(Guid productId, decimal price, bool trackChanges, string? include = default);
-        Task<ProductHistory?> GetProductHistoryByStatusAndIdProductAsync(Guid productId, bool trackChanges, string? include = default);
         Task<PagedList<ProductHistory>> GetProductHistoryAsync(ProductHistoryParameters productHistoryParameters, bool trackChanges, string? include = default);
-        Task CreateProductHisotoryAsync(ProductHistory productHisotry);
-        Task<ProductHistory?> GetProductHistoryByGoodsIssuedDetails(Guid productId);
-        void UpdateProductHistory(ProductHistory productHistory);
+        Task<IEnumerable<ProductHistory>> GetProductHistoriesAsync(IEnumerable<Guid> productIds, bool trackChanges);
+        Task<ProductHistory?> GetProductHistory(Guid productId, bool trackChanges);
     }
 }

@@ -4,7 +4,7 @@ using GarageManagementAPI.Repository.Contracts;
 using GarageManagementAPI.Repository.Extensions;
 using GarageManagementAPI.Shared.RequestFeatures;
 using GarageManagementAPI.Shared.Enums.SystemStatuss;
-
+using GarageManagementAPI.Shared.Extension;
 
 namespace GarageManagementAPI.Repository
 {
@@ -14,14 +14,10 @@ namespace GarageManagementAPI.Repository
         {
 
         }
-        public async Task CreateProductHisotoryAsync(ProductHistory productHisotry)
+        public async new Task CreateAsync(ProductHistory productHisotry)
         {
+            productHisotry.CreatedAt = DateTimeOffset.UtcNow.SEAsiaStandardTime();
             await base.CreateAsync(productHisotry);
-        }
-
-        public void UpdateProductHistory(ProductHistory productHistory)
-        {
-            base.Update(productHistory);
         }
 
         public async Task<PagedList<ProductHistory>> GetProductHistoryByIdProductAsync(Guid productId, ProductHistoryParameters productHistoryParameters, bool trackChanges, string? include = null)
@@ -29,7 +25,6 @@ namespace GarageManagementAPI.Repository
             var productsQuery = FindByCondition(p =>
                   p.ProductId.Equals(productId), trackChanges)
                 .SearchByPrice(productHistoryParameters.ProductPrice)
-                .SearchByStatus(productHistoryParameters.Status)
                 .Sort(productHistoryParameters.OrderBy)
                 .IsInclude(include)
                 .AsQueryable();
@@ -53,8 +48,7 @@ namespace GarageManagementAPI.Repository
         {
             // Lọc và sắp xếp danh sách products theo các điều kiện
             var products = await FindAll(trackChanges)
-                .SearchByPrice(productHistoryParameters.ProductPrice) 
-                .SearchByStatus(productHistoryParameters.Status)
+                .SearchByPrice(productHistoryParameters.ProductPrice)
                 .Sort(productHistoryParameters.OrderBy)
                 .IsInclude(include)
                 .ToListAsync();
@@ -67,18 +61,22 @@ namespace GarageManagementAPI.Repository
             );
         }
 
-        public Task<ProductHistory?> GetProductHistoryByPriceAndIdProductAsync(Guid productId, decimal price, bool trackChanges, string? include = null)
+        public async Task<IEnumerable<ProductHistory>> GetProductHistoriesAsync(IEnumerable<Guid> productIds, bool trackChanges)
         {
-         var productHistory = FindByCondition(p => p.ProductId.Equals(productId) && p.ProductPrice == price, false)
-                .OrderByDescending(p => p.UpdatedAt)
-                .FirstOrDefaultAsync();
-            return productHistory;
+            var productHistories = await FindByCondition(ph => productIds.Contains(ph.ProductId), trackChanges)
+                    .GroupBy(ph => ph.ProductId)
+                    .Select(g => g.OrderByDescending(s => s.CreatedAt).FirstOrDefault())
+                    .Where(ph => ph != null)
+                    .Select(ph => ph!)
+                    .ToListAsync();
+
+            return productHistories;
         }
 
-        public Task<ProductHistory?> GetProductHistoryByStatusAndIdProductAsync(Guid productId, bool trackChanges, string? include = null)
+        public async Task<ProductHistory?> GetProductHistory(Guid productId, bool trackChanges)
         {
-            var productHistory = FindByCondition(p => p.Status == ProductHistoryStatus.Active && p.ProductId == productId, false).OrderByDescending(p => p.UpdatedAt)
-                                   .FirstOrDefaultAsync();
+            var productHistory = await FindByCondition(ph => ph.ProductId.Equals(productId), trackChanges).OrderByDescending(s => s.CreatedAt).FirstOrDefaultAsync();
+
             return productHistory;
         }
 

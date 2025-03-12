@@ -24,14 +24,7 @@ namespace GarageManagementAPI.Repository.Extensions
                 return products;
             }
 
-            return products.Where(p =>
-                p.ProductHistories != null &&
-                p.ProductHistories.Any(ph =>
-                    ph.Status == ProductHistoryStatus.Active &&
-                    ph.ProductPrice >= minPrice &&
-                    ph.ProductPrice <= maxPrice
-                )
-            );
+            return products.Where(p => p.ProductPrice >= minPrice && p.ProductPrice <= maxPrice);
         }
 
 

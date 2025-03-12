@@ -1,9 +1,6 @@
 ﻿using GarageManagementAPI.Entities.Models;
 using GarageManagementAPI.Repository.Contracts;
 using GarageManagementAPI.Repository.Extensions;
-using GarageManagementAPI.Shared.Enums;
-using GarageManagementAPI.Shared.Enums.SystemStatuss;
-using GarageManagementAPI.Shared.Extension;
 using GarageManagementAPI.Shared.RequestFeatures;
 using Microsoft.EntityFrameworkCore;
 
@@ -69,10 +66,10 @@ namespace GarageManagementAPI.Repository
                 packageHistoryParameters.PageSize);
         }
 
-        public async Task CreateAsync(Guid packageId, PackageHistory packageHistory)
+        public async Task CreateAsync(Package package, PackageHistory packageHistory)
         {
-            packageHistory.PackageId = packageId;
-            packageHistory.CreatedAt = DateTimeOffset.UtcNow.SEAsiaStandardTime();
+            packageHistory.PackageId = package.Id;
+            packageHistory.CreatedAt = package.UpdatedAt;
             await base.CreateAsync(packageHistory);
         }
     }

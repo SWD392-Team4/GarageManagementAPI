@@ -13,11 +13,6 @@ namespace GarageManagementAPI.Repository.Configuration
             entity.ToTable("AppointmentPerDay");
 
             entity.Property(e => e.Id).ValueGeneratedOnAdd().HasDefaultValueSql("NEWID()");
-            entity.Property(e => e.Status).HasMaxLength(255);
-
-
-            entity.Property(e => e.Status)
-                .HasConversion<string>();
         }
     }
 }

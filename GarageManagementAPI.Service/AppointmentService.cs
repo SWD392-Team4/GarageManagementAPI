@@ -1,109 +1,116 @@
-﻿//using AutoMapper;
-//using GarageManagementAPI.Entities.Models;
-//using GarageManagementAPI.Repository.Contracts;
-//using GarageManagementAPI.Service.Contracts;
-//using GarageManagementAPI.Service.Extension;
-//using GarageManagementAPI.Shared.DataTransferObjects.Appointment;
-//using GarageManagementAPI.Shared.Enums;
-//using GarageManagementAPI.Shared.ErrorsConstant.Appointment;
-//using GarageManagementAPI.Shared.ErrorsConstant.CarModel;
-//using GarageManagementAPI.Shared.ErrorsConstant.Workplace;
-//using GarageManagementAPI.Shared.RequestFeatures;
-//using GarageManagementAPI.Shared.ResultModel;
+﻿using AutoMapper;
+using GarageManagementAPI.Entities.Models;
+using GarageManagementAPI.Repository.Contracts;
+using GarageManagementAPI.Service.Contracts;
+using GarageManagementAPI.Shared.Constant.Authentication;
+using GarageManagementAPI.Shared.DataTransferObjects.Appointment;
+using GarageManagementAPI.Shared.Enums;
+using GarageManagementAPI.Shared.Enums.SystemStatuss;
+using GarageManagementAPI.Shared.ErrorsConstant.Appointment;
+using GarageManagementAPI.Shared.ErrorsConstant.CarModel;
+using GarageManagementAPI.Shared.ErrorsConstant.Workplace;
+using GarageManagementAPI.Shared.Extension;
+using GarageManagementAPI.Shared.ResultModel;
 
-//namespace GarageManagementAPI.Service
-//{
-//    public class AppointmentService : IAppointmentService
-//    {
-//        private readonly IRepositoryManager _repoManager;
-//        private readonly IMapper _mapper;
-//        private readonly IDataShaperManager _dataShaper;
+namespace GarageManagementAPI.Service
+{
+    public class AppointmentService : IAppointmentService
+    {
+        private readonly IRepositoryManager _repoManager;
+        private readonly IMapper _mapper;
+        private readonly IDataShaperManager _dataShaper;
 
-//        public AppointmentService(IRepositoryManager repoManager, IMapper mapper, IDataShaperManager dataShaper)
-//        {
-//            _repoManager = repoManager;
-//            _mapper = mapper;
-//            _dataShaper = dataShaper;
-//        }
-
-//        public async Task<Result<IEnumerable<AppointmentDto>>> GetAppointmentsAsync(AppointmentParameters appointmentParameters, bool trackChanges)
-//        {
-//            var appointments = await _repoManager.Appointment.GetAppointmentsAsync(appointmentParameters, trackChanges);
-
-//            var appointmentsDto = _mapper.Map<IEnumerable<AppointmentDto>>(appointments);
-
-//            return Result<IEnumerable<AppointmentDto>>.Ok(appointmentsDto, appointments.MetaData);
-//        }
-
-//        public async Task<Result> CheckIfCarModelExist(Guid carModelId)
-//        {
-//            var carModel = await _repoManager.CarModel.GetCarModelAsync(carModelId, false);
-
-//            if (carModel == null)
-//                return Result.NotFound([CarModelErrors.GetCarModelNotFoundError(carModelId)]);
-
-//            return Result.Ok();
-//        }
-
-//        public async Task<Result> CheckIfGarageExist(Guid garageId)
-//        {
-//            var workplace = await _repoManager.Workplace.GetWorkplaceByIdAsync(garageId, false);
-
-//            if (workplace == null || workplace.WorkplaceType.Equals(WorkplaceType.Warehouse))
-//                return Result.NotFound([WorkplaceErrors.GetWorkplaceNotFoundError(garageId)]);
-
-//            return Result.Ok();
-//        }
-
-//        public async Task<Result<AppointmentDto>> CreateAppointment(AppointmentDtoForCreate appointmentDtoForCreate)
-//        {
-//            var carModelExist = await CheckIfCarModelExist(appointmentDtoForCreate.CarModelId);
-//            if (!carModelExist.IsSuccess)
-//                return Result<AppointmentDto>.NotFound(carModelExist.Errors!);
-
-//            var garageExist = await CheckIfGarageExist(appointmentDtoForCreate.GarageId);
-//            if (!garageExist.IsSuccess)
-//                return Result<AppointmentDto>.NotFound(garageExist.Errors!);
-
-//            if ((appointmentDtoForCreate.PackageList != null || appointmentDtoForCreate.ProductForSellings != null) && appointmentDtoForCreate.ServiceList != null)
-//                return Result<AppointmentDto>.BadRequest([AppointmentErrors.GetInvalidAppointmentError()]);
-
-//            var appointmentType = DetermineAppointmentType(appointmentDtoForCreate);
-
-//            var appointment = _mapper.Map<Appointment>(appointmentDtoForCreate);
-
-//            appointment.CreatedAt = DateTimeOffset.Now.SEAsiaStandardTime();
-//            appointment.UpdatedAt = DateTimeOffset.Now.SEAsiaStandardTime();
-//            await _repoManager.Appointment.CreateAsync(appointment);
-//            await _repoManager.SaveAsync();
-
-//            var appointmentDto = _mapper.Map<AppointmentDto>(appointment);
-//            return Result<AppointmentDto>.Ok(appointmentDto);
-//        }
+        public AppointmentService(IRepositoryManager repoManager, IMapper mapper, IDataShaperManager dataShaper)
+        {
+            _repoManager = repoManager;
+            _mapper = mapper;
+            _dataShaper = dataShaper;
+        }
 
 
+        public async Task<Result> ConfirmAppointment(Guid garageId, Guid appointmentId, Guid? userId, string? role, AppointmentConfirmationDto appointmentConfirmation)
+        {
+            var garage = await _repoManager.Workplace.GetWorkplaceByIdAsync(garageId, false);
+            if (garage is null || !garage.WorkplaceType.Equals(WorkplaceType.Garage))
+                return Result.NotFound(WorkplaceErrors.GetGarageNotFound(garageId));
 
-//        public async Task<Result<AppointmentDto>> GetAppointmentAsync(Guid id, bool trackChanges)
-//        {
-//            var appointment = await _repoManager.Appointment.GetAppointmentAsync(id, trackChanges);
+            var appointment = await _repoManager.Appointment.GetAppointmentAsync(garageId, appointmentId, true);
+            if (appointment is null)
+                return Result.NotFound(AppointmentErrors.GetAppointmentNotFoundError(appointmentId));
 
-//            if (appointment is null)
-//                return Result<AppointmentDto>.NotFound([AppointmentErrors.GetAppointmentNotFoundError(id)]);
+            var user = await _repoManager.User.GetUserByIdAsync(userId!.Value, false);
+            if (user is null)
+                return Result.NotFound(UserErrors.GetUserNotFoundWithIdError(userId!.Value));
 
-//            var appointmentDto = _mapper.Map<AppointmentDto>(appointment);
+            var statusResult = role switch
+            {
+                nameof(SystemRole.Cashier) when !string.IsNullOrWhiteSpace(appointmentConfirmation.CanceledReason) => Result<AppointmentStatus>.Ok(AppointmentStatus.Rejected),
+                nameof(SystemRole.Customer) when !string.IsNullOrWhiteSpace(appointmentConfirmation.CanceledReason) => Result<AppointmentStatus>.Ok(AppointmentStatus.Canceled),
+                nameof(SystemRole.Cashier) when string.IsNullOrWhiteSpace(appointmentConfirmation.CanceledReason) => Result<AppointmentStatus>.Ok(AppointmentStatus.Approved),
+                _ => Result.BadRequest(AppointmentErrors.GetNotAllowedToConfirmAppointmentError())
+            };
+            if (!statusResult.IsSuccess)
+            {
+                return statusResult;
+            }
 
-//            return Result<AppointmentDto>.Ok(appointmentDto);
-//        }
+            var status = statusResult.GetValue<AppointmentStatus>();
 
-//        private AppointmentType DetermineAppointmentType(AppointmentDtoForCreate appointmentDtoForCreate)
-//        {
-//            if (appointmentDtoForCreate.ProductForSellings != null)
-//                return AppointmentType.SellingProduct;
+            appointment.Status = status;
+            appointment.CanceledReason = appointmentConfirmation.CanceledReason;
+            appointment.EstimatedAppointmentTime = appointmentConfirmation.EstimatedAppointmentTime ?? appointment.EstimatedAppointmentTime;
 
-//            if (appointmentDtoForCreate.PackageList != null)
-//                return AppointmentType.ServicePackageBooking;
+            if (role!.Equals(nameof(SystemRole.Cashier)))
+            {
+                appointment.ApproveByEmployeeId = userId;
+            }
 
-//            return AppointmentType.ServiceBooking;
-//        }
-//    }
-//}
+            _repoManager.Appointment.Update(appointment);
+            await _repoManager.SaveAsync();
+
+            return Result.Ok();
+        }
+
+        public async Task<Result<AppointmentDto>> CreateAppointment(Guid garageId, Guid? userId, string? role, AppointmentDtoCreation appointmentDtoCreation)
+        {
+            var garage = await _repoManager.Workplace.GetWorkplaceByIdAsync(garageId, false);
+            if (garage is null || !garage.WorkplaceType.Equals(WorkplaceType.Garage))
+                return Result<AppointmentDto>.NotFound(WorkplaceErrors.GetGarageNotFound(garageId));
+
+            var user = userId.HasValue ? await _repoManager.User.GetUserByIdAsync(userId!.Value, false) : null;
+            if (userId.HasValue && user is null)
+                return Result<AppointmentDto>.NotFound(UserErrors.GetUserNotFoundWithIdError(userId!.Value));
+
+            var carModel = await _repoManager.CarModel.GetCarModelAsync(appointmentDtoCreation.CarModelId!.Value, false);
+            if (carModel is null)
+                return Result<AppointmentDto>.NotFound(CarModelErrors.GetCarModelNotFoundError(appointmentDtoCreation.CarModelId!.Value));
+
+            if (appointmentDtoCreation.Services is null && appointmentDtoCreation.PackageIds is null)
+                return Result<AppointmentDto>.BadRequest(AppointmentErrors.GetInvalidAppointmentError());
+
+            var appointment = _mapper.Map<Appointment>(appointmentDtoCreation);
+
+
+            var test = await CreateAppointmentDetails(appointmentDtoCreation.Services!);
+            return null;
+        }
+
+        public async Task<IEnumerable<AppointmentDetail>> CreateAppointmentDetails(IEnumerable<ServiceInAppointmentDto> serviceInAppointmentDtos)
+        {
+            var serviceList = serviceInAppointmentDtos.Where(s => s.ServiceId != null).Select(s => s.ServiceId!.Value).Distinct().ToList();
+
+            var serviceInServiceList = await _repoManager.Service.GetServiceByIdsAsync(serviceList, false);
+
+            if (serviceInServiceList.Count() != serviceList.Count)
+            {
+                var notFoundServiceIds = serviceList.Except(serviceInServiceList.Select(s => s.Id));
+                throw new Exception($"Service with id {string.Join(", ", notFoundServiceIds)} not found");
+            }
+
+            var serviceHistoryList = await _repoManager.ServiceHistory.GetServiceHistoriesAsync(serviceList, false);
+
+            return null;
+
+        }
+    }
+}

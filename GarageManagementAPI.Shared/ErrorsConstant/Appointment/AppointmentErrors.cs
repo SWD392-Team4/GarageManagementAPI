@@ -5,9 +5,8 @@ namespace GarageManagementAPI.Shared.ErrorsConstant.Appointment
     public class AppointmentErrors
     {
         public const string AppointmentNotFound = "Appointment not found";
-        public const string InvalidAppointment = "Appointment cannot be created because the service list or package list cannot be exist at the same time with product for sell.";
-
-
+        public const string InvalidAppointment = "Please provide at least one service or package.";
+        public const string NotAllowedToConfirmAppointment = "You are not allowed to confirm this appointment";
 
         public static ErrorsResult GetAppointmentNotFoundError(Guid id)
             => new ErrorsResult
@@ -22,5 +21,13 @@ namespace GarageManagementAPI.Shared.ErrorsConstant.Appointment
                 Code = nameof(InvalidAppointment),
                 Description = InvalidAppointment
             };
+
+        public static ErrorsResult GetNotAllowedToConfirmAppointmentError()
+            => new ErrorsResult
+            {
+                Code = nameof(NotAllowedToConfirmAppointment),
+                Description = NotAllowedToConfirmAppointment
+            };
+
     }
 }

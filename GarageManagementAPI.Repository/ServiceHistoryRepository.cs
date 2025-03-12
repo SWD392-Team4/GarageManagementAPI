@@ -3,7 +3,7 @@ using GarageManagementAPI.Entities.Models;
 using GarageManagementAPI.Repository.Contracts;
 using GarageManagementAPI.Repository.Extensions;
 using GarageManagementAPI.Shared.RequestFeatures;
-using GarageManagementAPI.Shared.Enums.SystemStatuss;
+using GarageManagementAPI.Shared.Extension;
 
 namespace GarageManagementAPI.Repository
 {
@@ -13,14 +13,10 @@ namespace GarageManagementAPI.Repository
         {
 
         }
-        public async Task CreateServicetHisotoryAsync(ServiceHistory productHisotry)
+        public async new Task CreateAsync(ServiceHistory entity)
         {
-            await base.CreateAsync(productHisotry);
-        }
-
-        public void UpdateServiceHistory(ServiceHistory ServiceHistory)
-        {
-            base.Update(ServiceHistory);
+            entity.CreatedAt = DateTimeOffset.UtcNow.SEAsiaStandardTime();
+            await base.CreateAsync(entity);
         }
 
         public async Task<PagedList<ServiceHistory>> GetServiceHistoryByIdSerivceAsync(Guid serviceId, ServiceHistoryParameters ServiceHistoryParameters, bool trackChanges, string? include = null)
@@ -28,7 +24,6 @@ namespace GarageManagementAPI.Repository
             var servicesQuery = FindByCondition(s =>
                   s.ServiceId.Equals(serviceId), trackChanges)
                  .SearchByPrice(ServiceHistoryParameters.Price)
-                 .SearchByStatus(ServiceHistoryParameters.Status)
                  .Sort(ServiceHistoryParameters.OrderBy)
                  .IsInclude(include)
                  .AsQueryable();
@@ -51,8 +46,7 @@ namespace GarageManagementAPI.Repository
         public async Task<PagedList<ServiceHistory>> GetServiceHistoryAsync(ServiceHistoryParameters ServiceHistoryParameters, bool trackChanges, string? include = null)
         {
             var services = await FindAll(trackChanges)
-                .SearchByPrice(ServiceHistoryParameters.Price) 
-                .SearchByStatus(ServiceHistoryParameters.Status)
+                .SearchByPrice(ServiceHistoryParameters.Price)
                 .Sort(ServiceHistoryParameters.OrderBy)
                 .IsInclude(include)
                 .ToListAsync();
@@ -64,18 +58,24 @@ namespace GarageManagementAPI.Repository
             );
         }
 
-        public Task<ServiceHistory?> GetServiceHistoryByPriceAndIdServiceAsync(Guid serviceId, decimal price, bool trackChanges, string? include = null)
+        public async Task<IEnumerable<ServiceHistory>> GetServiceHistoriesAsync(IEnumerable<Guid> ids, bool trackChanges)
         {
-            var serviceHistory = FindByCondition(p => p.ServiceId.Equals(serviceId) && p.Price == price, false)
-                   .OrderByDescending(p => p.UpdatedAt)
-                   .FirstOrDefaultAsync();
-            return serviceHistory;
+            var serviceHistories = await FindByCondition(s => ids.Contains(s.ServiceId), trackChanges)
+                  .GroupBy(s => s.ServiceId)
+                  .Select(g => g.OrderByDescending(s => s.CreatedAt).FirstOrDefault())
+                  .Where(s => s != null)
+                  .Select(s => s!)
+                  .ToListAsync();
+
+            return serviceHistories;
         }
 
-        public Task<ServiceHistory?> GetServiceHistoryByStatusAndIdServiceAsync(Guid serviceId, bool trackChanges, string? include = null)
+        public async Task<ServiceHistory?> GetServiceHistory(Guid serviceId, bool trackChanges, string? include = null)
         {
-            var serviceHistory = FindByCondition(s => s.Status == ServiceHistoryStatus.Active && s.ServiceId == serviceId, false).OrderByDescending(p => p.UpdatedAt)
-                                   .FirstOrDefaultAsync();
+            var serviceHistory = await FindByCondition(s => s.ServiceId.Equals(serviceId), trackChanges)
+                .OrderByDescending(s => s.CreatedAt)
+                .IsInclude(include)
+                .FirstOrDefaultAsync();
             return serviceHistory;
         }
     }

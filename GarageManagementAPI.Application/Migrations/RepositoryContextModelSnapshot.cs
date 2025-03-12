@@ -46,9 +46,6 @@ namespace GarageManagementAPI.Application.Migrations
                     b.Property<string>("CanceledReason")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("CarCondition")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("CarLicensePlateNumber")
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
@@ -77,13 +74,13 @@ namespace GarageManagementAPI.Application.Migrations
                     b.Property<DateTimeOffset>("EstimatedAppointmentTime")
                         .HasColumnType("datetimeoffset");
 
-                    b.Property<DateTimeOffset>("EstimatedEndTime")
+                    b.Property<DateTimeOffset?>("EstimatedEndTime")
                         .HasColumnType("datetimeoffset");
 
                     b.Property<Guid>("GarageId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<int>("Mileage")
+                    b.Property<int?>("Mileage")
                         .HasColumnType("int");
 
                     b.Property<decimal>("Price")
@@ -218,17 +215,6 @@ namespace GarageManagementAPI.Application.Migrations
                     b.Property<int>("CountPerDay")
                         .HasColumnType("int");
 
-                    b.Property<DateTimeOffset>("CreatedAt")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<string>("Status")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
-
-                    b.Property<DateTimeOffset>("UpdatedAt")
-                        .HasColumnType("datetimeoffset");
-
                     b.HasKey("Id")
                         .HasName("appointmentperdayy_id_primary");
 
@@ -248,7 +234,7 @@ namespace GarageManagementAPI.Application.Migrations
                     b.Property<DateTimeOffset>("CreatedAt")
                         .HasColumnType("datetimeoffset");
 
-                    b.Property<Guid>("ProductAtGarageId")
+                    b.Property<Guid?>("ProductAtGarageId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid>("ProductHistoryId")
@@ -3492,6 +3478,9 @@ namespace GarageManagementAPI.Application.Migrations
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
 
+                    b.Property<decimal>("ProductPrice")
+                        .HasColumnType("decimal(18,2)");
+
                     b.Property<string>("Status")
                         .IsRequired()
                         .HasMaxLength(255)
@@ -3522,6 +3511,7 @@ namespace GarageManagementAPI.Application.Migrations
                             ProductCategoryId = new Guid("3a891899-546f-4380-aee2-81c7939a0f99"),
                             ProductDescription = "The Smartphone XYZ Pro is a premium device featuring a 6.7-inch AMOLED display with 4K resolution and HDR10+ technology. Powered by the Snapdragon 888 chipset, 12GB of RAM, and 256GB of internal storage, this phone delivers smooth performance for all tasks. The 108MP main camera supports 8K video recording, and the 5000mAh battery supports 65W fast charging.",
                             ProductName = "Toyota Camry",
+                            ProductPrice = 0m,
                             Status = "Active",
                             UpdatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 0, 36, 40, 0, DateTimeKind.Unspecified), new TimeSpan(0, 7, 0, 0, 0))
                         },
@@ -3534,6 +3524,7 @@ namespace GarageManagementAPI.Application.Migrations
                             ProductCategoryId = new Guid("3a891899-546f-4380-aee2-81c7939a0f99"),
                             ProductDescription = "The UltraBook 2023 is an ultra-thin and lightweight laptop, weighing just 1.2kg, with a 14-inch 2.5K resolution display. It is equipped with a 12th Gen Intel Core i7 processor, 16GB of RAM, and a 512GB SSD. With up to 12 hours of battery life and Thunderbolt 4 connectivity, it is perfect for mobile work and entertainment.",
                             ProductName = "Ford Mustang",
+                            ProductPrice = 0m,
                             Status = "Active",
                             UpdatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 0, 36, 40, 0, DateTimeKind.Unspecified), new TimeSpan(0, 7, 0, 0, 0))
                         },
@@ -3546,6 +3537,7 @@ namespace GarageManagementAPI.Application.Migrations
                             ProductCategoryId = new Guid("3a891899-546f-4380-aee2-81c7939a0f99"),
                             ProductDescription = "The Mirrorless Alpha Z9 is the perfect choice for professional photographers. With a 45MP full-frame sensor, 6K video recording, and 5-axis image stabilization, this camera delivers sharp and true-to-life image quality. It also offers a continuous shooting speed of up to 20 frames per second.",
                             ProductName = "Volkswagen Golf",
+                            ProductPrice = 0m,
                             Status = "Active",
                             UpdatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 0, 36, 40, 0, DateTimeKind.Unspecified), new TimeSpan(0, 7, 0, 0, 0))
                         },
@@ -3558,6 +3550,7 @@ namespace GarageManagementAPI.Application.Migrations
                             ProductCategoryId = new Guid("3a891899-546f-4380-aee2-81c7939a0f99"),
                             ProductDescription = "The SoundWave 360 Smart Speaker features an integrated AI virtual assistant and supports voice control. With 360-degree surround sound and 50W of power, it delivers an immersive audio experience. It connects wirelessly via Bluetooth 5.0 and Wi-Fi, and is compatible with smart home devices.",
                             ProductName = "Honda Civic",
+                            ProductPrice = 0m,
                             Status = "Active",
                             UpdatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 0, 36, 40, 0, DateTimeKind.Unspecified), new TimeSpan(0, 7, 0, 0, 0))
                         });
@@ -3710,14 +3703,6 @@ namespace GarageManagementAPI.Application.Migrations
 
                     b.Property<decimal>("ProductPrice")
                         .HasColumnType("decimal(18, 2)");
-
-                    b.Property<string>("Status")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
-
-                    b.Property<DateTimeOffset>("UpdatedAt")
-                        .HasColumnType("datetimeoffset");
 
                     b.HasKey("Id")
                         .HasName("producthistory_id_primary");
@@ -3943,6 +3928,9 @@ namespace GarageManagementAPI.Application.Migrations
                     b.Property<int>("EstimatedHours")
                         .HasColumnType("int");
 
+                    b.Property<decimal>("Price")
+                        .HasColumnType("decimal(18,2)");
+
                     b.Property<string>("ServiceCategory")
                         .IsRequired()
                         .HasMaxLength(255)
@@ -3987,6 +3975,7 @@ namespace GarageManagementAPI.Application.Migrations
                             CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 0, 36, 40, 0, DateTimeKind.Unspecified), new TimeSpan(0, 7, 0, 0, 0)),
                             Description = "Changing transmission fluid to ensure smooth gear shifts and prolong transmission life.",
                             EstimatedHours = 2,
+                            Price = 0m,
                             ServiceCategory = "Maintenance",
                             ServiceName = "Transmission Fluid Change",
                             Status = "0",
@@ -4002,6 +3991,7 @@ namespace GarageManagementAPI.Application.Migrations
                             CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 0, 36, 40, 0, DateTimeKind.Unspecified), new TimeSpan(0, 7, 0, 0, 0)),
                             Description = "Replacing worn brake pads to restore optimal braking performance.",
                             EstimatedHours = 2,
+                            Price = 0m,
                             ServiceCategory = "Repair",
                             ServiceName = "Brake Pad Replacement",
                             Status = "0",
@@ -4017,6 +4007,7 @@ namespace GarageManagementAPI.Application.Migrations
                             CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 0, 36, 40, 0, DateTimeKind.Unspecified), new TimeSpan(0, 7, 0, 0, 0)),
                             Description = "Conducting a comprehensive inspection to fine-tune engine performance.",
                             EstimatedHours = 1,
+                            Price = 0m,
                             ServiceCategory = "Maintenance",
                             ServiceName = "Engine Tune-Up Inspection",
                             Status = "0",
@@ -4032,6 +4023,7 @@ namespace GarageManagementAPI.Application.Migrations
                             CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 0, 36, 40, 0, DateTimeKind.Unspecified), new TimeSpan(0, 7, 0, 0, 0)),
                             Description = "Repairing suspension components to improve ride comfort and safety.",
                             EstimatedHours = 3,
+                            Price = 0m,
                             ServiceCategory = "Repair",
                             ServiceName = "Suspension Repair",
                             Status = "0",
@@ -4047,6 +4039,7 @@ namespace GarageManagementAPI.Application.Migrations
                             CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 0, 36, 40, 0, DateTimeKind.Unspecified), new TimeSpan(0, 7, 0, 0, 0)),
                             Description = "Upgrading the infotainment system for enhanced connectivity and features.",
                             EstimatedHours = 3,
+                            Price = 0m,
                             ServiceCategory = "Upgrade",
                             ServiceName = "Infotainment System Upgrade",
                             Status = "0",
@@ -4062,6 +4055,7 @@ namespace GarageManagementAPI.Application.Migrations
                             CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 0, 36, 40, 0, DateTimeKind.Unspecified), new TimeSpan(0, 7, 0, 0, 0)),
                             Description = "Lubricating engine components to reduce friction and wear.",
                             EstimatedHours = 1,
+                            Price = 0m,
                             ServiceCategory = "Maintenance",
                             ServiceName = "Engine Oil Lubrication",
                             Status = "0",
@@ -4077,6 +4071,7 @@ namespace GarageManagementAPI.Application.Migrations
                             CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 0, 36, 40, 0, DateTimeKind.Unspecified), new TimeSpan(0, 7, 0, 0, 0)),
                             Description = "Cleaning the roof mechanism to ensure smooth operation and a spotless finish.",
                             EstimatedHours = 1,
+                            Price = 0m,
                             ServiceCategory = "CarWash",
                             ServiceName = "Convertible Roof Cleaning",
                             Status = "0",
@@ -4092,6 +4087,7 @@ namespace GarageManagementAPI.Application.Migrations
                             CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 0, 36, 40, 0, DateTimeKind.Unspecified), new TimeSpan(0, 7, 0, 0, 0)),
                             Description = "Replacing worn wiper blades to maintain clear visibility during rain.",
                             EstimatedHours = 1,
+                            Price = 0m,
                             ServiceCategory = "Maintenance",
                             ServiceName = "Windshield Wiper Replacement",
                             Status = "0",
@@ -4107,6 +4103,7 @@ namespace GarageManagementAPI.Application.Migrations
                             CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 0, 36, 40, 0, DateTimeKind.Unspecified), new TimeSpan(0, 7, 0, 0, 0)),
                             Description = "Thorough cleaning and polishing of the cabin to restore a premium feel.",
                             EstimatedHours = 2,
+                            Price = 0m,
                             ServiceCategory = "Detailing",
                             ServiceName = "Interior Detailing & Polishing",
                             Status = "0",
@@ -4122,6 +4119,7 @@ namespace GarageManagementAPI.Application.Migrations
                             CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 0, 36, 40, 0, DateTimeKind.Unspecified), new TimeSpan(0, 7, 0, 0, 0)),
                             Description = "Inspecting brake fluid levels and condition to ensure reliable braking.",
                             EstimatedHours = 1,
+                            Price = 0m,
                             ServiceCategory = "Maintenance",
                             ServiceName = "Brake Fluid Inspection",
                             Status = "0",
@@ -4137,6 +4135,7 @@ namespace GarageManagementAPI.Application.Migrations
                             CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 0, 36, 40, 0, DateTimeKind.Unspecified), new TimeSpan(0, 7, 0, 0, 0)),
                             Description = "Adjusting wheel angles to ensure even tire wear and improved handling.",
                             EstimatedHours = 2,
+                            Price = 0m,
                             ServiceCategory = "Maintenance",
                             ServiceName = "Wheel Alignment Service",
                             Status = "0",
@@ -4152,6 +4151,7 @@ namespace GarageManagementAPI.Application.Migrations
                             CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 0, 36, 40, 0, DateTimeKind.Unspecified), new TimeSpan(0, 7, 0, 0, 0)),
                             Description = "Repairing faulty suspension components to restore ride quality.",
                             EstimatedHours = 3,
+                            Price = 0m,
                             ServiceCategory = "Repair",
                             ServiceName = "Suspension System Repair",
                             Status = "0",
@@ -4167,6 +4167,7 @@ namespace GarageManagementAPI.Application.Migrations
                             CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 0, 36, 40, 0, DateTimeKind.Unspecified), new TimeSpan(0, 7, 0, 0, 0)),
                             Description = "A complete exterior wash to remove dirt and restore shine.",
                             EstimatedHours = 1,
+                            Price = 0m,
                             ServiceCategory = "CarWash",
                             ServiceName = "Exterior Wash & Clean",
                             Status = "0",
@@ -4182,6 +4183,7 @@ namespace GarageManagementAPI.Application.Migrations
                             CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 0, 36, 40, 0, DateTimeKind.Unspecified), new TimeSpan(0, 7, 0, 0, 0)),
                             Description = "Restoring headlight clarity to improve nighttime visibility.",
                             EstimatedHours = 1,
+                            Price = 0m,
                             ServiceCategory = "Detailing",
                             ServiceName = "Headlight Restoration",
                             Status = "0",
@@ -4197,6 +4199,7 @@ namespace GarageManagementAPI.Application.Migrations
                             CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 0, 36, 40, 0, DateTimeKind.Unspecified), new TimeSpan(0, 7, 0, 0, 0)),
                             Description = "Replacing the air filter to maintain optimal engine performance.",
                             EstimatedHours = 1,
+                            Price = 0m,
                             ServiceCategory = "Maintenance",
                             ServiceName = "Air Filter Replacement",
                             Status = "0",
@@ -4212,6 +4215,7 @@ namespace GarageManagementAPI.Application.Migrations
                             CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 0, 36, 40, 0, DateTimeKind.Unspecified), new TimeSpan(0, 7, 0, 0, 0)),
                             Description = "Repairing malfunctioning brake components for safety.",
                             EstimatedHours = 2,
+                            Price = 0m,
                             ServiceCategory = "Repair",
                             ServiceName = "Brake System Repair",
                             Status = "0",
@@ -4227,6 +4231,7 @@ namespace GarageManagementAPI.Application.Migrations
                             CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 0, 36, 40, 0, DateTimeKind.Unspecified), new TimeSpan(0, 7, 0, 0, 0)),
                             Description = "Refilling the coolant system to prevent overheating.",
                             EstimatedHours = 1,
+                            Price = 0m,
                             ServiceCategory = "Maintenance",
                             ServiceName = "Coolant Refill Service",
                             Status = "0",
@@ -4242,6 +4247,7 @@ namespace GarageManagementAPI.Application.Migrations
                             CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 0, 36, 40, 0, DateTimeKind.Unspecified), new TimeSpan(0, 7, 0, 0, 0)),
                             Description = "Repairing the drive shaft to restore proper power transmission.",
                             EstimatedHours = 3,
+                            Price = 0m,
                             ServiceCategory = "Repair",
                             ServiceName = "Drive Shaft Repair",
                             Status = "0",
@@ -4257,6 +4263,7 @@ namespace GarageManagementAPI.Application.Migrations
                             CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 0, 36, 40, 0, DateTimeKind.Unspecified), new TimeSpan(0, 7, 0, 0, 0)),
                             Description = "Upgrading the ECU for improved performance and responsiveness.",
                             EstimatedHours = 3,
+                            Price = 0m,
                             ServiceCategory = "Upgrade",
                             ServiceName = "Performance ECU Upgrade",
                             Status = "0",
@@ -4272,6 +4279,7 @@ namespace GarageManagementAPI.Application.Migrations
                             CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 0, 36, 40, 0, DateTimeKind.Unspecified), new TimeSpan(0, 7, 0, 0, 0)),
                             Description = "Lubricating the differential to reduce wear and maintain performance.",
                             EstimatedHours = 1,
+                            Price = 0m,
                             ServiceCategory = "Maintenance",
                             ServiceName = "Differential Lubrication",
                             Status = "0",
@@ -4287,6 +4295,7 @@ namespace GarageManagementAPI.Application.Migrations
                             CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 0, 36, 40, 0, DateTimeKind.Unspecified), new TimeSpan(0, 7, 0, 0, 0)),
                             Description = "Polishing leather seats to maintain a luxurious and refined interior.",
                             EstimatedHours = 2,
+                            Price = 0m,
                             ServiceCategory = "Detailing",
                             ServiceName = "Leather Seat Polishing",
                             Status = "0",
@@ -4302,6 +4311,7 @@ namespace GarageManagementAPI.Application.Migrations
                             CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 0, 36, 40, 0, DateTimeKind.Unspecified), new TimeSpan(0, 7, 0, 0, 0)),
                             Description = "Updating the infotainment software to incorporate the latest features.",
                             EstimatedHours = 2,
+                            Price = 0m,
                             ServiceCategory = "Upgrade",
                             ServiceName = "Infotainment Software Update",
                             Status = "0",
@@ -4317,6 +4327,7 @@ namespace GarageManagementAPI.Application.Migrations
                             CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 0, 36, 40, 0, DateTimeKind.Unspecified), new TimeSpan(0, 7, 0, 0, 0)),
                             Description = "Updating software to optimize battery performance and safety.",
                             EstimatedHours = 2,
+                            Price = 0m,
                             ServiceCategory = "Upgrade",
                             ServiceName = "Battery Management Software Update",
                             Status = "0",
@@ -4332,6 +4343,7 @@ namespace GarageManagementAPI.Application.Migrations
                             CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 0, 36, 40, 0, DateTimeKind.Unspecified), new TimeSpan(0, 7, 0, 0, 0)),
                             Description = "Inspecting high voltage cables for damage or wear to ensure EV safety.",
                             EstimatedHours = 1,
+                            Price = 0m,
                             ServiceCategory = "Maintenance",
                             ServiceName = "High Voltage Cable Inspection",
                             Status = "0",
@@ -4347,6 +4359,7 @@ namespace GarageManagementAPI.Application.Migrations
                             CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 0, 36, 40, 0, DateTimeKind.Unspecified), new TimeSpan(0, 7, 0, 0, 0)),
                             Description = "Performing diagnostic tests to ensure hybrid system efficiency.",
                             EstimatedHours = 1,
+                            Price = 0m,
                             ServiceCategory = "Maintenance",
                             ServiceName = "Hybrid System Diagnostic Inspection",
                             Status = "0",
@@ -4362,6 +4375,7 @@ namespace GarageManagementAPI.Application.Migrations
                             CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 0, 36, 40, 0, DateTimeKind.Unspecified), new TimeSpan(0, 7, 0, 0, 0)),
                             Description = "Repairing the electric motor to restore hybrid performance.",
                             EstimatedHours = 3,
+                            Price = 0m,
                             ServiceCategory = "Repair",
                             ServiceName = "Electric Motor Repair",
                             Status = "0",
@@ -4377,6 +4391,7 @@ namespace GarageManagementAPI.Application.Migrations
                             CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 0, 36, 40, 0, DateTimeKind.Unspecified), new TimeSpan(0, 7, 0, 0, 0)),
                             Description = "Upgrading the exhaust system to boost performance and achieve a sporty sound.",
                             EstimatedHours = 3,
+                            Price = 0m,
                             ServiceCategory = "Upgrade",
                             ServiceName = "Sport Exhaust Upgrade",
                             Status = "0",
@@ -4392,6 +4407,7 @@ namespace GarageManagementAPI.Application.Migrations
                             CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 0, 36, 40, 0, DateTimeKind.Unspecified), new TimeSpan(0, 7, 0, 0, 0)),
                             Description = "Changing engine oil to maintain performance and extend engine life.",
                             EstimatedHours = 1,
+                            Price = 0m,
                             ServiceCategory = "Maintenance",
                             ServiceName = "Engine Oil Change",
                             Status = "0",
@@ -4407,6 +4423,7 @@ namespace GarageManagementAPI.Application.Migrations
                             CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 0, 36, 40, 0, DateTimeKind.Unspecified), new TimeSpan(0, 7, 0, 0, 0)),
                             Description = "Upgrading the exhaust for enhanced performance and aggressive sound.",
                             EstimatedHours = 3,
+                            Price = 0m,
                             ServiceCategory = "Upgrade",
                             ServiceName = "Performance Exhaust Upgrade",
                             Status = "0",
@@ -4422,6 +4439,7 @@ namespace GarageManagementAPI.Application.Migrations
                             CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 0, 36, 40, 0, DateTimeKind.Unspecified), new TimeSpan(0, 7, 0, 0, 0)),
                             Description = "Comprehensive repair of engine components to restore peak performance.",
                             EstimatedHours = 4,
+                            Price = 0m,
                             ServiceCategory = "Repair",
                             ServiceName = "Engine Overhaul Repair",
                             Status = "0",
@@ -4437,6 +4455,7 @@ namespace GarageManagementAPI.Application.Migrations
                             CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 0, 36, 40, 0, DateTimeKind.Unspecified), new TimeSpan(0, 7, 0, 0, 0)),
                             Description = "Lubricating the differential to reduce friction in off-road conditions.",
                             EstimatedHours = 1,
+                            Price = 0m,
                             ServiceCategory = "Maintenance",
                             ServiceName = "Differential Lubrication",
                             Status = "0",
@@ -4452,6 +4471,7 @@ namespace GarageManagementAPI.Application.Migrations
                             CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 0, 36, 40, 0, DateTimeKind.Unspecified), new TimeSpan(0, 7, 0, 0, 0)),
                             Description = "Repairing suspension mounts to ensure durability on rough terrain.",
                             EstimatedHours = 3,
+                            Price = 0m,
                             ServiceCategory = "Repair",
                             ServiceName = "Suspension Mount Repair",
                             Status = "0",
@@ -4467,6 +4487,7 @@ namespace GarageManagementAPI.Application.Migrations
                             CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 0, 36, 40, 0, DateTimeKind.Unspecified), new TimeSpan(0, 7, 0, 0, 0)),
                             Description = "Routine engine inspection to detect early signs of wear.",
                             EstimatedHours = 1,
+                            Price = 0m,
                             ServiceCategory = "Maintenance",
                             ServiceName = "Regular Engine Inspection",
                             Status = "0",
@@ -4482,6 +4503,7 @@ namespace GarageManagementAPI.Application.Migrations
                             CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 0, 36, 40, 0, DateTimeKind.Unspecified), new TimeSpan(0, 7, 0, 0, 0)),
                             Description = "Replacing brake pads to maintain effective stopping power.",
                             EstimatedHours = 2,
+                            Price = 0m,
                             ServiceCategory = "Repair",
                             ServiceName = "Brake Pad Replacement",
                             Status = "0",
@@ -4497,6 +4519,7 @@ namespace GarageManagementAPI.Application.Migrations
                             CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 0, 36, 40, 0, DateTimeKind.Unspecified), new TimeSpan(0, 7, 0, 0, 0)),
                             Description = "Exterior wash designed specifically for subcompact cars.",
                             EstimatedHours = 1,
+                            Price = 0m,
                             ServiceCategory = "CarWash",
                             ServiceName = "Compact Car Exterior Wash",
                             Status = "0",
@@ -4512,6 +4535,7 @@ namespace GarageManagementAPI.Application.Migrations
                             CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 0, 36, 40, 0, DateTimeKind.Unspecified), new TimeSpan(0, 7, 0, 0, 0)),
                             Description = "Refilling the coolant to ensure the engine runs at optimal temperatures.",
                             EstimatedHours = 1,
+                            Price = 0m,
                             ServiceCategory = "Maintenance",
                             ServiceName = "Coolant Refill",
                             Status = "0",
@@ -4527,6 +4551,7 @@ namespace GarageManagementAPI.Application.Migrations
                             CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 0, 36, 40, 0, DateTimeKind.Unspecified), new TimeSpan(0, 7, 0, 0, 0)),
                             Description = "Lubricating the power steering system for smooth steering response.",
                             EstimatedHours = 1,
+                            Price = 0m,
                             ServiceCategory = "Maintenance",
                             ServiceName = "Power Steering Fluid Lubrication",
                             Status = "0",
@@ -4542,6 +4567,7 @@ namespace GarageManagementAPI.Application.Migrations
                             CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 0, 36, 40, 0, DateTimeKind.Unspecified), new TimeSpan(0, 7, 0, 0, 0)),
                             Description = "Repairing the brake system to ensure reliable stopping performance.",
                             EstimatedHours = 2,
+                            Price = 0m,
                             ServiceCategory = "Repair",
                             ServiceName = "Brake System Repair",
                             Status = "0",
@@ -4557,6 +4583,7 @@ namespace GarageManagementAPI.Application.Migrations
                             CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 0, 36, 40, 0, DateTimeKind.Unspecified), new TimeSpan(0, 7, 0, 0, 0)),
                             Description = "Upgrading the infotainment system with advanced features for a superior experience.",
                             EstimatedHours = 3,
+                            Price = 0m,
                             ServiceCategory = "Upgrade",
                             ServiceName = "Advanced Infotainment Upgrade",
                             Status = "0",
@@ -4572,6 +4599,7 @@ namespace GarageManagementAPI.Application.Migrations
                             CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 0, 36, 40, 0, DateTimeKind.Unspecified), new TimeSpan(0, 7, 0, 0, 0)),
                             Description = "Comprehensive interior detailing to restore and maintain a luxurious cabin finish.",
                             EstimatedHours = 3,
+                            Price = 0m,
                             ServiceCategory = "Detailing",
                             ServiceName = "Full Interior Detailing",
                             Status = "0",
@@ -4638,14 +4666,6 @@ namespace GarageManagementAPI.Application.Migrations
 
                     b.Property<Guid>("ServiceId")
                         .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Status")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
-
-                    b.Property<DateTimeOffset>("UpdatedAt")
-                        .HasColumnType("datetimeoffset");
 
                     b.HasKey("Id")
                         .HasName("servicehistory_id_primary");
@@ -6127,7 +6147,6 @@ namespace GarageManagementAPI.Application.Migrations
                     b.HasOne("GarageManagementAPI.Entities.Models.ProductAtGarage", "ProductAtGarage")
                         .WithMany("AppointmentReplacementParts")
                         .HasForeignKey("ProductAtGarageId")
-                        .IsRequired()
                         .HasConstraintName("appointmentreplacementpart_productatgarageid_foreign");
 
                     b.HasOne("GarageManagementAPI.Entities.Models.ProductHistory", "ProductHistory")

@@ -143,7 +143,7 @@ namespace api.Services
             var chatMessage = new SignalRDto
             {
                 SenderId = senderDto,
-                ReceiverId = receiverDto!, 
+                ReceiverId = receiverDto!,
                 Message = message,
                 Timestamp = DateTime.Now
             };
@@ -157,14 +157,14 @@ namespace api.Services
             foreach (var managerId in _userConnections.Keys)
             {
                 var manager = await GetUserByRoleCashier(Guid.Parse(managerId));
-                if(manager != null)
+                if (manager != null)
                 {
                     var connectionId = _userConnections[managerId];
                     await Clients.Client(connectionId).SendAsync("receiveMessage", chatMessage);
                 }
             }
 
-            if(receiverId == null && _userConnections.ContainsKey(senderId!))
+            if (receiverId == null && _userConnections.ContainsKey(senderId!))
             {
                 var senderIdConnectionId = _userConnections[senderId];
                 await Clients.Client(senderIdConnectionId).SendAsync("receiveMessage", chatMessage);
@@ -303,7 +303,7 @@ namespace api.Services
             await db.ListRightPushAsync(chatRoomKey, updatedMessages.Select(msg => (RedisValue)msg).ToArray());
         }
 
-        public async Task MarkMessageManagerAsRead(string? receiverId =null)
+        public async Task MarkMessageManagerAsRead(string? receiverId = null)
         {
             var senderId = GetUserId();
 
@@ -358,7 +358,7 @@ namespace api.Services
                     }
                 }
             }
-           
+
             return users;
         }
 
@@ -403,7 +403,7 @@ namespace api.Services
             var user = await _repoManager.User.GetUserByIdAsync(userId, false, "EmployeeInfo,Roles");
 
             if (user is null)
-                return Result<User>.NotFound([UserErrors.GetUserNotFoundWithIdError()]);
+                return Result<User>.NotFound([UserErrors.GetUserNotFoundWithIdError(userId)]);
 
             return Result<User>.Ok(user);
         }
@@ -437,7 +437,7 @@ namespace api.Services
 
         private string? GetUserId()
         {
-            var userId = Context.User?.FindFirstValue("UserId"); 
+            var userId = Context.User?.FindFirstValue("UserId");
             return userId;
         }
 

@@ -5,8 +5,10 @@ namespace GarageManagementAPI.Repository.Contracts
 {
     public interface IAppointmentRepository : IRepositoryBase<Appointment>
     {
-        public Task<PagedList<Appointment>> GetAppointmentsAsync(AppointmentParameters appointmentParameters, bool trackChanges);
+        public Task<PagedList<Appointment>> GetAppointmentsAsync(Guid garageId, AppointmentParameters appointmentParameters, bool trackChanges);
 
-        public Task<Appointment?> GetAppointmentAsync(Guid id, bool trackChanges);
+        public Task<Appointment?> GetAppointmentAsync(Guid garageId, Guid appoitnmentId, bool trackChanges);
+
+        public Task<Appointment?> GetAppointmentAsync(Guid appointmentId, bool trackChanges);
     }
 }

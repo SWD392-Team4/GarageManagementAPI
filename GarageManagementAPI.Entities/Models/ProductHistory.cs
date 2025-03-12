@@ -1,7 +1,4 @@
-﻿using GarageManagementAPI.Shared.Enums.SystemStatuss;
-using System.ComponentModel.DataAnnotations;
-
-namespace GarageManagementAPI.Entities.Models
+﻿namespace GarageManagementAPI.Entities.Models
 {
     public partial class ProductHistory : BaseEntity<ProductHistory>
     {
@@ -9,12 +6,7 @@ namespace GarageManagementAPI.Entities.Models
 
         public decimal ProductPrice { get; set; }
 
-        [EnumDataType(typeof(ProductHistoryStatus))]
-        public ProductHistoryStatus Status { get; set; }
-
         public DateTimeOffset CreatedAt { get; set; }
-
-        public DateTimeOffset UpdatedAt { get; set; }
 
         public virtual ICollection<AppointmentReplacementPart> AppointmentReplacementParts { get; set; } = new List<AppointmentReplacementPart>();
 

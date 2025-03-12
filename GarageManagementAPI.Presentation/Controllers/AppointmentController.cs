@@ -1,13 +1,13 @@
 ﻿using GarageManagementAPI.Service.Contracts;
 using GarageManagementAPI.Shared.DataTransferObjects.Appointment;
-using GarageManagementAPI.Shared.DataTransferObjects.Workplace;
-using GarageManagementAPI.Shared.Extension;
-using GarageManagementAPI.Shared.RequestFeatures;
+using GarageManagementAPI.Shared.Enums;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace GarageManagementAPI.Presentation.Controllers
 {
-    [Route("api/appointments")]
+    [Route("api/workplaces/{garageId}/appointments")]
     [ApiController]
     public class AppointmentController : ApiControllerBase
     {
@@ -15,10 +15,14 @@ namespace GarageManagementAPI.Presentation.Controllers
         {
         }
 
-        [HttpGet]
-        public async Task<IActionResult> GetAppointments([FromQuery] AppointmentParameters appointmentParameters)
+        [HttpPost("{appointmentId:guid}/confirmation")]
+        [Authorize(Roles = $"{nameof(SystemRole.Cashier)}, {nameof(SystemRole.Customer)}")]
+        public async Task<IActionResult> ApproveAppointment(Guid garageId, Guid appointmentId, [FromBody] AppointmentConfirmationDto appointmentConfirmation)
         {
-            var result = await _service.AppointmentService.GetAppointmentsAsync(appointmentParameters, false);
+            var userId = User.FindFirstValue("UserId");
+            var role = User.FindFirstValue("Role");
+
+            var result = await _service.AppointmentService.ConfirmAppointment(garageId, appointmentId, new(userId!), role!, appointmentConfirmation);
 
             return result.Map(
                 onSuccess: Ok,
@@ -26,30 +30,18 @@ namespace GarageManagementAPI.Presentation.Controllers
                 );
         }
 
-        [HttpGet("{appointmentId:guid}", Name = "GetAppointmentById")]
-        public async Task<IActionResult> GetAppointment(Guid appointmentId)
+        [HttpPost]
+        public async Task<IActionResult> CreateAppointment(Guid garageId, [FromBody] AppointmentDtoCreation appointmentDtoCreation)
         {
-            var result = await _service.AppointmentService.GetAppointmentAsync(appointmentId, false);
+            Guid? userId = User.FindFirstValue("UserId") != null ? new Guid(User.FindFirstValue("UserId")!) : (Guid?)null;
+            var role = User.FindFirstValue("Role");
+
+            var result = await _service.AppointmentService.CreateAppointment(garageId, userId, role, appointmentDtoCreation);
             return result.Map(
-                onSuccess: Ok,
+                onSuccess: _ => Created(),
                 onFailure: ProcessError
                 );
         }
 
-        [HttpPost(Name = "CreateAppointment")]
-        public async Task<IActionResult> CreateWorkplace([FromBody] AppointmentDtoForCreate appointmentDtoForCreate)
-        {
-            var result = await _service.AppointmentService.CreateAppointment(appointmentDtoForCreate);
-
-            return result.Map(
-                onSuccess: result =>
-                {
-                    var createdAppointment = result.GetValue<AppointmentDto>();
-
-                    return CreatedAtRoute("GetAppointmentById", new { appointmentId = createdAppointment.Id }, result);
-                },
-                onFailure: ProcessError
-                );
-        }
     }
 }

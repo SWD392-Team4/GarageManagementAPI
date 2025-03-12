@@ -86,7 +86,7 @@ namespace GarageManagementAPI.Repository
         {
             package.CreatedAt = DateTimeOffset.UtcNow.SEAsiaStandardTime();
             package.UpdatedAt = DateTimeOffset.UtcNow.SEAsiaStandardTime();
-
+            package.Status = PackageStatus.Active;
             await base.CreateAsync(package);
         }
 
