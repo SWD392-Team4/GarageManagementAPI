@@ -51,10 +51,19 @@ namespace GarageManagementAPI.Service
             return Result<IEnumerable<ExpandoObject>>.Ok(goodsIssuedsShaped, goodsIssuedsWithMetadata.MetaData);
         }
 
-        public Task<Result<IEnumerable<ExpandoObject>>> GetGoodsIssuedDetailsAsync(Guid goodGoodsIssued, GoodsIssuedDetailParameters goodsIssuedDetailParameters, string? include)
+        public async Task<Result<IEnumerable<ExpandoObject>>> GetGoodsIssuedDetailsAsync(Guid goodsIssuedDetail, GoodsIssuedDetailParameters goodsIssuedDetailParameters, bool trackChanges, string? include)
         {
-            throw new NotImplementedException();
+
+            var goodsIssuedsWithMetadata = await _repoManager.GoodsIssuedDetail.GetGoodsIssuedDetailsAsync(goodsIssuedDetail, goodsIssuedDetailParameters, trackChanges, include);
+
+            var goodsIssuedsDto = _mapper.Map<IEnumerable<GoodsIssuedDetailDto>>(goodsIssuedsWithMetadata);
+
+            var goodsIssuedsShaped = _dataShaper.GoodsIssuedDetail.ShapeData(goodsIssuedsDto, goodsIssuedDetailParameters.Fields);
+
+            return Result<IEnumerable<ExpandoObject>>.Ok(goodsIssuedsShaped, goodsIssuedsWithMetadata.MetaData);
         }
+
+
         private async Task<bool> GetAndCheckIfWarehouseIdIsNotExist(Guid createdWareHouseManagerId)
         {
             var createdWareHouseManager = await _repoManager.Workplace.GetWorkplaceByIdAsync(createdWareHouseManagerId, false);
@@ -76,6 +85,6 @@ namespace GarageManagementAPI.Service
             return goodsIssuedDetail.OkResult();
         }
 
-      
+        
     }
 }

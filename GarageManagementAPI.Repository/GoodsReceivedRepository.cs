@@ -93,5 +93,29 @@ namespace GarageManagementAPI.Repository
         {
             base.Update(goodsReceived);
         }
+
+        public async Task<PagedList<GoodsReceived>> GetGoodsReceivedsAsync(Guid warehouseId, GoodsReceivedParameters goodsReceivedParameters, bool trackChanges, string? include = null)
+        {
+            var goodsReceived = await FindByCondition(gr => gr.WarehouseId.Equals(warehouseId),trackChanges)
+                .SearchByRefereneceNumber(goodsReceivedParameters.RefereneceNumber)
+                .SearchByInvoiceCode(goodsReceivedParameters.InvoiceCode)
+                .SearchByStatus(goodsReceivedParameters.Status)
+                .SearchByPrice(goodsReceivedParameters.MinPrice, goodsReceivedParameters.MaxPrice)
+                .SearchByDate(goodsReceivedParameters.CreatedAt)
+                .SearchByDate(goodsReceivedParameters.UpdatedAt)
+                .SearchBySourceAddress(goodsReceivedParameters.SourceAddress)
+                .SearchBySourceDistrict(goodsReceivedParameters.SourceDistrict)
+                .SearchBySourceProvince(goodsReceivedParameters.SourceProvince)
+                .SearchBySourceWards(goodsReceivedParameters.SourceWards)
+                .SearchByStatus(goodsReceivedParameters.Status)
+                .IsInclude(include)
+                .ToListAsync();
+
+            return PagedList<GoodsReceived>.ToPagedList(
+                goodsReceived,
+                goodsReceivedParameters.PageNumber,
+                goodsReceivedParameters.PageSize
+            );
+        }
     }
 }

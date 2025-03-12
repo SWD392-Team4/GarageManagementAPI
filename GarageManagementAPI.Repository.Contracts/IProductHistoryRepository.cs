@@ -11,6 +11,7 @@ namespace GarageManagementAPI.Repository.Contracts
         Task<ProductHistory?> GetProductHistoryByStatusAndIdProductAsync(Guid productId, bool trackChanges, string? include = default);
         Task<PagedList<ProductHistory>> GetProductHistoryAsync(ProductHistoryParameters productHistoryParameters, bool trackChanges, string? include = default);
         Task CreateProductHisotoryAsync(ProductHistory productHisotry);
+        Task<ProductHistory?> GetProductHistoryByGoodsIssuedDetails(Guid productId);
         void UpdateProductHistory(ProductHistory productHistory);
     }
 }

@@ -10,6 +10,7 @@ namespace GarageManagementAPI.Repository.Contracts
         Task<GoodsReceived?> GetGoodsReceivedByInvoiceCodeAsync(Guid? goodsReceivedId, string invoiceCode, bool trackChanges, string? include = default);
         Task<GoodsReceived?> GetGoodsReceivedByAddressAsync(Guid? goodsReceivedId, GoodsReceived goodsReceived, bool trackChanges, string? include = default);
         Task<PagedList<GoodsReceived>> GetGoodsReceivedsAsync(GoodsReceivedParameters goodsReceivedParameters, bool trackChanges, string? include = default);
+        Task<PagedList<GoodsReceived>> GetGoodsReceivedsAsync(Guid warehouseId, GoodsReceivedParameters goodsReceivedParameters, bool trackChanges, string? include = default);
         Task CreateGoodsReceivedAsync(GoodsReceived goodsReceived);
         void UpdateGoodsReceived(GoodsReceived goodsReceived);
     }
