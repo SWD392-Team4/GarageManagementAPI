@@ -12,8 +12,10 @@ namespace GarageManagementAPI.Entities.Models
 
         public string ProductName { get; set; } = null!;
 
-        [DatabaseGenerated(DatabaseGeneratedOption.None)] // Tránh EF tự sinh giá trị
+        [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public string ProductBarcode { get; set; } = null!;
+
+        public decimal ProductPrice { get; set; }
 
         public string ProductDescription { get; set; } = null!;
 

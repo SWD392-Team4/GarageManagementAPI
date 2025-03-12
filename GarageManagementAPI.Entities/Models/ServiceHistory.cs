@@ -9,12 +9,7 @@ namespace GarageManagementAPI.Entities.Models
 
         public decimal Price { get; set; }
 
-        [EnumDataType(typeof(ServiceHistoryStatus))]
-        public ServiceHistoryStatus Status { get; set; }
-
         public DateTimeOffset CreatedAt { get; set; }
-
-        public DateTimeOffset UpdatedAt { get; set; }
 
         public virtual ICollection<AppointmentDetail> AppointmentDetails { get; set; } = new List<AppointmentDetail>();
 

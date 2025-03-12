@@ -32,14 +32,17 @@ namespace GarageManagementAPI.Service
         public async Task<Result<ProductDto>> CreateProductAsync(ProductDtoForCreation productDtoForCreation)
         {
             var productNameAndBarCodeResult = await CheckIfProductExistByNameAndBrandOrBarCode(productDtoForCreation);
-            var brandResult = await GetAndCheckIfBrandIsExist(productDtoForCreation.BrandId);
-            var productCategoryResult = await GetAndCheckIfProductCategoryIsExist(productDtoForCreation.ProductCategoryId);
             if (productNameAndBarCodeResult)
                 return Result<ProductDto>.BadRequest([ProductErrors.GetProductNameAlreadyExistError(productDtoForCreation)]);
-            if (productCategoryResult)
-                return Result<ProductDto>.BadRequest([ProductErrors.GetProductCategoryIsNotFound(productDtoForCreation.ProductCategoryId)]);
+
+            var brandResult = await GetAndCheckIfBrandIsExist(productDtoForCreation.BrandId);
             if (brandResult)
                 return Result<ProductDto>.BadRequest([ProductErrors.GetBrandIsNotFound(productDtoForCreation.BrandId)]);
+
+            var productCategoryResult = await GetAndCheckIfProductCategoryIsExist(productDtoForCreation.ProductCategoryId);
+            if (productCategoryResult)
+                return Result<ProductDto>.BadRequest([ProductErrors.GetProductCategoryIsNotFound(productDtoForCreation.ProductCategoryId)]);
+
             var productEntity = _mapper.Map<Product>(productDtoForCreation);
 
             productEntity.CreatedAt = DateTimeOffset.UtcNow.SEAsiaStandardTime();
@@ -49,10 +52,10 @@ namespace GarageManagementAPI.Service
             if (string.IsNullOrWhiteSpace(productEntity.ProductBarcode)) productEntity.ProductBarcode = this.GenerateBarcode();
 
             await _repoManager.Product.CreateProductAsync(productEntity);
+            await CreateProductHistoryAsync(productEntity);
+
             await _repoManager.SaveAsync();
 
-            //Create Product History
-            await CreateProductHistoryAsync(productEntity.Id, productDtoForCreation.ProductPrice);
 
             var productDtoToReturn = _mapper.Map<ProductDto>(productEntity);
 
@@ -62,21 +65,30 @@ namespace GarageManagementAPI.Service
         public async Task<Result> UpdateProduct(Guid productId, ProductDtoForUpdate productDtoForUpdate, bool trackChanges, string? include = null)
         {
             var productResult = await GetAndCheckIfProductExist(productId, trackChanges);
-            var brandResult = await GetAndCheckIfBrandIsExist(productDtoForUpdate.BrandId);
-            var productCategoryResult = await GetAndCheckIfProductCategoryIsExist(productDtoForUpdate.ProductCategoryId);
             if (!productResult.IsSuccess)
                 return Result<ProductDtoForUpdate>.Failure(productResult.StatusCode, productResult.Errors!);
-            if (productCategoryResult)
-                return Result<ProductDto>.BadRequest([ProductErrors.GetProductCategoryIsNotFound(productDtoForUpdate.ProductCategoryId)]);
+
+            var brandResult = await GetAndCheckIfBrandIsExist(productDtoForUpdate.BrandId);
             if (brandResult)
                 return Result<ProductDto>.BadRequest([ProductErrors.GetBrandIsNotFound(productDtoForUpdate.BrandId)]);
 
+            var productCategoryResult = await GetAndCheckIfProductCategoryIsExist(productDtoForUpdate.ProductCategoryId);
+            if (productCategoryResult)
+                return Result<ProductDto>.BadRequest([ProductErrors.GetProductCategoryIsNotFound(productDtoForUpdate.ProductCategoryId)]);
+
             var productEntity = productResult.GetValue<Product>();
-            _mapper.Map(productDtoForUpdate, productEntity);
+
+            if (!productEntity.ProductPrice.Equals(productDtoForUpdate.ProductPrice))
+            {
+                _mapper.Map(productDtoForUpdate, productEntity);
+                await CreateProductHistoryAsync(productEntity);
+
+            }
+            else
+                _mapper.Map(productDtoForUpdate, productEntity);
 
             productEntity.UpdatedAt = DateTimeOffset.UtcNow.SEAsiaStandardTime();
             //Create Product History
-            await CreateProductHistoryAsync(productId, productDtoForUpdate.ProductPrice);
 
             await _repoManager.SaveAsync();
 
@@ -185,54 +197,12 @@ namespace GarageManagementAPI.Service
 
             return product.OkResult();
         }
-        private async Task<Result<ProductHistoryDto>> CreateProductHistoryAsync(Guid productId, decimal price)
+
+        private async Task CreateProductHistoryAsync(Product product)
         {
-            var checkPrice = await GetAndCheckIfProductHistoryByIdAndPrice(productId, price);
-            if (checkPrice)
-                return Result<ProductHistoryDto>.BadRequest([ProductHistoryErrors.GetProductHistoryPriceAlreadyExistError(price)]);
+            var productHistory = _mapper.Map<ProductHistory>(product);
 
-            await UpdateStatusProductHistory(productId);
-
-            var productEntity = new ProductHistory
-            {
-                ProductId = productId,
-                ProductPrice = price,
-                Status = ProductHistoryStatus.Active,
-                CreatedAt = DateTimeOffset.UtcNow.SEAsiaStandardTime(),
-                UpdatedAt = DateTimeOffset.UtcNow.SEAsiaStandardTime(),
-            };
-
-            await _repoManager.ProductHistory.CreateProductHisotoryAsync(productEntity);
-            await _repoManager.SaveAsync();
-
-            var productHistoryDtoToReturn = _mapper.Map<ProductHistoryDto>(productEntity);
-
-            return productHistoryDtoToReturn.CreatedResult();
-        }
-
-
-        private async Task UpdateStatusProductHistory(Guid productId)
-        {
-            var productEntity = await _repoManager.ProductHistory.GetProductHistoryByStatusAndIdProductAsync(productId, false);
-
-            if (productEntity != null)
-            {
-                productEntity.Status = ProductHistoryStatus.Inactive;
-                productEntity.UpdatedAt = DateTimeOffset.UtcNow;
-                _repoManager.ProductHistory.UpdateProductHistory(productEntity);
-                await _repoManager.SaveAsync();
-            }
-        }
-
-        private async Task<bool> GetAndCheckIfProductHistoryByIdAndPrice(Guid productId, decimal price)
-        {
-            var latestProductHistory = await _repoManager.ProductHistory.GetProductHistoryByPriceAndIdProductAsync(productId, price, false);
-
-            if (latestProductHistory != null)
-            {
-                return true;
-            }
-            return false;
+            await _repoManager.ProductHistory.CreateAsync(productHistory);
         }
 
         private string GenerateBarcode()

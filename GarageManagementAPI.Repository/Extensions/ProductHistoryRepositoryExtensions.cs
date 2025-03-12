@@ -14,14 +14,8 @@ namespace GarageManagementAPI.Repository.Extensions
             if (price == 0 || price < 0)
             {
                 return product;
-            }      
+            }
             return product.Where(p => p.ProductPrice == price);
-        }
-
-        public static IQueryable<ProductHistory> SearchByStatus(this IQueryable<ProductHistory> products, ProductHistoryStatus? status)
-        {
-            if (status is null) return products;
-            return products.Where(p => p.Status == status);
         }
 
         public static IQueryable<ProductHistory> IsInclude(this IQueryable<ProductHistory> product, string? fieldsString)
@@ -39,8 +33,8 @@ namespace GarageManagementAPI.Repository.Extensions
 
                 if (property != null)
                 {
-                        // Bao gồm các tất cả thuộc tính 
-                        product = product.Include(field.Trim());
+                    // Bao gồm các tất cả thuộc tính 
+                    product = product.Include(field.Trim());
                 }
             }
             return product;
@@ -50,12 +44,12 @@ namespace GarageManagementAPI.Repository.Extensions
         public static IQueryable<ProductHistory> Sort(this IQueryable<ProductHistory> products, string? orderByQueryString)
         {
             if (string.IsNullOrWhiteSpace(orderByQueryString))
-                return products.OrderBy(p => p.ProductPrice);  
+                return products.OrderBy(p => p.ProductPrice);
 
             var orderQuery = QueryBuilder.CreateOrderQuery<ProductHistory>(orderByQueryString, ProductHistory.PropertyInfos);
 
             if (string.IsNullOrWhiteSpace(orderQuery))
-                return products.OrderBy(p => p.ProductPrice);  
+                return products.OrderBy(p => p.ProductPrice);
 
             return products.OrderBy(orderQuery);
         }
