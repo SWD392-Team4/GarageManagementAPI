@@ -14,6 +14,6 @@ namespace GarageManagementAPI.Service.Contracts
 
         Task<Result<AppointmentDto>> CreateAppointment(Guid garageId, Guid? userId, AppointmentDtoForCreation appointmentDtoCreation);
 
-        Task<Result<AppointmentDto>> ConfirmAppointment(Guid garageId, Guid appointmentId, string? userId, string? role, AppointmentDtoForConfirmation appointmentConfirmation);
+        //Task<Result<AppointmentDto>> ConfirmAppointment(Guid garageId, Guid appointmentId, string? userId, string? role, AppointmentDtoForConfirmation appointmentConfirmation);
     }
 }

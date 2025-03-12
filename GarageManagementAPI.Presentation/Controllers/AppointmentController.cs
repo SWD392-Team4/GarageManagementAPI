@@ -18,19 +18,19 @@ namespace GarageManagementAPI.Presentation.Controllers
         {
         }
 
-        [HttpPost("{appointmentId:guid}/confirmation")]
-        public async Task<IActionResult> ApproveAppointment(Guid garageId, Guid appointmentId, [FromBody] AppointmentDtoForConfirmation appointmentConfirmation)
-        {
-            var userId = User.FindFirstValue("UserId");
-            var role = User.FindFirstValue("Role");
+        //[HttpPost("{appointmentId:guid}/confirmation")]
+        //public async Task<IActionResult> ApproveAppointment(Guid garageId, Guid appointmentId, [FromBody] AppointmentDtoForConfirmation appointmentConfirmation)
+        //{
+        //    var userId = User.FindFirstValue("UserId");
+        //    var role = User.FindFirstValue("Role");
 
-            var result = await _service.AppointmentService.ConfirmAppointment(garageId, appointmentId, new(userId!), role!, appointmentConfirmation);
+        //    var result = await _service.AppointmentService.ConfirmAppointment(garageId, appointmentId, new(userId!), role!, appointmentConfirmation);
 
-            return result.Map(
-                onSuccess: Ok,
-                onFailure: ProcessError
-                );
-        }
+        //    return result.Map(
+        //        onSuccess: Ok,
+        //        onFailure: ProcessError
+        //        );
+        //}
 
         [HttpGet]
         public async Task<IActionResult> GetAllAppointments(Guid garageId, [FromQuery] AppointmentParameters appointmentParameters)
