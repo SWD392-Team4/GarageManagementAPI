@@ -16,5 +16,6 @@ namespace GarageManagementAPI.Shared.DataTransferObjects.GoodsReceivedDetail
         public DateTimeOffset CreatedAt { get; set; }
 
         public DateTimeOffset UpdatedAt { get; set; }
+        public Guid ProductId { get; set; }
     }
 }
