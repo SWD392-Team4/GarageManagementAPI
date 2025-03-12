@@ -79,5 +79,13 @@ namespace GarageManagementAPI.Repository
 
             return productHistory;
         }
+
+        public async Task<ProductHistory?> GetProductHistoryByGoodsIssuedDetails(Guid productId)
+        {
+            var productHistory = await FindByCondition(ph => ph.ProductId == productId, false)
+                                     .OrderByDescending(ph => ph.CreatedAt)
+                                     .FirstOrDefaultAsync();
+            return productHistory;
+        }
     }
 }

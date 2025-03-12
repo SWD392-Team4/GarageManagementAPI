@@ -54,6 +54,7 @@ namespace GarageManagementAPI.Service
 
 
             var goodsIssuedEntity = _mapper.Map<GoodsIssued>(goodsIssuedDtoForCreation);
+
             goodsIssuedEntity.CreatedWareHouseManagerId = createdWarehouseManagerId;
             goodsIssuedEntity.CreatedAt = DateTimeOffset.UtcNow.SEAsiaStandardTime();
             goodsIssuedEntity.UpdatedAt = DateTimeOffset.UtcNow.SEAsiaStandardTime();
@@ -61,7 +62,10 @@ namespace GarageManagementAPI.Service
 
             foreach (var goodsIssuedDetail in goodsIssuedDtoForCreation.gooodsIssuedDetails)
             {
-                goodsIssuedEntity.TotalCost += goodsIssuedDetail.Quantity * goodsIssuedDetail.UnitPrice;
+                var productAtWarehouse = await _repoManager.ProductAtWarehouse.GetProductAtWarehouse(goodsIssuedDetail.ProductAtWareHouseId, false, "GoodsReceivedDetail");
+                var goodsReceivedDetail = await _repoManager.GoodsReceivedDetail.GetGoodsReceivedDetailAsync(productAtWarehouse!.GoodsReceivedDetailId, false);
+                var productHistory = await _repoManager.ProductHistory.GetProductHistoryByGoodsIssuedDetails(goodsReceivedDetail!.ProductId);
+                goodsIssuedEntity.TotalCost += goodsIssuedDetail.Quantity * productHistory!.ProductPrice;
             }
 
             await _repoManager.GoodsIssued.CreateGoodsIssuedAsync(goodsIssuedEntity);
@@ -121,7 +125,11 @@ namespace GarageManagementAPI.Service
         private async Task<Result<GoodsIssuedDetailDto>> CreateGoodsIssuedDetailAsync(GoodsIssuedDetailDtoForCreation goodsIssuedDetailDtoForCreation, Guid goodsIssuedId)
         {
             var goodsIssuedDetailEntity = _mapper.Map<GoodsIssuedDetail>(goodsIssuedDetailDtoForCreation);
+            var productAtWarehouse = await _repoManager.ProductAtWarehouse.GetProductAtWarehouse(goodsIssuedDetailDtoForCreation.ProductAtWareHouseId, false, "GoodsReceivedDetail");
+            var goodsReceivedDetail = await _repoManager.GoodsReceivedDetail.GetGoodsReceivedDetailAsync(productAtWarehouse!.GoodsReceivedDetailId, false);
+            var productHistory = await _repoManager.ProductHistory.GetProductHistoryByGoodsIssuedDetails(goodsReceivedDetail!.ProductId);
 
+            goodsIssuedDetailEntity.UnitPrice = productHistory!.ProductPrice;
             goodsIssuedDetailEntity.GoodsIssuedId = goodsIssuedId;
             goodsIssuedDetailEntity.CreatedAt = DateTimeOffset.UtcNow.SEAsiaStandardTime();
             goodsIssuedDetailEntity.UpdatedAt = DateTimeOffset.UtcNow.SEAsiaStandardTime();
@@ -131,8 +139,10 @@ namespace GarageManagementAPI.Service
             await _repoManager.SaveAsync();
 
             var goodsIssuedDetailDtoToReturn = _mapper.Map<GoodsIssuedDetailDto>(goodsIssuedDetailEntity);
+
             await this.CreateGoodsTransaction(goodsIssuedDetailDtoForCreation.GoodsReceivedId, goodsIssuedDetailEntity.Id);
             await this.UpdateProductAtWareHouse(goodsIssuedDetailEntity.ProductAtWareHouseId, goodsIssuedDetailEntity.Quantity, true);
+
             return goodsIssuedDetailDtoToReturn.CreatedResult();
         }
 

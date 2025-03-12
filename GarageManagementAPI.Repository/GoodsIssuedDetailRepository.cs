@@ -10,7 +10,7 @@ namespace GarageManagementAPI.Repository
     {
         public GoodsIssuedDetailRepository(RepositoryContext repositoryContext) : base(repositoryContext)
         {
-            
+
         }
 
         public async Task CreateGoodsIssuedDetailAsync(GoodsIssuedDetail goodsIssuedDetail)
@@ -20,7 +20,7 @@ namespace GarageManagementAPI.Repository
 
         public async Task<GoodsIssuedDetail?> GetGoodsIssuedDetailAsync(Guid goodsIssusedDetailId, bool trackChanges, string? include = null)
         {
-            var goodIssuedDetail = include == null ? await FindByCondition(g => g.GoodsIssuedId.Equals(goodsIssusedDetailId), trackChanges).SingleOrDefaultAsync() 
+            var goodIssuedDetail = include == null ? await FindByCondition(g => g.GoodsIssuedId.Equals(goodsIssusedDetailId), trackChanges).SingleOrDefaultAsync()
                 :
                 await FindByCondition(g => g.GoodsIssuedId.Equals(goodsIssusedDetailId), trackChanges).IsInclude(include).SingleOrDefaultAsync();
             return goodIssuedDetail;
@@ -41,9 +41,31 @@ namespace GarageManagementAPI.Repository
                 );
         }
 
-        public Task<PagedList<GoodsIssuedDetail>> GetGoodsIssuedDetailsAsync(Guid goodsReceived, GoodsIssuedDetailParameters goodsReceivedParameters, string? include = null)
+        public async Task<GoodsIssuedDetail?> GetGoodsIssuedDetailsAsync(Guid goodsIssuedDetailId, bool trackChanges)
         {
-            throw new NotImplementedException();
+            var goodsIssuedDetail = await FindAll(trackChanges)
+                                        .Include(g => g.ProductAtWareHouse)
+                                        .ThenInclude(pw => pw.GoodsReceivedDetail)
+                                        .Where(gid => gid.Id == goodsIssuedDetailId)
+                                        .FirstOrDefaultAsync();
+            return goodsIssuedDetail;
+            }
+
+        public async Task<PagedList<GoodsIssuedDetail>> GetGoodsIssuedDetailsAsync(Guid goodsIssuedId, GoodsIssuedDetailParameters goodsReceivedParameters, bool trackChanges, string? include)
+        {
+
+            var goodIssuedDetails = await FindByCondition(gi => gi.GoodsIssuedId.Equals(goodsIssuedId),trackChanges)
+                .SearchByQuantity(goodsReceivedParameters.minQuantity, goodsReceivedParameters.maxQuantity)
+                .SearchByCreatedAt(goodsReceivedParameters.CreatedAt)
+                .SearchByUpdatedAt(goodsReceivedParameters.UpdatedAt)
+                .SearchByStatus(goodsReceivedParameters.Status)
+                .ToListAsync();
+
+            return PagedList<GoodsIssuedDetail>.ToPagedList(
+                goodIssuedDetails,
+                goodsReceivedParameters.PageNumber,
+                goodsReceivedParameters.PageSize
+                );
         }
 
         public void UpdateGoodsIssuedDetailAsync(GoodsIssuedDetail goodsIssuedDetail)
