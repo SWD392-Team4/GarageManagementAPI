@@ -4,6 +4,7 @@ using GarageManagementAPI.Repository.Extensions;
 using GarageManagementAPI.Shared.Enums.SystemStatuss;
 using GarageManagementAPI.Shared.Extension;
 using GarageManagementAPI.Shared.RequestFeatures;
+using GarageManagementAPI.Shared.Utilities;
 using Microsoft.EntityFrameworkCore;
 
 namespace GarageManagementAPI.Repository
@@ -19,17 +20,25 @@ namespace GarageManagementAPI.Repository
             return await FindByCondition(e => e.Id.Equals(appointmentId), trackChanges).SingleOrDefaultAsync();
         }
 
+        public async Task<IEnumerable<Appointment>> GetAppointmentAsync(DateTimeOffset EstimatedAppointmentTime, bool trackChanges)
+        {
+            return await FindByCondition(e => e.EstimatedAppointmentTime.Year == EstimatedAppointmentTime.Year &&
+                                                e.EstimatedAppointmentTime.Month == EstimatedAppointmentTime.Month &&
+                                                e.EstimatedAppointmentTime.Day == EstimatedAppointmentTime.Day, trackChanges).ToListAsync();
+        }
+
         public async Task<Appointment?> GetAppointmentAsync(Guid garageId, Guid appointmentId, bool trackChanges)
         {
             return await FindByCondition(e => e.GarageId.Equals(garageId) && e.Id.Equals(appointmentId), trackChanges).SingleOrDefaultAsync();
         }
 
-        public new async Task CreateAsync(Appointment entity)
+        public async Task CreateAsync(Guid garageId, Appointment entity)
         {
+            entity.GarageId = garageId;
             entity.CreatedAt = DateTimeOffset.UtcNow.SEAsiaStandardTime();
             entity.UpdatedAt = DateTimeOffset.UtcNow.SEAsiaStandardTime();
             entity.Status = AppointmentStatus.Pending;
-
+            entity.VerificationCode = CodeGenerator.GenerateRandomCode(6);
             await base.CreateAsync(entity);
         }
 
@@ -42,6 +51,7 @@ namespace GarageManagementAPI.Repository
         public async Task<PagedList<Appointment>> GetAppointmentsAsync(Guid garageId, AppointmentParameters appointmentParameters, bool trackChanges)
         {
             var appointments = await FindByCondition(a => a.GarageId.Equals(garageId), trackChanges)
+                .FilterByTime(appointmentParameters.FromTime, appointmentParameters.ToTime)
                 .FilterByEmployeeApprovedId(appointmentParameters.Employee)
                 .FilterByCustomerName(appointmentParameters.CustomerName)
                 .FilterByCustomerEmail(appointmentParameters.CustomerEmail)

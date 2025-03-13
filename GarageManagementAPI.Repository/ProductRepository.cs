@@ -3,6 +3,7 @@ using GarageManagementAPI.Entities.Models;
 using GarageManagementAPI.Repository.Contracts;
 using GarageManagementAPI.Repository.Extensions;
 using GarageManagementAPI.Shared.RequestFeatures;
+using GarageManagementAPI.Shared.Extension;
 
 namespace GarageManagementAPI.Repository
 {
@@ -12,32 +13,31 @@ namespace GarageManagementAPI.Repository
         {
 
         }
-        public async Task CreateProductAsync(Product product)
+        public async new Task CreateAsync(Product entity)
         {
-            await base.CreateAsync(product);
+            entity.CreatedAt = DateTimeOffset.UtcNow.SEAsiaStandardTime();
+            entity.UpdatedAt = DateTimeOffset.UtcNow.SEAsiaStandardTime();
+            await base.CreateAsync(entity);
         }
 
-        public void UpdateProductAsync(Product product)
-        {
-            base.Update(product);
-        }
 
         public async Task<Product?> GetProductByBarCodeAsync(string barcode, bool trackChanges, string? include = null)
         {
-            var product = include is null ?
-            await FindByCondition(p => p.ProductBarcode.Equals(barcode), trackChanges).SingleOrDefaultAsync() :
-            await FindByCondition(p => p.ProductBarcode.Equals(barcode), trackChanges).IsInclude(include).SingleOrDefaultAsync();
+            var product = await FindByCondition(p => p.ProductBarcode.Equals(barcode), trackChanges).IsInclude(include).SingleOrDefaultAsync();
 
             return product;
         }
 
         public async Task<Product?> GetProductByIdAsync(Guid productId, bool trackChanges, string? include = null)
         {
-            var product = include is null ?
-            await FindByCondition(p => p.Id.Equals(productId), trackChanges).SingleOrDefaultAsync() :
-            await FindByCondition(p => p.Id.Equals(productId), trackChanges).IsInclude(include).SingleOrDefaultAsync();
+            var product = await FindByCondition(p => p.Id.Equals(productId), trackChanges).IsInclude(include).SingleOrDefaultAsync();
 
             return product;
+        }
+
+        public async Task<IEnumerable<Product>> GetProductsAsync(IEnumerable<Guid> productIds, bool trackChanges)
+        {
+            return await FindByCondition(p => productIds.Contains(p.Id), trackChanges).ToListAsync();
         }
 
         public async Task<PagedList<Product>> GetProductsAsync(ProductParameters productParameters, bool trackChanges, string? include = null)

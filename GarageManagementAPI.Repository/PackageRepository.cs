@@ -5,6 +5,7 @@ using GarageManagementAPI.Shared.Enums.SystemStatuss;
 using GarageManagementAPI.Shared.Extension;
 using GarageManagementAPI.Shared.RequestFeatures;
 using Microsoft.EntityFrameworkCore;
+using System.Linq;
 using System.Runtime.Remoting;
 
 namespace GarageManagementAPI.Repository
@@ -135,6 +136,11 @@ namespace GarageManagementAPI.Repository
                 count,
                 packageParameters.PageNumber,
                 packageParameters.PageSize);
+        }
+
+        public async Task<IEnumerable<Package>> GetPackagesAsync(IEnumerable<Guid> packageIds, bool trackChanges)
+        {
+            return await FindByCondition(p => packageIds.Contains(p.Id), trackChanges).ToListAsync();
         }
     }
 }

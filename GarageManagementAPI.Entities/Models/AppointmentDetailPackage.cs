@@ -10,10 +10,6 @@ namespace GarageManagementAPI.Entities.Models
 
         public Guid AppointmentId { get; set; }
 
-        public Guid? UpdateByEmployeeId { get; set; }
-
-        public Guid? UpdateByCustomerId { get; set; }
-
         [EnumDataType(typeof(AppointmentDetailPackageStatus))]
         public AppointmentDetailPackageStatus Status { get; set; }
 
@@ -25,9 +21,6 @@ namespace GarageManagementAPI.Entities.Models
 
         public virtual PackageHistory PackageHistory { get; set; } = null!;
 
-        public virtual User? UpdateByCustomer { get; set; }
-
-        public virtual User? UpdateByEmployee { get; set; }
     }
 
 }

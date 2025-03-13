@@ -65,9 +65,7 @@ namespace GarageManagementAPI.Repository
         {
             var productHistories = await FindByCondition(ph => productIds.Contains(ph.ProductId), trackChanges)
                     .GroupBy(ph => ph.ProductId)
-                    .Select(g => g.OrderByDescending(s => s.CreatedAt).FirstOrDefault())
-                    .Where(ph => ph != null)
-                    .Select(ph => ph!)
+                    .Select(g => g.OrderByDescending(s => s.CreatedAt).First())
                     .ToListAsync();
 
             return productHistories;
@@ -79,7 +77,6 @@ namespace GarageManagementAPI.Repository
 
             return productHistory;
         }
-
         public async Task<ProductHistory?> GetProductHistoryByGoodsIssuedDetails(Guid productId)
         {
             var productHistory = await FindByCondition(ph => ph.ProductId == productId, false)

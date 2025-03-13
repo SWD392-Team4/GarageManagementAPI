@@ -2,7 +2,9 @@
 {
     public enum AppointmentReplacementPartStatus
     {
-        Approved = 1,
-        Rejected = 2,
+        Pending = 1,
+        Approved = 2,
+        Declined = 3,
+        Cancelled = 4,
     }
 }

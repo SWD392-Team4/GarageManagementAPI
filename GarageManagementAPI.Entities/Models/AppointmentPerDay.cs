@@ -4,6 +4,10 @@
     {
         public int CountPerDay { get; set; }
 
+        public Guid GarageId { get; set; }
+
+        public Workplace? Garage { get; set; }
+
     }
 }
 

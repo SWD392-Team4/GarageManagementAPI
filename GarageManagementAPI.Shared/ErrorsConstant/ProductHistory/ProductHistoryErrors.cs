@@ -12,14 +12,15 @@ namespace GarageManagementAPI.Shared.ErrorsConstant.ProductHistory
         public const string ProductHistoryPriceRequired = "The product history price is required.";
         public const string ProductHistoryStatusRequired = "The product history status is required";
         public const string ProductHistoryStatusInvalid = "Invalid product status.";
+        public const string ProductHistoryNotMatchWithProductId = "Product history found not match with product id {0}.)";
         #endregion
         #region static method
 
         public static ErrorsResult GetProductHistoryNotFoundError() =>
              new()
              {
-                Code = nameof(ProductHistoryNotFoundError),
-                Description = ProductHistoryNotFoundError
+                 Code = nameof(ProductHistoryNotFoundError),
+                 Description = ProductHistoryNotFoundError
              };
         public static ErrorsResult GetProductHistoryNotFoundWithIdError(Guid productId) =>
              new()
@@ -35,6 +36,13 @@ namespace GarageManagementAPI.Shared.ErrorsConstant.ProductHistory
                  Code = nameof(ProductHistoryPrice),
                  Description = string.Format(ProductHistoryPrice, price)
              };
+
+        public static ErrorsResult GetProductHistoryNotMatchWithProductId(IEnumerable<Guid> ids)
+            => new()
+            {
+                Code = nameof(ProductHistoryNotMatchWithProductId),
+                Description = string.Format(ProductHistoryNotMatchWithProductId, string.Join(", ", ids))
+            };
         #endregion
     }
 }

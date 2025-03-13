@@ -7,8 +7,6 @@ namespace GarageManagementAPI.Entities.Models
     {
         public Guid CarModelId { get; set; }
 
-        public Guid CustomerId { get; set; }
-
         public Guid CreatedByEmployeeId { get; set; }
 
         public string LicensePlateNumber { get; set; } = null!;
@@ -35,8 +33,6 @@ namespace GarageManagementAPI.Entities.Models
         public virtual CarModel CarModel { get; set; } = null!;
 
         public virtual User CreatedByEmployee { get; set; } = null!;
-
-        public virtual User Customer { get; set; } = null!;
 
         public virtual ICollection<PackageUsage> PackageUsages { get; set; } = new List<PackageUsage>();
     }

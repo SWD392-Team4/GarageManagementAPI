@@ -125,5 +125,10 @@ namespace GarageManagementAPI.Repository
                 serviceParameters.PageNumber,
                 serviceParameters.PageSize);
         }
+
+        public async Task<IEnumerable<Service>> GetServiceByPackageHistoryIdsAsync(IEnumerable<Guid> pacakgeHistoryIds, bool trackChanges)
+        {
+            return await FindByCondition(x => x.PackageHistories.Any(x => pacakgeHistoryIds.Contains(x.Id)), trackChanges).ToListAsync();
+        }
     }
 }

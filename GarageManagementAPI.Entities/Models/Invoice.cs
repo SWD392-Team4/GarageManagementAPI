@@ -5,9 +5,8 @@ namespace GarageManagementAPI.Entities.Models
 {
     public partial class Invoice : BaseEntity<Invoice>
     {
+        public Guid? AppointmentId { get; set; }
         public Guid EmployeeId { get; set; }
-
-        public Guid? CustomerId { get; set; }
 
         public Guid GarageId { get; set; }
 
@@ -30,8 +29,6 @@ namespace GarageManagementAPI.Entities.Models
         public DateTimeOffset UpdatedAt { get; set; }
 
         public virtual Appointment? Appointment { get; set; }
-
-        public virtual User? Customer { get; set; }
 
         public virtual User? Employee { get; set; }
 

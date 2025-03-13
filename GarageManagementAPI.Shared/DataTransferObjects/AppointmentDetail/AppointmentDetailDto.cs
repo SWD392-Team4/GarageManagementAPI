@@ -8,10 +8,6 @@ namespace GarageManagementAPI.Shared.DataTransferObjects.AppointmentDetail
     {
         public Guid ServiceHistoryId { get; set; }
 
-        public Guid? UpdateByEmployeeId { get; set; }
-
-        public Guid? UpdateByCustomerId { get; set; }
-
         public Guid AppointmentId { get; set; }
 
         public string ServiceNote { get; set; } = null!;
@@ -22,12 +18,8 @@ namespace GarageManagementAPI.Shared.DataTransferObjects.AppointmentDetail
         public DateTimeOffset CreateAt { get; set; }
 
         public DateTimeOffset UpdatedAt { get; set; }
+
+        public virtual IEnumerable<ReplacementPartDto>? ReplacementParts { get; set; }
     }
 
-    public class AppointmentDetailCreateDto
-    {
-        public Guid? ServiceHistoryId { get; set; }
-
-        public ReplacementPartDtoForCreation[]? ProductForReplace { get; set; }
-    }
 }

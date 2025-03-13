@@ -22,6 +22,20 @@ namespace GarageManagementAPI.Repository.Extensions
 
         }
 
+        public static IQueryable<Appointment> FilterByTime(this IQueryable<Appointment> appointments, DateTimeOffset? fromTime, DateTimeOffset? toTime)
+        {
+            if (fromTime is null || toTime is null)
+            {
+                return appointments;
+            }
+
+            if (fromTime > toTime)
+            {
+                (fromTime, toTime) = (toTime, fromTime);
+            }
+            return appointments.Where(g => g.EstimatedAppointmentTime >= fromTime && g.EstimatedAppointmentTime <= toTime);
+        }
+
         public static IQueryable<Appointment> FilterByEmployeeApprovedId(this IQueryable<Appointment> appointments, Guid? employeeId)
         {
             if (employeeId is null)

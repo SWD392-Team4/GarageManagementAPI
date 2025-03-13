@@ -38,6 +38,15 @@ namespace GarageManagementAPI.Entities.Models
 
         public string? CanceledReason { get; set; } = "None";
 
+        public string? VerificationCode { get; set; } // Mã xác thực ngẫu nhiên
+
+        public DateTime? CancelledAt { get; set; } // Thời gian hủy
+
+        public string? CancellationReason { get; set; } // Lý do hủy
+
+        public CancellationMethod? CancellationMethod { get; set; } // Phương thức hủy
+
+
         [EnumDataType(typeof(AppointmentStatus))]
         public AppointmentStatus Status { get; set; }
 

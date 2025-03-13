@@ -175,7 +175,7 @@ namespace GarageManagementAPI.Service
         private async Task<bool> GetAndCheckIServiceExistByName(string name, Guid? serviceId = null)
         {
             var service = await _repoManager.Service.GetServiceByIdAndNameAsync(name, serviceId, false);
-            if (service == null) return false;
+            if (service == null || service.Id.Equals(serviceId)) return false;
             return true;
         }
 

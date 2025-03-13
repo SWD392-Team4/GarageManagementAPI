@@ -58,13 +58,11 @@ namespace GarageManagementAPI.Repository
             );
         }
 
-        public async Task<IEnumerable<ServiceHistory>> GetServiceHistoriesAsync(IEnumerable<Guid> ids, bool trackChanges)
+        public async Task<IEnumerable<ServiceHistory>> GetServiceHistoriesAsync(IEnumerable<Guid> serviceIds, bool trackChanges)
         {
-            var serviceHistories = await FindByCondition(s => ids.Contains(s.ServiceId), trackChanges)
+            var serviceHistories = await FindByCondition(s => serviceIds.Contains(s.ServiceId), trackChanges)
                   .GroupBy(s => s.ServiceId)
-                  .Select(g => g.OrderByDescending(s => s.CreatedAt).FirstOrDefault())
-                  .Where(s => s != null)
-                  .Select(s => s!)
+                  .Select(g => g.OrderByDescending(s => s.CreatedAt).First())
                   .ToListAsync();
 
             return serviceHistories;

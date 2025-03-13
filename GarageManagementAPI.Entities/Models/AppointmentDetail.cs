@@ -7,13 +7,9 @@ namespace GarageManagementAPI.Entities.Models
     {
         public Guid ServiceHistoryId { get; set; }
 
-        public Guid? UpdateByEmployeeId { get; set; }
-
-        public Guid? UpdateByCustomerId { get; set; }
-
         public Guid AppointmentId { get; set; }
 
-        public string ServiceNote { get; set; } = null!;
+        public string? ServiceNote { get; set; } = string.Empty;
 
         [EnumDataType(typeof(AppointmentDetailStatus))]
         public AppointmentDetailStatus Status { get; set; }
@@ -31,10 +27,6 @@ namespace GarageManagementAPI.Entities.Models
         public virtual ICollection<EmployeeSchedule> EmployeeSchedules { get; set; } = new List<EmployeeSchedule>();
 
         public virtual ServiceHistory ServiceHistory { get; set; } = null!;
-
-        public virtual User? UpdateByCustomer { get; set; }
-
-        public virtual User? UpdateByEmployee { get; set; }
     }
 }
 

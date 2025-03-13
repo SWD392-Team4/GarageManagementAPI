@@ -29,6 +29,17 @@ namespace GarageManagementAPI.Shared.ErrorsConstant.Package
 
         public const string ServiceAlreadyExistInPackage = "Service with ID {0} already exists in the package have id {0}.";
         public const string ServiceNotExistInPackage = "Service with ID {0} not exist in package have id {0}.";
+        public const string PackageFoundNotMatchWithId = "Package found does not match with the ID {0}.";
+        public const string PackageHistoryFoundNotMatchWithId = "Package history found does not match with the ID {0}.";
+
+        public static ErrorsResult GetPackageHistoryFoundNotMatchWithIdsError(IEnumerable<Guid> ids)
+        {
+            return new()
+            {
+                Code = nameof(PackageHistoryFoundNotMatchWithId),
+                Description = string.Format(PackageHistoryFoundNotMatchWithId, string.Join(", ", ids))
+            };
+        }
 
         public static ErrorsResult GetPackageNotFoundError(Guid id)
             => new()
@@ -70,6 +81,15 @@ namespace GarageManagementAPI.Shared.ErrorsConstant.Package
             {
                 Code = nameof(ServiceNotExistInPackage),
                 Description = string.Format(ServiceNotExistInPackage, serviceId, packageId)
+            };
+        }
+
+        public static ErrorsResult GetPackageFoundNotMatchWithIdError(IEnumerable<Guid> ids)
+        {
+            return new()
+            {
+                Code = nameof(PackageFoundNotMatchWithId),
+                Description = string.Format(PackageFoundNotMatchWithId, string.Join(", ", ids))
             };
         }
     }

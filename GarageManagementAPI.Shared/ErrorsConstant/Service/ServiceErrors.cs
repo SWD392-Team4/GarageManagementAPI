@@ -31,7 +31,7 @@ namespace GarageManagementAPI.Shared.ErrorsConstant.Service
             return new()
             {
                 Code = nameof(ServicesFoundNotMatchWithIds),
-                Description = string.Format(ServicesFoundNotMatchWithIds, ids)
+                Description = string.Format(ServicesFoundNotMatchWithIds, string.Join(", ", ids))
             };
         }
 

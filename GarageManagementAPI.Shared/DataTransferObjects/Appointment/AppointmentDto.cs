@@ -4,8 +4,9 @@ using System.ComponentModel.DataAnnotations;
 
 namespace GarageManagementAPI.Shared.DataTransferObjects.Appointment
 {
-    public record AppointmentDto
+    public record AppointmentDto : BaseDto<AppointmentDto>
     {
+        public Guid Id { get; set; }
         public Guid? ApproveByEmployeeId { get; set; }
 
         public Guid CarModelId { get; set; }
@@ -13,7 +14,7 @@ namespace GarageManagementAPI.Shared.DataTransferObjects.Appointment
         public Guid GarageId { get; set; }
 
         public int? Mileage { get; set; }
-
+        public string? VerificationCode { get; set; }
         public string? CustomerName { get; set; }
 
         public string? CustomerPhoneNumber { get; set; }

@@ -40,8 +40,6 @@ namespace GarageManagementAPI.Entities.Models
 
         public virtual ICollection<CustomerCar> CustomerCarCreatedByEmployees { get; set; } = new List<CustomerCar>();
 
-        public virtual ICollection<CustomerCar> CustomerCarCustomers { get; set; } = new List<CustomerCar>();
-
         public virtual EmployeeInfo? EmployeeInfo { get; set; }
 
         public virtual ICollection<EmployeeSchedule> EmployeeSchedules { get; set; } = new List<EmployeeSchedule>();

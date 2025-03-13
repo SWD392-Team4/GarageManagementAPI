@@ -25,7 +25,8 @@ namespace GarageManagementAPI.Application.MappingProfile
                     otp.PreCondition(src => src.ServiceImage != null && src.ServiceImage.Any());
                     otp.MapFrom(src => src.ServiceImage.Select(e => e.ImageLink).ToList());
                 });
-            CreateMap<ServiceDtoForCreation, Entities.Models.Service>();
+            CreateMap<ServiceDtoForCreation, Entities.Models.Service>()
+                .ForMember(dest => dest.Price, opt => opt.MapFrom(src => src.ServicePrice));
             CreateMap<ServiceDtoForUpdate, Entities.Models.Service>()
                 .ForMember(dest => dest.Price, opt => opt.MapFrom(src => src.ServicePrice))
                 .ReverseMap();
