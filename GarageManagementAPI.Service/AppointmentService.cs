@@ -58,7 +58,7 @@ namespace GarageManagementAPI.Service
                 if (user is null)
                     return Result<AppointmentDto>.NotFound(UserErrors.GetUserNotFoundWithIdError(userId.Value));
 
-                if (!user.Roles.Any(r => r.Equals(nameof(SystemRole.Cashier))))
+                if (!user.Roles.Any(r => r.Name!.Equals(nameof(SystemRole.Cashier))))
                     return Result<AppointmentDto>.Forbidden(UserErrors.GetUnAuthorizeUserError());
             }
 

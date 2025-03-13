@@ -3,6 +3,7 @@ using GarageManagementAPI.Shared.DataTransferObjects.CarCategory;
 using GarageManagementAPI.Shared.Extension;
 using GarageManagementAPI.Shared.RequestFeatures;
 using Microsoft.AspNetCore.Mvc;
+using System.Dynamic;
 
 namespace GarageManagementAPI.Presentation.Controllers
 {
@@ -44,9 +45,11 @@ namespace GarageManagementAPI.Presentation.Controllers
             return result.Map(
                 onSuccess: result =>
                 {
-                    var createdCarCategory = result.GetValue<CarCategoryDto>();
+                    var createdCarCategory = result.GetValue<ExpandoObject>();
+                    var carCategoryId = createdCarCategory
+                        .FirstOrDefault(kv => kv.Key.Equals("id", StringComparison.InvariantCultureIgnoreCase)).Value;
 
-                    return CreatedAtRoute("GetCarCategoryById", new { id = createdCarCategory.Id }, result);
+                    return CreatedAtRoute("GetCarCategoryById", new { id = carCategoryId }, result);
                 },
                 onFailure: ProcessError
                 );
