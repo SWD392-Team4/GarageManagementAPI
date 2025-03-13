@@ -4,6 +4,7 @@ using GarageManagementAPI.Repository;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GarageManagementAPI.Application.Migrations
 {
     [DbContext(typeof(RepositoryContext))]
-    partial class RepositoryContextModelSnapshot : ModelSnapshot
+    [Migration("20250313052102_SecondDb")]
+    partial class SecondDb
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -3632,6 +3635,14 @@ namespace GarageManagementAPI.Application.Migrations
                     b.Property<int>("Quantity")
                         .HasColumnType("int");
 
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<DateTimeOffset>("UpdatedAt")
+                        .HasColumnType("datetimeoffset");
+
                     b.HasKey("Id")
                         .HasName("productatgarage_goodsissueddetailid_primary");
 
@@ -4906,64 +4917,6 @@ namespace GarageManagementAPI.Application.Migrations
                         .IsUnique();
 
                     b.ToTable("Supplier", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            Id = new Guid("1c1ffd05-3b06-48bf-b78c-86b6ef2d3cef"),
-                            Address = "123 Street",
-                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 0, 40, 40, 0, DateTimeKind.Unspecified), new TimeSpan(0, 7, 0, 0, 0)),
-                            District = "Ba Dinh",
-                            Name = "Trần Huy Hanh",
-                            Province = "Hanoi",
-                            Status = "Active",
-                            SupplierCategory = "Automotive",
-                            TaxCode = "123456789",
-                            UpdatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 0, 40, 40, 0, DateTimeKind.Unspecified), new TimeSpan(0, 7, 0, 0, 0)),
-                            Wards = "Ward 1"
-                        },
-                        new
-                        {
-                            Id = new Guid("cee5a4d8-de84-4482-9da9-302e2290cb0f"),
-                            Address = "456 Avenue",
-                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 0, 40, 40, 0, DateTimeKind.Unspecified), new TimeSpan(0, 7, 0, 0, 0)),
-                            District = "District 1",
-                            Name = "Bùi Duy Khánh",
-                            Province = "HCMC",
-                            Status = "Active",
-                            SupplierCategory = "Parts",
-                            TaxCode = "987654321",
-                            UpdatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 0, 40, 40, 0, DateTimeKind.Unspecified), new TimeSpan(0, 7, 0, 0, 0)),
-                            Wards = "Ward 2"
-                        },
-                        new
-                        {
-                            Id = new Guid("e9a7beda-ff63-4ac5-92cb-b7fa152c41c2"),
-                            Address = "789 Road",
-                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 0, 40, 40, 0, DateTimeKind.Unspecified), new TimeSpan(0, 7, 0, 0, 0)),
-                            District = "Hai Chau",
-                            Name = "Nguyễn Hoàng Nhật Tân",
-                            Province = "Da Nang",
-                            Status = "Active",
-                            SupplierCategory = "Maintenance",
-                            TaxCode = "123456799",
-                            UpdatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 0, 40, 40, 0, DateTimeKind.Unspecified), new TimeSpan(0, 7, 0, 0, 0)),
-                            Wards = "Ward 3"
-                        },
-                        new
-                        {
-                            Id = new Guid("f5fd6ee3-a8b6-452c-9042-146e8afc875f"),
-                            Address = "321 Boulevard",
-                            CreatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 0, 40, 40, 0, DateTimeKind.Unspecified), new TimeSpan(0, 7, 0, 0, 0)),
-                            District = "Ninh Kieu",
-                            Name = "Lê Tân",
-                            Province = "Can Tho",
-                            Status = "Active",
-                            SupplierCategory = "Electronics",
-                            TaxCode = "654321987",
-                            UpdatedAt = new DateTimeOffset(new DateTime(2025, 2, 25, 0, 40, 40, 0, DateTimeKind.Unspecified), new TimeSpan(0, 7, 0, 0, 0)),
-                            Wards = "Ward 4"
-                        });
                 });
 
             modelBuilder.Entity("GarageManagementAPI.Entities.Models.SupplierContact", b =>
@@ -5012,56 +4965,6 @@ namespace GarageManagementAPI.Application.Migrations
                     b.HasIndex(new[] { "SupplierId" }, "suppliercontact_supplierid_index");
 
                     b.ToTable("SupplierContact", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            Id = new Guid("1c1ffd05-3b06-48bf-b78c-86b6ef2d3cef"),
-                            ContactEmail = "john.doe@suppliera.com",
-                            ContactPersonName = "John Doe",
-                            ContactPhoneNumber = "0123456789",
-                            ContactPosition = "Support",
-                            CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
-                            Status = "Inactive",
-                            SupplierId = new Guid("1c1ffd05-3b06-48bf-b78c-86b6ef2d3cef"),
-                            UpdatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0))
-                        },
-                        new
-                        {
-                            Id = new Guid("cee5a4d8-de84-4482-9da9-302e2290cb0f"),
-                            ContactEmail = "jane.smith@supplierb.com",
-                            ContactPersonName = "Jane Smith",
-                            ContactPhoneNumber = "0987654321",
-                            ContactPosition = "Manager",
-                            CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
-                            Status = "Inactive",
-                            SupplierId = new Guid("1c1ffd05-3b06-48bf-b78c-86b6ef2d3cef"),
-                            UpdatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0))
-                        },
-                        new
-                        {
-                            Id = new Guid("e9a7beda-ff63-4ac5-92cb-b7fa152c41c2"),
-                            ContactEmail = "michael.j@supplierc.com",
-                            ContactPersonName = "Michael Johnson",
-                            ContactPhoneNumber = "0365478921",
-                            ContactPosition = "Director",
-                            CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
-                            Status = "Inactive",
-                            SupplierId = new Guid("e9a7beda-ff63-4ac5-92cb-b7fa152c41c2"),
-                            UpdatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0))
-                        },
-                        new
-                        {
-                            Id = new Guid("f5fd6ee3-a8b6-452c-9042-146e8afc875f"),
-                            ContactEmail = "emily.d@supplierd.com",
-                            ContactPersonName = "Sales",
-                            ContactPhoneNumber = "0932154786",
-                            ContactPosition = "123 Street",
-                            CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
-                            Status = "Inactive",
-                            SupplierId = new Guid("f5fd6ee3-a8b6-452c-9042-146e8afc875f"),
-                            UpdatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0))
-                        });
                 });
 
             modelBuilder.Entity("GarageManagementAPI.Entities.Models.User", b =>
