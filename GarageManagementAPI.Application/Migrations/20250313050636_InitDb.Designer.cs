@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GarageManagementAPI.Application.Migrations
 {
     [DbContext(typeof(RepositoryContext))]
-    [Migration("20250312111633_ConfigAppointment")]
-    partial class ConfigAppointment
+    [Migration("20250313050636_InitDb")]
+    partial class InitDb
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -48,6 +48,15 @@ namespace GarageManagementAPI.Application.Migrations
 
                     b.Property<string>("CanceledReason")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("CancellationMethod")
+                        .HasColumnType("int");
+
+                    b.Property<string>("CancellationReason")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("CancelledAt")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("CarLicensePlateNumber")
                         .HasMaxLength(255)
@@ -97,6 +106,9 @@ namespace GarageManagementAPI.Application.Migrations
                     b.Property<DateTimeOffset>("UpdatedAt")
                         .HasColumnType("datetimeoffset");
 
+                    b.Property<string>("VerificationCode")
+                        .HasColumnType("nvarchar(max)");
+
                     b.HasKey("Id")
                         .HasName("appointment_id_primary");
 
@@ -132,7 +144,6 @@ namespace GarageManagementAPI.Application.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("ServiceNote")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Status")
@@ -218,10 +229,30 @@ namespace GarageManagementAPI.Application.Migrations
                     b.Property<int>("CountPerDay")
                         .HasColumnType("int");
 
+                    b.Property<Guid>("GarageId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.HasKey("Id")
                         .HasName("appointmentperdayy_id_primary");
 
+                    b.HasIndex("GarageId")
+                        .IsUnique();
+
                     b.ToTable("AppointmentPerDay", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("c637eb36-0dee-4190-9338-3c5053ea3ea6"),
+                            CountPerDay = 10,
+                            GarageId = new Guid("c1aeb9e5-8c74-4b09-bc57-d4c3df7857f9")
+                        },
+                        new
+                        {
+                            Id = new Guid("fa657400-f856-4a91-965d-b20dc194ac66"),
+                            CountPerDay = 5,
+                            GarageId = new Guid("6760cbb7-f1fa-445f-a175-97e3f060c861")
+                        });
                 });
 
             modelBuilder.Entity("GarageManagementAPI.Entities.Models.AppointmentReplacementPart", b =>
@@ -2460,9 +2491,6 @@ namespace GarageManagementAPI.Application.Migrations
                     b.Property<Guid>("CreatedByEmployeeId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("CustomerId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<string>("EngineNumber")
                         .IsRequired()
                         .HasMaxLength(255)
@@ -2503,8 +2531,6 @@ namespace GarageManagementAPI.Application.Migrations
                     b.HasIndex("CarModelId");
 
                     b.HasIndex(new[] { "CreatedByEmployeeId" }, "customercar_createdbyemployeeid_index");
-
-                    b.HasIndex(new[] { "CustomerId" }, "customercar_customerid_index");
 
                     b.HasIndex(new[] { "LicensePlateNumber" }, "customercar_licenseplatenumber_unique")
                         .IsUnique();
@@ -2763,6 +2789,9 @@ namespace GarageManagementAPI.Application.Migrations
                     b.Property<Guid>("GarageId")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<Guid>("GoodsIssuedDetail_ProductAtWarehouseConfiguration")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<string>("InvoiceCode")
                         .IsRequired()
                         .HasMaxLength(255)
@@ -2812,9 +2841,6 @@ namespace GarageManagementAPI.Application.Migrations
                     b.Property<Guid>("GoodsIssuedId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("ProductAtWareHouseId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<int>("Quantity")
                         .HasColumnType("int");
 
@@ -2834,9 +2860,31 @@ namespace GarageManagementAPI.Application.Migrations
 
                     b.HasIndex(new[] { "GoodsIssuedId" }, "goodsissueddetail_goodsissuedid_index");
 
-                    b.HasIndex(new[] { "ProductAtWareHouseId" }, "goodsissueddetail_productatwarehouseid_index");
-
                     b.ToTable("GoodsIssuedDetail", (string)null);
+                });
+
+            modelBuilder.Entity("GarageManagementAPI.Entities.Models.GoodsIssuedDetail_ProductAtWarehouse", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("GoodsIssuedDetailId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("ProductAtWarehouseId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("QuantityUsed")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("GoodsIssuedDetailId");
+
+                    b.HasIndex("ProductAtWarehouseId");
+
+                    b.ToTable("GoodsIssuedDetail_ProductAtWarehouse");
                 });
 
             modelBuilder.Entity("GarageManagementAPI.Entities.Models.GoodsReceived", b =>
@@ -2985,6 +3033,9 @@ namespace GarageManagementAPI.Application.Migrations
                         .HasColumnType("uniqueidentifier")
                         .HasDefaultValueSql("NEWID()");
 
+                    b.Property<Guid?>("AppointmentId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<DateTimeOffset>("CreatedAt")
                         .HasColumnType("datetimeoffset");
 
@@ -2992,9 +3043,6 @@ namespace GarageManagementAPI.Application.Migrations
                         .IsRequired()
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
-
-                    b.Property<Guid?>("CustomerId")
-                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("CustomerName")
                         .IsRequired()
@@ -3028,14 +3076,21 @@ namespace GarageManagementAPI.Application.Migrations
                     b.Property<DateTimeOffset>("UpdatedAt")
                         .HasColumnType("datetimeoffset");
 
+                    b.Property<Guid?>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.HasKey("Id")
                         .HasName("invoice_appointmentid_primary");
 
-                    b.HasIndex("CustomerId");
+                    b.HasIndex("AppointmentId")
+                        .IsUnique()
+                        .HasFilter("[AppointmentId] IS NOT NULL");
 
                     b.HasIndex("EmployeeId");
 
                     b.HasIndex("GarageId");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("Invoice", (string)null);
                 });
@@ -6213,6 +6268,18 @@ namespace GarageManagementAPI.Application.Migrations
                     b.Navigation("PackageHistory");
                 });
 
+            modelBuilder.Entity("GarageManagementAPI.Entities.Models.AppointmentPerDay", b =>
+                {
+                    b.HasOne("GarageManagementAPI.Entities.Models.Workplace", "Garage")
+                        .WithOne("AppointmentPerDay")
+                        .HasForeignKey("GarageManagementAPI.Entities.Models.AppointmentPerDay", "GarageId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("appointmentperday_garageid_foreign");
+
+                    b.Navigation("Garage");
+                });
+
             modelBuilder.Entity("GarageManagementAPI.Entities.Models.AppointmentReplacementPart", b =>
                 {
                     b.HasOne("GarageManagementAPI.Entities.Models.AppointmentDetail", "AppointmentDetail")
@@ -6294,17 +6361,9 @@ namespace GarageManagementAPI.Application.Migrations
                         .IsRequired()
                         .HasConstraintName("customercar_createdbyemployeeid_foreign");
 
-                    b.HasOne("GarageManagementAPI.Entities.Models.User", "Customer")
-                        .WithMany("CustomerCarCustomers")
-                        .HasForeignKey("CustomerId")
-                        .IsRequired()
-                        .HasConstraintName("customercar_customerid_foreign");
-
                     b.Navigation("CarModel");
 
                     b.Navigation("CreatedByEmployee");
-
-                    b.Navigation("Customer");
                 });
 
             modelBuilder.Entity("GarageManagementAPI.Entities.Models.EmployeeInfo", b =>
@@ -6381,15 +6440,26 @@ namespace GarageManagementAPI.Application.Migrations
                         .IsRequired()
                         .HasConstraintName("goodsissueddetail_goodsissuedid_foreign");
 
-                    b.HasOne("GarageManagementAPI.Entities.Models.ProductAtWarehouse", "ProductAtWareHouse")
-                        .WithMany("GoodsIssuedDetails")
-                        .HasForeignKey("ProductAtWareHouseId")
-                        .IsRequired()
-                        .HasConstraintName("goodsissueddetail_productatwarehouseid_foreign");
-
                     b.Navigation("GoodsIssued");
+                });
 
-                    b.Navigation("ProductAtWareHouse");
+            modelBuilder.Entity("GarageManagementAPI.Entities.Models.GoodsIssuedDetail_ProductAtWarehouse", b =>
+                {
+                    b.HasOne("GarageManagementAPI.Entities.Models.GoodsIssuedDetail", "GoodsIssuedDetail")
+                        .WithMany("GoodsIssuedDetail_ProductAtWarehouse")
+                        .HasForeignKey("GoodsIssuedDetailId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("GarageManagementAPI.Entities.Models.ProductAtWarehouse", "ProductAtWarehouse")
+                        .WithMany("GoodsIssuedDetail_ProductAtWarehouse")
+                        .HasForeignKey("ProductAtWarehouseId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("GoodsIssuedDetail");
+
+                    b.Navigation("ProductAtWarehouse");
                 });
 
             modelBuilder.Entity("GarageManagementAPI.Entities.Models.GoodsReceived", b =>
@@ -6461,10 +6531,10 @@ namespace GarageManagementAPI.Application.Migrations
 
             modelBuilder.Entity("GarageManagementAPI.Entities.Models.Invoice", b =>
                 {
-                    b.HasOne("GarageManagementAPI.Entities.Models.User", "Customer")
-                        .WithMany("InvoiceCustomers")
-                        .HasForeignKey("CustomerId")
-                        .HasConstraintName("invoice_customerid_foreign");
+                    b.HasOne("GarageManagementAPI.Entities.Models.Appointment", "Appointment")
+                        .WithOne("Invoice")
+                        .HasForeignKey("GarageManagementAPI.Entities.Models.Invoice", "AppointmentId")
+                        .HasConstraintName("invoice_appointmentid_foreign");
 
                     b.HasOne("GarageManagementAPI.Entities.Models.User", "Employee")
                         .WithMany("InvoiceEmployees")
@@ -6478,15 +6548,11 @@ namespace GarageManagementAPI.Application.Migrations
                         .IsRequired()
                         .HasConstraintName("invoice_garageid_foreign");
 
-                    b.HasOne("GarageManagementAPI.Entities.Models.Appointment", "Appointment")
-                        .WithOne("Invoice")
-                        .HasForeignKey("GarageManagementAPI.Entities.Models.Invoice", "Id")
-                        .IsRequired()
-                        .HasConstraintName("invoice_appointmentid_foreign");
+                    b.HasOne("GarageManagementAPI.Entities.Models.User", null)
+                        .WithMany("InvoiceCustomers")
+                        .HasForeignKey("UserId");
 
                     b.Navigation("Appointment");
-
-                    b.Navigation("Customer");
 
                     b.Navigation("Employee");
 
@@ -7000,6 +7066,8 @@ namespace GarageManagementAPI.Application.Migrations
 
             modelBuilder.Entity("GarageManagementAPI.Entities.Models.GoodsIssuedDetail", b =>
                 {
+                    b.Navigation("GoodsIssuedDetail_ProductAtWarehouse");
+
                     b.Navigation("GoodsTransactions");
 
                     b.Navigation("ProductAtGarage");
@@ -7078,7 +7146,7 @@ namespace GarageManagementAPI.Application.Migrations
 
             modelBuilder.Entity("GarageManagementAPI.Entities.Models.ProductAtWarehouse", b =>
                 {
-                    b.Navigation("GoodsIssuedDetails");
+                    b.Navigation("GoodsIssuedDetail_ProductAtWarehouse");
                 });
 
             modelBuilder.Entity("GarageManagementAPI.Entities.Models.ProductCategory", b =>
@@ -7135,8 +7203,6 @@ namespace GarageManagementAPI.Application.Migrations
 
                     b.Navigation("CustomerCarCreatedByEmployees");
 
-                    b.Navigation("CustomerCarCustomers");
-
                     b.Navigation("EmployeeInfo");
 
                     b.Navigation("EmployeeSchedules");
@@ -7156,6 +7222,8 @@ namespace GarageManagementAPI.Application.Migrations
 
             modelBuilder.Entity("GarageManagementAPI.Entities.Models.Workplace", b =>
                 {
+                    b.Navigation("AppointmentPerDay");
+
                     b.Navigation("Appointments");
 
                     b.Navigation("EmployeeInfos");

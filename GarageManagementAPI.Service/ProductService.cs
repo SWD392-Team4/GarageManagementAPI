@@ -72,10 +72,6 @@ namespace GarageManagementAPI.Service
             if (productCategoryResult)
                 return Result<ProductDto>.BadRequest([ProductErrors.GetProductCategoryIsNotFound(productDtoForUpdate.ProductCategoryId)]);
 
-            var productCategoryResult = await GetAndCheckIfProductCategoryIsExist(productDtoForUpdate.ProductCategoryId);
-            if (productCategoryResult)
-                return Result<ProductDto>.BadRequest([ProductErrors.GetProductCategoryIsNotFound(productDtoForUpdate.ProductCategoryId)]);
-
             var productEntity = productResult.GetValue<Product>();
 
             if (!productEntity.ProductPrice.Equals(productDtoForUpdate.ProductPrice))
