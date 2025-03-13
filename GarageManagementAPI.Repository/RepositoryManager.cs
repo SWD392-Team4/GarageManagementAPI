@@ -43,6 +43,7 @@ namespace GarageManagementAPI.Repository
         private readonly Lazy<IPackageDetailRepository> _packageDetailRepository;
         private readonly Lazy<IProductAtWarehouseRepository> _productAtWarehouseRepository;
         private readonly Lazy<IGoodsTransactionRepository> _goodsTransactionRepository;
+        private readonly Lazy<IGoodsIssuedDetailProductAtWarehouseRepository> _goodsIssuedDetailProductAtWarehouseRepository;
 
         public RepositoryManager(RepositoryContext repositoryContext)
         {
@@ -84,6 +85,7 @@ namespace GarageManagementAPI.Repository
             _packageUsageDetailRepository = new Lazy<IPackageUsageDetailRepository>(() => new PackageUsageDetailRepository(repositoryContext));
             _packageDetailRepository = new Lazy<IPackageDetailRepository>(() => new PackageDetailRepository(repositoryContext));
             _productAtWarehouseRepository = new Lazy<IProductAtWarehouseRepository>(() => new ProductAtWarehouseRepository(repositoryContext));
+            _goodsIssuedDetailProductAtWarehouseRepository = new Lazy<IGoodsIssuedDetailProductAtWarehouseRepository>(() => new GoodsIssuedDetailProductAtWarehouseRepostitory(repositoryContext));
         }
 
         public IUserRepository User => _userRepository.Value;
@@ -123,6 +125,7 @@ namespace GarageManagementAPI.Repository
         public IPackageUsageRepository PackageUsage => _packageUsageRepository.Value;
         public IPackageUsageDetailRepository PackageUsageDetail => _packageUsageDetailRepository.Value;
         public IPackageDetailRepository PackageDetail => _packageDetailRepository.Value;
+        public IGoodsIssuedDetailProductAtWarehouseRepository GoodsIssuedDetailProductAtWarehouse => _goodsIssuedDetailProductAtWarehouseRepository.Value;
 
 
         public async Task<IDbContextTransaction> BeginTransactionAsync()

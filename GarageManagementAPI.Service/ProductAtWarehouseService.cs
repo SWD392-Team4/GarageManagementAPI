@@ -1,13 +1,13 @@
 ﻿using AutoMapper;
+using System.Dynamic;
 using GarageManagementAPI.Entities.Models;
-using GarageManagementAPI.Repository.Contracts;
+using GarageManagementAPI.Shared.Extension;
 using GarageManagementAPI.Service.Contracts;
 using GarageManagementAPI.Service.Extension;
-using GarageManagementAPI.Shared.DataTransferObjects.ProductAtWarehouse;
-using GarageManagementAPI.Shared.Extension;
-using GarageManagementAPI.Shared.RequestFeatures;
 using GarageManagementAPI.Shared.ResultModel;
-using System.Dynamic;
+using GarageManagementAPI.Repository.Contracts;
+using GarageManagementAPI.Shared.RequestFeatures;
+using GarageManagementAPI.Shared.DataTransferObjects.ProductAtWarehouse;
 
 namespace GarageManagementAPI.Service
 {
@@ -22,7 +22,6 @@ namespace GarageManagementAPI.Service
             _mapper = mapper;
             _dataShaper = dataShaper;
         }
-      
 
         public async Task<Result<ExpandoObject>> GetProductAtWarehouse(Guid productId, bool trackChanges, string? include = null)
         {

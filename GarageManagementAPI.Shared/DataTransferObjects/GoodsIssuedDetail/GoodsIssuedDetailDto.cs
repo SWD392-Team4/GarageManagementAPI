@@ -5,17 +5,13 @@ namespace GarageManagementAPI.Shared.DataTransferObjects.GoodsIssuedDetail
 {
     public record class GoodsIssuedDetailDto : BaseDto<GoodsIssuedDetailDto>
     {
-        public Guid Id { get; set; }
-        public string ProductAtWareHouseId { get; set; } = null!;
-
-        public string ProductAtGarageID { get; set; } = null!;
-
-        public string ReferenceNumberGoodIssued { get; set; } = null!;
-
+        public Guid ProductAtWareHouseId { get; set; }
+        public Guid GoodsIssuedId { get; set; }
         public int Quantity { get; set; }
+        public decimal UnitPrice { get; set; }
 
-        [EnumDataType(typeof(GoodsIssuedDetailStatus))]
-        public GoodsIssuedDetailStatus Status { get; set; }
+        [EnumDataType(typeof(GoodsReceivedStatus))]
+        public GoodsReceivedStatus Status { get; set; }
 
         public DateTimeOffset CreatedAt { get; set; }
 

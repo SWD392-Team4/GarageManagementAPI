@@ -11,6 +11,8 @@ using GarageManagementAPI.Shared.Enums.SystemStatuss;
 using GarageManagementAPI.Shared.ErrorsConstant.GoodsIssued;
 using GarageManagementAPI.Shared.DataTransferObjects.GoodsIssued;
 using GarageManagementAPI.Shared.DataTransferObjects.GoodsIssuedDetail;
+using GarageManagementAPI.Shared.ErrorsConstant.ProductHistory;
+using GarageManagementAPI.Shared.Enums;
 
 namespace GarageManagementAPI.Service
 {
@@ -33,27 +35,22 @@ namespace GarageManagementAPI.Service
             if (wareHouseResult) return Result<GoodsIssuedDto>.BadRequest([GoodsIssuedErrors.GetWareHourseIsNotFoundWithIdError(goodsIssuedDtoForCreation.WarehouseId)]);
 
             var goodsIssuedResult = await GetAndCheckIfGoodsIssuedWithReferenceNumberIsExist(goodsIssuedDtoForCreation.ReferenceNumber, null, false);
-            if(goodsIssuedResult) return Result<GoodsIssuedDto>.BadRequest([GoodsIssuedErrors.GetGoodsIssuedReferenceIsExist(goodsIssuedDtoForCreation.ReferenceNumber)]);
+            if (goodsIssuedResult) return Result<GoodsIssuedDto>.BadRequest([GoodsIssuedErrors.GetGoodsIssuedReferenceIsExist(goodsIssuedDtoForCreation.ReferenceNumber)]);
 
             foreach (var goodsIssuedDetail in goodsIssuedDtoForCreation.gooodsIssuedDetails)
             {
-                var productAtWarehouseResult = await GetAndCheckProductAtWarehouseIsExist(goodsIssuedDetail.ProductAtWareHouseId, false);
+                var totalStock = await _repoManager.ProductAtWarehouse
+                    .GetTotalStockForProduct(goodsIssuedDetail.ProductId, goodsIssuedDtoForCreation.WarehouseId);
 
-                if (!productAtWarehouseResult.IsSuccess)
+                if (totalStock < goodsIssuedDetail.Quantity)
                 {
-                    return Result<GoodsIssuedDto>.Failure(productAtWarehouseResult.StatusCode, productAtWarehouseResult.Errors!);
-                }
-
-                var productAtWarehouseEntity = productAtWarehouseResult.GetValue<ProductAtWarehouse>();
-
-                if (productAtWarehouseEntity.Quantity < goodsIssuedDetail.Quantity)
-                {
-                    return Result<GoodsIssuedDto>.BadRequest([GoodsIssuedErrors.GetQuantityIsOutOfRange(productAtWarehouseEntity.Id, productAtWarehouseEntity.Quantity, goodsIssuedDetail.Quantity)]);
+                    return Result<GoodsIssuedDto>.BadRequest(
+                        [GoodsIssuedErrors.GetQuantityIsOutOfRange()]);
                 }
             }
 
-
             var goodsIssuedEntity = _mapper.Map<GoodsIssued>(goodsIssuedDtoForCreation);
+
             goodsIssuedEntity.CreatedWareHouseManagerId = createdWarehouseManagerId;
             goodsIssuedEntity.CreatedAt = DateTimeOffset.UtcNow.SEAsiaStandardTime();
             goodsIssuedEntity.UpdatedAt = DateTimeOffset.UtcNow.SEAsiaStandardTime();
@@ -61,7 +58,16 @@ namespace GarageManagementAPI.Service
 
             foreach (var goodsIssuedDetail in goodsIssuedDtoForCreation.gooodsIssuedDetails)
             {
-                goodsIssuedEntity.TotalCost += goodsIssuedDetail.Quantity * goodsIssuedDetail.UnitPrice;
+                var productHistory = await _repoManager.ProductHistory.GetProductHistoryByGoodsIssuedDetails(goodsIssuedDetail!.ProductId);
+                if(productHistory == null)
+                {
+                    goodsIssuedEntity.TotalCost += 0;
+                }
+                else
+                {
+                    goodsIssuedEntity.TotalCost += goodsIssuedDetail.Quantity * productHistory!.ProductPrice;
+                }
+               
             }
 
             await _repoManager.GoodsIssued.CreateGoodsIssuedAsync(goodsIssuedEntity);
@@ -69,11 +75,41 @@ namespace GarageManagementAPI.Service
 
             var goodsIssuedDtoToReturn = _mapper.Map<GoodsIssuedDto>(goodsIssuedEntity);
 
-            foreach(var goodsIssuedDetail in goodsIssuedDtoForCreation.gooodsIssuedDetails)
+            foreach (var goodsIssuedDetail in goodsIssuedDtoForCreation.gooodsIssuedDetails)
             {
-                await this.CreateGoodsIssuedDetailAsync(goodsIssuedDetail, goodsIssuedDtoToReturn.Id);
-            }
+                var deductedList = await _repoManager.ProductAtWarehouse
+                    .DeductProductQuantityFromWarehouseAsync(goodsIssuedDetail.ProductId, goodsIssuedDtoForCreation.WarehouseId, goodsIssuedDetail.Quantity);
 
+                foreach (var (productAtWarehouseId, deductedQuantity) in deductedList)
+                {
+                    var productHistory = await _repoManager.ProductHistory
+                        .GetProductHistoryByGoodsIssuedDetails(goodsIssuedDetail.ProductId);
+
+                    var goodsIssuedDetailEntity = new GoodsIssuedDetail
+                    {
+                        GoodsIssuedId = goodsIssuedEntity.Id,
+                        Quantity = deductedQuantity,
+                        UnitPrice = productHistory == null ? 0 :  productHistory.ProductPrice,
+                        CreatedAt = DateTimeOffset.UtcNow.SEAsiaStandardTime(),
+                        UpdatedAt = DateTimeOffset.UtcNow.SEAsiaStandardTime(),
+                        Status = GoodsReceivedStatus.Active
+                    };
+
+                    await _repoManager.GoodsIssuedDetail.CreateGoodsIssuedDetailAsync(goodsIssuedDetailEntity);
+
+                    goodsIssuedEntity.TotalCost += deductedQuantity * (productHistory?.ProductPrice ?? 0);
+
+                    var goodsIssuedDetail_ProductAtWarehouse = new GoodsIssuedDetail_ProductAtWarehouse
+                    {
+                        GoodsIssuedDetailId = goodsIssuedDetailEntity.Id,
+                        ProductAtWarehouseId = productAtWarehouseId,
+                        QuantityUsed = deductedQuantity
+                    };
+
+                    await _repoManager.GoodsIssuedDetailProductAtWarehouse.CreateGoodsIssuedDetailProductAtWarehouse(goodsIssuedDetail_ProductAtWarehouse);
+                }
+            }
+            await _repoManager.SaveAsync();
             return goodsIssuedDtoToReturn.CreatedResult();
         }
         public async Task<Result> UpdateGoodsIssued(Guid goodsIssuedId, GoodsIssuedDtoForUpdate goodsIssuedDtoForUpdate, bool trackChanges)
@@ -82,7 +118,7 @@ namespace GarageManagementAPI.Service
 
             if (!goodsIssuedResult.IsSuccess)
                 return Result<GoodsIssuedDtoForUpdate>.Failure(goodsIssuedResult.StatusCode, goodsIssuedResult.Errors!);
-            
+
             var goodsIssuedEntity = goodsIssuedResult.GetValue<GoodsIssued>();
 
             _mapper.Map(goodsIssuedDtoForUpdate, goodsIssuedEntity);
@@ -118,11 +154,14 @@ namespace GarageManagementAPI.Service
             return Result<IEnumerable<ExpandoObject>>.Ok(goodsIssuedsShaped, goodsIssuedsWithMetadata.MetaData);
         }
 
-        private async Task<Result<GoodsIssuedDetailDto>> CreateGoodsIssuedDetailAsync(GoodsIssuedDetailDtoForCreation goodsIssuedDetailDtoForCreation, Guid goodsIssuedId)
+        private async Task<Result<GoodsIssuedDetailDto>> CreateGoodsIssuedDetailAsync(GoodsIssuedDetailDtoForCreation goodsIssuedDetailDtoForCreation, Guid goodsIssuedId, Guid warehouseId)
         {
             var goodsIssuedDetailEntity = _mapper.Map<GoodsIssuedDetail>(goodsIssuedDetailDtoForCreation);
 
+            var productHistory = await _repoManager.ProductHistory.GetProductHistoryByGoodsIssuedDetails(goodsIssuedDetailDtoForCreation!.ProductId);
+
             goodsIssuedDetailEntity.GoodsIssuedId = goodsIssuedId;
+            goodsIssuedDetailEntity.UnitPrice = productHistory!.ProductPrice;
             goodsIssuedDetailEntity.CreatedAt = DateTimeOffset.UtcNow.SEAsiaStandardTime();
             goodsIssuedDetailEntity.UpdatedAt = DateTimeOffset.UtcNow.SEAsiaStandardTime();
             goodsIssuedDetailEntity.Status = GoodsReceivedStatus.Active;
@@ -131,38 +170,8 @@ namespace GarageManagementAPI.Service
             await _repoManager.SaveAsync();
 
             var goodsIssuedDetailDtoToReturn = _mapper.Map<GoodsIssuedDetailDto>(goodsIssuedDetailEntity);
-            await this.CreateGoodsTransaction(goodsIssuedDetailDtoForCreation.GoodsReceivedId, goodsIssuedDetailEntity.Id);
-            await this.UpdateProductAtWareHouse(goodsIssuedDetailEntity.ProductAtWareHouseId, goodsIssuedDetailEntity.Quantity, true);
+
             return goodsIssuedDetailDtoToReturn.CreatedResult();
-        }
-
-        private async Task CreateGoodsTransaction(Guid goodsReceivedId, Guid goodsIssuedDetailId)
-        {
-            var goodsTransactionEntity = new GoodsTransaction()
-            {
-                GoodsIssuedDetailId = goodsIssuedDetailId,
-                GoodsReceivedId = goodsReceivedId,
-                CreatedAt = DateTimeOffset.UtcNow.SEAsiaStandardTime()
-            };
-            await _repoManager.GoodsTransaction.CreateGoodsTransaction(goodsTransactionEntity);
-            await _repoManager.SaveAsync();
-        }
-
-        private async Task UpdateProductAtWareHouse(Guid productAtWarehouseId, int quantity, bool trackChanges)
-        {
-            var productAtWarehouseReuslt = await this.GetAndCheckProductAtWarehouseIsExist(productAtWarehouseId, trackChanges);
-
-            var productAtWarehouseEntity = productAtWarehouseReuslt.GetValue<ProductAtWarehouse>();
-            productAtWarehouseEntity.Quantity -= quantity;
-            productAtWarehouseEntity.UpdatedAt = DateTimeOffset.UtcNow.SEAsiaStandardTime();
-            await _repoManager.SaveAsync();
-        }
-
-        public async Task<Result<ProductAtWarehouse>> GetAndCheckProductAtWarehouseIsExist(Guid productId, bool trackChanges, string? include = null)
-        {
-            var productAtWarehouse = await _repoManager.ProductAtWarehouse.GetProductAtWarehouse(productId, trackChanges, include);
-            if (productAtWarehouse == null) return productAtWarehouse.NotFoundResult(productId);
-            return productAtWarehouse.OkResult();
         }
 
         private async Task<Result<GoodsIssued>> GetAndCheckIfGoodsIssuedIsExist(Guid goodsIssuedId, bool trackChanges, string? include)

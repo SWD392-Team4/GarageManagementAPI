@@ -9,8 +9,6 @@ namespace GarageManagementAPI.Shared.DataTransferObjects.GoodsReceivedDetail
         public int Quantity { get; set; }
         public decimal UnitPrice { get; set; }
         public decimal TotalPrice { get; set; }
-        public string? Productname { get; set; } = null!;
-        public string? RefereneceNumber { get; set; } = null!;
 
         [EnumDataType(typeof(GoodsReceivedDetailStatus))]
         public GoodsReceivedDetailStatus Status { get; set; }
@@ -18,5 +16,6 @@ namespace GarageManagementAPI.Shared.DataTransferObjects.GoodsReceivedDetail
         public DateTimeOffset CreatedAt { get; set; }
 
         public DateTimeOffset UpdatedAt { get; set; }
+        public Guid ProductId { get; set; }
     }
 }

@@ -28,6 +28,7 @@ namespace GarageManagementAPI.Repository.Contracts
         IGoodsIssuedDetailRepository GoodsIssuedDetail { get; }
         IProductAtWarehouseRepository ProductAtWarehouse { get; }
         IGoodsReceivedDetailRepository GoodsReceivedDetail { get; }
+        IGoodsIssuedDetailProductAtWarehouseRepository GoodsIssuedDetailProductAtWarehouse { get; }
         IAppointmentRepository Appointment { get; }
         IAppointmentPerDayRepository AppointmentPerDay { get; }
         IAppointmentDetailPackageRepository AppointmentDetailPackage { get; }

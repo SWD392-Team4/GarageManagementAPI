@@ -52,6 +52,15 @@ namespace GarageManagementAPI.Presentation.Controllers
                 onFailure: ProcessError
                 );
         }
+
+        [HttpGet("warehouse/{warehouseId:guid}", Name = "GetProductByWarehouse")]
+        //[Authorize(Roles = $"{nameof(SystemRole.Administrator)},{nameof(SystemRole.Cashier)}")]
+        public async Task<IActionResult> GetProductByWarehouse(Guid warehouseId, [FromQuery] ProductParameters productParameters)
+        {
+            var productResult = await _service.ProductService.GetProductsByWarehouseIdWithQuantityAsync(warehouseId, trackChanges: false);
+
+            return Ok(productResult);
+        }
         /// <summary>
         /// Get all products
         /// </summary>
@@ -69,6 +78,8 @@ namespace GarageManagementAPI.Presentation.Controllers
                 onFailure: ProcessError
                 );
         }
+
+       
         /// <summary>
         /// Create product
         /// </summary>

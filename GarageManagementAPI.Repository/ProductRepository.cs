@@ -59,5 +59,18 @@ namespace GarageManagementAPI.Repository
                 productParameters.PageSize
             );
         }
+
+        public async Task<IEnumerable<Product>> GetProductsByWarehouseIdAsync(Guid warehouseId, bool trackChanges, string? include = default)
+        {
+            var products = await (from p in RepositoryContext.Products
+                                 join grd in RepositoryContext.GoodsReceivedDetails on p.Id equals grd.ProductId
+                                 join gr in RepositoryContext.GoodsReceiveds on grd.GoodsReceivedId equals gr.Id
+                                 where gr.WarehouseId == warehouseId
+                                 select p)
+                         .Distinct()
+                         .ToListAsync();
+
+            return products;
+        }
     }
 }

@@ -30,6 +30,20 @@ namespace GarageManagementAPI.Presentation.Controllers
                 );
         }
 
+        [HttpGet("warehouse/{warehouseId:guid}", Name = "GetGoodsReceiveds")]
+
+        //[Authorize(Roles = $"{nameof(SystemRole.Administrator)}, {nameof(SystemRole.Cashier)}")]
+        public async Task<IActionResult> GetGoodsReceiveds(Guid warehouseId, [FromQuery] GoodsReceivedParameters goodsReceivedParameters)
+        {
+            var include = "CreatedWarehouseManager, SupplierContact, Warehouse";
+            var goodsReceivedResult = await _service.GoodsReceivedService.GetGoodsReceivedsAsync(warehouseId, goodsReceivedParameters, trackChanges: false, include);
+
+            return goodsReceivedResult.Map(
+                onSuccess: Ok,
+                onFailure: ProcessError
+                );
+        }
+
         [HttpGet("{goodsReceivedId:guid}", Name = "GetGoodsReceivedById")]
         //[Authorize(Roles = $"{nameof(SystemRole.Administrator)},{nameof(SystemRole.Cashier)}")]
         public async Task<IActionResult> GetGoodsReceivedById(Guid goodsReceivedId, [FromQuery] GoodsReceivedParameters goodsReceivedParameters)

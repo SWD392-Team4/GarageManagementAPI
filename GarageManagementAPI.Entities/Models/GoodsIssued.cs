@@ -9,6 +9,7 @@ namespace GarageManagementAPI.Entities.Models
         public Guid CreatedWareHouseManagerId { get; set; }
         public Guid WarehouseId { get; set; }
         public Guid GarageId { get; set; }
+        public Guid GoodsIssuedDetail_ProductAtWarehouseConfiguration { get; set; }
         public decimal TotalCost { get; set; }
         public string ReferenceNumber { get; set; } = null!;
         public string InvoiceCode { get; set; } = null!;

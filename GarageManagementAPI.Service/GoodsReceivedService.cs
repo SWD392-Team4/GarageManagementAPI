@@ -11,7 +11,6 @@ using GarageManagementAPI.Shared.Enums.SystemStatuss;
 using GarageManagementAPI.Shared.ErrorsConstant.GoodsReceived;
 using GarageManagementAPI.Shared.DataTransferObjects.GoodsReceived;
 using GarageManagementAPI.Shared.DataTransferObjects.GoodsReceivedDetail;
-using GarageManagementAPI.Shared.DataTransferObjects.GoodsIssuedDetail;
 
 namespace GarageManagementAPI.Service
 {
@@ -95,6 +94,17 @@ namespace GarageManagementAPI.Service
             return Result<IEnumerable<ExpandoObject>>.Ok(goodsReceivedsShaped, goodsReceivedsWithMetadata.MetaData);
         }
 
+        public async Task<Result<IEnumerable<ExpandoObject>>> GetGoodsReceivedsAsync(Guid warehouseId, GoodsReceivedParameters goodsReceivedParameterdParameters, bool trackChanges, string? include = null)
+        {
+            var goodsReceivedsWithMetadata = await _repoManager.GoodsReceived.GetGoodsReceivedsAsync(warehouseId, goodsReceivedParameterdParameters, trackChanges, include);
+            
+            var goodsReceivedsDto = _mapper.Map<IEnumerable<GoodsReceivedDto>>(goodsReceivedsWithMetadata);
+
+            var goodsReceivedsShaped = _dataShaper.GoodsReceived.ShapeData(goodsReceivedsDto, goodsReceivedParameterdParameters.Fields);
+
+            return Result<IEnumerable<ExpandoObject>>.Ok(goodsReceivedsShaped, goodsReceivedsWithMetadata.MetaData);
+        }
+
         public async Task<Result> UpdateGoodsReceived(Guid goodsReceivedId, GoodsReceivedDtoForUpdate goodsReceivedDtoForUpdate, bool trackChanges)
         {
             var wareHouseResult = await GetAndCheckIfWarehouseIdIsNotExist(goodsReceivedDtoForUpdate.WarehouseId);
@@ -117,17 +127,7 @@ namespace GarageManagementAPI.Service
                 return Result<ExpandoObject>.NotFound(goodsReceivedResult.Errors!);
 
             var goodsReceivedEntity = goodsReceivedResult.GetValue<GoodsReceived>();
-            var goodsReceivedDetails = await this.GetAndCheckGoodsReceivedDetail(goodsReceivedEntity.Id);
-            if(goodsReceivedDetails.Any())
-            {
-                foreach (var goodsReceivedDetail in goodsReceivedDetails)
-                {
-                    goodsReceivedDetail.Status = goodsReceivedDtoForUpdate.Status.Equals(GoodsReceivedStatus.Active)
-                        ? GoodsReceivedStatus.Active
-                        : GoodsReceivedStatus.Inactive;
-                }
-
-            }
+          
             _mapper.Map(goodsReceivedDtoForUpdate, goodsReceivedEntity);
 
             goodsReceivedEntity.UpdatedAt = DateTimeOffset.UtcNow.SEAsiaStandardTime();
@@ -172,12 +172,6 @@ namespace GarageManagementAPI.Service
             var createdWareHouseManager = await _repoManager.SupplierContact.GetSupplierContactAsync(supplierContactId, false);
             if (createdWareHouseManager == null) return true;
             return false;
-        }
-
-        private async Task<IEnumerable<GoodsIssuedDetail>> GetAndCheckGoodsReceivedDetail(Guid goodsReceivedId)
-        {
-            var goodsIssuedDetails = await _repoManager.GoodsIssuedDetail.GetGoodsIssuedDetailsAsync(goodsReceivedId, null);
-            return goodsIssuedDetails;
         }
 
         private async Task CreateGoodsReceivedDetailAsync(Guid goodsReceivedId, GoodsReceivedDetailDtoForCreationGoods goodsReceivedDetailDtoForCreation)
