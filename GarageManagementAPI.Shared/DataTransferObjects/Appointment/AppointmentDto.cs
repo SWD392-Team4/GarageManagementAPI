@@ -14,7 +14,7 @@ namespace GarageManagementAPI.Shared.DataTransferObjects.Appointment
         public Guid GarageId { get; set; }
 
         public int? Mileage { get; set; }
-
+        public string? VerificationCode { get; set; }
         public string? CustomerName { get; set; }
 
         public string? CustomerPhoneNumber { get; set; }

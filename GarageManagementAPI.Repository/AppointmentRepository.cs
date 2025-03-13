@@ -4,6 +4,7 @@ using GarageManagementAPI.Repository.Extensions;
 using GarageManagementAPI.Shared.Enums.SystemStatuss;
 using GarageManagementAPI.Shared.Extension;
 using GarageManagementAPI.Shared.RequestFeatures;
+using GarageManagementAPI.Shared.Utilities;
 using Microsoft.EntityFrameworkCore;
 
 namespace GarageManagementAPI.Repository
@@ -37,7 +38,7 @@ namespace GarageManagementAPI.Repository
             entity.CreatedAt = DateTimeOffset.UtcNow.SEAsiaStandardTime();
             entity.UpdatedAt = DateTimeOffset.UtcNow.SEAsiaStandardTime();
             entity.Status = AppointmentStatus.Pending;
-
+            entity.VerificationCode = CodeGenerator.GenerateRandomCode(6);
             await base.CreateAsync(entity);
         }
 

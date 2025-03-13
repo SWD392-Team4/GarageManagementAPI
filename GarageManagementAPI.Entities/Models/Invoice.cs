@@ -5,6 +5,7 @@ namespace GarageManagementAPI.Entities.Models
 {
     public partial class Invoice : BaseEntity<Invoice>
     {
+        public Guid? AppointmentId { get; set; }
         public Guid EmployeeId { get; set; }
 
         public Guid GarageId { get; set; }

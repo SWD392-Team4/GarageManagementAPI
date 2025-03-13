@@ -21,7 +21,7 @@ namespace GarageManagementAPI.Repository.Configuration
             entity.Property(e => e.TotalPrice).HasColumnType("decimal(18, 2)");
 
             entity.HasOne(d => d.Appointment).WithOne(p => p.Invoice)
-                .HasForeignKey<Invoice>(d => d.Id)
+                .HasForeignKey<Invoice>(d => d.AppointmentId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("invoice_appointmentid_foreign");
 
