@@ -28,10 +28,20 @@ namespace GarageManagementAPI.Repository
                 productAtGarageParameters.PageSize);
         }
 
-        public async Task<ProductAtGarage?> GetProductAtWarehouse(Guid productAtGarageId, bool trackChanges, string? include = null)
+        public async Task<ProductAtGarage?> GetProductAtGarage(Guid productAtGarageId, bool trackChanges, string? include = null)
         {
             var productAtGarage = include == null ? await FindByCondition(pat => pat.Id.Equals(productAtGarageId), trackChanges).SingleOrDefaultAsync() : await FindByCondition(pat => pat.Id.Equals(productAtGarageId), false).IsInclude(include).SingleOrDefaultAsync();
             return productAtGarage;
+        }
+
+        public async Task<ProductAtGarage?> GetProductAtGarage(Guid productId, bool trackChanges)
+        {
+            return await FindByCondition(p => p.ProductId.Equals(productId), trackChanges).FirstOrDefaultAsync();
+        }
+
+        public void UpdateProductGarage(ProductAtGarage productAtGarage)
+        {
+            base.Update(productAtGarage);
         }
     }
 }

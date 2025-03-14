@@ -46,7 +46,7 @@ namespace GarageManagementAPI.Service
 
         private async Task<Result<ProductAtGarage>> GetAndCheckProductAtGarage(Guid productAtGarageId, bool trackChanges, string? include = null)
         {
-            var productAtGarage = await _repoManager.ProductAtGarage.GetProductAtWarehouse(productAtGarageId, trackChanges, include);
+            var productAtGarage = await _repoManager.ProductAtGarage.GetProductAtGarage(productAtGarageId, trackChanges, include);
             if (productAtGarage == null) return productAtGarage.NotFound(productAtGarageId);
             return productAtGarage.OkResukt();
         }
