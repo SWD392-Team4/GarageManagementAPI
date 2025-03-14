@@ -27,7 +27,6 @@ namespace GarageManagementAPI.Application.MappingProfile
 
 
             CreateMap<ProductDtoForCreation, Product>();
-            CreateMap<Product, ProductDtoWithQuantity>();
 
             CreateMap<ProductDtoForUpdate, Product>().ReverseMap()
                .ForAllMembers(opt =>

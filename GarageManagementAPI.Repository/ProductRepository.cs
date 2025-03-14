@@ -62,27 +62,38 @@ namespace GarageManagementAPI.Repository
 
         public async Task<Product?> GetProductWitMaxPrice(bool trackChanges, string? inlude = null)
         {
-            var product= await FindAll(trackChanges).OrderByDescending(p => p.ProductPrice).FirstOrDefaultAsync();
+            var product = await FindAll(trackChanges).OrderByDescending(p => p.ProductPrice).FirstOrDefaultAsync();
             return product;
         }
 
-        public async Task<IEnumerable<Product>> GetProductsByWarehouseIdAsync(Guid warehouseId, bool trackChanges, string? include = default)
+        public async Task<PagedList<Product>> GetProductsByWarehouseIdAsync(Guid warehouseId, ProductParameters productParameters, bool trackChanges, string? include = default)
         {
             var products = await (from p in RepositoryContext.Products
-                                 join grd in RepositoryContext.GoodsReceivedDetails on p.Id equals grd.ProductId
-                                 join gr in RepositoryContext.GoodsReceiveds on grd.GoodsReceivedId equals gr.Id
-                                 where gr.WarehouseId == warehouseId
-                                 select p)
-                         .Distinct()
-                         .ToListAsync();
+                                  join grd in RepositoryContext.GoodsReceivedDetails on p.Id equals grd.ProductId
+                                  join gr in RepositoryContext.GoodsReceiveds on grd.GoodsReceivedId equals gr.Id
+                                  where gr.WarehouseId == warehouseId
+                                  select p)
+                             .Distinct()
+                             .SearchByName(productParameters.ProductName)
+                            .SearchByStatus(productParameters.ProductStatus)
+                            .Sort(productParameters.OrderBy)
+                            .IsInclude(include)
+                            .SearchByPrice(productParameters.MinPrice, productParameters.MaxPrice)
+                            .SearchByCategory(productParameters.ProductCategory)
+                            .SearchByBrand(productParameters.ProductBrandName)
+                            .ToListAsync();
 
-            return products;
+            return PagedList<Product>.ToPagedList(
+                products,
+                productParameters.PageNumber,
+                productParameters.PageSize
+                );
         }
 
         public async Task<IEnumerable<Product>> GetProductsByCarModelAndPart(Guid carModelId, Guid carPartId, bool trackChanges, string? include = default)
         {
-            return await FindByCondition(p => 
-            p.CarParts.Any(cp => cp.Id.Equals(carPartId)) && 
+            return await FindByCondition(p =>
+            p.CarParts.Any(cp => cp.Id.Equals(carPartId)) &&
             p.CarModels.Any(cm => cm.Id.Equals(carModelId)), trackChanges)
                 .ToListAsync();
 

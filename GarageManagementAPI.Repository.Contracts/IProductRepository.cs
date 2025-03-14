@@ -10,7 +10,7 @@ namespace GarageManagementAPI.Repository.Contracts
         Task<PagedList<Product>> GetProductsAsync(ProductParameters productParameters, bool trackChanges, string? include = default);
         public Task<Product?> GetProductWitMaxPrice(bool trackChanges, string? inlude = null);
         Task<IEnumerable<Product>> GetProductsAsync(IEnumerable<Guid> productIds, bool trackChanges);
-        public Task<IEnumerable<Product>> GetProductsByWarehouseIdAsync(Guid warehouseId, bool trackChanges, string? include = default);
+        public Task<PagedList<Product>> GetProductsByWarehouseIdAsync(Guid warehouseId, ProductParameters productParameters, bool trackChanges, string? include = default);
         public Task<IEnumerable<Product>> GetProductsByCarModelAndPart(Guid carModelId, Guid carPartId, bool trackChanges, string? include = default);
     }
 }

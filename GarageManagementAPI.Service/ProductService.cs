@@ -46,7 +46,7 @@ namespace GarageManagementAPI.Service
 
             productEntity.Status = ProductStatus.Inactive;
 
-            if (string.IsNullOrWhiteSpace(productEntity.ProductBarcode)) 
+            if (string.IsNullOrWhiteSpace(productEntity.ProductBarcode))
                 productEntity.ProductBarcode = this.GenerateBarcode();
 
             if (productDtoForCreation.CarPartIds != null && productDtoForCreation.CarPartIds.Any())
@@ -67,7 +67,7 @@ namespace GarageManagementAPI.Service
                 {
                     Result<ProductDto>.BadRequest([CarPartErrors.GetCarModelFoundNotMatchWithIdsError(productDtoForCreation.CarPartIds)]);
                 }
-                productEntity.CarModels = [.. carModels]; 
+                productEntity.CarModels = [.. carModels];
             }
 
             await _repoManager.Product.CreateAsync(productEntity);
@@ -106,8 +106,28 @@ namespace GarageManagementAPI.Service
             else
                 _mapper.Map(productDtoForUpdate, productEntity);
 
+            if (productDtoForUpdate.CarPartIds != null && productDtoForUpdate.CarPartIds.Any())
+            {
+                var carparts = await _repoManager.CarPart.GetCarPartsAsync(productDtoForUpdate.CarPartIds!, true);
+                if (carparts.Count() != productDtoForUpdate.CarPartIds.Count())
+                {
+                    Result<ProductDto>.BadRequest([CarPartErrors.GetCarPartFoundNotMatchWithIdsError(productDtoForUpdate.CarPartIds)]);
+                }
+                productEntity.CarParts = [.. carparts];
+            }
+
+
+            if (productDtoForUpdate.CarPartIds != null && productDtoForUpdate.CarPartIds.Any())
+            {
+                var carModels = await _repoManager.CarModel.GetCarPartsAsync(productDtoForUpdate.CarModelIds!, true);
+                if (carModels.Count() != productDtoForUpdate.CarModelIds!.Count())
+                {
+                    Result<ProductDto>.BadRequest([CarPartErrors.GetCarModelFoundNotMatchWithIdsError(productDtoForUpdate.CarPartIds)]);
+                }
+                productEntity.CarModels = [.. carModels];
+            }
+
             productEntity.UpdatedAt = DateTimeOffset.UtcNow.SEAsiaStandardTime();
-            //Create Product History
 
             await _repoManager.SaveAsync();
 
@@ -182,23 +202,23 @@ namespace GarageManagementAPI.Service
             return Result<IEnumerable<ExpandoObject>>.Ok(productsShaped, productsWithMetadata.MetaData);
         }
 
-        public async Task<IEnumerable<ProductDtoWithQuantity>> GetProductsByWarehouseIdWithQuantityAsync(
-      Guid warehouseId, bool trackChanges, string? include = null)
+        public async Task<Result<IEnumerable<ExpandoObject>>> GetProductsByWarehouseIdWithQuantityAsync(
+      Guid warehouseId, ProductParameters productParameters, bool trackChanges, string? include = null)
         {
-            var productsPagedList = await _repoManager.Product.GetProductsByWarehouseIdAsync(warehouseId, false);
+            var productsWithMetadata = await _repoManager.Product.GetProductsByWarehouseIdAsync(warehouseId, productParameters, false);
 
-            var productIds = productsPagedList.Select(p => p.Id).ToList();
+            var productIds = productsWithMetadata.Select(p => p.Id).ToList();
 
             var productQuantities = await _repoManager.ProductAtWarehouse.GetTotalStockByProductIdsAsync(productIds, warehouseId);
 
-            var productsWithQuantities = _mapper.Map<IEnumerable<ProductDtoWithQuantity>>(productsPagedList);
+            var productsWithQuantities = _mapper.Map<IEnumerable<ProductDto>>(productsWithMetadata);
 
             foreach (var productDto in productsWithQuantities)
             {
                 productDto.TotalQuantity = productQuantities.ContainsKey(productDto.Id) ? productQuantities[productDto.Id] : 0;
             }
-
-            return productsWithQuantities;
+            var productsShaped = _dataShaper.Product.ShapeData(productsWithQuantities, productParameters.Fields);
+            return Result<IEnumerable<ExpandoObject>>.Ok(productsShaped, productsWithMetadata.MetaData);
         }
 
 
@@ -268,6 +288,6 @@ namespace GarageManagementAPI.Service
             return $"BCPD-{DateTime.UtcNow:yyyyMMddHHmmss}-{Guid.NewGuid().ToString("N").Substring(6)}";
         }
 
-        
+
     }
 }

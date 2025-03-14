@@ -10,7 +10,6 @@ using GarageManagementAPI.Shared.RequestFeatures;
 using GarageManagementAPI.Shared.Enums.SystemStatuss;
 using GarageManagementAPI.Shared.ErrorsConstant.GoodsIssued;
 using GarageManagementAPI.Shared.DataTransferObjects.GoodsIssued;
-using GarageManagementAPI.Shared.DataTransferObjects.GoodsIssuedDetail;
 using GarageManagementAPI.Shared.DataTransferObjects.ProductAtGarage;
 
 namespace GarageManagementAPI.Service
@@ -106,16 +105,28 @@ namespace GarageManagementAPI.Service
 
                     await _repoManager.GoodsIssuedDetailProductAtWarehouse.CreateGoodsIssuedDetailProductAtWarehouse(goodsIssuedDetail_ProductAtWarehouse);
 
-
                     var productAtGarage = new ProductAtGarage
                     {
                         GoodsIssuedDetailId = goodsIssuedDetailEntity.Id,
                         Quantity = deductedQuantity,
-                        ProductBarcodeAtGarage = GenerateBarcode(),
+                        ProductId = goodsIssuedDetail.ProductId,
                         CreatedAt = DateTimeOffset.UtcNow.SEAsiaStandardTime()
                     };
 
+                    var product = await _repoManager.ProductAtGarage.GetProductAtGarage(goodsIssuedDetail.ProductId, false);
+                    var productValue = product!.OkResukt().GetValue<ProductAtGarage>();
+
                     await this.CreateProductAtGarage(productAtGarage);
+                    await _repoManager.SaveAsync();
+                    var productAtGarageMapper = _mapper.Map<ProductAtGarageDto>(productAtGarage);
+                    var productAtGarageEntity = await _repoManager.ProductAtGarage.GetProductAtGarage(productAtGarageMapper.Id, true, null);
+                    var productAtGarageValue = productAtGarageEntity!.OkResukt().GetValue<ProductAtGarage>();
+
+                    if (product == null)
+                        productAtGarageValue.ProductBarcodeAtGarage = GenerateBarcode();
+                    else productAtGarageValue.ProductBarcodeAtGarage = productValue.ProductBarcodeAtGarage;
+   //                 _repoManager.ProductAtGarage.UpdateProductGarage(productAtGarageValue);
+                    await _repoManager.SaveAsync();
                 }
             }
             await _repoManager.SaveAsync();
