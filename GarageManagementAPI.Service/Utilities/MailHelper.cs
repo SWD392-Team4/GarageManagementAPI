@@ -1,4 +1,9 @@
-﻿namespace GarageManagementAPI.Service.Utilities
+﻿using GarageManagementAPI.Entities.Models;
+using GarageManagementAPI.Shared.DataTransferObjects.Package;
+using GarageManagementAPI.Shared.DataTransferObjects.Service;
+using System.Text;
+
+namespace GarageManagementAPI.Service.Utilities
 {
     public class MailHelper
     {
@@ -177,6 +182,69 @@
                     </div>
                 </body>
                 </html>";
+        }
+
+        public static string InfoAppointmentTemplate(string verfifyCode, DateTimeOffset appointmentDateTime, IEnumerable<AppointmentDetail> appointmentDetails, IEnumerable<AppointmentDetailPackage> appointmentDetailPackages)
+        {
+            StringBuilder html = new StringBuilder();
+            html.Append("<!DOCTYPE html>\r\n<html lang=\"en\">\r\n  <head>\r\n    <meta charset=\"UTF-8\" />\r\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />\r\n    <title>Document</title>\r\n  </head>\r\n  <body>");
+            html.Append("<div class=\"email-container\">");
+            html.Append($"<p>Mã lịch hẹn: <strong>{verfifyCode}</strong></p>\r\n        <p>Ngày giờ dự kiến: <strong>{ToVietnameseDateTimeFormat(appointmentDateTime)}</strong></p>");
+
+            decimal totalPrice = 0;
+            if (appointmentDetailPackages.Any())
+            {
+                html.Append("<h3>Danh sách gói dịch vụ:</h3>\r\n    <ul>");
+                foreach (var package in appointmentDetailPackages)
+                {
+                    html.Append($"<li>{package.PackageHistory.PackageName} - {package.PackageHistory.PackagePrice:N0} VNĐ</li>");
+                    totalPrice += package.PackageHistory.PackagePrice;
+                }
+                html.Append("</ul>");
+            }
+
+            html.Append("<h3>Danh sách dịch vụ:</h3>\r\n    <ul>");
+            foreach (var appointmentDetail in appointmentDetails)
+            {
+                html.Append($"<li>{appointmentDetail.ServiceHistory.Service.ServiceName} - {(appointmentDetail.PackageHistoryId != null ? 0 : appointmentDetail.ServiceHistory.Price):N0} VNĐ</li>");
+                if (appointmentDetail.AppointmentReplacementParts.Any())
+                {
+                    html.Append("<ul>");
+                    foreach (var part in appointmentDetail.AppointmentReplacementParts)
+                    {
+                        html.Append($"<li>{part.ProductHistory.Product.ProductName} - {part.ProductHistory.ProductPrice:N0} VNĐ</li>");
+                        totalPrice += part.ProductHistory.ProductPrice;
+                    }
+                    html.Append("</ul>");
+                }
+                totalPrice += appointmentDetail.PackageHistoryId.HasValue ? 0 : appointmentDetail.ServiceHistory.Price;
+            }
+            html.Append("</ul>");
+
+            html.Append($"<h3>Tổng chi phí dự kiến: <strong>{totalPrice:N0} VNĐ</strong></h3>");
+
+            html.Append($"<h3>Nếu bạn muốn hủy lịch hẹn:</h3>\r\n  <p>\r\n        <strong>Cách 1:</strong> Sử dụng mã hủy lịch:\r\n        <span style=\"background: #eee; padding: 5px; font-weight: bold\"\r\n          >{verfifyCode}</span\r\n        >\r\n        tại trang web của chúng tôi.\r\n      </p>\r\n      <p>\r\n        <strong>Cách 2:</strong> Gọi hotline:\r\n        <strong>0343663841</strong> và cung cấp mã lịch hẹn.\r\n      </p>\r\n\r\n      <p style=\"color: #666; font-style: italic\">\r\n        Lưu ý: Vui lòng hủy lịch trước {ToVietnameseDateTimeFormat(appointmentDateTime)}, sau khoảng thời gian này vui lòng gọi đến hotline để có thể hủy.\r\n      </p>\r\n    </div>");
+            html.Append("</body></html>");
+
+            return html.ToString();
+        }
+
+        public static string ToVietnameseDateTimeFormat(DateTimeOffset dateTime)
+        {
+            // Convert to local time for displaying
+            var localDateTime = dateTime.ToLocalTime();
+
+            // Format the date part
+            string datePart = localDateTime.ToString("dd/MM/yyyy");
+
+            // Format the time part
+            string timePart = localDateTime.ToString("HH:mm");
+
+            // Determine if it's morning or afternoon/evening
+            string timeOfDay = localDateTime.Hour < 12 ? "sáng" : "chiều";
+
+            // Combine the parts
+            return $"{datePart} vào lúc {timePart} {timeOfDay}";
         }
     }
 }

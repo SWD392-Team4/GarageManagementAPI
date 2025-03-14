@@ -49,6 +49,18 @@ namespace GarageManagementAPI.Repository
                 appointmentDetailParameters.PageNumber,
                 appointmentDetailParameters.PageSize);
         }
+
+        public async Task<IEnumerable<AppointmentDetail>> GetAppointmentDetailByAppointmentIdAsync(Guid appointmentId, bool trackChanges)
+        {
+            return await FindByCondition(ad => ad.AppointmentId.Equals(appointmentId), trackChanges)
+                .Include(apd => apd.ServiceHistory)
+                .ThenInclude(sh => sh.Service)
+                .Include(apd => apd.AppointmentReplacementParts)
+                .ThenInclude(arp => arp.ProductHistory)
+                .ThenInclude(ph => ph.Product)
+                .AsSplitQuery()
+                .ToListAsync();
+        }
     }
 
 }

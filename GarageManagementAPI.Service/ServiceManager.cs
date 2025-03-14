@@ -72,7 +72,7 @@ namespace GarageManagementAPI.Service
                     dataShaper));
 
             _mailService = new Lazy<IMailService>(
-                () => new MailService(mailConfiguration));
+                () => new MailService(mailConfiguration, repositoryManager));
 
             _employeeInfoService = new Lazy<IEmployeeInfoService>(() =>
             new EmployeeInfoService(

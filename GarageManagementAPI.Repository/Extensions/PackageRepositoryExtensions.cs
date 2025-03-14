@@ -120,5 +120,12 @@ namespace GarageManagementAPI.Repository.Extensions
             var lowerCaseSearch = description.Trim().ToLower();
             return packages.Where(p => p.Description.Contains(lowerCaseSearch));
         }
+
+        public static IQueryable<Package> FilterByCarPart(this IQueryable<Package> packages, Guid? carPartId)
+        {
+            if (carPartId is null)
+                return packages;
+            return packages.Where(p => p.PackageHistories.Any(ph => ph.Services.Any(s => s.CarPartId.Equals(carPartId))));
+        }
     }
 }

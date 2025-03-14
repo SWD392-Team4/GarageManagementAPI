@@ -58,15 +58,15 @@ namespace GarageManagementAPI.Presentation.Controllers
             Guid? userId = User.FindFirstValue("UserId") != null ? new Guid(User.FindFirstValue("UserId")!) : (Guid?)null;
 
             var result = await _service.AppointmentService.CreateAppointment(garageId, userId, appointmentDtoCreation);
-            return result.Map(
-              onSuccess: result =>
-              {
-                  var appointment = result.GetValue<AppointmentDto>();
 
-                  return CreatedAtRoute("GetAppointment", new { garageId, appointmentId = appointment.Id }, result);
-              },
-                onFailure: ProcessError
-                );
+            if (!result.IsSuccess)
+                return ProcessError(result);
+
+            var appointment = result.GetValue<AppointmentDto>();
+
+            await _service.MailService.SendInformationAppointmentEmail(appointment.Id);
+
+            return CreatedAtRoute("GetAppointment", new { garageId, appointmentId = appointment.Id }, result);
         }
 
     }

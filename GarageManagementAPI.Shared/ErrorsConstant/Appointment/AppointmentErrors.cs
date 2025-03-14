@@ -8,6 +8,10 @@ namespace GarageManagementAPI.Shared.ErrorsConstant.Appointment
         public const string InvalidAppointment = "Please provide at least one service or package.";
         public const string NotAllowedToConfirmAppointment = "You are not allowed to confirm this appointment";
         public const string AppointmentExceedLimit = "Garage {0} can only have {1} appoinment per day.";
+        public const string AppointmentServiceDuplicate = "Service {0} already added to appointment";
+        public const string AppointmentPackageDuplicate = "Package {0} already added to appointment";
+        public const string AppointmentHasDuplicateProductInService = "Service {0} has duplicate product {0}";
+        public const string AppointmentWrongPackageType = "Package type is not correct";
 
 
         public static ErrorsResult GetAppointmentNotFoundError(Guid id)
@@ -38,5 +42,34 @@ namespace GarageManagementAPI.Shared.ErrorsConstant.Appointment
                 Description = string.Format(AppointmentExceedLimit, garageId, numberPer),
             };
 
+        public static ErrorsResult GetAppointmentServiceDuplicateError(Guid serviceId)
+            => new ErrorsResult
+            {
+                Code = nameof(AppointmentServiceDuplicate),
+                Description = string.Format(AppointmentServiceDuplicate, serviceId)
+            };
+
+        public static ErrorsResult GetAppointmentPackageDuplicateError(Guid packageId)
+            => new ErrorsResult
+            {
+                Code = nameof(AppointmentPackageDuplicate),
+                Description = string.Format(AppointmentPackageDuplicate, packageId)
+            };
+
+        public static ErrorsResult GetAppointmentHasDuplicateProductInServiceError(Guid serviceId, Guid productId)
+            => new ErrorsResult
+            {
+                Code = nameof(AppointmentHasDuplicateProductInService),
+                Description = string.Format(AppointmentHasDuplicateProductInService, serviceId, productId)
+            };
+
+        public static ErrorsResult GetAppointmentWrongPackageTypeError()
+        {
+            return new ErrorsResult
+            {
+                Code = nameof(AppointmentWrongPackageType),
+                Description = AppointmentWrongPackageType
+            };
+        }
     }
 }

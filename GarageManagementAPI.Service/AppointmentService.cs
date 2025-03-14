@@ -58,7 +58,7 @@ namespace GarageManagementAPI.Service
                 if (user is null)
                     return Result<AppointmentDto>.NotFound(UserErrors.GetUserNotFoundWithIdError(userId.Value));
 
-                if (!user.Roles.Any(r => r.Name!.Equals(nameof(SystemRole.Cashier))))
+                if (!user.Roles.Any(r => r.Name!.Equals(nameof(SystemRole.Cashier)) || r.Name!.Equals(nameof(SystemRole.Customer))))
                     return Result<AppointmentDto>.Forbidden(UserErrors.GetUnAuthorizeUserError());
             }
 
@@ -100,20 +100,54 @@ namespace GarageManagementAPI.Service
             return Result<AppointmentDto>.Ok(appointmentDto);
         }
 
-        private async Task<Result<decimal>> CreateAppointmentDetails(Guid appointmentId, IEnumerable<AppointmentDetailDtoForCreation>? serviceInAppointmentDtos)
+
+        private async Task<Result<decimal>> CreateAppointmentDetails(
+            Guid appointmentId,
+            IEnumerable<AppointmentDetailDtoForCreation>? serviceInAppointmentDtos,
+            Guid packageHistoryId = default)
         {
-            if (serviceInAppointmentDtos is null || !serviceInAppointmentDtos.Any())
+            // Early return if no services
+            if (serviceInAppointmentDtos == null || !serviceInAppointmentDtos.Any())
                 return Result<decimal>.Ok(0);
-            decimal totalPrice = 0;
-            var serviceIdList = serviceInAppointmentDtos.Select(s => s.ServiceId).Distinct().ToList();
-            var poductInAppointmentList = serviceInAppointmentDtos.Where(s => s.ReplacementParts != null && s.ReplacementParts.Any()).SelectMany(s => s.ReplacementParts!).ToList();
 
-            var serviceInServiceList = await _repoManager.Service.GetServiceByIdsAsync(serviceIdList, false);
-
-            if (serviceInServiceList.Count() != serviceIdList.Count)
+            // Check for duplicated services if not from a package
+            if (packageHistoryId == default)
             {
-                var notFoundServiceIds = serviceIdList.Except(serviceInServiceList.Select(s => s.Id));
-                return Result<decimal>.NotFound(ServiceErrors.GetServicesFoundNotMatchWithIdsError(notFoundServiceIds));
+                var serviceGroups = serviceInAppointmentDtos.GroupBy(s => s.ServiceId);
+                var duplicateService = serviceGroups.FirstOrDefault(g => g.Count() > 1);
+
+                if (duplicateService != null)
+                    return Result<decimal>.BadRequest(AppointmentErrors.GetAppointmentServiceDuplicateError(duplicateService.Key));
+            }
+
+            // Extract all needed IDs upfront
+            var serviceList = serviceInAppointmentDtos.ToList();
+            var serviceIdList = serviceList.Select(s => s.ServiceId).ToList();
+            var servicesWithDuplicateProducts = serviceList
+                        .Where(s => s.ReplacementParts != null && s.ReplacementParts.Any())
+                        .Where(s => s.ReplacementParts!
+                            .GroupBy(rp => rp.ProductId)
+                            .Any(g => g.Count() > 1))
+                        .ToList();
+            if (servicesWithDuplicateProducts.Any())
+            {
+                var duplicateProductIds = servicesWithDuplicateProducts.First().ReplacementParts!
+                    .GroupBy(rp => rp.ProductId)
+                    .First(g => g.Count() > 1);
+                return Result<decimal>.BadRequest(AppointmentErrors.GetAppointmentHasDuplicateProductInServiceError(servicesWithDuplicateProducts.First().ServiceId, duplicateProductIds.Key.Value));
+            }
+
+            var productDtos = serviceList.Where(s => s.ReplacementParts != null && s.ReplacementParts.Any())
+                                .SelectMany(s => s.ReplacementParts!)
+                                .ToList();
+            var productIdList = productDtos.Where(p => p.ProductId.HasValue).Select(p => p.ProductId!.Value).Distinct().ToList();
+
+            // Get all required data from the database
+            var services = await _repoManager.Service.GetServiceByIdsAsync(serviceIdList, false);
+            if (services.Count() != serviceIdList.Count)
+            {
+                var missingIds = serviceIdList.Except(services.Select(s => s.Id));
+                return Result<decimal>.NotFound(ServiceErrors.GetServicesFoundNotMatchWithIdsError(missingIds));
             }
 
             var serviceHistoryList = await _repoManager.ServiceHistory.GetServiceHistoriesAsync(serviceIdList, false);
@@ -123,70 +157,106 @@ namespace GarageManagementAPI.Service
                 return Result<decimal>.NotFound(ServiceHistoryErrors.GetServiceHistoryFoundNotMatchWithIdsError(notFoundServiceIds));
             }
 
-            var productIdList = poductInAppointmentList.Select(p => p.ProductId).Distinct().ToList();
-            var productInServiceList = await _repoManager.Product.GetProductsAsync(productIdList, false);
+            // Only query products if there are any
+            IEnumerable<Product> productList = new List<Product>();
+            IEnumerable<ProductHistory> productHistoryList = new List<ProductHistory>();
 
-            if (productInServiceList.Count() != productIdList.Count)
+            if (productIdList != null && productIdList.Count != 0)
             {
-                var notFoundProductIds = productIdList.Except(productInServiceList.Select(p => p.Id));
-                return Result<decimal>.NotFound(ProductErrors.GetProductsFoundNotMatchWithIdsError(notFoundProductIds));
+                productList = await _repoManager.Product.GetProductsAsync(productIdList, false);
+                if (productList.Count() != productIdList.Count)
+                {
+                    var missingIds = productIdList.Except(productList.Select(p => p.Id));
+                    return Result<decimal>.NotFound(ProductErrors.GetProductsFoundNotMatchWithIdsError(missingIds));
+                }
+
+                productHistoryList = await _repoManager.ProductHistory.GetProductHistoriesAsync(productIdList, false);
+                if (productHistoryList.Count() != productIdList.Count)
+                {
+                    var notFoundProductIds = productIdList.Except(productHistoryList.Select(p => p.ProductId));
+                    return Result<decimal>.NotFound(ProductHistoryErrors.GetProductHistoryNotMatchWithProductId(notFoundProductIds));
+                }
             }
 
-            var productHistoryList = await _repoManager.ProductHistory.GetProductHistoriesAsync(productIdList, false);
-            if (productHistoryList.Count() != productIdList.Count)
-            {
-                var notFoundProductIds = productIdList.Except(productHistoryList.Select(p => p.ProductId));
-                return Result<decimal>.NotFound(ProductHistoryErrors.GetProductHistoryNotMatchWithProductId(notFoundProductIds));
-            }
+            // Create dictionaries for efficient lookups
+            var serviceHistoryDict = serviceHistoryList.ToDictionary(s => s.ServiceId);
+            var productHistoryDict = productIdList.Any() ?
+                productHistoryList.ToDictionary(p => p.ProductId) : null;
 
-            var apppointmentDetail = new List<AppointmentDetail>();
+            decimal totalPrice = 0;
+            var appointmentDetails = new List<AppointmentDetail>();
+            var now = DateTimeOffset.UtcNow.SEAsiaStandardTime();
 
-            foreach (var item in serviceInAppointmentDtos)
+            // Create appointment details
+            foreach (var item in serviceList)
             {
-                var serviceHistoryId = serviceHistoryList.First(s => s.ServiceId.Equals(item.ServiceId)).Id;
-                var newAppointmentDetail = new AppointmentDetail()
+                var serviceHistory = serviceHistoryDict[item.ServiceId];
+
+                var newAppointmentDetail = new AppointmentDetail
                 {
                     AppointmentId = appointmentId,
-                    ServiceHistoryId = serviceHistoryId,
-                    CreateAt = DateTimeOffset.UtcNow.SEAsiaStandardTime(),
-                    UpdatedAt = DateTimeOffset.UtcNow.SEAsiaStandardTime(),
-                    Status = AppointmentDetailStatus.Pending
+                    ServiceHistoryId = serviceHistory.Id,
+                    CreateAt = now,
+                    UpdatedAt = now,
+                    Status = AppointmentDetailStatus.Pending,
+                    PackageHistoryId = packageHistoryId != default ? packageHistoryId : null
                 };
-                if (item.ReplacementParts != null && item.ReplacementParts.Any())
+
+                // Add replacement parts if any
+                if (item.ReplacementParts?.Any() == true && productHistoryDict != null)
                 {
                     var replacementParts = new List<AppointmentReplacementPart>();
+
                     foreach (var part in item.ReplacementParts)
                     {
-                        var productHistoryId = productHistoryList.First(p => p.ProductId.Equals(part.ProductId)).Id;
-                        replacementParts.Add(new AppointmentReplacementPart
+                        var productHistory = productHistoryDict[part.ProductId!.Value];
+
+                        var replacementPart = new AppointmentReplacementPart
                         {
                             AppointmentDetailId = newAppointmentDetail.Id,
-                            ProductHistoryId = productHistoryId,
+                            ProductHistoryId = productHistory.Id,
                             Quantity = part.Quantity,
                             Status = AppointmentReplacementPartStatus.Pending,
-                            CreatedAt = DateTimeOffset.UtcNow.SEAsiaStandardTime(),
-                            UpdatedAt = DateTimeOffset.UtcNow.SEAsiaStandardTime()
-                        });
-                        totalPrice += (productHistoryList.First(p => p.ProductId.Equals(part.ProductId)).ProductPrice * part.Quantity);
+                            CreatedAt = now,
+                            UpdatedAt = now
+                        };
+
+                        replacementParts.Add(replacementPart);
+                        totalPrice += (productHistory.ProductPrice * part.Quantity);
                     }
+
                     newAppointmentDetail.AppointmentReplacementParts = replacementParts;
                 }
-                totalPrice += serviceHistoryList.First(s => s.ServiceId.Equals(item.ServiceId)).Price;
 
-                apppointmentDetail.Add(newAppointmentDetail);
+                // Only add service price if not from a package
+                if (newAppointmentDetail.PackageHistoryId == null)
+                    totalPrice += serviceHistory.Price;
+
+                appointmentDetails.Add(newAppointmentDetail);
             }
 
-            await _repoManager.AppointmentDetail.CreatesAsync([.. apppointmentDetail]);
+            // Bulk insert appointment details
+            await _repoManager.AppointmentDetail.CreatesAsync([.. appointmentDetails]);
 
             return Result<decimal>.Ok(totalPrice);
         }
 
-        private async Task<Result<decimal>> CreateAppointmentDetailPackages(Guid appointmentId, IEnumerable<AppointmentDetailPackageDtoForCreation>? packages, IEnumerable<AppointmentDetailDtoForCreation>? serviceInAppointmentDtos)
+        private async Task<Result<decimal>> CreateAppointmentDetailPackages(Guid appointmentId, IEnumerable<AppointmentDetailPackageDtoForCreation>? packages, IEnumerable<AppointmentDetailDtoForCreation>? serviceInAppointmentDtos, bool isPackageImmediate = true)
         {
             if (packages is null || !packages.Any())
                 return Result<decimal>.Ok(0);
 
-            var packageIds = packages.Select(p => p.PackageId).Distinct().ToList();
+
+            var checkDuplicatePackageId = packages
+                .GroupBy(p => p.PackageId)
+                .Where(s => s.Count() > 1)
+                .Select(s => s.Key)
+                .FirstOrDefault();
+
+            if (checkDuplicatePackageId != default)
+                return Result<decimal>.BadRequest(AppointmentErrors.GetAppointmentPackageDuplicateError(checkDuplicatePackageId));
+
+            var packageIds = packages.Select(p => p.PackageId).ToList();
 
             decimal totalPrice = 0;
             var packageList = await _repoManager.Package.GetPackagesAsync(packageIds, false);
@@ -194,6 +264,10 @@ namespace GarageManagementAPI.Service
             {
                 var notFoundPackageIds = packageIds.Except(packageList.Select(p => p.Id));
                 return Result<decimal>.NotFound(PackageErrors.GetPackageFoundNotMatchWithIdError(notFoundPackageIds));
+            }
+            if (packageList.Any(p => !p.Type.Equals(PackageType.Immediate)) && !isPackageImmediate)
+            {
+                return Result<decimal>.BadRequest(AppointmentErrors.GetAppointmentWrongPackageTypeError());
             }
 
             var packageHistoryList = await _repoManager.PackageHistory.GetPackageHistoriesAsync(packageIds, false);
@@ -204,32 +278,31 @@ namespace GarageManagementAPI.Service
             }
 
             var pacakgeDetail = new List<AppointmentDetailPackage>();
+            var packageHistoryDict = packageHistoryList.ToDictionary(p => p.PackageId);
+            var now = DateTimeOffset.UtcNow.SEAsiaStandardTime();
             foreach (var package in packages)
             {
-                var packageHistory = packageHistoryList.First(p => p.PackageId.Equals(package.PackageId));
+                var packageHistory = packageHistoryDict[package.PackageId];
                 var newAppointmentDetail = new AppointmentDetailPackage()
                 {
                     AppointmentId = appointmentId,
                     PackageHistoryId = packageHistory.Id,
-                    CreatedAt = DateTimeOffset.UtcNow.SEAsiaStandardTime(),
-                    UpdatedAt = DateTimeOffset.UtcNow.SEAsiaStandardTime(),
+                    CreatedAt = now,
+                    UpdatedAt = now,
                     Status = AppointmentDetailPackageStatus.Pending
                 };
                 pacakgeDetail.Add(newAppointmentDetail);
                 totalPrice += packageHistory.PackagePrice;
+                var serviceOfPackageHistory = await _repoManager.Service.GetServiceByPackageHistoryIdAsync(packageHistory.Id, false);
+                var newServiceInAppointmentDtos = serviceOfPackageHistory.Select(x => new AppointmentDetailDtoForCreation()
+                {
+                    ServiceId = x.Id,
+                });
+
+                var result = await CreateAppointmentDetails(appointmentId, newServiceInAppointmentDtos, packageHistory.Id);
+                if (!result.IsSuccess)
+                    return Result<decimal>.Failure(result);
             }
-            var packageHistoryIds = packageHistoryList.Select(p => p.Id).ToList();
-            var serviceOfPackageHistory = await _repoManager.Service.GetServiceByPackageHistoryIdsAsync(packageHistoryIds, false);
-
-            var newServiceInAppointmentDtos = serviceOfPackageHistory.Select(x => new AppointmentDetailDtoForCreation()
-            {
-                ServiceId = x.Id,
-            });
-
-
-            var result = await CreateAppointmentDetails(appointmentId, newServiceInAppointmentDtos);
-            if (!result.IsSuccess)
-                return Result<decimal>.Failure(result);
 
             if (serviceInAppointmentDtos is not null && serviceInAppointmentDtos.Any())
             {

@@ -11,6 +11,8 @@ namespace GarageManagementAPI.Shared.RequestFeatures
 
         public Guid? CarCategoryId { get; set; }
 
+        public Guid? CarPartId { get; set; }
+
         public string? PackageName { get; set; }
 
         public string? Description { get; set; }

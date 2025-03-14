@@ -17,6 +17,13 @@ namespace GarageManagementAPI.Repository
             return await FindByCondition(ad => ad.Id.Equals(id), trackChanges).SingleOrDefaultAsync();
         }
 
+        public async Task<IEnumerable<AppointmentDetailPackage>> GetAppointmentDetailPackageByAppointmentIdAsync(Guid appointmentId, bool trackChanges)
+        {
+            return await FindByCondition(ad => ad.AppointmentId.Equals(appointmentId), trackChanges)
+                .Include(adp => adp.PackageHistory)
+                .ToListAsync();
+        }
+
         public async Task<PagedList<AppointmentDetailPackage>> GetAppointmentDetailPackagesByAppointmentIdAsync(AppointmentDetailPackageParameters appointmentDetailPackageParameters, bool trackChanges)
         {
             var appointmentDetailPackages = await FindAll(trackChanges)

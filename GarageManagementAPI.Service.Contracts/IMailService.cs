@@ -11,6 +11,8 @@ namespace GarageManagementAPI.Service.Contracts
 
         Task<bool> SendConfirmEmailEmployeeEmail(UserForRegistrationEmployeeDto userForRegistrationEmployeeDto, string url);
 
+        Task<bool> SendInformationAppointmentEmail(Guid appointmentId);
+
         Task<bool> SendMail(MailData Mail_Data);
     }
 }

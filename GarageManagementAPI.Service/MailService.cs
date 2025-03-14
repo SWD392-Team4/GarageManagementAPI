@@ -1,4 +1,5 @@
 ﻿using GarageManagementAPI.Entities.ConfigurationModels;
+using GarageManagementAPI.Repository.Contracts;
 using GarageManagementAPI.Service.Contracts;
 using GarageManagementAPI.Service.Utilities;
 using GarageManagementAPI.Shared.DataTransferObjects;
@@ -16,10 +17,13 @@ namespace GarageManagementAPI.Service
         public const string ConfirmEmail = "Confirm your email.";
         public const string ForgotPassword = "Forgot password.";
 
+        public readonly IRepositoryManager _repoManager;
 
-        public MailService(IOptionsSnapshot<MailConfiguration> mailConfiguration)
+
+        public MailService(IOptionsSnapshot<MailConfiguration> mailConfiguration, IRepositoryManager repoManager)
         {
             _mail = mailConfiguration.Value;
+            _repoManager = repoManager;
         }
 
         public async Task<bool> SendMail(MailData Mail_Data)
@@ -83,6 +87,20 @@ namespace GarageManagementAPI.Service
                 EmailSubject = ConfirmEmail,
                 EmailBody = MailHelper.ConfirmEmailEmployeeTemplate(fullname, userForRegistrationEmployeeDto.UserName!, userForRegistrationEmployeeDto.Password!, url),
                 EmailToId = userForRegistrationEmployeeDto.Email,
+            };
+            return await SendMail(mailData);
+        }
+
+        public async Task<bool> SendInformationAppointmentEmail(Guid appointmentId)
+        {
+            var appointment = await _repoManager.Appointment.GetAppointmentAsync(appointmentId, false);
+            var appointmentDetail = await _repoManager.AppointmentDetail.GetAppointmentDetailByAppointmentIdAsync(appointmentId, false);
+            var appointmentDetailPackage = await _repoManager.AppointmentDetailPackage.GetAppointmentDetailPackageByAppointmentIdAsync(appointmentId, false);
+            MailData mailData = new MailData()
+            {
+                EmailSubject = "Information Appointment",
+                EmailBody = MailHelper.InfoAppointmentTemplate(appointment.VerificationCode!, appointment.EstimatedAppointmentTime, appointmentDetail, appointmentDetailPackage),
+                EmailToId = appointment.CustomerEmail,
             };
             return await SendMail(mailData);
         }

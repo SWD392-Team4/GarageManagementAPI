@@ -7,6 +7,8 @@ namespace GarageManagementAPI.Shared.DataTransferObjects.CarModel
     {
         public Guid Id { get; set; }
 
+        public Guid BrandId { get; set; }
+
         public string? BrandName { get; set; }
 
         public string? BrandLinkLogo { get; set; }
