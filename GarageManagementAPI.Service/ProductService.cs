@@ -9,6 +9,7 @@ using GarageManagementAPI.Shared.ResultModel;
 using GarageManagementAPI.Repository.Contracts;
 using GarageManagementAPI.Shared.RequestFeatures;
 using GarageManagementAPI.Shared.Enums.SystemStatuss;
+using GarageManagementAPI.Shared.ErrorsConstant.CarPart;
 using GarageManagementAPI.Shared.ErrorsConstant.Product;
 using GarageManagementAPI.Shared.DataTransferObjects.Product;
 
@@ -45,7 +46,29 @@ namespace GarageManagementAPI.Service
 
             productEntity.Status = ProductStatus.Inactive;
 
-            if (string.IsNullOrWhiteSpace(productEntity.ProductBarcode)) productEntity.ProductBarcode = this.GenerateBarcode();
+            if (string.IsNullOrWhiteSpace(productEntity.ProductBarcode)) 
+                productEntity.ProductBarcode = this.GenerateBarcode();
+
+            if (productDtoForCreation.CarPartIds != null && productDtoForCreation.CarPartIds.Any())
+            {
+                var carparts = await _repoManager.CarPart.GetCarPartsAsync(productDtoForCreation.CarPartIds!, true);
+                if (carparts.Count() != productDtoForCreation.CarPartIds.Count())
+                {
+                    Result<ProductDto>.BadRequest([CarPartErrors.GetCarPartFoundNotMatchWithIdsError(productDtoForCreation.CarPartIds)]);
+                }
+                productEntity.CarParts = [.. carparts];
+            }
+
+
+            if (productDtoForCreation.CarPartIds != null && productDtoForCreation.CarPartIds.Any())
+            {
+                var carModels = await _repoManager.CarModel.GetCarPartsAsync(productDtoForCreation.CarModelIds!, true);
+                if (carModels.Count() != productDtoForCreation.CarModelIds!.Count())
+                {
+                    Result<ProductDto>.BadRequest([CarPartErrors.GetCarModelFoundNotMatchWithIdsError(productDtoForCreation.CarPartIds)]);
+                }
+                productEntity.CarModels = [.. carModels]; 
+            }
 
             await _repoManager.Product.CreateAsync(productEntity);
             await CreateProductHistoryAsync(productEntity);
@@ -225,6 +248,14 @@ namespace GarageManagementAPI.Service
             return product.OkResult();
         }
 
+        public async Task<Result<IEnumerable<ProductDto>>> GetProductsByCarModelAndPart(Guid carModelId, Guid carPartId, bool trackChanges, string? include = null)
+        {
+            var products = await _repoManager.Product.GetProductsByCarModelAndPart(carModelId, carPartId, trackChanges, include);
+            var productDtos = _mapper.Map<IEnumerable<ProductDto>>(products);
+            return Result<IEnumerable<ProductDto>>.Success(productDtos, System.Net.HttpStatusCode.OK);
+        }
+
+
         private async Task CreateProductHistoryAsync(Product product)
         {
             var productHistory = _mapper.Map<ProductHistory>(product);
@@ -236,5 +267,7 @@ namespace GarageManagementAPI.Service
         {
             return $"BCPD-{DateTime.UtcNow:yyyyMMddHHmmss}-{Guid.NewGuid().ToString("N").Substring(6)}";
         }
+
+        
     }
 }

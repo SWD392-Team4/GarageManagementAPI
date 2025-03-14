@@ -67,6 +67,19 @@ namespace GarageManagementAPI.Presentation.Controllers
                 );
         }
 
+        [HttpGet("car-model/car-part/{carModelId:guid}/{carPartId:guid}", Name = "GetProductCarModelAndCarPart")]
+        //[Authorize(Roles = $"{nameof(SystemRole.Administrator)},{nameof(SystemRole.Cashier)}")]
+        public async Task<IActionResult> GetProductByCarModelAndCarPart(Guid carModelId, Guid carPartId, [FromQuery] ProductParameters productParameters)
+        {
+            var isInclude = "Brand,ProductCategory,ProductHistories,ProductImages";
+            var productResult = await _service.ProductService.GetProductsByCarModelAndPart(carModelId, carPartId, trackChanges: false, isInclude);
+
+            return productResult.Map(
+                onSuccess: Ok,
+                onFailure: ProcessError
+                );
+        }
+
         /// <summary>
         /// Get product with warehouse
         /// </summary>
@@ -99,7 +112,7 @@ namespace GarageManagementAPI.Presentation.Controllers
                 );
         }
 
-       
+
         /// <summary>
         /// Create product
         /// </summary>

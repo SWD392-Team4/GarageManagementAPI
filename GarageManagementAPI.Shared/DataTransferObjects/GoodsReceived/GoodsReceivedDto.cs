@@ -8,6 +8,12 @@ namespace GarageManagementAPI.Shared.DataTransferObjects.GoodsReceived
     public record class GoodsReceivedDto : BaseDto<GoodsReceivedDto>
     {
         public Guid Id { get; set; }
+        public Guid CreatedWarehouseManagerId { get; set; }
+        public string? UserName { get; set; }
+        public Guid SupplierContactId { get; set; }
+        public string? ContactPersonName { get; set; }
+        public Guid WarehouseId { get; set; }
+        public string? Warehouse { get; set; }
         public string RefereneceNumber { get; set; } = null!;
         public string InvoiceCode { get; set; } = null!;
         public string SourceAddress { get; set; } = null!;
@@ -15,15 +21,10 @@ namespace GarageManagementAPI.Shared.DataTransferObjects.GoodsReceived
         public string SourceDistrict { get; set; } = null!;
         public string SourceWards { get; set; } = null!;
         public decimal TotalPrice { get; set; }
-        public string ContactPersonName { get; set; } = null!;
-        public string WorkPlaceName { get; set; } = null!;
-        public string WarehouseManagereName { get; set; } = null!;
 
         [EnumDataType(typeof(GoodsReceivedStatus))]
         public GoodsReceivedStatus Status { get; set; }
 
         public DateTimeOffset CreatedAt { get; set; }
-
-        public DateTimeOffset UpdatedAt { get; set; }
     }
 }

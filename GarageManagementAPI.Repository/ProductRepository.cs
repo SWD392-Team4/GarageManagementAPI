@@ -78,5 +78,14 @@ namespace GarageManagementAPI.Repository
 
             return products;
         }
+
+        public async Task<IEnumerable<Product>> GetProductsByCarModelAndPart(Guid carModelId, Guid carPartId, bool trackChanges, string? include = default)
+        {
+            return await FindByCondition(p => 
+            p.CarParts.Any(cp => cp.Id.Equals(carPartId)) && 
+            p.CarModels.Any(cm => cm.Id.Equals(carModelId)), trackChanges)
+                .ToListAsync();
+
+        }
     }
 }
