@@ -58,6 +58,10 @@ namespace GarageManagementAPI.Repository
             );
         }
 
+        public async Task<IEnumerable<CarPart>> GetCarPartsAsync(List<Guid> carPartIds, bool trackChanges, string? include = null)
+        {
+            return await FindByCondition(cp => carPartIds.Contains(cp.Id), trackChanges).ToListAsync();
+        }
 
         public void UpdateCarPartAsync(CarPart carPart)
         {

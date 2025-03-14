@@ -14,12 +14,12 @@ namespace GarageManagementAPI.Application.MappingProfile
                      opts.PreCondition(src => src.SupplierContact != null);
                      opts.MapFrom(src => src.SupplierContact!.ContactPersonName);
                  })
-                  .ForMember(dest => dest.WorkPlaceName, opts =>
+                  .ForMember(dest => dest.Warehouse, opts =>
                   {
                       opts.PreCondition(src => src.Warehouse != null);
                       opts.MapFrom(src => src.Warehouse!.Name);
                   })
-                  .ForMember(dest => dest.WarehouseManagereName, opts =>
+                  .ForMember(dest => dest.UserName, opts =>
                   {
                       opts.PreCondition(src => src.CreatedWarehouseManager != null);
                       opts.MapFrom(src => src.CreatedWarehouseManager!.FirstName + " " + src.CreatedWarehouseManager!.LastName);
