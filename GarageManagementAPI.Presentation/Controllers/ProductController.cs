@@ -35,6 +35,20 @@ namespace GarageManagementAPI.Presentation.Controllers
                 );
         }
         /// <summary>
+        /// Get product max price
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("product/maxprice", Name = "GetProductMaxPrice")]
+        public async Task<IActionResult> GetProduct()
+        {
+            var productResult = await _service.ProductService.GetProductAsync(trackChanges: false);
+
+            return productResult.Map(
+                onSuccess: Ok,
+                onFailure: ProcessError
+                );
+        }
+        /// <summary>
         /// Get product by barcode
         /// </summary>
         /// <param name="barcode"></param>
@@ -53,6 +67,12 @@ namespace GarageManagementAPI.Presentation.Controllers
                 );
         }
 
+        /// <summary>
+        /// Get product with warehouse
+        /// </summary>
+        /// <param name="warehouseId"></param>
+        /// <param name="productParameters"></param>
+        /// <returns></returns>
         [HttpGet("warehouse/{warehouseId:guid}", Name = "GetProductByWarehouse")]
         //[Authorize(Roles = $"{nameof(SystemRole.Administrator)},{nameof(SystemRole.Cashier)}")]
         public async Task<IActionResult> GetProductByWarehouse(Guid warehouseId, [FromQuery] ProductParameters productParameters)

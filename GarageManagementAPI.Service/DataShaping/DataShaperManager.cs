@@ -26,6 +26,7 @@ using GarageManagementAPI.Shared.DataTransferObjects.GoodsIssuedDetail;
 using GarageManagementAPI.Shared.DataTransferObjects.PackageHistory;
 using GarageManagementAPI.Shared.DataTransferObjects.ProductAtWarehouse;
 using GarageManagementAPI.Shared.DataTransferObjects.Appointment;
+using GarageManagementAPI.Shared.DataTransferObjects.ProductAtGarage;
 
 namespace GarageManagementAPI.Service.DataShaping
 {
@@ -53,6 +54,7 @@ namespace GarageManagementAPI.Service.DataShaping
         private readonly Lazy<IDataShaper<GoodsIssuedDetailDto>> _goodsIssuedDetailShaper;
         private readonly Lazy<IDataShaper<GoodsReceivedDetailDto>> _goodsReceivedDetailShaper;
         private readonly Lazy<IDataShaper<PackageImageDto>> _packageImageShaper;
+        private readonly Lazy<IDataShaper<ProductAtGarageDto>> _productAtGarageShaper;
         private readonly Lazy<IDataShaper<PackageDto>> _packageShaper;
         private readonly Lazy<IDataShaper<PackageHistoryDto>> _packageHistoryShaper;
         private readonly Lazy<IDataShaper<PackageConditionDto>> _packageConditionShaper;
@@ -140,14 +142,16 @@ namespace GarageManagementAPI.Service.DataShaping
 
             _appointmentShaper = new Lazy<IDataShaper<AppointmentDto>>(
            () => new DataShaper<AppointmentDto>(AppointmentDto.PropertyInfos));
+            _productAtGarageShaper = new Lazy<IDataShaper<ProductAtGarageDto>>(
+         () => new DataShaper<ProductAtGarageDto>(ProductAtGarageDto.PropertyInfos));
         }
         //.Value là thuộc tính của Lazy<T>, nó sẽ kích hoạt việc khởi tạo đối tượng nếu đối tượng đó chưa được khởi tạo trước đó. Nếu đối tượng đã được khởi tạo, thuộc tính .Value sẽ trả về đối tượng đó.
         public IDataShaper<UserDto> User => _userShaper.Value;
         public IDataShaper<BrandDto> Brand => _brandShaper.Value;
         public IDataShaper<ServiceDto> Service => _serviceShaper.Value;
         public IDataShaper<CarPartDto> CarPart => _carPartShaper.Value;
-        public IDataShaper<CarModelDto> CarModel => _carModelShaper.Value;
         public IDataShaper<ProductDto> Product => _productShaper.Value;
+        public IDataShaper<CarModelDto> CarModel => _carModelShaper.Value;
         public IDataShaper<SupplierDto> Supplier => _supplierShapper.Value;
         public IDataShaper<WorkplaceDto> Workplace => _workplaceShaper.Value;
         public IDataShaper<GoodsIssuedDto> GoodsIssued => _goodsIssuedShaper.Value;
@@ -160,6 +164,7 @@ namespace GarageManagementAPI.Service.DataShaping
         public IDataShaper<CarPartCategoryDto> CarPartCategory => _carPartCategoryShaper.Value;
         public IDataShaper<ServiceFeedBackDto> ServiceFeedback => _serviceFeedBackShaper.Value;
         public IDataShaper<SupplierContactDto> SupplierContact => _supplierContactShaper.Value;
+        public IDataShaper<ProductAtGarageDto> ProductAtGarage => _productAtGarageShaper.Value;
         public IDataShaper<GoodsIssuedDetailDto> GoodsIssuedDetail => _goodsIssuedDetailShaper.Value;
         public IDataShaper<GoodsReceivedDetailDto> GoodsReceivedDetail => _goodsReceivedDetailShaper.Value;
         public IDataShaper<PackageImageDto> PackageImage => _packageImageShaper.Value;

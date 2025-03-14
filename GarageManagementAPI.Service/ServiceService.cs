@@ -12,6 +12,7 @@ using GarageManagementAPI.Shared.ErrorsConstant.Service;
 using GarageManagementAPI.Shared.DataTransferObjects.Service;
 using GarageManagementAPI.Shared.DataTransferObjects.Package;
 using GarageManagementAPI.Shared.Enums;
+using GarageManagementAPI.Shared.DataTransferObjects.Product;
 
 namespace GarageManagementAPI.Service
 {
@@ -63,6 +64,7 @@ namespace GarageManagementAPI.Service
                 return Result.BadRequest([ServiceErrors.GetCarPartNotFoundError(serviceDtoForCreation.CarPartId)]);
 
             var carCategoryResult = await GetAndCheckIfCarCategoryIsExist(serviceDtoForCreation.CarCategoryId);
+
             if (carCategoryResult)
                 return Result.BadRequest([ServiceErrors.GetCarCategoryNotFoundError(serviceDtoForCreation.CarCategoryId)]);
 
@@ -217,6 +219,25 @@ namespace GarageManagementAPI.Service
             var packageDtoShaped = _dataShaper.Package.ShapeData(packageDto, packageParameters.Fields);
 
             return Result<IEnumerable<ExpandoObject>>.Ok(packageDtoShaped, packages.MetaData);
+        }
+
+        public async Task<Result<IEnumerable<ExpandoObject>>> GetServiceByCarCategory(Guid carCategoryId, ServiceParameters serviceParameters, bool trackChanges, string? include = null)
+        {
+            var services = await _repoManager.Service.GetServiceByCarCategory(carCategoryId, serviceParameters, trackChanges);
+
+            var servicesDto = _mapper.Map<IEnumerable<ServiceDto>>(services);
+            var serviceDtoShapped = _dataShaper.Service.ShapeData(servicesDto, null);
+            return Result<IEnumerable<ExpandoObject>>.Ok(serviceDtoShapped, services.MetaData);
+        }
+
+        public async Task<Result<IEnumerable<ExpandoObject>>> GetServiceByCarModel(Guid carModelId, ServiceParameters serviceParameters, bool trackChanges, string? include = null)
+        {
+            var carModel = await _repoManager.CarModel.GetCarModelAsync(carModelId, trackChanges, "CarCategory");
+            var services = await _repoManager.Service.GetServiceByCarCategory(carModel!.CarCategoryId, serviceParameters, trackChanges, include);
+
+            var servicesDto = _mapper.Map<IEnumerable<ServiceDto>>(services);
+            var serviceDtoShapped = _dataShaper.Service.ShapeData(servicesDto, null);
+            return Result<IEnumerable<ExpandoObject>>.Ok(serviceDtoShapped, services.MetaData);
         }
     }
 }

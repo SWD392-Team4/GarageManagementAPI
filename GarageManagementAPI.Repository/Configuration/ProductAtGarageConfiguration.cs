@@ -14,15 +14,15 @@ namespace GarageManagementAPI.Repository.Configuration
 
             entity.Property(e => e.Id).ValueGeneratedOnAdd().HasDefaultValueSql("NEWID()");
             entity.Property(e => e.ProductBarcodeAtGarage).HasMaxLength(255);
-            entity.Property(e => e.Status).HasMaxLength(255);
+            entity.HasOne(e => e.Product).WithOne(p => p.ProductAtGarage)
+                .HasForeignKey<ProductAtGarage>(p => p.ProductId)
+                .OnDelete(DeleteBehavior.Cascade)
+                .HasConstraintName("productatgarage_productid_foreign");
 
             entity.HasOne(d => d.GoodsIssuedDetail).WithOne(p => p.ProductAtGarage)
                 .HasForeignKey<ProductAtGarage>(d => d.GoodsIssuedDetailId)
                 .OnDelete(DeleteBehavior.Cascade)
                 .HasConstraintName("productatgarage_goodsissueddetailid_foreign");
-
-            entity.Property(e => e.Status)
-                .HasConversion<string>();
         }
     }
 }

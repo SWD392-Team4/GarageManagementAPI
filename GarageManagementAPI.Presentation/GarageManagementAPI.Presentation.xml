@@ -127,6 +127,20 @@
             <param name="validator"></param>
             <returns></returns>
         </member>
+        <member name="M:GarageManagementAPI.Presentation.Controllers.ProductAtGarageController.GetProductAtGarage(System.Guid)">
+            <summary>
+            Get product at garage by Id
+            </summary>
+            <param name="productAtGarageId"></param>
+            <returns></returns>
+        </member>
+        <member name="M:GarageManagementAPI.Presentation.Controllers.ProductAtGarageController.GetProductAtGarages(GarageManagementAPI.Shared.RequestFeatures.ProductAtGarageParameters)">
+            <summary>
+            Get products at garage
+            </summary>
+            <param name="productAtWarehouseParameters"></param>
+            <returns></returns>
+        </member>
         <member name="M:GarageManagementAPI.Presentation.Controllers.ProductCategoryController.GetProductCategories(GarageManagementAPI.Shared.RequestFeatures.ProductCategoryParameters)">
             <summary>
             Get all product category
@@ -173,11 +187,25 @@
             <param name="productId"></param>
             <returns></returns>
         </member>
+        <member name="M:GarageManagementAPI.Presentation.Controllers.ProductController.GetProduct">
+            <summary>
+            Get product max price
+            </summary>
+            <returns></returns>
+        </member>
         <member name="M:GarageManagementAPI.Presentation.Controllers.ProductController.GetProductByBarcode(System.String,GarageManagementAPI.Shared.RequestFeatures.ProductParameters)">
             <summary>
             Get product by barcode
             </summary>
             <param name="barcode"></param>
+            <param name="productParameters"></param>
+            <returns></returns>
+        </member>
+        <member name="M:GarageManagementAPI.Presentation.Controllers.ProductController.GetProductByWarehouse(System.Guid,GarageManagementAPI.Shared.RequestFeatures.ProductParameters)">
+            <summary>
+            Get product with warehouse
+            </summary>
+            <param name="warehouseId"></param>
             <param name="productParameters"></param>
             <returns></returns>
         </member>
@@ -262,6 +290,22 @@
             Get service by id
             </summary>
             <param name="serviceId"></param>
+            <returns></returns>
+        </member>
+        <member name="M:GarageManagementAPI.Presentation.Controllers.ServiceController.GetServiceByCarCategory(System.Guid,GarageManagementAPI.Shared.RequestFeatures.ServiceParameters)">
+            <summary>
+            Get service by car category
+            </summary>
+            <param name="carCategoryId"></param>
+            <param name="serviceParameters"></param>
+            <returns></returns>
+        </member>
+        <member name="M:GarageManagementAPI.Presentation.Controllers.ServiceController.GetServiceByCarModel(System.Guid,GarageManagementAPI.Shared.RequestFeatures.ServiceParameters)">
+            <summary>
+            Get service by car model
+            </summary>
+            <param name="carModelId"></param>
+            <param name="serviceParameters"></param>
             <returns></returns>
         </member>
         <member name="M:GarageManagementAPI.Presentation.Controllers.ServiceController.CreateService(GarageManagementAPI.Shared.DataTransferObjects.Service.ServiceDtoForCreation)">

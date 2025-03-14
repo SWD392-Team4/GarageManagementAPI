@@ -45,7 +45,7 @@ namespace GarageManagementAPI.Repository
             // Lọc và sắp xếp danh sách sản phẩm theo các điều kiện từ productParameters
             var products = await FindAll(trackChanges)
                 .SearchByName(productParameters.ProductName)
-                 .SearchByStatus(productParameters.ProductStatus)
+                .SearchByStatus(productParameters.ProductStatus)
                 .Sort(productParameters.OrderBy)
                 .IsInclude(include)
                 .SearchByPrice(productParameters.MinPrice, productParameters.MaxPrice)
@@ -58,6 +58,12 @@ namespace GarageManagementAPI.Repository
                 productParameters.PageNumber,
                 productParameters.PageSize
             );
+        }
+
+        public async Task<Product?> GetProductWitMaxPrice(bool trackChanges, string? inlude = null)
+        {
+            var product= await FindAll(trackChanges).OrderByDescending(p => p.ProductPrice).FirstOrDefaultAsync();
+            return product;
         }
 
         public async Task<IEnumerable<Product>> GetProductsByWarehouseIdAsync(Guid warehouseId, bool trackChanges, string? include = default)

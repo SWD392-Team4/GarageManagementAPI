@@ -69,8 +69,8 @@ namespace GarageManagementAPI.Shared.ErrorsConstant.Service
         public static ErrorsResult GetCarPartNotFoundError(Guid carCategory) =>
         new()
         {
-            Code = nameof(CarCategoryExist),
-            Description = string.Format(CarCategoryExist, carCategory)
+            Code = nameof(CarPartExist),
+            Description = string.Format(CarPartExist, carCategory)
         };
 
         #endregion

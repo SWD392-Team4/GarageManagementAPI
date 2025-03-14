@@ -77,6 +77,44 @@ namespace GarageManagementAPI.Presentation.Controllers
                 );
         }
 
+        /// <summary>
+        /// Get service by car category
+        /// </summary>
+        /// <param name="carCategoryId"></param>
+        /// <param name="serviceParameters"></param>
+        /// <returns></returns>
+
+        [HttpGet("carCategory/{carCategoryId:guid}", Name = "GetCarCategory")]
+        //[Authorize(Roles = $"{nameof(SystemRole.Administrator)},{nameof(SystemRole.Cashier)}")]
+        public async Task<IActionResult> GetServiceByCarCategory(Guid carCategoryId, [FromRoute] ServiceParameters serviceParameters)
+        {
+            var include = "CarCategory, CarPart, ServiceImage, ServiceHistories";
+            var setviceResult = await _service.ServiceService.GetServiceByCarCategory(carCategoryId, serviceParameters, trackChanges: false, include);
+
+            return setviceResult.Map(
+                onSuccess: Ok,
+                onFailure: ProcessError
+                );
+        }
+
+        /// <summary>
+        /// Get service by car model
+        /// </summary>
+        /// <param name="carModelId"></param>
+        /// <param name="serviceParameters"></param>
+        /// <returns></returns>
+        [HttpGet("carModel/{carModelId:guid}", Name = "GetCarModel")]
+        //[Authorize(Roles = $"{nameof(SystemRole.Administrator)},{nameof(SystemRole.Cashier)}")]
+        public async Task<IActionResult> GetServiceByCarModel(Guid carModelId, [FromRoute] ServiceParameters serviceParameters)
+        {
+            var include = "CarCategory, CarPart, ServiceImage, ServiceHistories";
+            var setviceResult = await _service.ServiceService.GetServiceByCarModel(carModelId, serviceParameters, trackChanges: false, include);
+
+            return setviceResult.Map(
+                onSuccess: Ok,
+                onFailure: ProcessError
+                );
+        }
 
         [HttpPut("{serviceId:guid}")]
         public async Task<IActionResult> UpdateService(Guid serviceId, [FromBody] ServiceDtoForUpdate serviceDtoForUpdate)
@@ -102,15 +140,15 @@ namespace GarageManagementAPI.Presentation.Controllers
         [HttpPost(Name = "CreateService")]
         public async Task<IActionResult> CreateService([FromBody] ServiceDtoForCreation serviceDtoForCreation)
         {
-            Console.WriteLine("Xin chao");
             var createServiceResult = await _service.ServiceService.CreateServiceAsync(serviceDtoForCreation);
             if (!createServiceResult.IsSuccess)
             {
                 return ProcessError(createServiceResult);
             }
             var createdService = createServiceResult.GetValue<ServiceDto>();
+            var getServiceResult = await GetServiceById(createdService.Id);
 
-            return CreatedAtRoute("GetServiceById", new { serviceId = createdService.Id }, createServiceResult);
+            return getServiceResult;
         }
 
         [HttpPost("{serviceId:guid}/images", Name = "Create service image")]
