@@ -42,6 +42,8 @@ namespace GarageManagementAPI.Entities.Models
         public virtual ICollection<Service> Services { get; set; } = new List<Service>();
 
         public virtual ICollection<PackageUsage> PackageUsages { get; set; } = new List<PackageUsage>();
+
+        public virtual ICollection<AppointmentDetail> AppointmentDetails { get; set; } = new List<AppointmentDetail>();
     }
 }
 

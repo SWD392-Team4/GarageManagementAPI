@@ -9,6 +9,8 @@ namespace GarageManagementAPI.Entities.Models
 
         public Guid AppointmentId { get; set; }
 
+        public Guid? PackageHistoryId { get; set; }
+
         public string? ServiceNote { get; set; } = string.Empty;
 
         [EnumDataType(typeof(AppointmentDetailStatus))]
@@ -25,6 +27,8 @@ namespace GarageManagementAPI.Entities.Models
         public virtual ICollection<CarConditionImage> CarConditionImages { get; set; } = new List<CarConditionImage>();
 
         public virtual ICollection<EmployeeSchedule> EmployeeSchedules { get; set; } = new List<EmployeeSchedule>();
+
+        public virtual PackageHistory? PackageHistory { get; set; }
 
         public virtual ServiceHistory ServiceHistory { get; set; } = null!;
     }

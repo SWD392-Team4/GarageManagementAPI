@@ -42,7 +42,6 @@ namespace GarageManagementAPI.Entities.Models
 
         public DateTime? CancelledAt { get; set; } // Thời gian hủy
 
-        public string? CancellationReason { get; set; } // Lý do hủy
 
         public CancellationMethod? CancellationMethod { get; set; } // Phương thức hủy
 

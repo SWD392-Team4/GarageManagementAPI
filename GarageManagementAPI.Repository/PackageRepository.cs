@@ -39,6 +39,7 @@ namespace GarageManagementAPI.Repository
         public async Task<PagedList<Package>> GetPackagesAsync(PackageParameters packageParameters, bool trackChanges)
         {
             var pacakges = await FindAll(trackChanges)
+                .FilterByCarPart(packageParameters.CarPartId)
                 .FilterByCarCategory(packageParameters.CarCategoryId)
                 .FilterByServiceCategory(packageParameters.ServiceCategory)
                 .FilterByPriceRange(packageParameters.MinPrice, packageParameters.MaxPrice)
@@ -61,6 +62,7 @@ namespace GarageManagementAPI.Repository
                 .ToListAsync();
 
             var count = await FindAll(trackChanges)
+                .FilterByCarPart(packageParameters.CarPartId)
                 .FilterByCarCategory(packageParameters.CarCategoryId)
                 .FilterByServiceCategory(packageParameters.ServiceCategory)
                 .FilterByPriceRange(packageParameters.MinPrice, packageParameters.MaxPrice)

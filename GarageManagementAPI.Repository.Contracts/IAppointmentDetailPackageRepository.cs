@@ -7,6 +7,8 @@ namespace GarageManagementAPI.Repository.Contracts
     {
         public Task<AppointmentDetailPackage?> GetAppointmentDetailPackageAsync(Guid id, bool trackChanges);
 
+        public Task<IEnumerable<AppointmentDetailPackage>> GetAppointmentDetailPackageByAppointmentIdAsync(Guid appointmentId, bool trackChanges);
+
         public Task<PagedList<AppointmentDetailPackage>> GetAppointmentDetailPackagesByAppointmentIdAsync(AppointmentDetailPackageParameters appointmentDetailPackageParameters, bool trackChanges);
     }
 }
