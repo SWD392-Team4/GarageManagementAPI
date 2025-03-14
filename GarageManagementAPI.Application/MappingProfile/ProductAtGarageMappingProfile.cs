@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using GarageManagementAPI.Entities.Models;
-using GarageManagementAPI.Shared.DataTransferObjects.ProductAtGarage;
 
 namespace GarageManagementAPI.Application.MappingProfile
 {
