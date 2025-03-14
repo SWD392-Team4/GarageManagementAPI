@@ -43,6 +43,7 @@ namespace GarageManagementAPI.Repository
         private readonly Lazy<IPackageDetailRepository> _packageDetailRepository;
         private readonly Lazy<IProductAtWarehouseRepository> _productAtWarehouseRepository;
         private readonly Lazy<IGoodsTransactionRepository> _goodsTransactionRepository;
+        private readonly Lazy<IProductAtGarageRepository> _productAtGarageRepository;
         private readonly Lazy<IGoodsIssuedDetailProductAtWarehouseRepository> _goodsIssuedDetailProductAtWarehouseRepository;
 
         public RepositoryManager(RepositoryContext repositoryContext)
@@ -64,6 +65,7 @@ namespace GarageManagementAPI.Repository
             _goodsReceivedtRepository = new Lazy<IGoodsReceivedRepository>(() => new GoodsReceivedRepository(repositoryContext));
             _productHistoryRepository = new Lazy<IProductHistoryRepository>(() => new ProductHistoryRepository(repositoryContext));
             _serviceHistoryRepository = new Lazy<IServiceHistoryRepository>(() => new ServiceHistoryRepository(repositoryContext));
+            _productAtGarageRepository = new Lazy<IProductAtGarageRepository>(() => new ProductAtGarageRepostitory(repositoryContext));
             _productCategoryRepository = new Lazy<IProductCategoryRepository>(() => new ProductCategoryRepository(repositoryContext));
             _carPartCategoryRepository = new Lazy<ICarPartCategoryRepository>(() => new CarPartCategoryRepository(repositoryContext));
             _serviceFeedBackRepository = new Lazy<IServiceFeedBackRepository>(() => new ServiceFeedBackRepository(repositoryContext));
@@ -126,6 +128,7 @@ namespace GarageManagementAPI.Repository
         public IPackageUsageDetailRepository PackageUsageDetail => _packageUsageDetailRepository.Value;
         public IPackageDetailRepository PackageDetail => _packageDetailRepository.Value;
         public IGoodsIssuedDetailProductAtWarehouseRepository GoodsIssuedDetailProductAtWarehouse => _goodsIssuedDetailProductAtWarehouseRepository.Value;
+        public IProductAtGarageRepository ProductAtGarage => _productAtGarageRepository.Value;
 
 
         public async Task<IDbContextTransaction> BeginTransactionAsync()

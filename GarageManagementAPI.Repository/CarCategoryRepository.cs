@@ -47,6 +47,7 @@ namespace GarageManagementAPI.Repository
 
         public async Task<CarCategory?> GetCarCategoryAsync(Guid id, bool trackChanges)
         {
+            Console.WriteLine("id: " + id);
             return await FindByCondition(e => e.Id.Equals(id), trackChanges).SingleOrDefaultAsync();
         }
     }

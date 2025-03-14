@@ -285,7 +285,7 @@ namespace GarageManagementAPI.Service
 
             var appointmentDtosShaped = _dataShaper.Appointment.ShapeData(appointmentDtos, appointmentParameters.Fields);
 
-            return Result<IEnumerable<ExpandoObject>>.Ok(appointmentDtosShaped);
+            return Result<IEnumerable<ExpandoObject>>.Ok(appointmentDtosShaped, appointments.MetaData);
         }
 
 

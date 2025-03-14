@@ -108,6 +108,17 @@ namespace GarageManagementAPI.Service
             return Result<ExpandoObject>.Ok(productShaped);
         }
 
+        public async Task<Result<ExpandoObject>> GetProductAsync(bool trackChanges, string? include = null)
+        {
+            var productResult = await _repoManager.Product.GetProductWitMaxPrice(trackChanges, include);
+
+            var productDto = _mapper.Map<ProductDto>(productResult);
+
+            var productShaped = _dataShaper.Product.ShapeData(productDto, null);
+
+            return Result<ExpandoObject>.Ok(productShaped);
+        }
+
         public async Task<Result<ExpandoObject>> GetProductByBarcodeAsync(string barcode, ProductParameters productParameters, bool trackChanges, string? include = null)
         {
             var productResult = await GetAndCheckIfProductByBarCodeExist(barcode, trackChanges, include);
@@ -148,7 +159,7 @@ namespace GarageManagementAPI.Service
             return Result<IEnumerable<ExpandoObject>>.Ok(productsShaped, productsWithMetadata.MetaData);
         }
 
-        public async Task<IEnumerable<ProductWithQuantityDto>> GetProductsByWarehouseIdWithQuantityAsync(
+        public async Task<IEnumerable<ProductDtoWithQuantity>> GetProductsByWarehouseIdWithQuantityAsync(
       Guid warehouseId, bool trackChanges, string? include = null)
         {
             var productsPagedList = await _repoManager.Product.GetProductsByWarehouseIdAsync(warehouseId, false);
@@ -157,22 +168,12 @@ namespace GarageManagementAPI.Service
 
             var productQuantities = await _repoManager.ProductAtWarehouse.GetTotalStockByProductIdsAsync(productIds, warehouseId);
 
-            var productsWithQuantities = productsPagedList
-                .Select(product => new ProductWithQuantityDto
-                {
-                    Id = product.Id,
-                    ProductName = product.ProductName,
-                    ProductBarcode = product.ProductBarcode,
-                    ProductCategoryId = product.ProductCategoryId,
-                    BrandId = product.BrandId,
-                    ProductPrice = product.ProductPrice,
-                    ProductDescription = product.ProductDescription,
-                    Status = product.Status,
-                    CreatedAt = product.CreatedAt,
-                    UpdatedAt = product.UpdatedAt,
-                    TotalQuantity = productQuantities.ContainsKey(product.Id) ? productQuantities[product.Id] : 0
-                })
-                .ToList();
+            var productsWithQuantities = _mapper.Map<IEnumerable<ProductDtoWithQuantity>>(productsPagedList);
+
+            foreach (var productDto in productsWithQuantities)
+            {
+                productDto.TotalQuantity = productQuantities.ContainsKey(productDto.Id) ? productQuantities[productDto.Id] : 0;
+            }
 
             return productsWithQuantities;
         }
@@ -233,7 +234,7 @@ namespace GarageManagementAPI.Service
 
         private string GenerateBarcode()
         {
-            return $"GID-{Guid.NewGuid().ToString().Substring(0, 8)}";
+            return $"BCPD-{DateTime.UtcNow:yyyyMMddHHmmss}-{Guid.NewGuid().ToString("N").Substring(6)}";
         }
     }
 }

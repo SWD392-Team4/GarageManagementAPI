@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace GarageManagementAPI.Shared.DataTransferObjects.Product
 {
-    public class ProductWithQuantityDto
+    public class ProductDtoWithQuantity
     {
         public required Guid Id { get; set; }
         public required string ProductName { get; set; }

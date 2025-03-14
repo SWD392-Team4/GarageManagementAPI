@@ -12,7 +12,9 @@ namespace GarageManagementAPI.Repository.Contracts
         Task<IEnumerable<Service>> GetServiceByIdsAsync(IEnumerable<Guid> ids, bool trackChanges);
         Task<Service?> GetServiceByIdAsync(Guid serviceId, bool trackChanges, string? include = default);
         public Task<Service?> GetServiceByIdAndNameAsync(string name, Guid? serviceId, bool trackChanges);
+        public Task<PagedList<Service>> GetServiceByCarCategory(Guid carCategoryId, ServiceParameters serviceParameters, bool trackChanges, string? include = default);
         public Task<Service?> GetServiceByCarCategoryAnCarPartId(Guid? serviceId, Guid carPartId, Guid carparCategoryId, WorkNature workNature, ServiceAction action, bool trackChanges, string? include = default);
         Task<PagedList<Service>> GetServicesAsync(ServiceParameters serviceParameters, bool trackChanges, string? include = default);
+        public Task<PagedList<Service>> GetServiceByCarModel(Guid carModelId, ServiceParameters serviceParameters, bool trackChanges);
     }
 }
