@@ -83,10 +83,10 @@ namespace GarageManagementAPI.Repository
 
         public async Task<int> GetTotalStockForProduct(Guid productId, Guid warehouseId)
         {
-            return await RepositoryContext.ProductAtWarehouses
-                .Where(pw => pw.GoodsReceivedDetail.ProductId == productId &&
+            return await
+                FindByCondition(pw => pw.GoodsReceivedDetail.ProductId == productId &&
                              pw.GoodsReceivedDetail.GoodsReceived.WarehouseId == warehouseId &&
-                             pw.Quantity > 0)
+                             pw.Quantity > 0, false)
                 .SumAsync(pw => pw.Quantity);
         }
 

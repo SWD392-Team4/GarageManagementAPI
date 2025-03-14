@@ -10,9 +10,11 @@ namespace GarageManagementAPI.Service.Contracts
         public Task<Result<ExpandoObject>> GetProductByIdAsync(Guid productId, bool trackChanges, string? include = null);
         public Task<Result<ExpandoObject>> GetProductByBarcodeAsync(string productId, ProductParameters productParameters, bool trackChanges, string? include = null);
         public Task<Result<IEnumerable<ExpandoObject>>> GetProductsAsync(ProductParameters productParameters, bool trackChanges, string? include = null);
-        public Task<IEnumerable<ProductWithQuantityDto>> GetProductsByWarehouseIdWithQuantityAsync(Guid warehouseId, bool trackChanges, string? include = null);
+        public Task<Result<IEnumerable<ExpandoObject>>> GetProductsByWarehouseIdWithQuantityAsync(Guid warehouseId, ProductParameters productParameters, bool trackChanges, string? include = null);
         public Task<Result<ProductDtoForUpdate>> GetProductForPartiallyUpdate(Guid productId, bool trackChanges, string? include = null);
         public Task<Result<ProductDto>> CreateProductAsync(ProductDtoForCreation productDtoForCreation);
+        public Task<Result<ExpandoObject>> GetProductAsync(bool trackChanges, string? include = null);
         public Task<Result> UpdateProduct(Guid productId, ProductDtoForUpdate productDtoForUpdate, bool trackChanges, string? include = null);
+        public Task<Result<IEnumerable<ProductDto>>> GetProductsByCarModelAndPart(Guid carModelId, Guid carPartId, bool trackChanges, string? include = null);
     }
 }

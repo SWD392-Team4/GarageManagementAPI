@@ -13,6 +13,8 @@ namespace GarageManagementAPI.Service.Contracts
         public Task<Result<ServiceDtoForUpdate>> GetServiceForPartiallyUpdate(Guid serviceId, bool trackChanges);
         public Task<Result<ServiceDto>> CreateServiceAsync(ServiceDtoForCreation serviceDtoForCreation);
         public Task<Result> UpdateService(Guid serviceId, ServiceDtoForUpdate serviceDtoForUpdate, bool trackChanges);
+        public Task<Result<IEnumerable<ExpandoObject>>> GetServiceByCarCategory(Guid carCategoryId, ServiceParameters serviceParameters, bool trackChanges, string? include = null);
+        public Task<Result<IEnumerable<ExpandoObject>>> GetServiceByCarModel(Guid carModelId, ServiceParameters serviceParameters, bool trackChanges, string? include = null);
 
     }
 }

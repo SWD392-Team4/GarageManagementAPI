@@ -4,9 +4,9 @@ using GarageManagementAPI.Shared.DataTransferObjects.GoodsIssuedDetail;
 
 namespace GarageManagementAPI.Application.MappingProfile
 {
-    public class GoodsIssuedDetailProfile : Profile
+    public class GoodsIssuedDetailMappingProfile : Profile
     {
-        public GoodsIssuedDetailProfile()
+        public GoodsIssuedDetailMappingProfile()
         {
             CreateMap<GoodsIssuedDetail, GoodsIssuedDetailDto>();
             CreateMap<GoodsIssuedDetailDtoForCreation, GoodsIssuedDetail>();

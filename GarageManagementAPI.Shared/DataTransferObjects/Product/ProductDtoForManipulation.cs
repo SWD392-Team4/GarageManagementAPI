@@ -10,5 +10,7 @@ namespace GarageManagementAPI.Shared.DataTransferObjects.Product
         public Guid ProductCategoryId { get; set; } 
         public Guid BrandId { get; set; }
         public required decimal ProductPrice { get; set; }
+        public List<Guid>? CarPartIds { get; set; }
+        public List<Guid>? CarModelIds { get; set; }
     }
 }

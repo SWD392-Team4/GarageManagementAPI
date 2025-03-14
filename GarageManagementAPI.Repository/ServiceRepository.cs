@@ -1,11 +1,10 @@
-﻿using GarageManagementAPI.Entities.Models;
+﻿using Microsoft.EntityFrameworkCore;
+using GarageManagementAPI.Shared.Enums;
+using GarageManagementAPI.Entities.Models;
+using GarageManagementAPI.Shared.Extension;
 using GarageManagementAPI.Repository.Contracts;
 using GarageManagementAPI.Shared.RequestFeatures;
 using GarageManagementAPI.Repository.Extensions;
-using Microsoft.EntityFrameworkCore;
-using Bogus.DataSets;
-using GarageManagementAPI.Shared.Enums;
-using GarageManagementAPI.Shared.Extension;
 
 namespace GarageManagementAPI.Repository
 {
@@ -50,11 +49,10 @@ namespace GarageManagementAPI.Repository
 
         public async Task<PagedList<Service>> GetServicesAsync(ServiceParameters serviceParameters, bool trackChanges, string? include = null)
         {
-            // Lọc và sắp xếp danh sách Services theo các điều kiện
             var services = await FindAll(trackChanges)
-                .SearchByName(serviceParameters.ServiceName) // Tìm kiếm theo tên sản phẩm
-                .SearchByCreateAt(serviceParameters.CreatedAt) //Tìm kiếm theo CreatedAt
-                .SearchByUpdateAt(serviceParameters.UpdatedAt) //Tìm kiếm theo UpdateAt
+                .SearchByName(serviceParameters.ServiceName)
+                .SearchByCreateAt(serviceParameters.CreatedAt) 
+                .SearchByUpdateAt(serviceParameters.UpdatedAt) 
                 .SearchByWorkNature(serviceParameters.WorkNature)
                 .SearchByServiceCategory(serviceParameters.ServiceCategory)
                 .SearchByAction(serviceParameters.Action)
@@ -78,8 +76,6 @@ namespace GarageManagementAPI.Repository
         {
             var service =
                 await FindByCondition(s => s.CarCategoryId.Equals(carparCategoryId) && s.CarPartId.Equals(carPartId) && s.WorkNature.Equals(workNature) && s.Action.Equals(action) && !s.Id.Equals(serviceId), trackChanges).SingleOrDefaultAsync();
-            Console.WriteLine("service " + service);
-            Console.WriteLine("service " + carparCategoryId);
             return service;
         }
 
@@ -129,6 +125,27 @@ namespace GarageManagementAPI.Repository
         public async Task<IEnumerable<Service>> GetServiceByPackageHistoryIdsAsync(IEnumerable<Guid> pacakgeHistoryIds, bool trackChanges)
         {
             return await FindByCondition(x => x.PackageHistories.Any(x => pacakgeHistoryIds.Contains(x.Id)), trackChanges).ToListAsync();
+        }
+
+        public async Task<PagedList<Service>> GetServiceByCarCategory(Guid carCategoryId, ServiceParameters serviceParameters,bool trackChanges, string? include = default)
+        {
+          var services =  await FindByCondition(s => s.CarCategoryId.Equals(carCategoryId), trackChanges).IsInclude(include).ToListAsync();
+
+            return PagedList<Service>.ToPagedList(
+                services,
+                serviceParameters.PageNumber,
+                serviceParameters.PageSize
+                );
+        }
+
+        public async Task<PagedList<Service>> GetServiceByCarModel(Guid carModelId, ServiceParameters serviceParameters,bool trackChanges)
+        {
+            var services = await FindByCondition(s => s.CarCategoryId.Equals(RepositoryContext.CarModels.Where(cm => cm.Id.Equals(carModelId)).Select(cm => cm.CarCategoryId)), trackChanges).ToListAsync();
+            return PagedList<Service>.ToPagedList(
+                services,
+                serviceParameters.PageNumber,
+                serviceParameters.PageSize
+                );
         }
     }
 }

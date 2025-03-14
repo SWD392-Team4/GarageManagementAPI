@@ -44,7 +44,7 @@ namespace GarageManagementAPI.Service
             goodsReceivedEntity.CreatedWarehouseManagerId = createdWarehouseManagerId;
             goodsReceivedEntity.CreatedAt = DateTimeOffset.UtcNow.SEAsiaStandardTime();
             goodsReceivedEntity.UpdatedAt = DateTimeOffset.UtcNow.SEAsiaStandardTime();
-            goodsReceivedEntity.Status = GoodsReceivedStatus.Inactive;
+            goodsReceivedEntity.Status = GoodsReceivedStatus.Active;
 
             foreach (var goodsReceivedDetailDtoForCreation in goodsReceivedDtoForCreation.goodsReceivedDetailDtoForCreations)
             {

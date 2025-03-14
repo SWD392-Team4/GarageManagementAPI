@@ -35,6 +35,20 @@ namespace GarageManagementAPI.Presentation.Controllers
                 );
         }
         /// <summary>
+        /// Get product max price
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("product/maxprice", Name = "GetProductMaxPrice")]
+        public async Task<IActionResult> GetProduct()
+        {
+            var productResult = await _service.ProductService.GetProductAsync(trackChanges: false);
+
+            return productResult.Map(
+                onSuccess: Ok,
+                onFailure: ProcessError
+                );
+        }
+        /// <summary>
         /// Get product by barcode
         /// </summary>
         /// <param name="barcode"></param>
@@ -53,11 +67,30 @@ namespace GarageManagementAPI.Presentation.Controllers
                 );
         }
 
+        [HttpGet("car-model/car-part/{carModelId:guid}/{carPartId:guid}", Name = "GetProductCarModelAndCarPart")]
+        //[Authorize(Roles = $"{nameof(SystemRole.Administrator)},{nameof(SystemRole.Cashier)}")]
+        public async Task<IActionResult> GetProductByCarModelAndCarPart(Guid carModelId, Guid carPartId, [FromQuery] ProductParameters productParameters)
+        {
+            var isInclude = "Brand,ProductCategory,ProductHistories,ProductImages";
+            var productResult = await _service.ProductService.GetProductsByCarModelAndPart(carModelId, carPartId, trackChanges: false, isInclude);
+
+            return productResult.Map(
+                onSuccess: Ok,
+                onFailure: ProcessError
+                );
+        }
+
+        /// <summary>
+        /// Get product with warehouse
+        /// </summary>
+        /// <param name="warehouseId"></param>
+        /// <param name="productParameters"></param>
+        /// <returns></returns>
         [HttpGet("warehouse/{warehouseId:guid}", Name = "GetProductByWarehouse")]
         //[Authorize(Roles = $"{nameof(SystemRole.Administrator)},{nameof(SystemRole.Cashier)}")]
         public async Task<IActionResult> GetProductByWarehouse(Guid warehouseId, [FromQuery] ProductParameters productParameters)
         {
-            var productResult = await _service.ProductService.GetProductsByWarehouseIdWithQuantityAsync(warehouseId, trackChanges: false);
+            var productResult = await _service.ProductService.GetProductsByWarehouseIdWithQuantityAsync(warehouseId, productParameters, trackChanges: false);
 
             return Ok(productResult);
         }
@@ -79,7 +112,7 @@ namespace GarageManagementAPI.Presentation.Controllers
                 );
         }
 
-       
+
         /// <summary>
         /// Create product
         /// </summary>

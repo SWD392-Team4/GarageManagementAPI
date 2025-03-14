@@ -9,6 +9,7 @@ using GarageManagementAPI.Shared.ResultModel;
 using GarageManagementAPI.Repository.Contracts;
 using GarageManagementAPI.Shared.RequestFeatures;
 using GarageManagementAPI.Shared.Enums.SystemStatuss;
+using GarageManagementAPI.Shared.ErrorsConstant.CarPart;
 using GarageManagementAPI.Shared.ErrorsConstant.Product;
 using GarageManagementAPI.Shared.DataTransferObjects.Product;
 
@@ -45,7 +46,29 @@ namespace GarageManagementAPI.Service
 
             productEntity.Status = ProductStatus.Inactive;
 
-            if (string.IsNullOrWhiteSpace(productEntity.ProductBarcode)) productEntity.ProductBarcode = this.GenerateBarcode();
+            if (string.IsNullOrWhiteSpace(productEntity.ProductBarcode))
+                productEntity.ProductBarcode = this.GenerateBarcode();
+
+            if (productDtoForCreation.CarPartIds != null && productDtoForCreation.CarPartIds.Any())
+            {
+                var carparts = await _repoManager.CarPart.GetCarPartsAsync(productDtoForCreation.CarPartIds!, true);
+                if (carparts.Count() != productDtoForCreation.CarPartIds.Count())
+                {
+                    Result<ProductDto>.BadRequest([CarPartErrors.GetCarPartFoundNotMatchWithIdsError(productDtoForCreation.CarPartIds)]);
+                }
+                productEntity.CarParts = [.. carparts];
+            }
+
+
+            if (productDtoForCreation.CarPartIds != null && productDtoForCreation.CarPartIds.Any())
+            {
+                var carModels = await _repoManager.CarModel.GetCarPartsAsync(productDtoForCreation.CarModelIds!, true);
+                if (carModels.Count() != productDtoForCreation.CarModelIds!.Count())
+                {
+                    Result<ProductDto>.BadRequest([CarPartErrors.GetCarModelFoundNotMatchWithIdsError(productDtoForCreation.CarPartIds)]);
+                }
+                productEntity.CarModels = [.. carModels];
+            }
 
             await _repoManager.Product.CreateAsync(productEntity);
             await CreateProductHistoryAsync(productEntity);
@@ -83,8 +106,28 @@ namespace GarageManagementAPI.Service
             else
                 _mapper.Map(productDtoForUpdate, productEntity);
 
+            if (productDtoForUpdate.CarPartIds != null && productDtoForUpdate.CarPartIds.Any())
+            {
+                var carparts = await _repoManager.CarPart.GetCarPartsAsync(productDtoForUpdate.CarPartIds!, true);
+                if (carparts.Count() != productDtoForUpdate.CarPartIds.Count())
+                {
+                    Result<ProductDto>.BadRequest([CarPartErrors.GetCarPartFoundNotMatchWithIdsError(productDtoForUpdate.CarPartIds)]);
+                }
+                productEntity.CarParts = [.. carparts];
+            }
+
+
+            if (productDtoForUpdate.CarPartIds != null && productDtoForUpdate.CarPartIds.Any())
+            {
+                var carModels = await _repoManager.CarModel.GetCarPartsAsync(productDtoForUpdate.CarModelIds!, true);
+                if (carModels.Count() != productDtoForUpdate.CarModelIds!.Count())
+                {
+                    Result<ProductDto>.BadRequest([CarPartErrors.GetCarModelFoundNotMatchWithIdsError(productDtoForUpdate.CarPartIds)]);
+                }
+                productEntity.CarModels = [.. carModels];
+            }
+
             productEntity.UpdatedAt = DateTimeOffset.UtcNow.SEAsiaStandardTime();
-            //Create Product History
 
             await _repoManager.SaveAsync();
 
@@ -102,6 +145,17 @@ namespace GarageManagementAPI.Service
             var productsEntity = productResult.GetValue<Product>();
 
             var productDto = _mapper.Map<ProductDto>(productsEntity);
+
+            var productShaped = _dataShaper.Product.ShapeData(productDto, null);
+
+            return Result<ExpandoObject>.Ok(productShaped);
+        }
+
+        public async Task<Result<ExpandoObject>> GetProductAsync(bool trackChanges, string? include = null)
+        {
+            var productResult = await _repoManager.Product.GetProductWitMaxPrice(trackChanges, include);
+
+            var productDto = _mapper.Map<ProductDto>(productResult);
 
             var productShaped = _dataShaper.Product.ShapeData(productDto, null);
 
@@ -148,33 +202,23 @@ namespace GarageManagementAPI.Service
             return Result<IEnumerable<ExpandoObject>>.Ok(productsShaped, productsWithMetadata.MetaData);
         }
 
-        public async Task<IEnumerable<ProductWithQuantityDto>> GetProductsByWarehouseIdWithQuantityAsync(
-      Guid warehouseId, bool trackChanges, string? include = null)
+        public async Task<Result<IEnumerable<ExpandoObject>>> GetProductsByWarehouseIdWithQuantityAsync(
+      Guid warehouseId, ProductParameters productParameters, bool trackChanges, string? include = null)
         {
-            var productsPagedList = await _repoManager.Product.GetProductsByWarehouseIdAsync(warehouseId, false);
+            var productsWithMetadata = await _repoManager.Product.GetProductsByWarehouseIdAsync(warehouseId, productParameters, false);
 
-            var productIds = productsPagedList.Select(p => p.Id).ToList();
+            var productIds = productsWithMetadata.Select(p => p.Id).ToList();
 
             var productQuantities = await _repoManager.ProductAtWarehouse.GetTotalStockByProductIdsAsync(productIds, warehouseId);
 
-            var productsWithQuantities = productsPagedList
-                .Select(product => new ProductWithQuantityDto
-                {
-                    Id = product.Id,
-                    ProductName = product.ProductName,
-                    ProductBarcode = product.ProductBarcode,
-                    ProductCategoryId = product.ProductCategoryId,
-                    BrandId = product.BrandId,
-                    ProductPrice = product.ProductPrice,
-                    ProductDescription = product.ProductDescription,
-                    Status = product.Status,
-                    CreatedAt = product.CreatedAt,
-                    UpdatedAt = product.UpdatedAt,
-                    TotalQuantity = productQuantities.ContainsKey(product.Id) ? productQuantities[product.Id] : 0
-                })
-                .ToList();
+            var productsWithQuantities = _mapper.Map<IEnumerable<ProductDto>>(productsWithMetadata);
 
-            return productsWithQuantities;
+            foreach (var productDto in productsWithQuantities)
+            {
+                productDto.TotalQuantity = productQuantities.ContainsKey(productDto.Id) ? productQuantities[productDto.Id] : 0;
+            }
+            var productsShaped = _dataShaper.Product.ShapeData(productsWithQuantities, productParameters.Fields);
+            return Result<IEnumerable<ExpandoObject>>.Ok(productsShaped, productsWithMetadata.MetaData);
         }
 
 
@@ -224,6 +268,14 @@ namespace GarageManagementAPI.Service
             return product.OkResult();
         }
 
+        public async Task<Result<IEnumerable<ProductDto>>> GetProductsByCarModelAndPart(Guid carModelId, Guid carPartId, bool trackChanges, string? include = null)
+        {
+            var products = await _repoManager.Product.GetProductsByCarModelAndPart(carModelId, carPartId, trackChanges, include);
+            var productDtos = _mapper.Map<IEnumerable<ProductDto>>(products);
+            return Result<IEnumerable<ProductDto>>.Success(productDtos, System.Net.HttpStatusCode.OK);
+        }
+
+
         private async Task CreateProductHistoryAsync(Product product)
         {
             var productHistory = _mapper.Map<ProductHistory>(product);
@@ -233,7 +285,9 @@ namespace GarageManagementAPI.Service
 
         private string GenerateBarcode()
         {
-            return $"GID-{Guid.NewGuid().ToString().Substring(0, 8)}";
+            return $"BCPD-{DateTime.UtcNow:yyyyMMddHHmmss}-{Guid.NewGuid().ToString("N").Substring(6)}";
         }
+
+
     }
 }

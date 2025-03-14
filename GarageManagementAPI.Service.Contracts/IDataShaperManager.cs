@@ -25,6 +25,7 @@ using GarageManagementAPI.Shared.DataTransferObjects.GoodsIssuedDetail;
 using GarageManagementAPI.Shared.DataTransferObjects.PackageHistory;
 using GarageManagementAPI.Shared.DataTransferObjects.ProductAtWarehouse;
 using GarageManagementAPI.Shared.DataTransferObjects.Appointment;
+using GarageManagementAPI.Shared.DataTransferObjects.ProductAtGarage;
 
 namespace GarageManagementAPI.Service.Contracts
 {
@@ -32,30 +33,31 @@ namespace GarageManagementAPI.Service.Contracts
     {
         IDataShaper<UserDto> User { get; }
         IDataShaper<BrandDto> Brand { get; }
-        IDataShaper<CarCategoryDto> CarCategory { get; }
-        IDataShaper<CarModelDto> CarModel { get; }
         IDataShaper<ServiceDto> Service { get; }
+        IDataShaper<PackageDto> Package { get; }
         IDataShaper<ProductDto> Product { get; }
         IDataShaper<CarPartDto> CarPart { get; }
         IDataShaper<SupplierDto> Supplier { get; }
+        IDataShaper<CarModelDto> CarModel { get; }
         IDataShaper<WorkplaceDto> Workplace { get; }
+        IDataShaper<AppointmentDto> Appointment { get; }
+        IDataShaper<CarCategoryDto> CarCategory { get; }
         IDataShaper<GoodsIssuedDto> GoodsIssued { get; }
+        IDataShaper<PackageImageDto> PackageImage { get; }
         IDataShaper<ServiceImageDto> ServiceImage { get; }
         IDataShaper<ProductImageDto> ProductImage { get; }
         IDataShaper<GoodsReceivedDto> GoodsReceived { get; }
         IDataShaper<ProductHistoryDto> ProductHistory { get; }
         IDataShaper<ServiceHistoryDto> ServiceHistory { get; }
+        IDataShaper<PackageHistoryDto> PackageHistory { get; }
         IDataShaper<ProductCategoryDto> ProductCategory { get; }
         IDataShaper<CarPartCategoryDto> CarPartCategory { get; }
         IDataShaper<ServiceFeedBackDto> ServiceFeedback { get; }
         IDataShaper<SupplierContactDto> SupplierContact { get; }
-        IDataShaper<GoodsIssuedDetailDto> GoodsIssuedDetail { get; }
-        IDataShaper<GoodsReceivedDetailDto> GoodsReceivedDetail { get; }
-        IDataShaper<PackageImageDto> PackageImage { get; }
-        IDataShaper<PackageDto> Package { get; }
-        IDataShaper<PackageHistoryDto> PackageHistory { get; }
+        IDataShaper<ProductAtGarageDto> ProductAtGarage { get; }
         IDataShaper<PackageConditionDto> PackageCondition { get; }
+        IDataShaper<GoodsIssuedDetailDto> GoodsIssuedDetail { get; }
         IDataShaper<ProductAtWarehouseDto> ProductAtWarehouse { get; }
-        IDataShaper<AppointmentDto> Appointment { get; }
+        IDataShaper<GoodsReceivedDetailDto> GoodsReceivedDetail { get; }
     }
 }

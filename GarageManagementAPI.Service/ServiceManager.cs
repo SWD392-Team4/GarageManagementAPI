@@ -18,14 +18,18 @@ namespace GarageManagementAPI.Service
         private readonly Lazy<IProductService> _productService;
         private readonly Lazy<IServiceService> _serviceService;
         private readonly Lazy<ICarPartService> _carPartService;
+        private readonly Lazy<IPackageService> _packageService;
         private readonly Lazy<ICarModelService> _carModelService;
         private readonly Lazy<ISupplierService> _supplierService;
         private readonly Lazy<IWorkplaceService> _workplaceService;
         private readonly Lazy<IGoodsIssuedService> _goodsIssuedService;
         private readonly Lazy<ICarCategoryService> _carCategoryService;
+        private readonly Lazy<IAppointmentService> _appointmentService;
+        private readonly Lazy<IPackageUsageService> _packageUsageService;
         private readonly Lazy<IEmployeeInfoService> _employeeInfoService;
         private readonly Lazy<IServiceImageService> _serviceImageService;
         private readonly Lazy<IProductImageService> _productImageService;
+        private readonly Lazy<IPackageImageService> _packageImageService;
         private readonly Lazy<IGoodsReceivedService> _goodsReceivedService;
         private readonly Lazy<IProductHistoryService> _productHistoryService;
         private readonly Lazy<IServiceHistoryService> _serviceHistoryService;
@@ -33,17 +37,14 @@ namespace GarageManagementAPI.Service
         private readonly Lazy<IProductCategoryService> _productCategoryService;
         private readonly Lazy<ICarPartCategoryService> _carPartCategoryService;
         private readonly Lazy<ISupplierContactService> _supplierContactService;
-        private readonly Lazy<IAppointmentService> _appointmentService;
         private readonly Lazy<IServiceFeedbackService> _serviceFeedbackService;
+        private readonly Lazy<IProductAtGarageService> _productAtGarageService;
+        private readonly Lazy<IPackageFeedBackService> _packageFeedBackService;
+        private readonly Lazy<IPackageConditionService> _packageConditionService;
+        private readonly Lazy<IProductAtWarehouseService> _productAtWarehouseService;
         private readonly Lazy<IGoodsIssuedDetailService> _goodsIssuedDetailService;
         private readonly Lazy<IGoodsReceivedDetailService> _goodsReceivedDetailService;
-        private readonly Lazy<IPackageService> _packageService;
-        private readonly Lazy<IPackageConditionService> _packageConditionService;
-        private readonly Lazy<IPackageFeedBackService> _packageFeedBackService;
-        private readonly Lazy<IPackageUsageService> _packageUsageService;
         private readonly Lazy<IPackageUsageDetailService> _packageUsageDetailService;
-        private readonly Lazy<IPackageImageService> _packageImageService;
-        private readonly Lazy<IProductAtWarehouseService> _productAtWarehouseService;
 
         public ServiceManager(
             IRepositoryManager repositoryManager,
@@ -203,6 +204,13 @@ namespace GarageManagementAPI.Service
             mapper,
             dataShaper));
 
+            _productAtGarageService = new Lazy<IProductAtGarageService>(() =>
+                new ProductAtGarageService(
+                repositoryManager,
+                mapper,
+                dataShaper));
+
+
             _goodsReceivedDetailService = new Lazy<IGoodsReceivedDetailService>(() =>
             new GoodsReceivedDetailService(
             repositoryManager,
@@ -248,12 +256,16 @@ namespace GarageManagementAPI.Service
         public IServiceService ServiceService => _serviceService.Value;
         public IProductService ProductService => _productService.Value;
         public ICarPartService CarPartService => _carPartService.Value;
+        public IPackageService PackageService => _packageService.Value;
         public ISupplierService SupplierService => _supplierService.Value;
         public ICarModelService CarModelService => _carModelService.Value;
         public IWorkplaceService WorkplaceService => _workplaceService.Value;
         public IGoodsIssuedService GoodsIssuedService => _goodsIssuedService.Value;
         public ICarCategoryService CarCategoryService => _carCategoryService.Value;
+        public IAppointmentService AppointmentService => _appointmentService.Value;
+        public IPackageUsageService PackageUsageService => _packageUsageService.Value;
         public IServiceImageService ServiceImageService => _serviceImageService.Value;
+        public IPackageImageService PackageImageService => _packageImageService.Value;
         public IProductImageService ProductImageService => _productImageService.Value;
         public IEmployeeInfoService EmployeeInfoService => _employeeInfoService.Value;
         public IServiceFeedbackService ServiceFeedback => _serviceFeedbackService.Value;
@@ -261,18 +273,15 @@ namespace GarageManagementAPI.Service
         public IAuthenticationService AuthenticationService => _authenticationService.Value;
         public IProductHistoryService ProductHistoryService => _productHistoryService.Value;
         public IServiceHistoryService ServiceHistoryService => _serviceHistoryService.Value;
+        public IPackageFeedBackService PackageFeedBackService => _packageFeedBackService.Value;
         public IProductCategoryService ProductCategoryService => _productCategoryService.Value;
         public ICarPartCategoryService CarPartCategoryService => _carPartCategoryService.Value;
         public ISupplierContactService SupplierContactService => _supplierContactService.Value;
-        public IGoodsIssuedDetailService GoodsIssuedDetailService => _goodsIssuedDetailService.Value;
-        public IGoodsReceivedDetailService GoodsReceivedDetailService => _goodsReceivedDetailService.Value;
-        public IAppointmentService AppointmentService => _appointmentService.Value;
-        public IPackageService PackageService => _packageService.Value;
+        public IProductAtGarageService ProductAtGarageService => _productAtGarageService.Value;
         public IPackageConditionService PackageConditionService => _packageConditionService.Value;
-        public IPackageFeedBackService PackageFeedBackService => _packageFeedBackService.Value;
-        public IPackageUsageService PackageUsageService => _packageUsageService.Value;
+        public IGoodsIssuedDetailService GoodsIssuedDetailService => _goodsIssuedDetailService.Value;
         public IPackageUsageDetailService PackageUsageDetailService => _packageUsageDetailService.Value;
-        public IPackageImageService PackageImageService => _packageImageService.Value;
         public IProductAtWarehouseService ProductAtWarehouseService => _productAtWarehouseService.Value;
+        public IGoodsReceivedDetailService GoodsReceivedDetailService => _goodsReceivedDetailService.Value;
     }
 }

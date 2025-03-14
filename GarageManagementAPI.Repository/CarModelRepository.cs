@@ -73,5 +73,10 @@ namespace GarageManagementAPI.Repository
                 e.CarCategoryId.Equals(categoryId) &&
                 e.ModelYear.Equals(modelYear), trackChanges).FirstOrDefaultAsync();
         }
+
+        public async Task<IEnumerable<CarModel>> GetCarPartsAsync(List<Guid> carModeldIds, bool trackChanges, string? include = null)
+        {
+            return await FindByCondition(cp => carModeldIds.Contains(cp.Id), trackChanges).ToListAsync();
+        }
     }
 }

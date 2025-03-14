@@ -10,9 +10,7 @@ using GarageManagementAPI.Shared.RequestFeatures;
 using GarageManagementAPI.Shared.Enums.SystemStatuss;
 using GarageManagementAPI.Shared.ErrorsConstant.GoodsIssued;
 using GarageManagementAPI.Shared.DataTransferObjects.GoodsIssued;
-using GarageManagementAPI.Shared.DataTransferObjects.GoodsIssuedDetail;
-using GarageManagementAPI.Shared.ErrorsConstant.ProductHistory;
-using GarageManagementAPI.Shared.Enums;
+using GarageManagementAPI.Shared.DataTransferObjects.ProductAtGarage;
 
 namespace GarageManagementAPI.Service
 {
@@ -34,9 +32,6 @@ namespace GarageManagementAPI.Service
             var wareHouseResult = await GetAndCheckIfWarehouseIdIsNotExist(goodsIssuedDtoForCreation.WarehouseId);
             if (wareHouseResult) return Result<GoodsIssuedDto>.BadRequest([GoodsIssuedErrors.GetWareHourseIsNotFoundWithIdError(goodsIssuedDtoForCreation.WarehouseId)]);
 
-            var goodsIssuedResult = await GetAndCheckIfGoodsIssuedWithReferenceNumberIsExist(goodsIssuedDtoForCreation.ReferenceNumber, null, false);
-            if (goodsIssuedResult) return Result<GoodsIssuedDto>.BadRequest([GoodsIssuedErrors.GetGoodsIssuedReferenceIsExist(goodsIssuedDtoForCreation.ReferenceNumber)]);
-
             foreach (var goodsIssuedDetail in goodsIssuedDtoForCreation.gooodsIssuedDetails)
             {
                 var totalStock = await _repoManager.ProductAtWarehouse
@@ -54,12 +49,14 @@ namespace GarageManagementAPI.Service
             goodsIssuedEntity.CreatedWareHouseManagerId = createdWarehouseManagerId;
             goodsIssuedEntity.CreatedAt = DateTimeOffset.UtcNow.SEAsiaStandardTime();
             goodsIssuedEntity.UpdatedAt = DateTimeOffset.UtcNow.SEAsiaStandardTime();
+            goodsIssuedEntity.ReferenceNumber = GenerateReferenceNumber();
+            goodsIssuedEntity.InvoiceCode = GenerateInvoiceCode();
             goodsIssuedEntity.Status = GoodsIssuedStatus.Active;
 
             foreach (var goodsIssuedDetail in goodsIssuedDtoForCreation.gooodsIssuedDetails)
             {
                 var productHistory = await _repoManager.ProductHistory.GetProductHistoryByGoodsIssuedDetails(goodsIssuedDetail!.ProductId);
-                if(productHistory == null)
+                if (productHistory == null)
                 {
                     goodsIssuedEntity.TotalCost += 0;
                 }
@@ -67,7 +64,7 @@ namespace GarageManagementAPI.Service
                 {
                     goodsIssuedEntity.TotalCost += goodsIssuedDetail.Quantity * productHistory!.ProductPrice;
                 }
-               
+
             }
 
             await _repoManager.GoodsIssued.CreateGoodsIssuedAsync(goodsIssuedEntity);
@@ -89,7 +86,7 @@ namespace GarageManagementAPI.Service
                     {
                         GoodsIssuedId = goodsIssuedEntity.Id,
                         Quantity = deductedQuantity,
-                        UnitPrice = productHistory == null ? 0 :  productHistory.ProductPrice,
+                        UnitPrice = productHistory == null ? 0 : productHistory.ProductPrice,
                         CreatedAt = DateTimeOffset.UtcNow.SEAsiaStandardTime(),
                         UpdatedAt = DateTimeOffset.UtcNow.SEAsiaStandardTime(),
                         Status = GoodsReceivedStatus.Active
@@ -107,6 +104,29 @@ namespace GarageManagementAPI.Service
                     };
 
                     await _repoManager.GoodsIssuedDetailProductAtWarehouse.CreateGoodsIssuedDetailProductAtWarehouse(goodsIssuedDetail_ProductAtWarehouse);
+
+                    var productAtGarage = new ProductAtGarage
+                    {
+                        GoodsIssuedDetailId = goodsIssuedDetailEntity.Id,
+                        Quantity = deductedQuantity,
+                        ProductId = goodsIssuedDetail.ProductId,
+                        CreatedAt = DateTimeOffset.UtcNow.SEAsiaStandardTime()
+                    };
+
+                    var product = await _repoManager.ProductAtGarage.GetProductAtGarage(goodsIssuedDetail.ProductId, false);
+                    var productValue = product!.OkResukt().GetValue<ProductAtGarage>();
+
+                    await this.CreateProductAtGarage(productAtGarage);
+                    await _repoManager.SaveAsync();
+                    var productAtGarageMapper = _mapper.Map<ProductAtGarageDto>(productAtGarage);
+                    var productAtGarageEntity = await _repoManager.ProductAtGarage.GetProductAtGarage(productAtGarageMapper.Id, true, null);
+                    var productAtGarageValue = productAtGarageEntity!.OkResukt().GetValue<ProductAtGarage>();
+
+                    if (product == null)
+                        productAtGarageValue.ProductBarcodeAtGarage = GenerateBarcode();
+                    else productAtGarageValue.ProductBarcodeAtGarage = productValue.ProductBarcodeAtGarage;
+   //                 _repoManager.ProductAtGarage.UpdateProductGarage(productAtGarageValue);
+                    await _repoManager.SaveAsync();
                 }
             }
             await _repoManager.SaveAsync();
@@ -154,24 +174,11 @@ namespace GarageManagementAPI.Service
             return Result<IEnumerable<ExpandoObject>>.Ok(goodsIssuedsShaped, goodsIssuedsWithMetadata.MetaData);
         }
 
-        private async Task<Result<GoodsIssuedDetailDto>> CreateGoodsIssuedDetailAsync(GoodsIssuedDetailDtoForCreation goodsIssuedDetailDtoForCreation, Guid goodsIssuedId, Guid warehouseId)
+        private async Task<Result<ProductAtGarageDto>> CreateProductAtGarage(ProductAtGarage productAtGarage)
         {
-            var goodsIssuedDetailEntity = _mapper.Map<GoodsIssuedDetail>(goodsIssuedDetailDtoForCreation);
-
-            var productHistory = await _repoManager.ProductHistory.GetProductHistoryByGoodsIssuedDetails(goodsIssuedDetailDtoForCreation!.ProductId);
-
-            goodsIssuedDetailEntity.GoodsIssuedId = goodsIssuedId;
-            goodsIssuedDetailEntity.UnitPrice = productHistory!.ProductPrice;
-            goodsIssuedDetailEntity.CreatedAt = DateTimeOffset.UtcNow.SEAsiaStandardTime();
-            goodsIssuedDetailEntity.UpdatedAt = DateTimeOffset.UtcNow.SEAsiaStandardTime();
-            goodsIssuedDetailEntity.Status = GoodsReceivedStatus.Active;
-
-            await _repoManager.GoodsIssuedDetail.CreateGoodsIssuedDetailAsync(goodsIssuedDetailEntity);
-            await _repoManager.SaveAsync();
-
-            var goodsIssuedDetailDtoToReturn = _mapper.Map<GoodsIssuedDetailDto>(goodsIssuedDetailEntity);
-
-            return goodsIssuedDetailDtoToReturn.CreatedResult();
+            await _repoManager.ProductAtGarage.CreateProductAtGarageAsync(productAtGarage);
+            var productReturnDto = _mapper.Map<ProductAtGarageDto>(productAtGarage);
+            return productReturnDto.CreateResult();
         }
 
         private async Task<Result<GoodsIssued>> GetAndCheckIfGoodsIssuedIsExist(Guid goodsIssuedId, bool trackChanges, string? include)
@@ -181,18 +188,26 @@ namespace GarageManagementAPI.Service
             return goodsIssued.OkResult();
         }
 
-        private async Task<bool> GetAndCheckIfGoodsIssuedWithReferenceNumberIsExist(string referenceNumber, Guid? goodsIssuedId, bool trackChanges)
-        {
-            var goodsIssued = await _repoManager.GoodsIssued.GetGoodsIssuedByIdAndReferenceNumberAsync(referenceNumber, goodsIssuedId, trackChanges);
-            if (goodsIssued == null) return false;
-            return true;
-        }
-
         private async Task<bool> GetAndCheckIfWarehouseIdIsNotExist(Guid createdWareHouseManagerId)
         {
             var createdWareHouseManager = await _repoManager.Workplace.GetWorkplaceByIdAsync(createdWareHouseManagerId, false);
             if (createdWareHouseManager == null) return true;
             return false;
+        }
+
+        public static string GenerateReferenceNumber()
+        {
+            return $"RN-{DateTime.UtcNow:yyyyMMddHHmmss}-{Guid.NewGuid().ToString("N").Substring(6)}";
+        }
+
+        public static string GenerateInvoiceCode()
+        {
+            return $"IC-{DateTime.UtcNow:yyyyMMddHHmmss}-{Guid.NewGuid().ToString("N").Substring(6)}";
+        }
+
+        public static string GenerateBarcode()
+        {
+            return $"BCPAG-{DateTime.UtcNow:yyyyMMddHHmmss}-{Guid.NewGuid().ToString("N").Substring(6)}";
         }
     }
 }
