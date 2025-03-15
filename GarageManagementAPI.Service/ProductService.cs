@@ -205,7 +205,7 @@ namespace GarageManagementAPI.Service
         public async Task<Result<IEnumerable<ExpandoObject>>> GetProductsByWarehouseIdWithQuantityAsync(
       Guid warehouseId, ProductParameters productParameters, bool trackChanges, string? include = null)
         {
-            var productsWithMetadata = await _repoManager.Product.GetProductsByWarehouseIdAsync(warehouseId, productParameters, false);
+            var productsWithMetadata = await _repoManager.Product.GetProductsByWarehouseIdAsync(warehouseId, productParameters, false, include);
 
             var productIds = productsWithMetadata.Select(p => p.Id).ToList();
 

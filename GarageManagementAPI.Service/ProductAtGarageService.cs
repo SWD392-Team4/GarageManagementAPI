@@ -8,6 +8,7 @@ using GarageManagementAPI.Shared.ResultModel;
 using GarageManagementAPI.Repository.Contracts;
 using GarageManagementAPI.Shared.RequestFeatures;
 using GarageManagementAPI.Shared.DataTransferObjects.ProductAtGarage;
+using GarageManagementAPI.Shared.DataTransferObjects.Product;
 
 namespace GarageManagementAPI.Service
 {
@@ -36,12 +37,22 @@ namespace GarageManagementAPI.Service
 
         public async Task<Result<IEnumerable<ExpandoObject>>> GetProductAtWarehouses(ProductAtGarageParameters productAtGarageParameters, bool trackChanges, string? include = null)
         {
-            var productWithMetadata = await _repoManager.ProductAtGarage.GetProductAtGarages(productAtGarageParameters, trackChanges, include);
+            var productsWithMetadata = await _repoManager.ProductAtGarage.GetProductAtGarages(productAtGarageParameters, trackChanges, include);
 
-            var productAtHouseDto = _mapper.Map<IEnumerable<ProductAtGarageDto>>(productWithMetadata);
+            var productIds = productsWithMetadata.Select(p => p.Id).ToList();
+
+            var productAtHouseDto = _mapper.Map<IEnumerable<ProductAtGarageDto>>(productsWithMetadata);
+
+
+            var productQuantities = await _repoManager.ProductAtGarage.GetTotalQuantityByProductIdAsync();
+
+            foreach (var productDto in productAtHouseDto)
+            {
+                productDto.Quantity = productQuantities.ContainsKey(productDto.ProductId) ? productQuantities[productDto.ProductId] : 0;
+            }
 
             var productAtHouseShapper = _dataShapper.ProductAtGarage.ShapeData(productAtHouseDto, productAtGarageParameters.Fields);
-            return Result<IEnumerable<ExpandoObject>>.Ok(productAtHouseShapper, productWithMetadata.MetaData);
+            return Result<IEnumerable<ExpandoObject>>.Ok(productAtHouseShapper, productsWithMetadata.MetaData);
         }
 
         private async Task<Result<ProductAtGarage>> GetAndCheckProductAtGarage(Guid productAtGarageId, bool trackChanges, string? include = null)
