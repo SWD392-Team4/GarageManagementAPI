@@ -5,6 +5,7 @@ namespace GarageManagementAPI.Shared.DataTransferObjects.AppointmentReplacementP
 {
     public record AppointmentReplacementPartDto
     {
+        public Guid Id { get; set; }
         public Guid AppointmentDetailId { get; set; }
 
         public Guid ProductHistoryId { get; set; }

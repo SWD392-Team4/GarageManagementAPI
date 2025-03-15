@@ -17,6 +17,11 @@ namespace GarageManagementAPI.Shared.ErrorsConstant.Appointment
         public const string AppointmentEstimatedAppointmentTimeInvalid = " Estimated appointment time must be greater than current time";
         public const string AppointmentEstimatedEndTimeInvalid = " Estimated end time must be greater than current time";
         public const string AppointmentStatusCompleted = "Appointment {0} is already completed";
+        public const string AppointmentDetailIdRequired = "Appointment detail id is required";
+        public const string AppointmentDetailNotFound = "Appointment detail {0} not found";
+        public const string AppointmentDetailAlreadyCancelled = "Appointment detail {0} is already cancelled";
+        public const string AppointmentDetailAlreadyRejected = "Appointment detail {0} is already rejected";
+        public const string AppointmentReplacementPartNotFound = "Appointment replacement part not found";
 
         public static ErrorsResult GetAppointmentNotFoundError(Guid id)
             => new ErrorsResult
@@ -128,6 +133,51 @@ namespace GarageManagementAPI.Shared.ErrorsConstant.Appointment
             {
                 Code = nameof(AppointmentStatusCompleted),
                 Description = $"Appointment is {appointmentStatus}, can not update."
+            };
+        }
+
+        public static ErrorsResult GetAppointmentDetailIdRequired()
+        {
+            return new ErrorsResult
+            {
+                Code = nameof(AppointmentDetailIdRequired),
+                Description = AppointmentDetailIdRequired
+            };
+        }
+
+        public static ErrorsResult GetAppointmentDetailNotFound(IEnumerable<Guid> id)
+        {
+            return new ErrorsResult
+            {
+                Code = nameof(AppointmentDetailNotFound),
+                Description = string.Format(AppointmentDetailNotFound, string.Join(",", id))
+            };
+        }
+
+        public static ErrorsResult GetAppointmentDetailAlreadyCancelled(IEnumerable<Guid> ids)
+        {
+            return new ErrorsResult
+            {
+                Code = nameof(AppointmentDetailAlreadyCancelled),
+                Description = string.Format(AppointmentDetailAlreadyCancelled, string.Join(", ", ids))
+            };
+        }
+
+        public static ErrorsResult GetAppointmentDetailAlreadyRejectedError(IEnumerable<Guid> ids)
+        {
+            return new ErrorsResult
+            {
+                Code = nameof(AppointmentDetailAlreadyRejected),
+                Description = string.Format(AppointmentDetailAlreadyRejected, string.Join(", ", ids))
+            };
+        }
+
+        public static ErrorsResult GetAppointmentReplacementPartNotFoundError()
+        {
+            return new ErrorsResult
+            {
+                Code = nameof(AppointmentReplacementPartNotFound),
+                Description = AppointmentReplacementPartNotFound
             };
         }
     }

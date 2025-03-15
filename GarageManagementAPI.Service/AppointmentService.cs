@@ -559,6 +559,46 @@ namespace GarageManagementAPI.Service
             if (user.EmployeeInfo is null || user.EmployeeInfo.WorkplaceId != garageId)
                 return Result<AppointmentDto>.Unauthorized(UserErrors.GetUnAuthorizeUserError());
 
+            var now = DateTimeOffset.UtcNow.SEAsiaStandardTime();
+
+            if (appointment.AppointmentDetails.Any())
+            {
+                foreach (var item in appointment.AppointmentDetails)
+                {
+                    if (item.Status == AppointmentDetailStatus.Pending)
+                    {
+                        item.Status = AppointmentDetailStatus.Approved;
+                        item.UpdatedAt = now;
+                        if (item.AppointmentReplacementParts.Any())
+                        {
+                            foreach (var part in item.AppointmentReplacementParts)
+                            {
+                                if (part.Status == AppointmentReplacementPartStatus.Pending)
+                                {
+                                    part.Status = AppointmentReplacementPartStatus.Approved;
+                                    part.UpdatedAt = now;
+                                }
+                            }
+                        }
+                    }
+
+                    _repoManager.AppointmentDetail.Updates([.. appointment.AppointmentDetails]);
+                }
+            }
+
+            if (appointment.AppointmentDetailPackages.Any())
+            {
+                foreach (var item in appointment.AppointmentDetailPackages)
+                {
+                    if (item.Status == AppointmentDetailPackageStatus.Pending)
+                    {
+                        item.Status = AppointmentDetailPackageStatus.Approved;
+                        item.UpdatedAt = now;
+                    }
+                }
+                _repoManager.AppointmentDetailPackage.Updates([.. appointment.AppointmentDetailPackages]);
+            }
+
 
             appointment.ApproveByEmployeeId = userId;
             appointment.Status = AppointmentStatus.Approved;
@@ -634,6 +674,95 @@ namespace GarageManagementAPI.Service
 
             return Result.Ok();
         }
+
+        public async Task<Result> UpdateAppointmentArrival(Guid garageId, Guid appointmentId, Guid userId, AppointmentDtoForUpdate appointmentDtoForUpdate)
+        {
+            var garage = await _repoManager.Workplace.GetWorkplaceByIdAsync(garageId, false);
+            if (garage is null || !garage.WorkplaceType.Equals(WorkplaceType.Garage))
+                return Result<AppointmentDto>.NotFound(WorkplaceErrors.GetGarageNotFound(garageId));
+
+            var appointment = await _repoManager.Appointment.GetAppointmentAsync(garageId, appointmentId, true);
+            if (appointment is null)
+                return Result<AppointmentDto>.NotFound(AppointmentErrors.GetAppointmentNotFoundError(appointmentId));
+
+            if (appointment.Status != AppointmentStatus.Approved || appointment.Status != AppointmentStatus.Pending)
+                return Result<AppointmentDto>.Conflict(AppointmentErrors.GetAppointmentCanNotUpdate(appointment.Status));
+
+            var user = await _repoManager.User.GetUserByIdAsync(userId, false, "EmployeeInfo");
+            if (user is null)
+                return Result<AppointmentDto>.NotFound(UserErrors.GetUserNotFoundWithIdError(userId));
+
+            if (user.EmployeeInfo is null || user.EmployeeInfo.WorkplaceId != garageId)
+                return Result<AppointmentDto>.Unauthorized(UserErrors.GetUnAuthorizeUserError());
+
+            if (appointmentDtoForUpdate.EstimatedEndTime != null)
+            {
+                if (appointmentDtoForUpdate.EstimatedEndTime != appointment.EstimatedEndTime)
+                {
+                    if (!ValidEstimatedTime(appointmentDtoForUpdate.EstimatedEndTime.Value) ||
+                        appointmentDtoForUpdate.EstimatedEndTime < appointmentDtoForUpdate.EstimatedAppointmentTime)
+                    {
+                        return Result<AppointmentDto>.BadRequest(AppointmentErrors.GetAppointmentEstimatedEndTimeInvalidError());
+                    }
+                }
+            }
+            var now = DateTimeOffset.UtcNow.SEAsiaStandardTime();
+            if (appointment.AppointmentDetails.Any())
+            {
+                foreach (var item in appointment.AppointmentDetails)
+                {
+                    if (item.Status == AppointmentDetailStatus.Pending || item.Status == AppointmentDetailStatus.Approved)
+                    {
+                        item.Status = AppointmentDetailStatus.Unsigned;
+                        item.UpdatedAt = now;
+                        if (item.AppointmentReplacementParts.Any())
+                        {
+                            foreach (var part in item.AppointmentReplacementParts)
+                            {
+                                if (part.Status == AppointmentReplacementPartStatus.Pending)
+                                {
+                                    part.Status = AppointmentReplacementPartStatus.Approved;
+                                    part.UpdatedAt = now;
+                                }
+                            }
+                        }
+                    }
+
+                    _repoManager.AppointmentDetail.Updates([.. appointment.AppointmentDetails]);
+                }
+            }
+
+            if (appointment.AppointmentDetailPackages.Any())
+            {
+                foreach (var item in appointment.AppointmentDetailPackages)
+                {
+                    if (item.Status == AppointmentDetailPackageStatus.Pending || item.Status == AppointmentDetailPackageStatus.Approved)
+                    {
+                        item.Status = AppointmentDetailPackageStatus.Unsigned;
+                        item.UpdatedAt = now;
+                    }
+                }
+                _repoManager.AppointmentDetailPackage.Updates([.. appointment.AppointmentDetailPackages]);
+            }
+
+
+            if (IsAppointmentUpdated(appointmentDtoForUpdate, appointment))
+            {
+                if (appointmentDtoForUpdate.CarModelId.HasValue)
+                {
+                    var carModel = await _repoManager.CarModel.GetCarModelAsync(appointmentDtoForUpdate.CarModelId!.Value, false);
+                    if (carModel is null)
+                        return Result<AppointmentDto>.NotFound(CarModelErrors.GetCarModelNotFoundError(appointmentDtoForUpdate.CarModelId!.Value));
+                }
+                appointment.ActualAppointmentTime = DateTimeOffset.UtcNow.SEAsiaStandardTime();
+                appointment = _mapper.Map(appointmentDtoForUpdate, appointment);
+                _repoManager.Appointment.Update(appointment);
+                await _repoManager.SaveAsync();
+            }
+
+            return Result.Ok();
+        }
+
 
         private bool IsAppointmentUpdated(AppointmentDtoForUpdate dto, Appointment entity)
         {

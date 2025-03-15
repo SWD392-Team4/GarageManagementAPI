@@ -26,6 +26,5 @@ namespace GarageManagementAPI.Entities.Models
 
         public virtual User Employee { get; set; } = null!;
     }
-
 }
 
