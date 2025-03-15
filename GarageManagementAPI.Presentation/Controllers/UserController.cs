@@ -35,6 +35,34 @@ namespace GarageManagementAPI.Presentation.Controllers
 
         }
 
+
+        [HttpGet("customers/{userId:guid}")]
+        [Authorize(Roles = $"{nameof(SystemRole.Administrator)},{nameof(SystemRole.Cashier)}")]
+        public async Task<IActionResult> GetUsersIsCustomerById(Guid userId, [FromQuery] UserParameters userParameters)
+        {
+            var userResult = await _service.UserService.GetUserAsync(userId, userParameters, trackChanges: false, "Roles");
+
+            return userResult.Map(
+                onSuccess: Ok,
+                onFailure: ProcessError
+                );
+        }
+
+
+        [HttpGet("employees/{userId:guid}")]
+        [Authorize(Roles = $"{nameof(SystemRole.Administrator)},{nameof(SystemRole.Cashier)}")]
+        public async Task<IActionResult> GetUsersIsEmployeeById([FromQuery] UserParameters userParameters)
+        {
+            var userResult = await _service.UserService.GetUsersAsync(userParameters, trackChanges: false, isEmployee: true, "EmployeeInfo,Roles");
+
+            return userResult.Map(
+                onSuccess: Ok,
+                onFailure: ProcessError
+                );
+        }
+
+
+
         [HttpGet("customers")]
         [Authorize(Roles = $"{nameof(SystemRole.Administrator)},{nameof(SystemRole.Cashier)}")]
         public async Task<IActionResult> GetUsersIsCustomer([FromQuery] UserParameters userParameters)

@@ -7,6 +7,7 @@ namespace GarageManagementAPI.Shared.DataTransferObjects.AppointmentDetail
 {
     public class AppointmentDetailDto
     {
+        public Guid Id { get; set; }
         public Guid ServiceHistoryId { get; set; }
 
         public Guid AppointmentId { get; set; }

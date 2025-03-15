@@ -12,37 +12,45 @@ namespace GarageManagementAPI.Presentation.Controllers
         public AppointmentDetailController(IServiceManager service) : base(service)
         {
         }
-        //[HttpGet]
-        //public async Task<IActionResult> GetAppointmentDetails(Guid garageId, Guid appointmentId)
-        //{
-        //    var result = await _service.AppointmentDetailService.GetAppointmentDetail(garageId, appointmentId);
-        //    return result.Map(
-        //        onSuccess: Ok,
-        //        onFailure: ProcessError
-        //        );
-        //}
 
+        [HttpGet]
+        public async Task<IActionResult> GetAppointmentDetails(Guid garageId, Guid appointmentId)
+        {
+            var result = await _service.AppointmentDetailService.GetAppointmentDetailsAsync(garageId, appointmentId);
+            return result.Map(
+                onSuccess: Ok,
+                onFailure: ProcessError
+                );
+        }
 
-        //[HttpPost]
-        //public async Task<IActionResult> CreateAppointmentDetails(Guid garageId, Guid appointmentId, [FromBody] List<AppointmentDetailDtoForCreation> appointmentDetailDtoForCreation)
-        //{
-        //    var result = await _service.AppointmentDetailService.CreateAppointmentDetails(garageId, appointmentId, appointmentDetailDtoForCreation);
-        //    return result.Map(
-        //        onSuccess: CreatedAtRoute("GetAppointmentDetail", new { garageId, appointmentId, appointmentDetailId = result.Value }, result.Value),
-        //        onFailure: ProcessError
-        //        );
-        //}
+        [HttpPost]
+        public async Task<IActionResult> CreateAppointmentDetail(Guid garageId, Guid appointmentId, [FromBody] List<AppointmentDetailDtoForCreation> appointmentDetailDtoForCreation)
+        {
+            var result = await _service.AppointmentDetailService.CreateAppointmentDetails(garageId, appointmentId, appointmentDetailDtoForCreation);
+            return result.Map(
+                onSuccess: _ => Created(),
+                onFailure: ProcessError
+                );
+        }
 
+        [HttpPut("cancel")]
+        public async Task<IActionResult> CancelAppointmentDetail(Guid garageId, Guid appointmentId, [FromBody] AppointmentDetailDtoForCancellation appointmentDetailDtoForCancellation)
+        {
+            var result = await _service.AppointmentDetailService.CancelAppointmentDetailsAsync(garageId, appointmentId, appointmentDetailDtoForCancellation);
+            return result.Map(
+                onSuccess: Ok,
+                onFailure: ProcessError
+                );
+        }
 
-
-        //[HttpDelete("({ids})")]
-        //public async Task<IActionResult> DeleteAppointmentDetail(Guid garageId, Guid appointmentId, [ModelBinder(BinderType = typeof(ArrayModelBinder))] IEnumerable<Guid> ids)
-        //{
-        //    var result = await _service.AppointmentDetailService.DeleteAppointmentDetails(garageId, appointmentId, ids);
-        //    return result.Map(
-        //        onSuccess: Ok,
-        //        onFailure: ProcessError
-        //        );
-        //}
+        [HttpPut("reject")]
+        public async Task<IActionResult> RejectAppointmentDetail(Guid garageId, Guid appointmentId, [FromBody] AppointmentDetailDtoForCancellation appointmentDetailDtoForCancellation)
+        {
+            var result = await _service.AppointmentDetailService.RejectAppointmentDetailsAsync(garageId, appointmentId, appointmentDetailDtoForCancellation);
+            return result.Map(
+                onSuccess: Ok,
+                onFailure: ProcessError
+                );
+        }
     }
 }

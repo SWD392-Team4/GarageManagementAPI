@@ -19,7 +19,7 @@ namespace GarageManagementAPI.Presentation.Controllers
         }
 
         [HttpGet]
-        [Authorize(Roles = $"{nameof(SystemRole.Customer)}, {nameof(SystemRole.Cashier)}")]
+        [Authorize(Roles = $"{nameof(SystemRole.Customer)}, {nameof(SystemRole.Cashier)}, {nameof(SystemRole.Administrator)}")]
         public async Task<IActionResult> GetAllAppointments(Guid garageId, [FromQuery] AppointmentParameters appointmentParameters)
         {
             var userId = User.FindFirstValue("UserId");
@@ -31,7 +31,6 @@ namespace GarageManagementAPI.Presentation.Controllers
                 onFailure: ProcessError
                 );
         }
-
 
         [HttpGet("{appointmentId:guid}", Name = "GetAppointment")]
         [Authorize(Roles = $"{nameof(SystemRole.Customer)}, {nameof(SystemRole.Cashier)}")]
@@ -124,10 +123,22 @@ namespace GarageManagementAPI.Presentation.Controllers
 
         [HttpPut("{appointmentId:guid}")]
         [Authorize(Roles = $"{nameof(SystemRole.Cashier)}")]
-        public async Task<IActionResult> UpdateAppointmentInformation(Guid garageId, Guid appointmentId, AppointmentDtoForUpdate appointmentDtoForUpdate)
+        public async Task<IActionResult> UpdateAppointmentInformation(Guid garageId, Guid appointmentId, [FromBody] AppointmentDtoForUpdate appointmentDtoForUpdate)
         {
             var userId = User.FindFirstValue("UserId");
             var result = await _service.AppointmentService.UpdateAppointmentInformation(garageId, appointmentId, new(userId!), appointmentDtoForUpdate);
+            return result.Map(
+                onSuccess: Ok,
+                onFailure: ProcessError
+                );
+        }
+
+        [HttpPut("{appointmentId:guid}/arrival")]
+        [Authorize(Roles = $"{nameof(SystemRole.Cashier)}")]
+        public async Task<IActionResult> UpdateAppointmentArrival(Guid garageId, Guid appointmentId, [FromBody] AppointmentDtoForUpdate appointmentDtoForUpdate)
+        {
+            var userId = User.FindFirstValue("UserId");
+            var result = await _service.AppointmentService.UpdateAppointmentArrival(garageId, appointmentId, new(userId!), appointmentDtoForUpdate);
             return result.Map(
                 onSuccess: Ok,
                 onFailure: ProcessError
