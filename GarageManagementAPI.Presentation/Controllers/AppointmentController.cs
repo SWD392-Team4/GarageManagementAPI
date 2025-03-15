@@ -69,5 +69,8 @@ namespace GarageManagementAPI.Presentation.Controllers
             return CreatedAtRoute("GetAppointment", new { garageId, appointmentId = appointment.Id }, result);
         }
 
+
+
+
     }
 }

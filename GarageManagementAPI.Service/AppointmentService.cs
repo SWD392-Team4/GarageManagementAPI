@@ -69,7 +69,7 @@ namespace GarageManagementAPI.Service
                     return Result<AppointmentDto>.NotFound(CarModelErrors.GetCarModelNotFoundError(appointmentDtoCreation.CarModelId!.Value));
             }
 
-            if (appointmentDtoCreation.Services is null && appointmentDtoCreation.Packages is null)
+            if ((appointmentDtoCreation.Services is null || !appointmentDtoCreation.Services.Any()) && (appointmentDtoCreation.Packages is null || !appointmentDtoCreation.Packages.Any()))
                 return Result<AppointmentDto>.BadRequest(AppointmentErrors.GetInvalidAppointmentError());
 
             var appointment = _mapper.Map<Appointment>(appointmentDtoCreation);
