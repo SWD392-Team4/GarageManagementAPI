@@ -17,19 +17,40 @@ namespace GarageManagementAPI.Repository
 
         public async Task<Appointment?> GetAppointmentAsync(Guid appointmentId, bool trackChanges)
         {
-            return await FindByCondition(e => e.Id.Equals(appointmentId), trackChanges).SingleOrDefaultAsync();
+            return await FindByCondition(e => e.Id.Equals(appointmentId), trackChanges)
+                        .Include(a => a.AppointmentDetails)
+                        .ThenInclude(ad => ad.ServiceHistory)
+                        .ThenInclude(ad => ad.Service)
+                        .Include(a => a.AppointmentDetails)
+                        .ThenInclude(a => a.AppointmentReplacementParts)
+                        .ThenInclude(a => a.ProductHistory)
+                        .ThenInclude(a => a.Product)
+                        .Include(a => a.AppointmentDetailPackages)
+                        .ThenInclude(a => a.PackageHistory)
+                        .SingleOrDefaultAsync();
         }
 
-        public async Task<IEnumerable<Appointment>> GetAppointmentAsync(DateTimeOffset EstimatedAppointmentTime, bool trackChanges)
+        public async Task<IEnumerable<Appointment>> GetAppointmentAsync(DateTimeOffset estimatedAppointmentTime, bool trackChanges)
         {
-            return await FindByCondition(e => e.EstimatedAppointmentTime.Year == EstimatedAppointmentTime.Year &&
-                                                e.EstimatedAppointmentTime.Month == EstimatedAppointmentTime.Month &&
-                                                e.EstimatedAppointmentTime.Day == EstimatedAppointmentTime.Day, trackChanges).ToListAsync();
+            return await FindByCondition(e => e.EstimatedAppointmentTime.Year == estimatedAppointmentTime.Year &&
+                                              e.EstimatedAppointmentTime.Month == estimatedAppointmentTime.Month &&
+                                              e.EstimatedAppointmentTime.Day == estimatedAppointmentTime.Day
+                                              && e.Status != AppointmentStatus.Cancelled && e.Status != AppointmentStatus.Rejected, trackChanges).ToListAsync();
         }
 
         public async Task<Appointment?> GetAppointmentAsync(Guid garageId, Guid appointmentId, bool trackChanges)
         {
-            return await FindByCondition(e => e.GarageId.Equals(garageId) && e.Id.Equals(appointmentId), trackChanges).SingleOrDefaultAsync();
+            return await FindByCondition(e => e.GarageId.Equals(garageId) && e.Id.Equals(appointmentId), trackChanges)
+                .Include(a => a.AppointmentDetails)
+                .ThenInclude(ad => ad.ServiceHistory)
+                .ThenInclude(ad => ad.Service)
+                .Include(a => a.AppointmentDetails)
+                .ThenInclude(a => a.AppointmentReplacementParts)
+                .ThenInclude(a => a.ProductHistory)
+                .ThenInclude(a => a.Product)
+                .Include(a => a.AppointmentDetailPackages)
+                .ThenInclude(a => a.PackageHistory)
+                .SingleOrDefaultAsync();
         }
 
         public async Task CreateAsync(Guid garageId, Appointment entity)
@@ -62,6 +83,15 @@ namespace GarageManagementAPI.Repository
                 .Sort(appointmentParameters.OrderBy)
                 .Skip((appointmentParameters.PageNumber - 1) * appointmentParameters.PageSize)
                 .Take(appointmentParameters.PageSize)
+                .Include(a => a.AppointmentDetails)
+                .ThenInclude(ad => ad.ServiceHistory)
+                .ThenInclude(ad => ad.Service)
+                .Include(a => a.AppointmentDetails)
+                .ThenInclude(a => a.AppointmentReplacementParts)
+                .ThenInclude(a => a.ProductHistory)
+                .ThenInclude(a => a.Product)
+                .Include(a => a.AppointmentDetailPackages)
+                .ThenInclude(a => a.PackageHistory)
                 .ToListAsync();
 
             var count = await FindByCondition(a => a.GarageId.Equals(garageId), trackChanges)
@@ -82,6 +112,25 @@ namespace GarageManagementAPI.Repository
                 appointmentParameters.PageSize);
         }
 
-
+        public async Task<Appointment?> GetAppointmentAsync(Guid garageId, string verifyCode, string customerEmail, string customerPhone, DateTimeOffset estimatedAppointmentTime, bool trackChanges)
+        {
+            return await FindByCondition(ap => ap.GarageId.Equals(garageId) &&
+                                                ap.VerificationCode!.Equals(verifyCode) &&
+                                                ap.CustomerEmail.Equals(customerEmail) &&
+                                                ap.CustomerPhoneNumber.Equals(customerPhone) &&
+                                                (ap.EstimatedAppointmentTime.Year == estimatedAppointmentTime.Year &&
+                                                ap.EstimatedAppointmentTime.Month == estimatedAppointmentTime.Month &&
+                                                ap.EstimatedAppointmentTime.Day == estimatedAppointmentTime.Day), trackChanges)
+                        .Include(a => a.AppointmentDetails)
+                        .ThenInclude(ad => ad.ServiceHistory)
+                        .ThenInclude(ad => ad.Service)
+                        .Include(a => a.AppointmentDetails)
+                        .ThenInclude(a => a.AppointmentReplacementParts)
+                        .ThenInclude(a => a.ProductHistory)
+                        .ThenInclude(a => a.Product)
+                        .Include(a => a.AppointmentDetailPackages)
+                        .ThenInclude(a => a.PackageHistory)
+                        .FirstOrDefaultAsync();
+        }
     }
 }

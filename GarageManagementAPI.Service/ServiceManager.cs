@@ -25,6 +25,9 @@ namespace GarageManagementAPI.Service
         private readonly Lazy<IGoodsIssuedService> _goodsIssuedService;
         private readonly Lazy<ICarCategoryService> _carCategoryService;
         private readonly Lazy<IAppointmentService> _appointmentService;
+        private readonly Lazy<IAppointmentDetailService> _appointmentDetailService;
+        private readonly Lazy<IAppointmentDetailPackageService> _appointmentDetailPackageService;
+        private readonly Lazy<IAppointmentReplacementPartService> _appointmentReplacementPartService;
         private readonly Lazy<IPackageUsageService> _packageUsageService;
         private readonly Lazy<IEmployeeInfoService> _employeeInfoService;
         private readonly Lazy<IServiceImageService> _serviceImageService;
@@ -184,6 +187,24 @@ namespace GarageManagementAPI.Service
             mapper,
             dataShaper));
 
+            _appointmentDetailService = new Lazy<IAppointmentDetailService>(() =>
+            new AppointmentDetailService(
+            repositoryManager,
+            mapper,
+            dataShaper));
+
+            _appointmentDetailPackageService = new Lazy<IAppointmentDetailPackageService>(() =>
+              new AppointmentDetailPackageService(
+              repositoryManager,
+              mapper,
+              dataShaper));
+
+            _appointmentReplacementPartService = new Lazy<IAppointmentReplacementPartService>(() =>
+              new AppointmentReplacementPartService(
+              repositoryManager,
+              mapper,
+              dataShaper));
+
             _supplierService = new Lazy<ISupplierService>(() =>
             new SupplierService(
             repositoryManager,
@@ -283,5 +304,8 @@ namespace GarageManagementAPI.Service
         public IPackageUsageDetailService PackageUsageDetailService => _packageUsageDetailService.Value;
         public IProductAtWarehouseService ProductAtWarehouseService => _productAtWarehouseService.Value;
         public IGoodsReceivedDetailService GoodsReceivedDetailService => _goodsReceivedDetailService.Value;
+        public IAppointmentDetailService AppointmentDetailService => _appointmentDetailService.Value;
+        public IAppointmentDetailPackageService AppointmentDetailPackageService => _appointmentDetailPackageService.Value;
+        public IAppointmentReplacementPartService AppointmentReplacementPartService => _appointmentReplacementPartService.Value;
     }
 }

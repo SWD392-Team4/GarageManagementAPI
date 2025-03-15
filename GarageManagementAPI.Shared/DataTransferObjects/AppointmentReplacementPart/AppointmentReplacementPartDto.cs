@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace GarageManagementAPI.Shared.DataTransferObjects.AppointmentReplacementPart
 {
-    public record ReplacementPartDto
+    public record AppointmentReplacementPartDto
     {
         public Guid AppointmentDetailId { get; set; }
 
@@ -19,5 +19,11 @@ namespace GarageManagementAPI.Shared.DataTransferObjects.AppointmentReplacementP
         public DateTimeOffset CreatedAt { get; set; }
 
         public DateTimeOffset UpdatedAt { get; set; }
+
+        public string? ProductName { get; set; }
+
+        public List<string>? ImageLink { get; set; }
+
+        public decimal? ProductPrice { get; set; }
     }
 }

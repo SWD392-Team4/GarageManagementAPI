@@ -1,4 +1,5 @@
-﻿using GarageManagementAPI.Shared.ErrorModel;
+﻿using GarageManagementAPI.Shared.Enums.SystemStatuss;
+using GarageManagementAPI.Shared.ErrorModel;
 
 namespace GarageManagementAPI.Shared.ErrorsConstant.Appointment
 {
@@ -12,7 +13,10 @@ namespace GarageManagementAPI.Shared.ErrorsConstant.Appointment
         public const string AppointmentPackageDuplicate = "Package {0} already added to appointment";
         public const string AppointmentHasDuplicateProductInService = "Service {0} has duplicate product {0}";
         public const string AppointmentWrongPackageType = "Package type is not correct";
-
+        public const string AppointmentStatusNotPending = "Appointment {0} is not in pending status so cannot be confirm.";
+        public const string AppointmentEstimatedAppointmentTimeInvalid = " Estimated appointment time must be greater than current time";
+        public const string AppointmentEstimatedEndTimeInvalid = " Estimated end time must be greater than current time";
+        public const string AppointmentStatusCompleted = "Appointment {0} is already completed";
 
         public static ErrorsResult GetAppointmentNotFoundError(Guid id)
             => new ErrorsResult
@@ -69,6 +73,61 @@ namespace GarageManagementAPI.Shared.ErrorsConstant.Appointment
             {
                 Code = nameof(AppointmentWrongPackageType),
                 Description = AppointmentWrongPackageType
+            };
+        }
+
+        public static ErrorsResult GetAppointmentNotFoundError(string verifyCode, string customnerEmail, string customerPhone, DateTimeOffset estimatedTime)
+        {
+            return new ErrorsResult
+            {
+                Code = nameof(AppointmentNotFound),
+                Description = $"Appointment has code {verifyCode} with customer email {customnerEmail}, customer phone {customerPhone}, estimated time {estimatedTime} not found"
+            };
+        }
+
+        public static ErrorsResult GetAppointmentStatusNotPendingError(Guid appointmentId)
+        {
+            return new ErrorsResult
+            {
+                Code = nameof(AppointmentStatusNotPending),
+                Description = string.Format(AppointmentStatusNotPending, appointmentId)
+            };
+        }
+
+        public static ErrorsResult GetAppointmentEstimatedTimeInvalidError()
+        {
+            return new ErrorsResult
+            {
+                Code = nameof(AppointmentEstimatedAppointmentTimeInvalid),
+                Description = AppointmentEstimatedAppointmentTimeInvalid
+            };
+        }
+
+        public static ErrorsResult GetAppointmentEstimatedEndTimeInvalidError()
+        {
+            return new ErrorsResult
+            {
+                Code = nameof(AppointmentEstimatedEndTimeInvalid),
+                Description = AppointmentEstimatedEndTimeInvalid
+            };
+        }
+
+
+        public static ErrorsResult GetAppointmentStatusCompletedError(Guid id)
+        {
+            return new ErrorsResult
+            {
+                Code = nameof(AppointmentStatusCompleted),
+                Description = string.Format(AppointmentStatusCompleted, id)
+            };
+        }
+
+        public static ErrorsResult GetAppointmentCanNotUpdate(AppointmentStatus appointmentStatus)
+        {
+            return new ErrorsResult
+            {
+                Code = nameof(AppointmentStatusCompleted),
+                Description = $"Appointment is {appointmentStatus}, can not update."
             };
         }
     }

@@ -36,7 +36,8 @@ namespace GarageManagementAPI.Entities.Models
 
         public virtual ICollection<AppointmentDetail> AppointmentDetailUpdateByEmployees { get; set; } = new List<AppointmentDetail>();
 
-        public virtual ICollection<Appointment> Appointments { get; set; } = new List<Appointment>();
+        public virtual ICollection<Appointment> ApprovedAppointments { get; set; } = new List<Appointment>();
+        public virtual ICollection<Appointment> RejectedAppointments { get; set; } = new List<Appointment>();
 
         public virtual ICollection<CustomerCar> CustomerCarCreatedByEmployees { get; set; } = new List<CustomerCar>();
 

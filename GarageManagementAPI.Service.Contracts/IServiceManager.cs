@@ -16,6 +16,9 @@
         IWorkplaceService WorkplaceService { get; }
         ICarCategoryService CarCategoryService { get; }
         IAppointmentService AppointmentService { get; }
+        IAppointmentDetailService AppointmentDetailService { get; }
+        IAppointmentDetailPackageService AppointmentDetailPackageService { get; }
+        IAppointmentReplacementPartService AppointmentReplacementPartService { get; }
         IGoodsIssuedService GoodsIssuedService { get; }
         IServiceFeedbackService ServiceFeedback { get; }
         IProductImageService ProductImageService { get; }
@@ -36,6 +39,5 @@
         IProductAtWarehouseService ProductAtWarehouseService { get; }
         IPackageUsageDetailService PackageUsageDetailService { get; }
         IGoodsReceivedDetailService GoodsReceivedDetailService { get; }
-
     }
 }

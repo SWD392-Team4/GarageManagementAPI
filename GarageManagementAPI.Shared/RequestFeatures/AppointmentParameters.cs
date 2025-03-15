@@ -6,6 +6,8 @@ namespace GarageManagementAPI.Shared.RequestFeatures
 {
     public class AppointmentParameters : RequestParameters
     {
+        public Guid? CustomerId { get; set; }
+
         public Guid? Employee { get; set; }
 
         public string? CustomerName { get; set; }

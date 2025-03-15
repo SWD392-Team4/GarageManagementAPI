@@ -9,6 +9,8 @@ namespace GarageManagementAPI.Entities.Models
     {
         public Guid? ApproveByEmployeeId { get; set; }
 
+        public Guid? RejectByEmployeeId { get; set; }
+
         public Guid CarModelId { get; set; }
 
         public Guid GarageId { get; set; }
@@ -40,10 +42,9 @@ namespace GarageManagementAPI.Entities.Models
 
         public string? VerificationCode { get; set; } // Mã xác thực ngẫu nhiên
 
-        public DateTime? CancelledAt { get; set; } // Thời gian hủy
+        public DateTimeOffset? CancelledAt { get; set; } // Thời gian hủy
 
-
-        public CancellationMethod? CancellationMethod { get; set; } // Phương thức hủy
+        public DateTimeOffset? ApprovedAt { get; set; } // Thời gian duyệt
 
 
         [EnumDataType(typeof(AppointmentStatus))]
@@ -58,6 +59,7 @@ namespace GarageManagementAPI.Entities.Models
         public virtual ICollection<AppointmentDetail> AppointmentDetails { get; set; } = new List<AppointmentDetail>();
 
         public virtual User? ApproveByEmployee { get; set; }
+        public virtual User? RejecteByEmployee { get; set; }
 
         public virtual CarModel CarModel { get; set; } = null!;
 

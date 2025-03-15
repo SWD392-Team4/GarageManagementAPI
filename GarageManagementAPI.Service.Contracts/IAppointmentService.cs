@@ -10,10 +10,19 @@ namespace GarageManagementAPI.Service.Contracts
     {
         Task<Result<ExpandoObject>> GetAppointment(Guid garageId, Guid appointmentId, string? fields = null);
 
-        Task<Result<IEnumerable<ExpandoObject>>> GetAppointments(Guid garageId, AppointmentParameters appointmentParameters);
+        Task<Result<IEnumerable<ExpandoObject>>> GetAppointments(Guid garageId, AppointmentParameters appointmentParameters, Guid userId, string role);
 
         Task<Result<AppointmentDto>> CreateAppointment(Guid garageId, Guid? userId, AppointmentDtoForCreation appointmentDtoCreation);
 
-        //Task<Result<AppointmentDto>> ConfirmAppointment(Guid garageId, Guid appointmentId, string? userId, string? role, AppointmentDtoForConfirmation appointmentConfirmation);
+        Task<Result<AppointmentDto>> GetAppointmentForGuest(Guid garageId, AppointmentDtoForGuest appointmentDtoForGuest);
+
+        Task<Result> CancelAppointmentForGuest(Guid garageId, AppointmentDtoForGuestCancellation appointmentDtoForGuest);
+
+        Task<Result> CancelAppointment(Guid garageId, Guid appointmentId, Guid userId, string role, AppointmentDtoForCancellation appointmentDtoForCancellation);
+
+        Task<Result> ConfirmAppointment(Guid garageId, Guid appointmentId, Guid userId, AppointmentDtoForConfirmation appointmentConfirmation);
+
+        Task<Result> UpdateAppointmentInformation(Guid garageId, Guid appointmentId, Guid userId, AppointmentDtoForUpdate appointmentDtoForUpdate);
+
     }
 }

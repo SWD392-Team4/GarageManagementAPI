@@ -9,9 +9,11 @@ namespace GarageManagementAPI.Repository.Contracts
 
         Task<Appointment?> GetAppointmentAsync(Guid garageId, Guid appoitnmentId, bool trackChanges);
 
+        Task<Appointment?> GetAppointmentAsync(Guid garageId, string verifyCode, string customerEmail, string customerPhone, DateTimeOffset estimatedAppointmentTime, bool trackChanges);
+
         Task<Appointment?> GetAppointmentAsync(Guid appointmentId, bool trackChanges);
 
-        Task<IEnumerable<Appointment>> GetAppointmentAsync(DateTimeOffset EstimatedAppointmentTime, bool trackChanges);
+        Task<IEnumerable<Appointment>> GetAppointmentAsync(DateTimeOffset estimatedAppointmentTime, bool trackChanges);
 
         Task CreateAsync(Guid garageId, Appointment appointment);
     }

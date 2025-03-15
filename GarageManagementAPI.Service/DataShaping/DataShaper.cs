@@ -101,8 +101,8 @@ namespace GarageManagementAPI.Service.DataShaping
                     continue;
 
                 var propertyValue = propertyInfo.GetValue(entity);
-                //if (propertyValue == null)
-                //    continue;
+                if (propertyValue == null)
+                    continue;
 
                 var propertyName = char.ToLower(property.Key[0]) + property.Key.Substring(1);
 
@@ -176,8 +176,8 @@ namespace GarageManagementAPI.Service.DataShaping
                 return;
 
             var propertyValue = propertyInfo.GetValue(entity);
-            //if (propertyValue == null)
-            //    return;
+            if (propertyValue == null)
+                return;
 
             var propertyName = char.ToLower(currentProperty[0]) + currentProperty.Substring(1);
 
