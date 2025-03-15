@@ -22,5 +22,6 @@
 	</ItemGroup>
 	<ItemGroup>
 	  <Folder Include="DataTransferObjects\CarPart\" />
+	  <Folder Include="DataTransferObjects\NewFolder\" />
 	</ItemGroup>
 </Project>

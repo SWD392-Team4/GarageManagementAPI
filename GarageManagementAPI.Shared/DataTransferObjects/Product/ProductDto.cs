@@ -1,4 +1,6 @@
-﻿using GarageManagementAPI.Shared.Enums.SystemStatuss;
+﻿using GarageManagementAPI.Shared.DataTransferObjects.CarModel;
+using GarageManagementAPI.Shared.DataTransferObjects.CarPart;
+using GarageManagementAPI.Shared.Enums.SystemStatuss;
 using System.ComponentModel.DataAnnotations;
 
 namespace GarageManagementAPI.Shared.DataTransferObjects.Product
@@ -20,5 +22,9 @@ namespace GarageManagementAPI.Shared.DataTransferObjects.Product
         public DateTimeOffset CreatedAt { get; set; }
         public DateTimeOffset UpdatedAt { get; set; }
         public int TotalQuantity { get; set; }
+
+        public virtual ICollection<CarModelDto> CarModels { get; set; } = new List<CarModelDto>();
+
+        public virtual ICollection<CarPartDto> CarParts { get; set; } = new List<CarPartDto>();
     }
 }
