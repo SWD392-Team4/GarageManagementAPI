@@ -26,7 +26,7 @@ namespace GarageManagementAPI.Presentation.Controllers
         //[Authorize(Roles = $"{nameof(SystemRole.Administrator)},{nameof(SystemRole.Cashier)}")]
         public async Task<IActionResult> GetProductById(Guid productId)
         {
-            var isInclude = "Brand,ProductCategory,ProductHistories,ProductImages";
+            var isInclude = "Brand,ProductCategory,ProductHistories,ProductImages,CarModels,CarParts";
             var productResult = await _service.ProductService.GetProductByIdAsync(productId, trackChanges: false, isInclude);
 
             return productResult.Map(
