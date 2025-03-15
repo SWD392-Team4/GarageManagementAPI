@@ -8,7 +8,12 @@ namespace GarageManagementAPI.Application.MappingProfile
     {
         public ProductAtGarageMappingProfile()
         {
-            CreateMap<ProductAtGarage, ProductAtGarageDto>();
+            CreateMap<ProductAtGarage, ProductAtGarageDto>().
+                ForMember(dest => dest.ProductName, otps =>
+                {
+                    otps.PreCondition(otp => otp.Product != null);
+                    otps.MapFrom(src => src.Product.ProductName);
+                });
             CreateMap<ProductAtGarageForCreation, ProductAtGarage>();
         }
     }
