@@ -1,4 +1,5 @@
 ﻿using GarageManagementAPI.Shared.DataTransferObjects.AppointmentReplacementPart;
+using GarageManagementAPI.Shared.DataTransferObjects.Service;
 using GarageManagementAPI.Shared.Enums.SystemStatuss;
 using System.ComponentModel.DataAnnotations;
 
@@ -19,7 +20,13 @@ namespace GarageManagementAPI.Shared.DataTransferObjects.AppointmentDetail
 
         public DateTimeOffset UpdatedAt { get; set; }
 
-        public virtual IEnumerable<ReplacementPartDto>? ReplacementParts { get; set; }
+        public virtual IEnumerable<AppointmentReplacementPartDto>? AppointmentReplacementParts { get; set; }
+
+        public int? EstimatedHours { get; set; }
+
+        public string? ServiceName { get; set; }
+
+        public decimal? Price { get; set; }
     }
 
 }

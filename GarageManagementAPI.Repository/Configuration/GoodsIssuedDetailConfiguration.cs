@@ -23,6 +23,8 @@ namespace GarageManagementAPI.Repository.Configuration
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("goodsissueddetail_goodsissuedid_foreign");
 
+            entity.Property(e => e.UnitPrice)
+            .HasColumnType("decimal(18,2)");
 
             entity.Property(e => e.Status)
                 .HasConversion<string>();

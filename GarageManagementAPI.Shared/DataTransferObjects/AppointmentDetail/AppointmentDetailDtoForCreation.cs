@@ -4,7 +4,7 @@ namespace GarageManagementAPI.Shared.DataTransferObjects.AppointmentDetail
 {
     public class AppointmentDetailDtoForCreation : AppointmentDetailDtoForManipulation
     {
-        public IEnumerable<ReplacementPartDtoForCreation>? ReplacementParts { get; set; }
+        public IEnumerable<AppointmentReplacementPartDtoForCreation>? ReplacementParts { get; set; }
 
     }
 

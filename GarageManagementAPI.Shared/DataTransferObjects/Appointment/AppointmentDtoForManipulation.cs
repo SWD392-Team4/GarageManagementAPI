@@ -12,7 +12,7 @@
 
         public string? CustomerEmail { get; set; }
 
-        public DateTimeOffset EstimatedAppointmentTime { get; set; }
+        public DateTimeOffset? EstimatedAppointmentTime { get; set; }
 
         public DateTimeOffset? EstimatedEndTime { get; set; }
 

@@ -28,9 +28,13 @@ namespace GarageManagementAPI.Repository.Configuration
             entity.Property(e => e.Price).HasColumnType("decimal(18, 2)");
             entity.Property(e => e.Status).HasMaxLength(255);
 
-            entity.HasOne(d => d.ApproveByEmployee).WithMany(p => p.Appointments)
+            entity.HasOne(d => d.ApproveByEmployee).WithMany(p => p.ApprovedAppointments)
                 .HasForeignKey(d => d.ApproveByEmployeeId)
                 .HasConstraintName("appointment_approvebyemployeeid_foreign");
+
+            entity.HasOne(d => d.RejecteByEmployee).WithMany(p => p.RejectedAppointments)
+              .HasForeignKey(d => d.RejectByEmployeeId)
+              .HasConstraintName("appointment_rejectbyemployeeid_foreign");
 
             entity.HasOne(d => d.CarModel).WithMany(p => p.Appointments)
                 .HasForeignKey(d => d.CarModelId)

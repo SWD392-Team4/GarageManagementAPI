@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace GarageManagementAPI.Shared.DataTransferObjects.AppointmentReplacementPart
 {
-    public record ReplacementPartDtoForUpdate : ReplacementPartDtoForManipulation
+    public record AppointmentReplacementPartDtoForUpdate : AppointmentReplacementPartDtoForManipulation
     {
         public Guid? ProductAtGarageId { get; set; }
 

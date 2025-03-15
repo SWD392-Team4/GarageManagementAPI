@@ -1,6 +1,6 @@
 ﻿namespace GarageManagementAPI.Shared.DataTransferObjects.Appointment
 {
-    public record CancelAppointmentDto
+    public record AppointmentDtoForGuest
     {
         public string? VerifyCode { get; init; }
 

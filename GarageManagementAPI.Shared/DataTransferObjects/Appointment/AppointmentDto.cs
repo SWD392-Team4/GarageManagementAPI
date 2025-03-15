@@ -1,6 +1,8 @@
 ﻿using GarageManagementAPI.Shared.Enums.SystemStatuss;
 using GarageManagementAPI.Shared.Enums;
 using System.ComponentModel.DataAnnotations;
+using GarageManagementAPI.Shared.DataTransferObjects.AppointmentDetail;
+using GarageManagementAPI.Shared.DataTransferObjects.AppointmentDetailPackage;
 
 namespace GarageManagementAPI.Shared.DataTransferObjects.Appointment
 {
@@ -8,6 +10,8 @@ namespace GarageManagementAPI.Shared.DataTransferObjects.Appointment
     {
         public Guid Id { get; set; }
         public Guid? ApproveByEmployeeId { get; set; }
+
+        public Guid? RejectByEmployeeId { get; set; }
 
         public Guid CarModelId { get; set; }
 
@@ -34,6 +38,10 @@ namespace GarageManagementAPI.Shared.DataTransferObjects.Appointment
         [EnumDataType(typeof(AppointmentType))]
         public AppointmentType? AppointmentType { get; set; }
 
+        public DateTimeOffset? CancelledAt { get; set; } // Thời gian hủy
+
+        public DateTimeOffset? ApprovedAt { get; set; } // Thời gian duyệt
+
         public string? CarLicensePlateNumber { get; set; }
 
         public string? CanceledReason { get; set; } = "None";
@@ -44,5 +52,9 @@ namespace GarageManagementAPI.Shared.DataTransferObjects.Appointment
         public DateTimeOffset? CreatedAt { get; set; }
 
         public DateTimeOffset? UpdatedAt { get; set; }
+
+        public IEnumerable<AppointmentDetailDto>? AppointmentDetails { get; set; }
+
+        public IEnumerable<AppointmentDetailPackageDto>? AppointmentDetailPackages { get; set; }
     }
 }

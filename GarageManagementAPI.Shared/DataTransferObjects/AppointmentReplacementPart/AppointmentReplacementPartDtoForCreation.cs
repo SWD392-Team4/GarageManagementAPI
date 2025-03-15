@@ -1,6 +1,6 @@
 ﻿namespace GarageManagementAPI.Shared.DataTransferObjects.AppointmentReplacementPart
 {
-    public record ReplacementPartDtoForCreation : ReplacementPartDtoForManipulation
+    public record AppointmentReplacementPartDtoForCreation : AppointmentReplacementPartDtoForManipulation
     {
 
     }
