@@ -1,7 +1,6 @@
-﻿using AutoMapper;
+using AutoMapper;
 using GarageManagementAPI.Entities.Models;
 using GarageManagementAPI.Shared.DataTransferObjects.AppointmentReplacementPart;
-using static System.Net.WebRequestMethods;
 
 namespace GarageManagementAPI.Application.MappingProfile
 {
