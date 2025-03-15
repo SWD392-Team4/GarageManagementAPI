@@ -11,8 +11,7 @@ namespace GarageManagementAPI.Application.MappingProfile
             CreateMap<AppointmentDetail, AppointmentDetailDto>()
                 .ForMember(dest => dest.ServiceName, opts =>
                 {
-                    opts.PreCondition(dest => dest.ServiceHistory != null);
-                    opts.PreCondition(dest => dest.ServiceHistory.Service != null);
+                    opts.PreCondition(dest => dest.ServiceHistory != null && dest.ServiceHistory.Service != null);
                     opts.MapFrom(src => src.ServiceHistory.Service.ServiceName);
                 })
                 .ForMember(dest => dest.Price, opts =>
@@ -22,8 +21,7 @@ namespace GarageManagementAPI.Application.MappingProfile
                 })
                 .ForMember(dest => dest.EstimatedHours, opts =>
                 {
-                    opts.PreCondition(dest => dest.ServiceHistory != null);
-                    opts.PreCondition(dest => dest.ServiceHistory.Service != null);
+                    opts.PreCondition(dest => dest.ServiceHistory != null && dest.ServiceHistory.Service != null);
                     opts.MapFrom(src => src.ServiceHistory.Service.EstimatedHours);
                 });
 

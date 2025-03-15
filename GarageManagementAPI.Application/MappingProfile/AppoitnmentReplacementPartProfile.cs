@@ -12,14 +12,11 @@ namespace GarageManagementAPI.Application.MappingProfile
             CreateMap<AppointmentReplacementPart, AppointmentReplacementPartDto>()
                 .ForMember(dest => dest.ProductName, opts =>
                 {
-                    opts.PreCondition(src => src.ProductHistory != null);
-                    opts.PreCondition(src => src.ProductHistory.Product != null);
+                    opts.PreCondition(src => src.ProductHistory != null && src.ProductHistory.Product != null);
                     opts.MapFrom(src => src.ProductHistory.Product.ProductName);
                 }).ForMember(dest => dest.ImageLink, opts =>
                 {
-                    opts.PreCondition(src => src.ProductHistory != null);
-                    opts.PreCondition(src => src.ProductHistory.Product != null);
-                    opts.PreCondition(src => src.ProductHistory.Product.ProductImages != null && src.ProductHistory.Product.ProductImages.Any());
+                    opts.PreCondition(src => src.ProductHistory != null && src.ProductHistory.Product != null && src.ProductHistory.Product.ProductImages != null && src.ProductHistory.Product.ProductImages.Any());
                     opts.MapFrom(src => src.ProductHistory.Product.ProductImages.Select(e => e.ImageLink).ToList());
                 }).ForMember(dest => dest.ProductPrice, opts =>
                 {
