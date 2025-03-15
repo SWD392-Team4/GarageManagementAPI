@@ -408,18 +408,18 @@ namespace GarageManagementAPI.Service
             return Result<AppointmentDto>.Ok(appointmentDto);
         }
 
-        public async Task<Result> CancelAppointmentForGuest(Guid garageId, AppointmentDtoForGuestCancellation appointmentDtoForGuest)
+        public async Task<Result<Guid?>> CancelAppointmentForGuest(Guid garageId, AppointmentDtoForGuestCancellation appointmentDtoForGuest)
         {
             var garage = await _repoManager.Workplace.GetWorkplaceByIdAsync(garageId, false);
             if (garage is null || !garage.WorkplaceType.Equals(WorkplaceType.Garage))
-                return Result<AppointmentDto>.NotFound(WorkplaceErrors.GetGarageNotFound(garageId));
+                return Result<Guid?>.NotFound(WorkplaceErrors.GetGarageNotFound(garageId));
 
             var appointment = await _repoManager.Appointment.GetAppointmentAsync(garageId, appointmentDtoForGuest.VerifyCode, appointmentDtoForGuest.CustomerEmail!, appointmentDtoForGuest.CustomerPhoneNumber!, appointmentDtoForGuest.EstimatedTime!.Value, false);
             if (appointment is null)
-                return Result<AppointmentDto>.NotFound(AppointmentErrors.GetAppointmentNotFoundError(appointmentDtoForGuest.VerifyCode!, appointmentDtoForGuest.CustomerEmail!, appointmentDtoForGuest.CustomerPhoneNumber!, appointmentDtoForGuest.EstimatedTime!.Value));
+                return Result<Guid?>.NotFound(AppointmentErrors.GetAppointmentNotFoundError(appointmentDtoForGuest.VerifyCode!, appointmentDtoForGuest.CustomerEmail!, appointmentDtoForGuest.CustomerPhoneNumber!, appointmentDtoForGuest.EstimatedTime!.Value));
 
             if (!CanUpdateAppointment(appointment.Status))
-                return Result<AppointmentDto>.Conflict(AppointmentErrors.GetAppointmentCanNotUpdate(appointment.Status));
+                return Result<Guid?>.Conflict(AppointmentErrors.GetAppointmentCanNotUpdate(appointment.Status));
 
             appointment.Status = AppointmentStatus.Cancelled;
             appointment.CancelledAt = DateTime.UtcNow.SEAsiaStandardTime();
@@ -460,7 +460,7 @@ namespace GarageManagementAPI.Service
             _repoManager.Appointment.Update(appointment);
             await _repoManager.SaveAsync();
 
-            return Result.Ok();
+            return Result<Guid?>.Ok(appointment.Id);
 
         }
 
@@ -540,7 +540,7 @@ namespace GarageManagementAPI.Service
             if (appointment is null)
                 return Result<AppointmentDto>.NotFound(AppointmentErrors.GetAppointmentNotFoundError(appointmentId));
 
-            if (!CanUpdateAppointment(appointment.Status))
+            if (!CanUpdateAppointment(appointment.Status) || appointment.Status.Equals(AppointmentStatus.Approved))
                 return Result<AppointmentDto>.Conflict(AppointmentErrors.GetAppointmentCanNotUpdate(appointment.Status));
 
             if (appointmentConfirmation.EstimatedAppointmentTime != null && !ValidEstimatedTime(appointment.EstimatedAppointmentTime))

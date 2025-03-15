@@ -13,6 +13,8 @@ namespace GarageManagementAPI.Service.Contracts
 
         Task<bool> SendInformationAppointmentEmail(Guid appointmentId);
 
+        Task<bool> SendInformationAppointmentAfterConfirmationEmail(Guid appointmentId);
+
         Task<bool> SendMail(MailData Mail_Data);
     }
 }
