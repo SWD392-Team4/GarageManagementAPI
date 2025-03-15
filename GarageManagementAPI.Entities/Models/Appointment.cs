@@ -38,7 +38,7 @@ namespace GarageManagementAPI.Entities.Models
 
         public string? CarLicensePlateNumber { get; set; }
 
-        public string? CanceledReason { get; set; } = "None";
+        public string? CanceledReason { get; set; }
 
         public string? VerificationCode { get; set; } // Mã xác thực ngẫu nhiên
 

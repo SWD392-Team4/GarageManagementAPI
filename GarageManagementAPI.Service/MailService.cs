@@ -1,9 +1,11 @@
 ﻿using GarageManagementAPI.Entities.ConfigurationModels;
+using GarageManagementAPI.Entities.Models;
 using GarageManagementAPI.Repository.Contracts;
 using GarageManagementAPI.Service.Contracts;
 using GarageManagementAPI.Service.Utilities;
 using GarageManagementAPI.Shared.DataTransferObjects;
 using GarageManagementAPI.Shared.DataTransferObjects.User;
+using GarageManagementAPI.Shared.Enums.SystemStatuss;
 using MailKit.Net.Smtp;
 using MailKit.Security;
 using Microsoft.Extensions.Options;
@@ -94,15 +96,37 @@ namespace GarageManagementAPI.Service
         public async Task<bool> SendInformationAppointmentEmail(Guid appointmentId)
         {
             var appointment = await _repoManager.Appointment.GetAppointmentAsync(appointmentId, false);
-            var appointmentDetail = await _repoManager.AppointmentDetail.GetAppointmentDetailByAppointmentIdAsync(appointmentId, false);
-            var appointmentDetailPackage = await _repoManager.AppointmentDetailPackage.GetAppointmentDetailPackageByAppointmentIdAsync(appointmentId, false);
+            var workplace = await _repoManager.Workplace.GetWorkplaceByIdAsync(appointment!.GarageId, false);
             MailData mailData = new MailData()
             {
                 EmailSubject = "Information Appointment",
-                EmailBody = MailHelper.InfoAppointmentTemplate(appointment.VerificationCode!, appointment.EstimatedAppointmentTime, appointmentDetail, appointmentDetailPackage),
+                EmailBody = MailHelper.InfoAppointmentTemplate(appointment.VerificationCode!, workplace!, appointment.EstimatedAppointmentTime, appointment.AppointmentDetails, appointment.AppointmentDetailPackages),
                 EmailToId = appointment.CustomerEmail,
             };
             return await SendMail(mailData);
+        }
+
+        public async Task<bool> SendInformationAppointmentAfterConfirmationEmail(Guid appointmentId)
+        {
+            var appointment = await _repoManager.Appointment.GetAppointmentAsync(appointmentId, false);
+            var workplace = await _repoManager.Workplace.GetWorkplaceByIdAsync(appointment!.GarageId, false);
+            User? user = null;
+            if (appointment.Status.Equals(AppointmentStatus.Approved))
+            {
+                user = await _repoManager.User.GetUserByIdAsync(appointment.ApproveByEmployeeId!.Value, false);
+            }
+            else if (appointment.Status.Equals(AppointmentStatus.Rejected))
+            {
+                user = await _repoManager.User.GetUserByIdAsync(appointment.RejectByEmployeeId!.Value, false);
+            }
+            MailData mailData = new MailData()
+            {
+                EmailSubject = "Information Appointment after confirmation",
+                EmailBody = MailHelper.InfoAppointmentAfterConfirmationTemplate(appointment.VerificationCode!, workplace!, appointment.EstimatedAppointmentTime, appointment.AppointmentDetails, appointment.AppointmentDetailPackages, appointment.Status, user, appointment.CanceledReason),
+                EmailToId = appointment.CustomerEmail,
+            };
+            return await SendMail(mailData);
+
         }
     }
 }
