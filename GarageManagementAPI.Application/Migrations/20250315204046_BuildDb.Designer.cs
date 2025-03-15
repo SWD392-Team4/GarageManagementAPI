@@ -4,6 +4,7 @@ using GarageManagementAPI.Repository;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GarageManagementAPI.Application.Migrations
 {
     [DbContext(typeof(RepositoryContext))]
-    partial class RepositoryContextModelSnapshot : ModelSnapshot
+    [Migration("20250315204046_BuildDb")]
+    partial class BuildDb
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -3144,7 +3147,7 @@ namespace GarageManagementAPI.Application.Migrations
                     b.Property<decimal>("Price")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<Guid?>("ProductAtGarageId")
+                    b.Property<Guid>("ProductAtGarageId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid?>("ProductHistoryId")
@@ -6741,15 +6744,19 @@ namespace GarageManagementAPI.Application.Migrations
                         .IsRequired()
                         .HasConstraintName("invoicesellproduct_invoiceid_foreign");
 
-                    b.HasOne("GarageManagementAPI.Entities.Models.ProductAtGarage", null)
+                    b.HasOne("GarageManagementAPI.Entities.Models.ProductAtGarage", "ProductAtGarage")
                         .WithMany("InvoiceSellProducts")
-                        .HasForeignKey("ProductAtGarageId");
+                        .HasForeignKey("ProductAtGarageId")
+                        .IsRequired()
+                        .HasConstraintName("invoicesellproduct_productatgarageid_foreign");
 
                     b.HasOne("GarageManagementAPI.Entities.Models.ProductHistory", null)
                         .WithMany("InvoiceSellProducts")
                         .HasForeignKey("ProductHistoryId");
 
                     b.Navigation("Invoice");
+
+                    b.Navigation("ProductAtGarage");
                 });
 
             modelBuilder.Entity("GarageManagementAPI.Entities.Models.InvoiceSellProduct_ProductAtGarage", b =>
