@@ -6,6 +6,7 @@
         IMailService MailService { get; }
         IUserService UserService { get; }
         IBrandService BrandService { get; }
+        IInvoiceService InvoiceService { get; }
         IMediaService MediaService { get; }
         IServiceService ServiceService { get; }
         IProductService ProductService { get; }
@@ -16,9 +17,6 @@
         IWorkplaceService WorkplaceService { get; }
         ICarCategoryService CarCategoryService { get; }
         IAppointmentService AppointmentService { get; }
-        IAppointmentDetailService AppointmentDetailService { get; }
-        IAppointmentDetailPackageService AppointmentDetailPackageService { get; }
-        IAppointmentReplacementPartService AppointmentReplacementPartService { get; }
         IGoodsIssuedService GoodsIssuedService { get; }
         IServiceFeedbackService ServiceFeedback { get; }
         IProductImageService ProductImageService { get; }
@@ -36,8 +34,13 @@
         IPackageFeedBackService PackageFeedBackService { get; }
         IPackageConditionService PackageConditionService { get; }
         IGoodsIssuedDetailService GoodsIssuedDetailService { get; }
+        IAppointmentDetailService AppointmentDetailService { get; }
+        IInvoiceSellProductService InvoiceSellProductService { get; }
         IProductAtWarehouseService ProductAtWarehouseService { get; }
         IPackageUsageDetailService PackageUsageDetailService { get; }
         IGoodsReceivedDetailService GoodsReceivedDetailService { get; }
+        IAppointmentDetailPackageService AppointmentDetailPackageService { get; }
+        IAppointmentReplacementPartService AppointmentReplacementPartService { get; }
+
     }
 }

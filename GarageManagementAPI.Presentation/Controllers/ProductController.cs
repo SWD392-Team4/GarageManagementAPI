@@ -90,7 +90,8 @@ namespace GarageManagementAPI.Presentation.Controllers
         //[Authorize(Roles = $"{nameof(SystemRole.Administrator)},{nameof(SystemRole.Cashier)}")]
         public async Task<IActionResult> GetProductByWarehouse(Guid warehouseId, [FromQuery] ProductParameters productParameters)
         {
-            var productResult = await _service.ProductService.GetProductsByWarehouseIdWithQuantityAsync(warehouseId, productParameters, trackChanges: false);
+            var isInclude = "Brand,ProductCategory,ProductHistories,ProductImages,CarModels,CarParts";
+            var productResult = await _service.ProductService.GetProductsByWarehouseIdWithQuantityAsync(warehouseId, productParameters, trackChanges: false, isInclude);
 
             return Ok(productResult);
         }

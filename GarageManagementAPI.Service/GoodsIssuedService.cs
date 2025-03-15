@@ -108,6 +108,7 @@ namespace GarageManagementAPI.Service
                     var productAtGarage = new ProductAtGarage
                     {
                         GoodsIssuedDetailId = goodsIssuedDetailEntity.Id,
+                        WorkplaceId = goodsIssuedDtoForCreation.GarageId,
                         Quantity = deductedQuantity,
                         ProductId = goodsIssuedDetail.ProductId,
                         CreatedAt = DateTimeOffset.UtcNow.SEAsiaStandardTime()
