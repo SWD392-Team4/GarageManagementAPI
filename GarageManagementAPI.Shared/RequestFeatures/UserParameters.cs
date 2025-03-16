@@ -1,4 +1,5 @@
 ﻿using GarageManagementAPI.Shared.Enums;
+
 using System.ComponentModel.DataAnnotations;
 
 namespace GarageManagementAPI.Shared.RequestFeatures
@@ -15,6 +16,8 @@ namespace GarageManagementAPI.Shared.RequestFeatures
 
         [EnumDataType(typeof(SystemRole))]
         public SystemRole? Role { get; set; }
+
+        public string? PhoneNumber { get; set; }
 
     }
 }

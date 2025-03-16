@@ -1,6 +1,6 @@
-﻿using GarageManagementAPI.Presentation.ModelBinders;
-using GarageManagementAPI.Service.Contracts;
+﻿using GarageManagementAPI.Service.Contracts;
 using GarageManagementAPI.Shared.DataTransferObjects.AppointmentDetail;
+
 using Microsoft.AspNetCore.Mvc;
 
 namespace GarageManagementAPI.Presentation.Controllers
