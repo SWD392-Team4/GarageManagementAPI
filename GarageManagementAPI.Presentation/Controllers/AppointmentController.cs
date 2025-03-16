@@ -33,7 +33,7 @@ namespace GarageManagementAPI.Presentation.Controllers
         }
 
         [HttpGet("{appointmentId:guid}", Name = "GetAppointment")]
-        [Authorize(Roles = $"{nameof(SystemRole.Customer)}, {nameof(SystemRole.Cashier)}")]
+        [Authorize(Roles = $"{nameof(SystemRole.Customer)}, {nameof(SystemRole.Cashier)}, {nameof(SystemRole.Cashier)}, {nameof(SystemRole.Administrator)}")]
         public async Task<IActionResult> GetAppointment(Guid garageId, Guid appointmentId, string? fields)
         {
             var result = await _service.AppointmentService.GetAppointment(garageId, appointmentId, fields);
