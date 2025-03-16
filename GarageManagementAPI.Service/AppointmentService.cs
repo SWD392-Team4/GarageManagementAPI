@@ -373,11 +373,11 @@ namespace GarageManagementAPI.Service
                 if (user is null)
                     return Result<IEnumerable<ExpandoObject>>.NotFound(UserErrors.GetUserNotFoundWithIdError(userId));
 
-                if (user.EmployeeInfo is null || user.EmployeeInfo.WorkplaceId != garageId)
+                if ((user.EmployeeInfo is null || user.EmployeeInfo.WorkplaceId != garageId))
                     return Result<IEnumerable<ExpandoObject>>.Unauthorized(UserErrors.GetUnAuthorizeUserError());
             }
 
-            if (!isEmployee)
+            if (!isEmployee && !role.Equals(nameof(SystemRole.Administrator)))
             {
                 user = await _repoManager.User.GetUserByIdAsync(userId, false);
                 appointmentParameters.CustomerPhoneNumber = user!.PhoneNumber;
