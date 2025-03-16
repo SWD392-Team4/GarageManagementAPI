@@ -2,21 +2,19 @@
 {
     public partial class InvoiceSellProduct : BaseEntity<InvoiceSellProduct>
     {
-        public Guid ProductHistoryId { get; set; }
 
         public Guid InvoiceId { get; set; }
 
-        public Guid ProductAtGarageId { get; set; }
-
         public int Quantity { get; set; }
+
+        public decimal Price { get; set; }
 
         public DateTimeOffset CreatedAt { get; set; }
 
         public virtual Invoice Invoice { get; set; } = null!;
 
-        public virtual ProductAtGarage ProductAtGarage { get; set; } = null!;
+        public virtual ICollection<InvoiceSellProduct_ProductAtGarage> InvoiceSellProduct_ProductAtGarage { get; set; } = new List<InvoiceSellProduct_ProductAtGarage>();
 
-        public virtual ProductHistory ProductHistory { get; set; } = null!;
     }
 
 }

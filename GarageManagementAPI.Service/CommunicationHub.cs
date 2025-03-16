@@ -54,10 +54,9 @@ namespace api.Services
             var db = _redis.GetDatabase();
             var type = await db.KeyTypeAsync(chatRoomKey);
 
-            // Nếu key tồn tại nhưng không phải List, xóa để tránh lỗi
             if (type != RedisType.None && type != RedisType.List)
             {
-                await db.KeyDeleteAsync(chatRoomKey);
+                Console.WriteLine($"Warning: Key {chatRoomKey} is not a List. Consider manual cleanup.");
             }
 
             var sender = await this.GetUserAsync(Guid.Parse(senderId!));
@@ -78,6 +77,7 @@ namespace api.Services
             // Lưu tin nhắn vào Redis
             string jsonMessage = JsonConvert.SerializeObject(chatMessage);
             await db.ListRightPushAsync(chatRoomKey, jsonMessage);
+            await db.KeyExpireAsync(chatRoomKey, TimeSpan.FromDays(30));
             // Gửi tin nhắn nếu user đang online
             if (_userConnections.ContainsKey(receiverId))
             {
@@ -234,10 +234,29 @@ namespace api.Services
 
             var notificationsJson = await db.ListRangeAsync(notificationKey, 0, 50);
 
-            var notifications = notificationsJson
-                            .Select(message => JsonConvert.DeserializeObject<SignalRDto>(message.ToString()))
-                            .ToList();
-            return notifications!;
+            if (notificationsJson == null || notificationsJson.Length == 0)
+            {
+                return new List<SignalRDto>();
+            }
+
+            var notifications = new List<SignalRDto>();
+            foreach (var message in notificationsJson)
+            {
+                try
+                {
+                    var notification = JsonConvert.DeserializeObject<SignalRDto>(message);
+                    if (notification != null)
+                    {
+                        notifications.Add(notification);
+                    }
+                }
+                catch (JsonException)
+                {
+                    // Ghi log nếu cần
+                }
+            }
+
+            return notifications;
         }
 
         public async Task MarkNotificationAsRead()
@@ -299,7 +318,6 @@ namespace api.Services
                 }
             }
 
-            await db.KeyDeleteAsync(chatRoomKey);
             await db.ListRightPushAsync(chatRoomKey, updatedMessages.Select(msg => (RedisValue)msg).ToArray());
         }
 
@@ -337,7 +355,6 @@ namespace api.Services
                 }
             }
 
-            await db.KeyDeleteAsync(managerChatRoomKey);
             await db.ListRightPushAsync(managerChatRoomKey, updatedMessages.Select(msg => (RedisValue)msg).ToArray());
         }
 

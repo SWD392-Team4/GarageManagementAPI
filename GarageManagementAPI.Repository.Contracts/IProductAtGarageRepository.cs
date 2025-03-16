@@ -8,7 +8,15 @@ namespace GarageManagementAPI.Repository.Contracts
         public Task CreateProductAtGarageAsync(ProductAtGarage productAtGarage);
         Task<ProductAtGarage?> GetProductAtGarage(Guid productAtWarehouseId, bool trackChanges, string? include = default);
         Task<ProductAtGarage?> GetProductAtGarage(Guid productId, bool trackChanges);
+
         Task<PagedList<ProductAtGarage>> GetProductAtGarages(ProductAtGarageParameters productAtGarageParameters, bool trackChanges, string? include = default);
+
+        public Task<List<(Guid ProductAtGarageId, int DeductedQuantity)>> DeductProductQuantityFromGarageAsync(
+     Guid productId, Guid? garageId, int quantity);
+
+        public Task<int> GetTotalStockForProduct(Guid productId, Guid? garageId);
+
+        public Task<Dictionary<Guid, int>> GetTotalQuantityByProductIdAsync();
         void UpdateProductGarage(ProductAtGarage productAtGarage);
     }
 }

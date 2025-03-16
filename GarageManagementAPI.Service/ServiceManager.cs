@@ -48,6 +48,8 @@ namespace GarageManagementAPI.Service
         private readonly Lazy<IGoodsIssuedDetailService> _goodsIssuedDetailService;
         private readonly Lazy<IGoodsReceivedDetailService> _goodsReceivedDetailService;
         private readonly Lazy<IPackageUsageDetailService> _packageUsageDetailService;
+        private readonly Lazy<IInvoiceService> _invoiceService;
+        private readonly Lazy<IInvoiceSellProductService> _invoiceSellProductService;
 
         public ServiceManager(
             IRepositoryManager repositoryManager,
@@ -232,6 +234,19 @@ namespace GarageManagementAPI.Service
                 dataShaper));
 
 
+            _invoiceService = new Lazy<IInvoiceService>(() =>
+            new InvoiceService(
+            repositoryManager,
+            mapper,
+            dataShaper));
+
+            _invoiceSellProductService = new Lazy<IInvoiceSellProductService>(() =>
+                new InvoiceSellProductService(
+                repositoryManager,
+                mapper,
+                dataShaper));
+
+
             _goodsReceivedDetailService = new Lazy<IGoodsReceivedDetailService>(() =>
             new GoodsReceivedDetailService(
             repositoryManager,
@@ -275,6 +290,7 @@ namespace GarageManagementAPI.Service
         public IBrandService BrandService => _brandService.Value;
         public IMediaService MediaService => _mediaService.Value;
         public IServiceService ServiceService => _serviceService.Value;
+        public IInvoiceService InvoiceService => _invoiceService.Value;
         public IProductService ProductService => _productService.Value;
         public ICarPartService CarPartService => _carPartService.Value;
         public IPackageService PackageService => _packageService.Value;
@@ -301,11 +317,14 @@ namespace GarageManagementAPI.Service
         public IProductAtGarageService ProductAtGarageService => _productAtGarageService.Value;
         public IPackageConditionService PackageConditionService => _packageConditionService.Value;
         public IGoodsIssuedDetailService GoodsIssuedDetailService => _goodsIssuedDetailService.Value;
+        public IInvoiceSellProductService InvoiceSellProductServic => _invoiceSellProductService.Value;
         public IPackageUsageDetailService PackageUsageDetailService => _packageUsageDetailService.Value;
         public IProductAtWarehouseService ProductAtWarehouseService => _productAtWarehouseService.Value;
         public IGoodsReceivedDetailService GoodsReceivedDetailService => _goodsReceivedDetailService.Value;
         public IAppointmentDetailService AppointmentDetailService => _appointmentDetailService.Value;
         public IAppointmentDetailPackageService AppointmentDetailPackageService => _appointmentDetailPackageService.Value;
         public IAppointmentReplacementPartService AppointmentReplacementPartService => _appointmentReplacementPartService.Value;
+
+        public IInvoiceSellProductService InvoiceSellProductService => _invoiceSellProductService.Value;
     }
 }

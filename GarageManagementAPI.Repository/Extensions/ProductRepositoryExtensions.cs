@@ -27,6 +27,11 @@ namespace GarageManagementAPI.Repository.Extensions
             return products.Where(p => p.ProductPrice >= minPrice && p.ProductPrice <= maxPrice);
         }
 
+        public static IQueryable<Product> SearchByBarCode(this IQueryable<Product> products, string? barcode)
+        {
+            if (string.IsNullOrWhiteSpace(barcode)) return products;
+            return products.Where(p => p.ProductBarcode.Equals(barcode));
+        }
 
 
         public static IQueryable<Product> SearchByCategory(this IQueryable<Product> products, string? category)

@@ -9,41 +9,45 @@ namespace GarageManagementAPI.Repository
         private readonly Lazy<IUserRepository> _userRepository;
         private readonly Lazy<IBrandRepository> _brandRepository;
         private readonly Lazy<IServiceRepository> _serviceRepository;
+        private readonly Lazy<IInvoiceRepository> _invoiceRepository;
         private readonly Lazy<IProductRepository> _productRepository;
         private readonly Lazy<ICarPartRepository> _carPartRepository;
+        private readonly Lazy<IPackageRepository> _packageRepository;
         private readonly Lazy<ICarModelRepository> _carModelRepository;
         private readonly Lazy<ISupplierRepository> _supplierRepository;
         private readonly Lazy<IWorkplaceRepository> _workplaceRepository;
+        private readonly Lazy<IAppointmentRepository> _appointmentRepository;
         private readonly Lazy<ICarCategoryRepository> _carCategoryRepository;
         private readonly Lazy<IGoodsIssuedRepository> _goodsIssuedRepository;
         private readonly Lazy<IServiceImageRepository> _serviceImageRepository;
         private readonly Lazy<IProductImageRepository> _productImageRepository;
         private readonly Lazy<IEmployeeInfoRepository> _employeeInfoRepository;
+        private readonly Lazy<IPackageImageRepository> _packageImageRepository;
+        private readonly Lazy<IPackageUsageRepository> _packageUsageRepository;
+        private readonly Lazy<IPackageDetailRepository> _packageDetailRepository;
         private readonly Lazy<IGoodsReceivedRepository> _goodsReceivedtRepository;
         private readonly Lazy<IProductHistoryRepository> _productHistoryRepository;
         private readonly Lazy<IServiceHistoryRepository> _serviceHistoryRepository;
+        private readonly Lazy<IPackageHistoryRepository> _packageHistoryRepository;
+        private readonly Lazy<ISupplierContactRepository> _supplierContactRepository;
         private readonly Lazy<IProductCategoryRepository> _productCategoryRepository;
         private readonly Lazy<ICarPartCategoryRepository> _carPartCategoryRepository;
         private readonly Lazy<IServiceFeedBackRepository> _serviceFeedBackRepository;
-        private readonly Lazy<ISupplierContactRepository> _supplierContactRepository;
+        private readonly Lazy<IPackageFeedBackRepository> _packageFeedBackRepository;
+        private readonly Lazy<IProductAtGarageRepository> _productAtGarageRepository;
+        private readonly Lazy<IPackageConditionRepository> _packageConditionRepository;
+        private readonly Lazy<IGoodsTransactionRepository> _goodsTransactionRepository;
         private readonly Lazy<IGoodsIssuedDetailRepository> _goodsIssuedDetaiRepository;
-        private readonly Lazy<IGoodsReceivedDetailRepository> _goodsReceivedDetailRepository;
-        private readonly Lazy<IAppointmentRepository> _appointmentRepository;
         private readonly Lazy<IAppointmentPerDayRepository> _appointmentPerDayRepository;
         private readonly Lazy<IAppointmentDetailRepository> _appointmentDetailRepository;
+        private readonly Lazy<IInvoiceSellProductRepository> invoiceSellProductRepository;
+        private readonly Lazy<IProductAtWarehouseRepository> _productAtWarehouseRepository;
+        private readonly Lazy<IPackageUsageDetailRepository> _packageUsageDetailRepository;
+        private readonly Lazy<IInvoiceSellProductRepository> _invoiceSellProductRepository;
+        private readonly Lazy<IGoodsReceivedDetailRepository> _goodsReceivedDetailRepository;
         private readonly Lazy<IAppointmentDetailPackageRepository> _appointmentDetailPackageRepository;
         private readonly Lazy<IAppointmentReplacementPartRepository> _appointmentReplacementPartRepository;
-        private readonly Lazy<IPackageRepository> _packageRepository;
-        private readonly Lazy<IPackageConditionRepository> _packageConditionRepository;
-        private readonly Lazy<IPackageFeedBackRepository> _packageFeedBackRepository;
-        private readonly Lazy<IPackageHistoryRepository> _packageHistoryRepository;
-        private readonly Lazy<IPackageImageRepository> _packageImageRepository;
-        private readonly Lazy<IPackageUsageRepository> _packageUsageRepository;
-        private readonly Lazy<IPackageUsageDetailRepository> _packageUsageDetailRepository;
-        private readonly Lazy<IPackageDetailRepository> _packageDetailRepository;
-        private readonly Lazy<IProductAtWarehouseRepository> _productAtWarehouseRepository;
-        private readonly Lazy<IGoodsTransactionRepository> _goodsTransactionRepository;
-        private readonly Lazy<IProductAtGarageRepository> _productAtGarageRepository;
+        private readonly Lazy<IInvoiceSellProduct_ProductAtGarageRepository> _invoiceSellProduct_ProductAtGarageRepository;
         private readonly Lazy<IGoodsIssuedDetailProductAtWarehouseRepository> _goodsIssuedDetailProductAtWarehouseRepository;
 
         public RepositoryManager(RepositoryContext repositoryContext)
@@ -62,6 +66,8 @@ namespace GarageManagementAPI.Repository
             _serviceImageRepository = new Lazy<IServiceImageRepository>(() => new ServiceImageRepository(repositoryContext));
             _productImageRepository = new Lazy<IProductImageRepository>(() => new ProductImageRepository(repositoryContext));
             _employeeInfoRepository = new Lazy<IEmployeeInfoRepository>(() => new EmployeeInfoRepository(repositoryContext));
+            _invoiceRepository = new Lazy<IInvoiceRepository>(() => new InvoiceRepository(repositoryContext));
+            _invoiceSellProductRepository = new Lazy<IInvoiceSellProductRepository>(() => new InvoiceSellProductRepository(repositoryContext));
             _goodsReceivedtRepository = new Lazy<IGoodsReceivedRepository>(() => new GoodsReceivedRepository(repositoryContext));
             _productHistoryRepository = new Lazy<IProductHistoryRepository>(() => new ProductHistoryRepository(repositoryContext));
             _serviceHistoryRepository = new Lazy<IServiceHistoryRepository>(() => new ServiceHistoryRepository(repositoryContext));
@@ -71,7 +77,9 @@ namespace GarageManagementAPI.Repository
             _serviceFeedBackRepository = new Lazy<IServiceFeedBackRepository>(() => new ServiceFeedBackRepository(repositoryContext));
             _supplierContactRepository = new Lazy<ISupplierContactRepository>(() => new SupplierContactRepository(repositoryContext));
             _goodsTransactionRepository = new Lazy<IGoodsTransactionRepository>(() => new GoodsTransactionRepository(repositoryContext));
+            _invoiceSellProduct_ProductAtGarageRepository = new Lazy<IInvoiceSellProduct_ProductAtGarageRepository>(() => new InvoiceSellProduct_ProductAtGarageRepository(repositoryContext));
             _goodsIssuedDetaiRepository = new Lazy<IGoodsIssuedDetailRepository>(() => new GoodsIssuedDetailRepository(repositoryContext));
+            _invoiceSellProductRepository = new Lazy<IInvoiceSellProductRepository>(() => new InvoiceSellProductRepository(repositoryContext));
             _goodsReceivedDetailRepository = new Lazy<IGoodsReceivedDetailRepository>(() => new GoodsReceivedDetailRepository(repositoryContext));
             _appointmentRepository = new Lazy<IAppointmentRepository>(() => new AppointmentRepository(repositoryContext));
             _appointmentPerDayRepository = new Lazy<IAppointmentPerDayRepository>(() => new AppointmentPerDayRepository(repositoryContext));
@@ -93,6 +101,7 @@ namespace GarageManagementAPI.Repository
         public IUserRepository User => _userRepository.Value;
         public IBrandRepository Brand => _brandRepository.Value;
         public IServiceRepository Service => _serviceRepository.Value;
+        public IInvoiceRepository Invoice => _invoiceRepository.Value;
         public IProductRepository Product => _productRepository.Value;
         public ICarPartRepository CarPart => _carPartRepository.Value;
         public ICarModelRepository CarModel => _carModelRepository.Value;
@@ -113,6 +122,7 @@ namespace GarageManagementAPI.Repository
         public IGoodsTransactionRepository GoodsTransaction => _goodsTransactionRepository.Value;
         public IGoodsIssuedDetailRepository GoodsIssuedDetail => _goodsIssuedDetaiRepository.Value;
         public IProductAtWarehouseRepository ProductAtWarehouse => _productAtWarehouseRepository.Value;
+        public IInvoiceSellProductRepository InvoiceSellProduct => _invoiceSellProductRepository.Value;
         public IGoodsReceivedDetailRepository GoodsReceivedDetail => _goodsReceivedDetailRepository.Value;
         public IAppointmentRepository Appointment => _appointmentRepository.Value;
         public IAppointmentDetailPackageRepository AppointmentDetailPackage => _appointmentDetailPackageRepository.Value;
@@ -130,6 +140,10 @@ namespace GarageManagementAPI.Repository
         public IGoodsIssuedDetailProductAtWarehouseRepository GoodsIssuedDetailProductAtWarehouse => _goodsIssuedDetailProductAtWarehouseRepository.Value;
         public IProductAtGarageRepository ProductAtGarage => _productAtGarageRepository.Value;
 
+        public IInvoiceRepository InvoiceRepository => _invoiceRepository.Value;
+
+        public IInvoiceSellProductRepository InvoiceSellProductRepository => _invoiceSellProductRepository.Value;
+        public IInvoiceSellProduct_ProductAtGarageRepository InvoiceSellProduct_ProductAtGarage => _invoiceSellProduct_ProductAtGarageRepository.Value;
 
         public async Task<IDbContextTransaction> BeginTransactionAsync()
         {

@@ -11,6 +11,7 @@ namespace GarageManagementAPI.Shared.RequestFeatures
         public string? ProductName { get; set; }
         public string? ProductCategory{ get; set; }
         public string? ProductBrandName { get; set; }
+        public string? ProductBarcode { get; set; }
         public decimal? MinPrice { get; set; } = 0;
         public decimal? MaxPrice { get; set; }
 
