@@ -8,7 +8,6 @@ using GarageManagementAPI.Shared.ResultModel;
 using GarageManagementAPI.Repository.Contracts;
 using GarageManagementAPI.Shared.RequestFeatures;
 using GarageManagementAPI.Shared.DataTransferObjects.ProductAtGarage;
-using GarageManagementAPI.Shared.DataTransferObjects.Product;
 
 namespace GarageManagementAPI.Service
 {
@@ -35,7 +34,7 @@ namespace GarageManagementAPI.Service
             return Result<ExpandoObject>.Ok(productAtHouseShapper);
         }
 
-        public async Task<Result<IEnumerable<ExpandoObject>>> GetProductAtWarehouses(ProductAtGarageParameters productAtGarageParameters, bool trackChanges, string? include = null)
+        public async Task<Result<IEnumerable<ExpandoObject>>> GetProductAtGarages(ProductAtGarageParameters productAtGarageParameters, bool trackChanges, string? include = null)
         {
             var productsWithMetadata = await _repoManager.ProductAtGarage.GetProductAtGarages(productAtGarageParameters, trackChanges, include);
 
@@ -60,6 +59,27 @@ namespace GarageManagementAPI.Service
             var productAtGarage = await _repoManager.ProductAtGarage.GetProductAtGarage(productAtGarageId, trackChanges, include);
             if (productAtGarage == null) return productAtGarage.NotFound(productAtGarageId);
             return productAtGarage.OkResukt();
+        }
+
+        public async Task<Result<IEnumerable<ProductAtGarageDto>>> GetProductsAtGarage(Guid userId, bool trackChanges, string? include = null)
+        {
+            var user = await _repoManager.User.GetUserByIdAsync(userId, false, "EmployeeInfo");
+
+            var garageId = user!.EmployeeInfo!.WorkplaceId ?? throw new Exception("GarageId cannot be null.");
+
+            var productQuantities = await _repoManager.ProductAtGarage.GetTotalQuantityByProductIdAsync();
+
+            var productAtGarages = await _repoManager.ProductAtGarage.GetProductAtGarages(garageId, trackChanges, include);
+
+            var productAtGaragesDto = _mapper.Map<IEnumerable<ProductAtGarageDto>>(productAtGarages);
+
+            foreach (var productDto in productAtGaragesDto)
+            {
+                productDto.Quantity = productQuantities.ContainsKey(productDto.ProductId) ? productQuantities[productDto.ProductId] : 0;
+            }
+
+
+            return Result<IEnumerable<ProductAtGarageDto>>.Ok(productAtGaragesDto);
         }
     }
 }

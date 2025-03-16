@@ -12,6 +12,7 @@ using GarageManagementAPI.Shared.Enums.SystemStatuss;
 using GarageManagementAPI.Shared.ErrorsConstant.CarPart;
 using GarageManagementAPI.Shared.ErrorsConstant.Product;
 using GarageManagementAPI.Shared.DataTransferObjects.Product;
+using System.Collections.Generic;
 
 namespace GarageManagementAPI.Service
 {
@@ -60,12 +61,12 @@ namespace GarageManagementAPI.Service
             }
 
 
-            if (productDtoForCreation.CarPartIds != null && productDtoForCreation.CarPartIds.Any())
+            if (productDtoForCreation.CarModelIds != null && productDtoForCreation.CarModelIds.Any())
             {
-                var carModels = await _repoManager.CarModel.GetCarPartsAsync(productDtoForCreation.CarModelIds!, true);
+                var carModels = await _repoManager.CarModel.GetModelsAsync(productDtoForCreation.CarModelIds!, true);
                 if (carModels.Count() != productDtoForCreation.CarModelIds!.Count())
                 {
-                    Result<ProductDto>.BadRequest([CarPartErrors.GetCarModelFoundNotMatchWithIdsError(productDtoForCreation.CarPartIds)]);
+                    Result<ProductDto>.BadRequest([CarPartErrors.GetCarModelFoundNotMatchWithIdsError(productDtoForCreation.CarModelIds)]);
                 }
                 productEntity.CarModels = [.. carModels];
             }
@@ -83,7 +84,7 @@ namespace GarageManagementAPI.Service
 
         public async Task<Result> UpdateProduct(Guid productId, ProductDtoForUpdate productDtoForUpdate, bool trackChanges, string? include = null)
         {
-            var productResult = await GetAndCheckIfProductExist(productId, trackChanges);
+            var productResult = await GetAndCheckIfProductExist(productId, trackChanges, "CarModels,CarParts");
             if (!productResult.IsSuccess)
                 return Result<ProductDtoForUpdate>.Failure(productResult.StatusCode, productResult.Errors!);
 
@@ -108,23 +109,60 @@ namespace GarageManagementAPI.Service
 
             if (productDtoForUpdate.CarPartIds != null && productDtoForUpdate.CarPartIds.Any())
             {
-                var carparts = await _repoManager.CarPart.GetCarPartsAsync(productDtoForUpdate.CarPartIds!, true);
-                if (carparts.Count() != productDtoForUpdate.CarPartIds.Count())
+                var existingCarParts = productEntity.CarParts.ToList();
+
+                var newCarParts = await _repoManager.CarPart.GetCarPartsAsync(productDtoForUpdate.CarPartIds!, true);
+
+                if (newCarParts.Count() != productDtoForUpdate.CarPartIds.Count())
                 {
-                    Result<ProductDto>.BadRequest([CarPartErrors.GetCarPartFoundNotMatchWithIdsError(productDtoForUpdate.CarPartIds)]);
+                    return Result<ProductDto>.BadRequest([CarPartErrors.GetCarPartFoundNotMatchWithIdsError(productDtoForUpdate.CarPartIds)]);
                 }
-                productEntity.CarParts = [.. carparts];
+
+                var carPartsToRemove = existingCarParts.Where(cp => !productDtoForUpdate.CarPartIds.Contains(cp.Id)).ToList();
+                foreach (var carPart in carPartsToRemove)
+                {
+                    productEntity.CarParts.Remove(carPart);
+                }
+
+                var carPartsToAdd = newCarParts
+                                   .Where(cp => !existingCarParts.Any(e => e.Id == cp.Id))
+                                   .ToList();
+                foreach (var carPart in carPartsToAdd)
+                {
+                    productEntity.CarParts.Add(carPart);
+                }
+
             }
 
 
-            if (productDtoForUpdate.CarPartIds != null && productDtoForUpdate.CarPartIds.Any())
+            if (productDtoForUpdate.CarModelIds != null && productDtoForUpdate.CarModelIds.Any())
             {
-                var carModels = await _repoManager.CarModel.GetCarPartsAsync(productDtoForUpdate.CarModelIds!, true);
+                var existingModels = productEntity.CarModels.ToList();
+
+                var carModels = await _repoManager.CarModel.GetModelsAsync(productDtoForUpdate.CarModelIds!, true);
+
                 if (carModels.Count() != productDtoForUpdate.CarModelIds!.Count())
                 {
-                    Result<ProductDto>.BadRequest([CarPartErrors.GetCarModelFoundNotMatchWithIdsError(productDtoForUpdate.CarPartIds)]);
+                    return Result<ProductDto>.BadRequest([CarPartErrors.GetCarModelFoundNotMatchWithIdsError(productDtoForUpdate.CarModelIds!)]);
                 }
-                productEntity.CarModels = [.. carModels];
+
+                var carModelsToRemove = existingModels
+                    .Where(cm => !productDtoForUpdate.CarModelIds!.Contains(cm.Id))
+                    .ToList();
+
+                foreach (var carModel in carModelsToRemove)
+                {
+                    productEntity.CarModels.Remove(carModel);
+                }
+
+                var carModelsToAdd = carModels
+                                    .Where(cm => !existingModels.Any(e => e.Id == cm.Id))
+                                    .ToList();
+
+                foreach (var carModel in carModelsToAdd)
+                {
+                    productEntity.CarModels.Add(carModel);
+                }
             }
 
             productEntity.UpdatedAt = DateTimeOffset.UtcNow.SEAsiaStandardTime();
@@ -132,8 +170,14 @@ namespace GarageManagementAPI.Service
             await _repoManager.SaveAsync();
 
             return Result.NoContent();
-        }
 
+
+            productEntity.UpdatedAt = DateTimeOffset.UtcNow.SEAsiaStandardTime();
+
+            await _repoManager.SaveAsync();
+
+            return Result.NoContent();
+        }
 
         public async Task<Result<ExpandoObject>> GetProductByIdAsync(Guid productId, bool trackChanges, string? include = null)
         {
@@ -268,10 +312,20 @@ namespace GarageManagementAPI.Service
             return product.OkResult();
         }
 
-        public async Task<Result<IEnumerable<ProductDto>>> GetProductsByCarModelAndPart(Guid carModelId, Guid carPartId, bool trackChanges, string? include = null)
+        public async Task<Result<IEnumerable<ProductDto>>> GetProductsByCarModelAndPart(Guid carModelId, Guid carPartId, Guid userId, bool trackChanges, string? include = null)
         {
+            var user = await _repoManager.User.GetUserByIdAsync(userId, false, "EmployeeInfo");
+
+            var garageId = user!.EmployeeInfo!.WorkplaceId ?? throw new Exception("GarageId cannot be null.");
+
+            var productsAtGarage = await _repoManager.ProductAtGarage.GetProductAtGarages(garageId, trackChanges, include);
+
             var products = await _repoManager.Product.GetProductsByCarModelAndPart(carModelId, carPartId, trackChanges, include);
-            var productDtos = _mapper.Map<IEnumerable<ProductDto>>(products);
+
+            var commonProducts = products.IntersectBy(productsAtGarage.Select(p => p.ProductId), p => p.Id).ToList();
+
+            var productDtos = _mapper.Map<IEnumerable<ProductDto>>(commonProducts);
+
             return Result<IEnumerable<ProductDto>>.Success(productDtos, System.Net.HttpStatusCode.OK);
         }
 

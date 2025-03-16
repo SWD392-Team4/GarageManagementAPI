@@ -27,6 +27,7 @@ namespace GarageManagementAPI.Service
         public async Task<Result<InvoiceDto>> CreateInvoice(InvoiceDtoForCreation invoiceDtoForCreation, Guid userId)
         {
             var user = await _repoManager.User.GetUserByIdAsync(userId, false, "EmployeeInfo");
+ 
             var invoiceEntity = _mapper.Map<Invoice>(invoiceDtoForCreation);
 
             foreach (var invoiceDetail in invoiceDtoForCreation.InvoiceSellProducts)

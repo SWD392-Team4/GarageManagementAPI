@@ -9,11 +9,12 @@ namespace GarageManagementAPI.Shared.DataTransferObjects.Invoice
         [EnumDataType(typeof(InvoiceType))]
         public InvoiceType InvoiceType { get; set; }
 
-        public string CustomerName { get; set; } = null!;
+        public string? CustomerName { get; set; }
 
         public string CustomerPhoneNumber { get; set; } = null!;
 
-        public string CustomerEmail { get; set; } = null!;
+        public string? CustomerEmail { get; set; }
+
 
         public virtual ICollection<InvoiceSellProductDtoForCreation> InvoiceSellProducts { get; set; } = new List<InvoiceSellProductDtoForCreation>();
     }

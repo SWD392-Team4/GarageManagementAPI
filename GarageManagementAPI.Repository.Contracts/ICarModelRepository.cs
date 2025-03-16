@@ -11,7 +11,7 @@ namespace GarageManagementAPI.Repository.Contracts
 
         public Task<CarModel?> GetCarModelAsync(string modelName, Guid brandId, Guid categoryId, DateOnly modelYear, bool trackChanges);
 
-        Task<IEnumerable<CarModel>> GetCarPartsAsync(List<Guid> carModeldsId, bool trackChanges, string? include = default);
+        Task<IEnumerable<CarModel>> GetModelsAsync(List<Guid> carModeldsId, bool trackChanges, string? include = default);
 
         public Task CreateCarModelsAsync(CarModel carModel);
     }

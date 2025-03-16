@@ -8,5 +8,6 @@ namespace GarageManagementAPI.Shared.DataTransferObjects.Product
 {
     public record ProductDtoForCreation : ProductDtoForManipulation
     {
+
     }
 }

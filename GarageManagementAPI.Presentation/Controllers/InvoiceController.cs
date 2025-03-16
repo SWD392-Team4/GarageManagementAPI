@@ -4,6 +4,8 @@ using GarageManagementAPI.Service.Contracts;
 using GarageManagementAPI.Shared.DataTransferObjects.Invoice;
 using Microsoft.AspNetCore.Http.HttpResults;
 using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
+using GarageManagementAPI.Shared.Enums;
 
 namespace GarageManagementAPI.Presentation.Controllers
 {
@@ -15,6 +17,7 @@ namespace GarageManagementAPI.Presentation.Controllers
         {
         }
 
+        [Authorize(Roles = $"{nameof(SystemRole.Cashier)}")]
         [HttpPost(Name = "CreateInvoice")]
         public async Task<IActionResult> CreateProduct([FromBody] InvoiceDtoForCreation invoiceDtoForCreation)
         {

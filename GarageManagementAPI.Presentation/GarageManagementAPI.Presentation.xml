@@ -136,7 +136,14 @@
         </member>
         <member name="M:GarageManagementAPI.Presentation.Controllers.ProductAtGarageController.GetProductAtGarages(GarageManagementAPI.Shared.RequestFeatures.ProductAtGarageParameters)">
             <summary>
-            Get products at garage
+            Get all product at all garage
+            </summary>
+            <param name="productAtWarehouseParameters"></param>
+            <returns></returns>
+        </member>
+        <member name="M:GarageManagementAPI.Presentation.Controllers.ProductAtGarageController.GetProductAtGarageSpecefics(GarageManagementAPI.Shared.RequestFeatures.ProductAtGarageParameters)">
+            <summary>
+            Get product at garage specific
             </summary>
             <param name="productAtWarehouseParameters"></param>
             <returns></returns>

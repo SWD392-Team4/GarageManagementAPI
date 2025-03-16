@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using GarageManagementAPI.Service.Contracts;
 using GarageManagementAPI.Shared.RequestFeatures;
+using System.Security.Claims;
 
 namespace GarageManagementAPI.Presentation.Controllers
 {
@@ -10,7 +11,7 @@ namespace GarageManagementAPI.Presentation.Controllers
     {
         public ProductAtGarageController(IServiceManager service) : base(service)
         {
-            
+
         }
 
         /// <summary>
@@ -18,10 +19,11 @@ namespace GarageManagementAPI.Presentation.Controllers
         /// </summary>
         /// <param name="productAtGarageId"></param>
         /// <returns></returns>
-        [HttpGet("{productAtGarageId:guid}", Name = "GetProductAtWareById")]
+        [HttpGet("{productAtGarageId:guid}", Name = "GetProductAtGarageById")]
         public async Task<IActionResult> GetProductAtGarage(Guid productAtGarageId)
         {
-            var product = await _service.ProductAtGarageService.GetProductAtGarage(productAtGarageId, trackChanges: false);
+            var include = "Product";
+            var product = await _service.ProductAtGarageService.GetProductAtGarage(productAtGarageId, trackChanges: false, include);
             return product.Map(
                   onSuccess: Ok,
                 onFailure: ProcessError
@@ -29,14 +31,32 @@ namespace GarageManagementAPI.Presentation.Controllers
         }
 
         /// <summary>
-        /// Get products at garage
+        /// Get all product at all garage
         /// </summary>
         /// <param name="productAtWarehouseParameters"></param>
         /// <returns></returns>
         [HttpGet(Name = "GetProducts")]
-        public async Task<IActionResult> GetProductAtGarages([FromRoute]ProductAtGarageParameters productAtWarehouseParameters)
+        public async Task<IActionResult> GetProductAtGarages([FromRoute] ProductAtGarageParameters productAtWarehouseParameters)
         {
-            var productAtWarehouse = await _service.ProductAtGarageService.GetProductAtWarehouses(productAtWarehouseParameters, trackChanges: false);
+            var include = "Product";
+            var productAtWarehouse = await _service.ProductAtGarageService.GetProductAtGarages(productAtWarehouseParameters, trackChanges: false, include);
+            return productAtWarehouse.Map(
+                 onSuccess: Ok,
+               onFailure: ProcessError
+               );
+
+        }
+        /// <summary>
+        /// Get product at garage specific
+        /// </summary>
+        /// <param name="productAtWarehouseParameters"></param>
+        /// <returns></returns>
+        [HttpGet("garage", Name = "GetProductsAtGarageSpecific")]
+        public async Task<IActionResult> GetProductAtGarageSpecefics([FromRoute] ProductAtGarageParameters productAtWarehouseParameters)
+        {
+            var include = "Product";
+            var userId = HttpContext.User.FindFirstValue("UserId");
+            var productAtWarehouse = await _service.ProductAtGarageService.GetProductsAtGarage(Guid.Parse(userId!), trackChanges: false, include);
             return productAtWarehouse.Map(
                  onSuccess: Ok,
                onFailure: ProcessError
