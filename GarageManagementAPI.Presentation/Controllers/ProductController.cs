@@ -7,6 +7,9 @@ using GarageManagementAPI.Service.Contracts;
 using GarageManagementAPI.Shared.RequestFeatures;
 using GarageManagementAPI.Presentation.Extensions;
 using GarageManagementAPI.Shared.DataTransferObjects.Product;
+using Microsoft.AspNetCore.Authorization;
+using GarageManagementAPI.Shared.Enums;
+using System.Security.Claims;
 
 namespace GarageManagementAPI.Presentation.Controllers
 {
@@ -67,12 +70,14 @@ namespace GarageManagementAPI.Presentation.Controllers
                 );
         }
 
+        [Authorize(Roles = $"{nameof(SystemRole.Cashier)}")]
         [HttpGet("car-model/car-part/{carModelId:guid}/{carPartId:guid}", Name = "GetProductCarModelAndCarPart")]
         //[Authorize(Roles = $"{nameof(SystemRole.Administrator)},{nameof(SystemRole.Cashier)}")]
         public async Task<IActionResult> GetProductByCarModelAndCarPart(Guid carModelId, Guid carPartId, [FromQuery] ProductParameters productParameters)
         {
-            var isInclude = "Brand,ProductCategory,ProductHistories,ProductImages";
-            var productResult = await _service.ProductService.GetProductsByCarModelAndPart(carModelId, carPartId, trackChanges: false, isInclude);
+            var userId = HttpContext.User.FindFirstValue("UserId");
+            var isInclude = "Brand,ProductCategory,ProductHistories,ProductImages,CarModels,CarParts";
+            var productResult = await _service.ProductService.GetProductsByCarModelAndPart(carModelId, carPartId, Guid.Parse(userId!), trackChanges: false, isInclude);
 
             return productResult.Map(
                 onSuccess: Ok,
@@ -104,7 +109,7 @@ namespace GarageManagementAPI.Presentation.Controllers
         //[Authorize(Roles = $"{nameof(SystemRole.Administrator)},{nameof(SystemRole.Cashier)}")]
         public async Task<IActionResult> GetProducts([FromQuery] ProductParameters productParameters)
         {
-            var isInclude = "Brand,ProductCategory,ProductHistories,ProductImages";
+            var isInclude = "Brand,ProductCategory,ProductHistories,ProductImages,CarModels,CarParts";
             var productResult = await _service.ProductService.GetProductsAsync(productParameters, trackChanges: false, isInclude);
 
             return productResult.Map(

@@ -16,5 +16,7 @@ namespace GarageManagementAPI.Shared.RequestFeatures
         [EnumDataType(typeof(SystemRole))]
         public SystemRole? Role { get; set; }
 
+        public string? PhoneNumber { get; set; }
+
     }
 }

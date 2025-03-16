@@ -11,6 +11,7 @@ namespace GarageManagementAPI.Repository.Contracts
 
         Task<PagedList<ProductAtGarage>> GetProductAtGarages(ProductAtGarageParameters productAtGarageParameters, bool trackChanges, string? include = default);
 
+        Task<IEnumerable<ProductAtGarage>> GetProductAtGarages(Guid garageId, bool trackChanges, string? include = default);
         public Task<List<(Guid ProductAtGarageId, int DeductedQuantity)>> DeductProductQuantityFromGarageAsync(
      Guid productId, Guid? garageId, int quantity);
 

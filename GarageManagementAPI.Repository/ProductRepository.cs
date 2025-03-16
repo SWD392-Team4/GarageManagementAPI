@@ -97,6 +97,7 @@ namespace GarageManagementAPI.Repository
             return await FindByCondition(p =>
             p.CarParts.Any(cp => cp.Id.Equals(carPartId)) &&
             p.CarModels.Any(cm => cm.Id.Equals(carModelId)), trackChanges)
+                .IsInclude(include)
                 .ToListAsync();
 
         }
