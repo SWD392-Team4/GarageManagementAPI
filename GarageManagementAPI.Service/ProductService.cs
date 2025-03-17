@@ -169,13 +169,6 @@ namespace GarageManagementAPI.Service
             await _repoManager.SaveAsync();
 
             return Result.NoContent();
-
-
-            productEntity.UpdatedAt = DateTimeOffset.UtcNow.SEAsiaStandardTime();
-
-            await _repoManager.SaveAsync();
-
-            return Result.NoContent();
         }
 
         public async Task<Result<ExpandoObject>> GetProductByIdAsync(Guid productId, bool trackChanges, string? include = null)
@@ -325,6 +318,12 @@ namespace GarageManagementAPI.Service
 
             var productDtos = _mapper.Map<IEnumerable<ProductDto>>(commonProducts);
 
+            foreach (var productDto in productDtos)
+            {
+                var quantity = await _repoManager.ProductAtGarage.GetTotalStockForProduct(productDto.Id, garageId);
+                productDto.TotalQuantity = quantity;
+            }
+
             return Result<IEnumerable<ProductDto>>.Success(productDtos, System.Net.HttpStatusCode.OK);
         }
 
@@ -338,6 +337,12 @@ namespace GarageManagementAPI.Service
             var commonProducts = products.IntersectBy(productsAtGarage.Select(p => p.ProductId), p => p.Id).ToList();
 
             var productDtos = _mapper.Map<IEnumerable<ProductDto>>(commonProducts);
+
+            foreach (var productDto in productDtos)
+            {
+                var quantity = await _repoManager.ProductAtGarage.GetTotalStockForProduct(productDto.Id, garageId);
+                productDto.TotalQuantity = quantity;
+            }
 
             return Result<IEnumerable<ProductDto>>.Success(productDtos, System.Net.HttpStatusCode.OK);
         }

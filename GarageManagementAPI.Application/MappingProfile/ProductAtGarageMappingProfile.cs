@@ -18,6 +18,11 @@ namespace GarageManagementAPI.Application.MappingProfile
                 {
                     otps.PreCondition(otp => otp.Product != null);
                     otps.MapFrom(src => src.Product.ProductPrice);
+                })
+                .ForMember(dest => dest.ProductImage, otps =>
+                {
+                    otps.PreCondition(otp => otp.Product != null);
+                    otps.MapFrom(src => src.Product.ProductImages.Select(img => img.ImageLink).ToList());
                 });
             CreateMap<ProductAtGarageForCreation, ProductAtGarage>();
         }
