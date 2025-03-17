@@ -10,7 +10,7 @@ namespace GarageManagementAPI.Repository
     {
         public ProductAtGarageRepostitory(RepositoryContext repositoryContext) : base(repositoryContext)
         {
-            
+
         }
         public async Task CreateProductAtGarageAsync(ProductAtGarage productAtGarage)
         {
@@ -19,8 +19,9 @@ namespace GarageManagementAPI.Repository
 
         public async Task<PagedList<ProductAtGarage>> GetProductAtGarages(ProductAtGarageParameters productAtGarageParameters, bool trackChanges, string? include = null)
         {
-            var productsAtgarages= await FindAll(trackChanges)
+            var productsAtgarages = await FindAll(trackChanges)
                                             .SearchByQuantityProduct(productAtGarageParameters.minQuantity, productAtGarageParameters.maxQuantity)
+                                            .Include("Product")
                                             .OrderBy(p => p.CreatedAt)
                                             .GroupBy(p => p.ProductId)
                                             .Select(group => group.First())
@@ -33,11 +34,11 @@ namespace GarageManagementAPI.Repository
         public async Task<Dictionary<Guid, int>> GetTotalQuantityByProductIdAsync()
         {
             var totalQuantities = await FindAll(false)
-                .GroupBy(p => p.ProductId) 
+                .GroupBy(p => p.ProductId)
                 .Select(group => new
                 {
                     ProductId = group.Key,
-                    TotalQuantity = group.Sum(p => p.Quantity) 
+                    TotalQuantity = group.Sum(p => p.Quantity)
                 })
                 .ToDictionaryAsync(x => x.ProductId, x => x.TotalQuantity);
 
@@ -111,6 +112,18 @@ namespace GarageManagementAPI.Repository
                              pw.WorkplaceId.Equals(garageId) &&
                              pw.Quantity > 0, false)
                 .SumAsync(pw => pw.Quantity);
+        }
+
+        public async Task<IEnumerable<ProductAtGarage>> GetProductAtGarages(Guid garageId, bool trackChanges, string? include = null)
+        {
+            var productAtGagare = await FindByCondition(pg => pg.WorkplaceId.Equals(garageId), false)
+                                            .Include("Product")
+                                            .OrderBy(p => p.CreatedAt)
+                                            .GroupBy(p => p.ProductId)
+                                            .Select(group => group.First())
+                                            .ToListAsync();
+
+            return productAtGagare;
         }
     }
 }

@@ -64,7 +64,8 @@ namespace GarageManagementAPI.Repository.Configuration
                         Description = "Changing transmission fluid to ensure smooth gear shifts and prolong transmission life.",
                         EstimatedHours = 2,
                         CreatedAt = DateTimeOffset.Parse("2/25/2025 12:36:40 AM +07:00"),
-                        UpdatedAt = DateTimeOffset.Parse("2/25/2025 12:36:40 AM +07:00")
+                        UpdatedAt = DateTimeOffset.Parse("2/25/2025 12:36:40 AM +07:00"),
+                        Status = Shared.Enums.SystemStatuss.ServiceStatus.Active,
                     },
                     // 2. Sedan – Brake Pad Replacement
                     new Service()
@@ -79,7 +80,8 @@ namespace GarageManagementAPI.Repository.Configuration
                         Description = "Replacing worn brake pads to restore optimal braking performance.",
                         EstimatedHours = 2,
                         CreatedAt = DateTimeOffset.Parse("2/25/2025 12:36:40 AM +07:00"),
-                        UpdatedAt = DateTimeOffset.Parse("2/25/2025 12:36:40 AM +07:00")
+                        UpdatedAt = DateTimeOffset.Parse("2/25/2025 12:36:40 AM +07:00"),
+                        Status = Shared.Enums.SystemStatuss.ServiceStatus.Active,
                     },
                     // 3. Hatchback – Engine Tune-Up Inspection
                     new Service()
@@ -94,7 +96,8 @@ namespace GarageManagementAPI.Repository.Configuration
                         Description = "Conducting a comprehensive inspection to fine-tune engine performance.",
                         EstimatedHours = 1,
                         CreatedAt = DateTimeOffset.Parse("2/25/2025 12:36:40 AM +07:00"),
-                        UpdatedAt = DateTimeOffset.Parse("2/25/2025 12:36:40 AM +07:00")
+                        UpdatedAt = DateTimeOffset.Parse("2/25/2025 12:36:40 AM +07:00"),
+                        Status = Shared.Enums.SystemStatuss.ServiceStatus.Active,
                     },
                     // 4. Hatchback – Suspension Repair
                     new Service()
@@ -109,7 +112,8 @@ namespace GarageManagementAPI.Repository.Configuration
                         Description = "Repairing suspension components to improve ride comfort and safety.",
                         EstimatedHours = 3,
                         CreatedAt = DateTimeOffset.Parse("2/25/2025 12:36:40 AM +07:00"),
-                        UpdatedAt = DateTimeOffset.Parse("2/25/2025 12:36:40 AM +07:00")
+                        UpdatedAt = DateTimeOffset.Parse("2/25/2025 12:36:40 AM +07:00"),
+                        Status = Shared.Enums.SystemStatuss.ServiceStatus.Active,
                     },
                     // 5. Coupe – Infotainment System Upgrade
                     new Service()
@@ -124,7 +128,8 @@ namespace GarageManagementAPI.Repository.Configuration
                         Description = "Upgrading the infotainment system for enhanced connectivity and features.",
                         EstimatedHours = 3,
                         CreatedAt = DateTimeOffset.Parse("2/25/2025 12:36:40 AM +07:00"),
-                        UpdatedAt = DateTimeOffset.Parse("2/25/2025 12:36:40 AM +07:00")
+                        UpdatedAt = DateTimeOffset.Parse("2/25/2025 12:36:40 AM +07:00"),
+                        Status = Shared.Enums.SystemStatuss.ServiceStatus.Active,
                     },
                     // 6. Coupe – Engine Oil Lubrication
                     new Service()
@@ -139,7 +144,8 @@ namespace GarageManagementAPI.Repository.Configuration
                         Description = "Lubricating engine components to reduce friction and wear.",
                         EstimatedHours = 1,
                         CreatedAt = DateTimeOffset.Parse("2/25/2025 12:36:40 AM +07:00"),
-                        UpdatedAt = DateTimeOffset.Parse("2/25/2025 12:36:40 AM +07:00")
+                        UpdatedAt = DateTimeOffset.Parse("2/25/2025 12:36:40 AM +07:00"),
+                        Status = Shared.Enums.SystemStatuss.ServiceStatus.Active,
                     },
                     // 7. Convertible – Convertible Roof Cleaning
                     new Service()
@@ -154,7 +160,8 @@ namespace GarageManagementAPI.Repository.Configuration
                         Description = "Cleaning the roof mechanism to ensure smooth operation and a spotless finish.",
                         EstimatedHours = 1,
                         CreatedAt = DateTimeOffset.Parse("2/25/2025 12:36:40 AM +07:00"),
-                        UpdatedAt = DateTimeOffset.Parse("2/25/2025 12:36:40 AM +07:00")
+                        UpdatedAt = DateTimeOffset.Parse("2/25/2025 12:36:40 AM +07:00"),
+                        Status = Shared.Enums.SystemStatuss.ServiceStatus.Active,
                     },
                     // 8. Convertible – Windshield Wiper Replacement
                     new Service()
@@ -169,7 +176,8 @@ namespace GarageManagementAPI.Repository.Configuration
                         Description = "Replacing worn wiper blades to maintain clear visibility during rain.",
                         EstimatedHours = 1,
                         CreatedAt = DateTimeOffset.Parse("2/25/2025 12:36:40 AM +07:00"),
-                        UpdatedAt = DateTimeOffset.Parse("2/25/2025 12:36:40 AM +07:00")
+                        UpdatedAt = DateTimeOffset.Parse("2/25/2025 12:36:40 AM +07:00"),
+                        Status = Shared.Enums.SystemStatuss.ServiceStatus.Active,
                     },
                     // 9. Station Wagon – Interior Detailing & Polishing
                     new Service()
@@ -184,7 +192,8 @@ namespace GarageManagementAPI.Repository.Configuration
                         Description = "Thorough cleaning and polishing of the cabin to restore a premium feel.",
                         EstimatedHours = 2,
                         CreatedAt = DateTimeOffset.Parse("2/25/2025 12:36:40 AM +07:00"),
-                        UpdatedAt = DateTimeOffset.Parse("2/25/2025 12:36:40 AM +07:00")
+                        UpdatedAt = DateTimeOffset.Parse("2/25/2025 12:36:40 AM +07:00"),
+                        Status = Shared.Enums.SystemStatuss.ServiceStatus.Active,
                     },
                     // 10. Station Wagon – Brake Fluid Inspection
                     new Service()
@@ -199,7 +208,8 @@ namespace GarageManagementAPI.Repository.Configuration
                         Description = "Inspecting brake fluid levels and condition to ensure reliable braking.",
                         EstimatedHours = 1,
                         CreatedAt = DateTimeOffset.Parse("2/25/2025 12:36:40 AM +07:00"),
-                        UpdatedAt = DateTimeOffset.Parse("2/25/2025 12:36:40 AM +07:00")
+                        UpdatedAt = DateTimeOffset.Parse("2/25/2025 12:36:40 AM +07:00"),
+                        Status = Shared.Enums.SystemStatuss.ServiceStatus.Active,
                     },
                     // 11. SUV – Wheel Alignment Service
                     new Service()
@@ -214,7 +224,8 @@ namespace GarageManagementAPI.Repository.Configuration
                         Description = "Adjusting wheel angles to ensure even tire wear and improved handling.",
                         EstimatedHours = 2,
                         CreatedAt = DateTimeOffset.Parse("2/25/2025 12:36:40 AM +07:00"),
-                        UpdatedAt = DateTimeOffset.Parse("2/25/2025 12:36:40 AM +07:00")
+                        UpdatedAt = DateTimeOffset.Parse("2/25/2025 12:36:40 AM +07:00"),
+                        Status = Shared.Enums.SystemStatuss.ServiceStatus.Active,
                     },
                     // 12. SUV – Suspension System Repair
                     new Service()
@@ -229,7 +240,8 @@ namespace GarageManagementAPI.Repository.Configuration
                         Description = "Repairing faulty suspension components to restore ride quality.",
                         EstimatedHours = 3,
                         CreatedAt = DateTimeOffset.Parse("2/25/2025 12:36:40 AM +07:00"),
-                        UpdatedAt = DateTimeOffset.Parse("2/25/2025 12:36:40 AM +07:00")
+                        UpdatedAt = DateTimeOffset.Parse("2/25/2025 12:36:40 AM +07:00"),
+                        Status = Shared.Enums.SystemStatuss.ServiceStatus.Active,
                     },
                     // 13. Crossover – Exterior Wash & Clean
                     new Service()
@@ -244,7 +256,8 @@ namespace GarageManagementAPI.Repository.Configuration
                         Description = "A complete exterior wash to remove dirt and restore shine.",
                         EstimatedHours = 1,
                         CreatedAt = DateTimeOffset.Parse("2/25/2025 12:36:40 AM +07:00"),
-                        UpdatedAt = DateTimeOffset.Parse("2/25/2025 12:36:40 AM +07:00")
+                        UpdatedAt = DateTimeOffset.Parse("2/25/2025 12:36:40 AM +07:00"),
+                        Status = Shared.Enums.SystemStatuss.ServiceStatus.Active,
                     },
                     // 14. Crossover – Headlight Restoration
                     new Service()
@@ -259,7 +272,8 @@ namespace GarageManagementAPI.Repository.Configuration
                         Description = "Restoring headlight clarity to improve nighttime visibility.",
                         EstimatedHours = 1,
                         CreatedAt = DateTimeOffset.Parse("2/25/2025 12:36:40 AM +07:00"),
-                        UpdatedAt = DateTimeOffset.Parse("2/25/2025 12:36:40 AM +07:00")
+                        UpdatedAt = DateTimeOffset.Parse("2/25/2025 12:36:40 AM +07:00"),
+                        Status = Shared.Enums.SystemStatuss.ServiceStatus.Active,
                     },
                     // 15. Minivan/MPV – Air Filter Replacement
                     new Service()
@@ -274,7 +288,8 @@ namespace GarageManagementAPI.Repository.Configuration
                         Description = "Replacing the air filter to maintain optimal engine performance.",
                         EstimatedHours = 1,
                         CreatedAt = DateTimeOffset.Parse("2/25/2025 12:36:40 AM +07:00"),
-                        UpdatedAt = DateTimeOffset.Parse("2/25/2025 12:36:40 AM +07:00")
+                        UpdatedAt = DateTimeOffset.Parse("2/25/2025 12:36:40 AM +07:00"),
+                        Status = Shared.Enums.SystemStatuss.ServiceStatus.Active,
                     },
                     // 16. Minivan/MPV – Brake System Repair
                     new Service()
@@ -289,7 +304,8 @@ namespace GarageManagementAPI.Repository.Configuration
                         Description = "Repairing malfunctioning brake components for safety.",
                         EstimatedHours = 2,
                         CreatedAt = DateTimeOffset.Parse("2/25/2025 12:36:40 AM +07:00"),
-                        UpdatedAt = DateTimeOffset.Parse("2/25/2025 12:36:40 AM +07:00")
+                        UpdatedAt = DateTimeOffset.Parse("2/25/2025 12:36:40 AM +07:00"),
+                        Status = Shared.Enums.SystemStatuss.ServiceStatus.Active,
                     },
                     // 17. Pickup Truck – Coolant Refill Service
                     new Service()
@@ -304,7 +320,8 @@ namespace GarageManagementAPI.Repository.Configuration
                         Description = "Refilling the coolant system to prevent overheating.",
                         EstimatedHours = 1,
                         CreatedAt = DateTimeOffset.Parse("2/25/2025 12:36:40 AM +07:00"),
-                        UpdatedAt = DateTimeOffset.Parse("2/25/2025 12:36:40 AM +07:00")
+                        UpdatedAt = DateTimeOffset.Parse("2/25/2025 12:36:40 AM +07:00"),
+                        Status = Shared.Enums.SystemStatuss.ServiceStatus.Active,
                     },
                     // 18. Pickup Truck – Drive Shaft Repair
                     new Service()
@@ -319,7 +336,8 @@ namespace GarageManagementAPI.Repository.Configuration
                         Description = "Repairing the drive shaft to restore proper power transmission.",
                         EstimatedHours = 3,
                         CreatedAt = DateTimeOffset.Parse("2/25/2025 12:36:40 AM +07:00"),
-                        UpdatedAt = DateTimeOffset.Parse("2/25/2025 12:36:40 AM +07:00")
+                        UpdatedAt = DateTimeOffset.Parse("2/25/2025 12:36:40 AM +07:00"),
+                        Status = Shared.Enums.SystemStatuss.ServiceStatus.Active,
                     },
                     // 19. Sports Car – Performance ECU Upgrade
                     new Service()
@@ -334,22 +352,8 @@ namespace GarageManagementAPI.Repository.Configuration
                         Description = "Upgrading the ECU for improved performance and responsiveness.",
                         EstimatedHours = 3,
                         CreatedAt = DateTimeOffset.Parse("2/25/2025 12:36:40 AM +07:00"),
-                        UpdatedAt = DateTimeOffset.Parse("2/25/2025 12:36:40 AM +07:00")
-                    },
-                    // 20. Sports Car – Differential Lubrication
-                    new Service()
-                    {
-                        Id = Guid.Parse("1aef6a6e-7376-42e2-ba86-50954246809e"),
-                        CarPartId = Guid.Parse("350B60F4-40FB-499B-9358-3A06EE2FF5F7"),
-                        CarCategoryId = Guid.Parse("6f9e4206-d0a0-4366-a997-094827005006"), // Sports Car
-                        ServiceCategory = ServiceCategory.Maintenance,
-                        ServiceName = "Differential Lubrication",
-                        WorkNature = WorkNature.Preventive,
-                        Action = ServiceAction.Lubricate,
-                        Description = "Lubricating the differential to reduce wear and maintain performance.",
-                        EstimatedHours = 1,
-                        CreatedAt = DateTimeOffset.Parse("2/25/2025 12:36:40 AM +07:00"),
-                        UpdatedAt = DateTimeOffset.Parse("2/25/2025 12:36:40 AM +07:00")
+                        UpdatedAt = DateTimeOffset.Parse("2/25/2025 12:36:40 AM +07:00"),
+                        Status = Shared.Enums.SystemStatuss.ServiceStatus.Active,
                     },
                     // 21. Luxury Car – Leather Seat Polishing
                     new Service()
@@ -364,7 +368,8 @@ namespace GarageManagementAPI.Repository.Configuration
                         Description = "Polishing leather seats to maintain a luxurious and refined interior.",
                         EstimatedHours = 2,
                         CreatedAt = DateTimeOffset.Parse("2/25/2025 12:36:40 AM +07:00"),
-                        UpdatedAt = DateTimeOffset.Parse("2/25/2025 12:36:40 AM +07:00")
+                        UpdatedAt = DateTimeOffset.Parse("2/25/2025 12:36:40 AM +07:00"),
+                        Status = Shared.Enums.SystemStatuss.ServiceStatus.Active,
                     },
                     // 22. Luxury Car – Infotainment Software Update
                     new Service()
@@ -379,7 +384,8 @@ namespace GarageManagementAPI.Repository.Configuration
                         Description = "Updating the infotainment software to incorporate the latest features.",
                         EstimatedHours = 2,
                         CreatedAt = DateTimeOffset.Parse("2/25/2025 12:36:40 AM +07:00"),
-                        UpdatedAt = DateTimeOffset.Parse("2/25/2025 12:36:40 AM +07:00")
+                        UpdatedAt = DateTimeOffset.Parse("2/25/2025 12:36:40 AM +07:00"),
+                        Status = Shared.Enums.SystemStatuss.ServiceStatus.Active,
                     },
                     // 23. Electric Vehicle – Battery Management Software Update
                     new Service()
@@ -394,7 +400,8 @@ namespace GarageManagementAPI.Repository.Configuration
                         Description = "Updating software to optimize battery performance and safety.",
                         EstimatedHours = 2,
                         CreatedAt = DateTimeOffset.Parse("2/25/2025 12:36:40 AM +07:00"),
-                        UpdatedAt = DateTimeOffset.Parse("2/25/2025 12:36:40 AM +07:00")
+                        UpdatedAt = DateTimeOffset.Parse("2/25/2025 12:36:40 AM +07:00"),
+                        Status = Shared.Enums.SystemStatuss.ServiceStatus.Active,
                     },
                     // 24. Electric Vehicle – High Voltage Cable Inspection
                     new Service()
@@ -409,7 +416,8 @@ namespace GarageManagementAPI.Repository.Configuration
                         Description = "Inspecting high voltage cables for damage or wear to ensure EV safety.",
                         EstimatedHours = 1,
                         CreatedAt = DateTimeOffset.Parse("2/25/2025 12:36:40 AM +07:00"),
-                        UpdatedAt = DateTimeOffset.Parse("2/25/2025 12:36:40 AM +07:00")
+                        UpdatedAt = DateTimeOffset.Parse("2/25/2025 12:36:40 AM +07:00"),
+                        Status = Shared.Enums.SystemStatuss.ServiceStatus.Active,
                     },
                     // 25. Hybrid Car – Hybrid System Diagnostic Inspection
                     new Service()
@@ -424,7 +432,8 @@ namespace GarageManagementAPI.Repository.Configuration
                         Description = "Performing diagnostic tests to ensure hybrid system efficiency.",
                         EstimatedHours = 1,
                         CreatedAt = DateTimeOffset.Parse("2/25/2025 12:36:40 AM +07:00"),
-                        UpdatedAt = DateTimeOffset.Parse("2/25/2025 12:36:40 AM +07:00")
+                        UpdatedAt = DateTimeOffset.Parse("2/25/2025 12:36:40 AM +07:00"),
+                        Status = Shared.Enums.SystemStatuss.ServiceStatus.Active,
                     },
                     // 26. Hybrid Car – Electric Motor Repair
                     new Service()
@@ -439,7 +448,8 @@ namespace GarageManagementAPI.Repository.Configuration
                         Description = "Repairing the electric motor to restore hybrid performance.",
                         EstimatedHours = 3,
                         CreatedAt = DateTimeOffset.Parse("2/25/2025 12:36:40 AM +07:00"),
-                        UpdatedAt = DateTimeOffset.Parse("2/25/2025 12:36:40 AM +07:00")
+                        UpdatedAt = DateTimeOffset.Parse("2/25/2025 12:36:40 AM +07:00"),
+                        Status = Shared.Enums.SystemStatuss.ServiceStatus.Active,
                     },
                     // 27. Roadster – Sport Exhaust Upgrade
                     new Service()
@@ -454,7 +464,8 @@ namespace GarageManagementAPI.Repository.Configuration
                         Description = "Upgrading the exhaust system to boost performance and achieve a sporty sound.",
                         EstimatedHours = 3,
                         CreatedAt = DateTimeOffset.Parse("2/25/2025 12:36:40 AM +07:00"),
-                        UpdatedAt = DateTimeOffset.Parse("2/25/2025 12:36:40 AM +07:00")
+                        UpdatedAt = DateTimeOffset.Parse("2/25/2025 12:36:40 AM +07:00"),
+                        Status = Shared.Enums.SystemStatuss.ServiceStatus.Active,
                     },
                     // 28. Roadster – Engine Oil Change
                     new Service()
@@ -469,7 +480,8 @@ namespace GarageManagementAPI.Repository.Configuration
                         Description = "Changing engine oil to maintain performance and extend engine life.",
                         EstimatedHours = 1,
                         CreatedAt = DateTimeOffset.Parse("2/25/2025 12:36:40 AM +07:00"),
-                        UpdatedAt = DateTimeOffset.Parse("2/25/2025 12:36:40 AM +07:00")
+                        UpdatedAt = DateTimeOffset.Parse("2/25/2025 12:36:40 AM +07:00"),
+                        Status = Shared.Enums.SystemStatuss.ServiceStatus.Active,
                     },
                     // 29. Muscle Car – Performance Exhaust Upgrade
                     new Service()
@@ -484,7 +496,8 @@ namespace GarageManagementAPI.Repository.Configuration
                         Description = "Upgrading the exhaust for enhanced performance and aggressive sound.",
                         EstimatedHours = 3,
                         CreatedAt = DateTimeOffset.Parse("2/25/2025 12:36:40 AM +07:00"),
-                        UpdatedAt = DateTimeOffset.Parse("2/25/2025 12:36:40 AM +07:00")
+                        UpdatedAt = DateTimeOffset.Parse("2/25/2025 12:36:40 AM +07:00"),
+                        Status = Shared.Enums.SystemStatuss.ServiceStatus.Active,
                     },
                     // 30. Muscle Car – Engine Overhaul Repair
                     new Service()
@@ -499,7 +512,8 @@ namespace GarageManagementAPI.Repository.Configuration
                         Description = "Comprehensive repair of engine components to restore peak performance.",
                         EstimatedHours = 4,
                         CreatedAt = DateTimeOffset.Parse("2/25/2025 12:36:40 AM +07:00"),
-                        UpdatedAt = DateTimeOffset.Parse("2/25/2025 12:36:40 AM +07:00")
+                        UpdatedAt = DateTimeOffset.Parse("2/25/2025 12:36:40 AM +07:00"),
+                        Status = Shared.Enums.SystemStatuss.ServiceStatus.Active,
                     },
                     // 31. Off-Road Vehicle – Differential Lubrication
                     new Service()
@@ -514,7 +528,8 @@ namespace GarageManagementAPI.Repository.Configuration
                         Description = "Lubricating the differential to reduce friction in off-road conditions.",
                         EstimatedHours = 1,
                         CreatedAt = DateTimeOffset.Parse("2/25/2025 12:36:40 AM +07:00"),
-                        UpdatedAt = DateTimeOffset.Parse("2/25/2025 12:36:40 AM +07:00")
+                        UpdatedAt = DateTimeOffset.Parse("2/25/2025 12:36:40 AM +07:00"),
+                        Status = Shared.Enums.SystemStatuss.ServiceStatus.Active,
                     },
                     // 32. Off-Road Vehicle – Suspension Mount Repair
                     new Service()
@@ -529,7 +544,8 @@ namespace GarageManagementAPI.Repository.Configuration
                         Description = "Repairing suspension mounts to ensure durability on rough terrain.",
                         EstimatedHours = 3,
                         CreatedAt = DateTimeOffset.Parse("2/25/2025 12:36:40 AM +07:00"),
-                        UpdatedAt = DateTimeOffset.Parse("2/25/2025 12:36:40 AM +07:00")
+                        UpdatedAt = DateTimeOffset.Parse("2/25/2025 12:36:40 AM +07:00"),
+                        Status = Shared.Enums.SystemStatuss.ServiceStatus.Active,
                     },
                     // 33. Compact Car – Regular Engine Inspection
                     new Service()
@@ -544,22 +560,8 @@ namespace GarageManagementAPI.Repository.Configuration
                         Description = "Routine engine inspection to detect early signs of wear.",
                         EstimatedHours = 1,
                         CreatedAt = DateTimeOffset.Parse("2/25/2025 12:36:40 AM +07:00"),
-                        UpdatedAt = DateTimeOffset.Parse("2/25/2025 12:36:40 AM +07:00")
-                    },
-                    // 34. Compact Car – Brake Pad Replacement
-                    new Service()
-                    {
-                        Id = Guid.Parse("e320a34f-1e76-48d6-a2fa-a45b7eeddb07"),
-                        CarPartId = Guid.Parse("350B60F4-40FB-499B-9358-3A06EE2FF5F7"),
-                        CarCategoryId = Guid.Parse("d4018b86-eb87-4114-9b9e-5fae1034cbd8"), // Compact Car
-                        ServiceCategory = ServiceCategory.Repair,
-                        ServiceName = "Brake Pad Replacement",
-                        WorkNature = WorkNature.Corrective,
-                        Action = ServiceAction.Replace,
-                        Description = "Replacing brake pads to maintain effective stopping power.",
-                        EstimatedHours = 2,
-                        CreatedAt = DateTimeOffset.Parse("2/25/2025 12:36:40 AM +07:00"),
-                        UpdatedAt = DateTimeOffset.Parse("2/25/2025 12:36:40 AM +07:00")
+                        UpdatedAt = DateTimeOffset.Parse("2/25/2025 12:36:40 AM +07:00"),
+                        Status = Shared.Enums.SystemStatuss.ServiceStatus.Active,
                     },
                     // 35. Subcompact Car – Compact Car Exterior Wash
                     new Service()
@@ -574,22 +576,8 @@ namespace GarageManagementAPI.Repository.Configuration
                         Description = "Exterior wash designed specifically for subcompact cars.",
                         EstimatedHours = 1,
                         CreatedAt = DateTimeOffset.Parse("2/25/2025 12:36:40 AM +07:00"),
-                        UpdatedAt = DateTimeOffset.Parse("2/25/2025 12:36:40 AM +07:00")
-                    },
-                    // 36. Subcompact Car – Coolant Refill
-                    new Service()
-                    {
-                        Id = Guid.Parse("dae53a3d-c422-4242-a6c6-752ad99223ec"),
-                        CarPartId = Guid.Parse("350B60F4-40FB-499B-9358-3A06EE2FF5F7"),
-                        CarCategoryId = Guid.Parse("fc000760-6615-4f3b-96cc-7607ba6609a8"), // Subcompact Car
-                        ServiceCategory = ServiceCategory.Maintenance,
-                        ServiceName = "Coolant Refill",
-                        WorkNature = WorkNature.Preventive,
-                        Action = ServiceAction.Refill,
-                        Description = "Refilling the coolant to ensure the engine runs at optimal temperatures.",
-                        EstimatedHours = 1,
-                        CreatedAt = DateTimeOffset.Parse("2/25/2025 12:36:40 AM +07:00"),
-                        UpdatedAt = DateTimeOffset.Parse("2/25/2025 12:36:40 AM +07:00")
+                        UpdatedAt = DateTimeOffset.Parse("2/25/2025 12:36:40 AM +07:00"),
+                        Status = Shared.Enums.SystemStatuss.ServiceStatus.Active,
                     },
                     // 37. Mid-Size Car – Power Steering Fluid Lubrication
                     new Service()
@@ -604,22 +592,8 @@ namespace GarageManagementAPI.Repository.Configuration
                         Description = "Lubricating the power steering system for smooth steering response.",
                         EstimatedHours = 1,
                         CreatedAt = DateTimeOffset.Parse("2/25/2025 12:36:40 AM +07:00"),
-                        UpdatedAt = DateTimeOffset.Parse("2/25/2025 12:36:40 AM +07:00")
-                    },
-                    // 38. Mid-Size Car – Brake System Repair
-                    new Service()
-                    {
-                        Id = Guid.Parse("3605af66-e2e0-4189-acfa-78b2151e8108"),
-                        CarPartId = Guid.Parse("350B60F4-40FB-499B-9358-3A06EE2FF5F7"),
-                        CarCategoryId = Guid.Parse("61a22ffb-c41d-4365-b067-11213e5579f9"), // Mid-Size Car
-                        ServiceCategory = ServiceCategory.Repair,
-                        ServiceName = "Brake System Repair",
-                        WorkNature = WorkNature.Corrective,
-                        Action = ServiceAction.Repair,
-                        Description = "Repairing the brake system to ensure reliable stopping performance.",
-                        EstimatedHours = 2,
-                        CreatedAt = DateTimeOffset.Parse("2/25/2025 12:36:40 AM +07:00"),
-                        UpdatedAt = DateTimeOffset.Parse("2/25/2025 12:36:40 AM +07:00")
+                        UpdatedAt = DateTimeOffset.Parse("2/25/2025 12:36:40 AM +07:00"),
+                        Status = Shared.Enums.SystemStatuss.ServiceStatus.Active,
                     },
                     // 39. Full-Size Car – Advanced Infotainment Upgrade
                     new Service()
@@ -634,7 +608,8 @@ namespace GarageManagementAPI.Repository.Configuration
                         Description = "Upgrading the infotainment system with advanced features for a superior experience.",
                         EstimatedHours = 3,
                         CreatedAt = DateTimeOffset.Parse("2/25/2025 12:36:40 AM +07:00"),
-                        UpdatedAt = DateTimeOffset.Parse("2/25/2025 12:36:40 AM +07:00")
+                        UpdatedAt = DateTimeOffset.Parse("2/25/2025 12:36:40 AM +07:00"),
+                        Status = Shared.Enums.SystemStatuss.ServiceStatus.Active,
                     },
                     // 40. Full-Size Car – Full Interior Detailing
                     new Service()
@@ -649,7 +624,8 @@ namespace GarageManagementAPI.Repository.Configuration
                         Description = "Comprehensive interior detailing to restore and maintain a luxurious cabin finish.",
                         EstimatedHours = 3,
                         CreatedAt = DateTimeOffset.Parse("2/25/2025 12:36:40 AM +07:00"),
-                        UpdatedAt = DateTimeOffset.Parse("2/25/2025 12:36:40 AM +07:00")
+                        UpdatedAt = DateTimeOffset.Parse("2/25/2025 12:36:40 AM +07:00"),
+                        Status = Shared.Enums.SystemStatuss.ServiceStatus.Active,
                     }
             );
         }

@@ -8,6 +8,7 @@ using GarageManagementAPI.Shared.DataTransferObjects.InvoiceSellProduct;
 using GarageManagementAPI.Shared.ErrorsConstant.GoodsIssued;
 using GarageManagementAPI.Shared.ResultModel;
 using GarageManagementAPI.Shared.Extension;
+using GarageManagementAPI.Shared.Enums;
 
 namespace GarageManagementAPI.Service
 {
@@ -27,6 +28,7 @@ namespace GarageManagementAPI.Service
         public async Task<Result<InvoiceDto>> CreateInvoice(InvoiceDtoForCreation invoiceDtoForCreation, Guid userId)
         {
             var user = await _repoManager.User.GetUserByIdAsync(userId, false, "EmployeeInfo");
+ 
             var invoiceEntity = _mapper.Map<Invoice>(invoiceDtoForCreation);
 
             foreach (var invoiceDetail in invoiceDtoForCreation.InvoiceSellProducts)
@@ -35,6 +37,7 @@ namespace GarageManagementAPI.Service
 
                 var productEntity = product!.OkResult().GetValue<Product>();
                 invoiceEntity.EmployeeId = userId;
+                invoiceEntity.InvoiceType = InvoiceType.InvocieSell;
                 invoiceEntity.GarageId = user!.EmployeeInfo!.WorkplaceId ?? throw new Exception("WorkplaceId cannot be null.");
                 invoiceEntity.TotalPrice = invoiceDetail.Quantity * product!.ProductPrice;
             }
