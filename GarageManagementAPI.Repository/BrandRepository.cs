@@ -29,7 +29,7 @@ namespace GarageManagementAPI.Repository
         {
             var brand = include is null ?
              await FindByCondition(u => u.Id.Equals(brandId), trackChanges).SingleOrDefaultAsync() :
-             await FindByCondition(u => u.Id.Equals(brandId), trackChanges).Include(include).SingleOrDefaultAsync();
+             await FindByCondition(u => u.Id.Equals(brandId), trackChanges).IsInclude(include).SingleOrDefaultAsync();
 
             return brand;
         }

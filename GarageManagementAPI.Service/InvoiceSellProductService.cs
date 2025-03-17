@@ -41,7 +41,7 @@ namespace GarageManagementAPI.Service
 
             invoiceSellProductEntity.Price = productEntity.ProductPrice;
 
-            await _repoManager.InvoiceSellProductRepository.CreateInvoiceSellProductAsync(invoiceSellProductEntity);
+            await _repoManager.InvoiceSellProduct.CreateInvoiceSellProductAsync(invoiceSellProductEntity);
             await _repoManager.SaveAsync();
 
             var invoiceSellProductDto = _mapper.Map<InvoiceSellProductDto>(invoiceSellProductEntity);
@@ -53,8 +53,8 @@ namespace GarageManagementAPI.Service
             {
                 var invoiceSellProduct_ProductAtGarage = new InvoiceSellProduct_ProductAtGarage()
                 {
-                    ProductductAtGarageId = productAtGarageId,
-                    InvoiceSellProductId = invoiceSellProductDto.InvoiceId,
+                    ProductAtGarageId = productAtGarageId,
+                    InvoiceSellProductId = invoiceSellProductEntity.Id,
                     QuantityUsed = deductedQuantity
                 };
                 await _repoManager.InvoiceSellProduct_ProductAtGarage.CreatInvoiceSellProduct_ProductAtGarageAsync(invoiceSellProduct_ProductAtGarage);

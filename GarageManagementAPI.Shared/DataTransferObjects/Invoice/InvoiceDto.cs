@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace GarageManagementAPI.Shared.DataTransferObjects.Invoice
 {
-    public record class InvoiceDto
+    public record class InvoiceDto : BaseDto<InvoiceDto>
     {
         public Guid Id { get; set; }
         [EnumDataType(typeof(InvoiceType))]

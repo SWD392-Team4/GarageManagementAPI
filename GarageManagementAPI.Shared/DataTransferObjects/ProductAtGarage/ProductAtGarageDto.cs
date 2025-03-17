@@ -6,6 +6,7 @@
         public Guid ProductId { get; set; }
         public string? ProductName { get; set; }
         public Guid GoodsIssuedDetailId { get; set; }
+        public decimal ProductPrice { get; set; }
         public int Quantity { get; set; }
         public string ProductBarcodeAtGarage { get; set; } = null!;
         public DateTimeOffset CreatedAt { get; set; }

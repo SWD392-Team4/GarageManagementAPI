@@ -329,6 +329,20 @@ namespace GarageManagementAPI.Service
         }
 
 
+        public async Task<Result<IEnumerable<ProductDto>>> GetProductsByCarModelAndPartGarage(Guid carModelId, Guid carPartId, Guid garageId, bool trackChanges, string? include = null)
+        {
+            var productsAtGarage = await _repoManager.ProductAtGarage.GetProductAtGarages(garageId, trackChanges, include);
+
+            var products = await _repoManager.Product.GetProductsByCarModelAndPart(carModelId, carPartId, trackChanges, include);
+
+            var commonProducts = products.IntersectBy(productsAtGarage.Select(p => p.ProductId), p => p.Id).ToList();
+
+            var productDtos = _mapper.Map<IEnumerable<ProductDto>>(commonProducts);
+
+            return Result<IEnumerable<ProductDto>>.Success(productDtos, System.Net.HttpStatusCode.OK);
+        }
+
+
         private async Task CreateProductHistoryAsync(Product product)
         {
             var productHistory = _mapper.Map<ProductHistory>(product);
@@ -340,7 +354,6 @@ namespace GarageManagementAPI.Service
         {
             return $"BCPD-{DateTime.UtcNow:yyyyMMddHHmmss}-{Guid.NewGuid().ToString("N").Substring(6)}";
         }
-
 
     }
 }

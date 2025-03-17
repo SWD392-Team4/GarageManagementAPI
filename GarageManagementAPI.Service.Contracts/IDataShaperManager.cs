@@ -26,6 +26,8 @@ using GarageManagementAPI.Shared.DataTransferObjects.PackageHistory;
 using GarageManagementAPI.Shared.DataTransferObjects.ProductAtWarehouse;
 using GarageManagementAPI.Shared.DataTransferObjects.Appointment;
 using GarageManagementAPI.Shared.DataTransferObjects.ProductAtGarage;
+using GarageManagementAPI.Shared.DataTransferObjects.Invoice;
+using GarageManagementAPI.Shared.DataTransferObjects.InvoiceSellProduct;
 
 namespace GarageManagementAPI.Service.Contracts
 {
@@ -37,6 +39,7 @@ namespace GarageManagementAPI.Service.Contracts
         IDataShaper<PackageDto> Package { get; }
         IDataShaper<ProductDto> Product { get; }
         IDataShaper<CarPartDto> CarPart { get; }
+        IDataShaper<InvoiceDto> Invoice { get; }
         IDataShaper<SupplierDto> Supplier { get; }
         IDataShaper<CarModelDto> CarModel { get; }
         IDataShaper<WorkplaceDto> Workplace { get; }
@@ -57,7 +60,9 @@ namespace GarageManagementAPI.Service.Contracts
         IDataShaper<ProductAtGarageDto> ProductAtGarage { get; }
         IDataShaper<PackageConditionDto> PackageCondition { get; }
         IDataShaper<GoodsIssuedDetailDto> GoodsIssuedDetail { get; }
+        IDataShaper<InvoiceSellProductDto> InvoiceSellProduct { get; }
         IDataShaper<ProductAtWarehouseDto> ProductAtWarehouse { get; }
         IDataShaper<GoodsReceivedDetailDto> GoodsReceivedDetail { get; }
+
     }
 }
