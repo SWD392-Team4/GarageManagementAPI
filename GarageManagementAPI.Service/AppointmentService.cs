@@ -40,6 +40,8 @@ namespace GarageManagementAPI.Service
             _dataShaper = dataShaper;
         }
 
+
+
         public async Task<Result<AppointmentDto>> CreateAppointment(Guid garageId, Guid? userId, AppointmentDtoForCreation appointmentDtoCreation)
         {
             var garage = await _repoManager.Workplace.GetWorkplaceByIdAsync(garageId, false);
@@ -541,7 +543,7 @@ namespace GarageManagementAPI.Service
             if (appointment is null)
                 return Result<AppointmentDto>.NotFound(AppointmentErrors.GetAppointmentNotFoundError(appointmentId));
 
-            if (!CanUpdateAppointment(appointment.Status) || appointment.Status.Equals(AppointmentStatus.Approved))
+            if (!CanUpdateAppointment(appointment.Status) || appointment.Status.Equals(AppointmentStatus.Approved) || appointment.Status == AppointmentStatus.Arrival)
                 return Result<AppointmentDto>.Conflict(AppointmentErrors.GetAppointmentCanNotUpdate(appointment.Status));
 
             if (appointmentConfirmation.EstimatedAppointmentTime != null && !ValidEstimatedTime(appointment.EstimatedAppointmentTime))
@@ -686,7 +688,7 @@ namespace GarageManagementAPI.Service
             if (appointment is null)
                 return Result<AppointmentDto>.NotFound(AppointmentErrors.GetAppointmentNotFoundError(appointmentId));
 
-            if (appointment.Status != AppointmentStatus.Approved || appointment.Status != AppointmentStatus.Pending)
+            if (appointment.Status != AppointmentStatus.Approved && appointment.Status != AppointmentStatus.Pending)
                 return Result<AppointmentDto>.Conflict(AppointmentErrors.GetAppointmentCanNotUpdate(appointment.Status));
 
             var user = await _repoManager.User.GetUserByIdAsync(userId, false, "EmployeeInfo");
@@ -757,10 +759,10 @@ namespace GarageManagementAPI.Service
                 }
                 appointment.ActualAppointmentTime = DateTimeOffset.UtcNow.SEAsiaStandardTime();
                 appointment = _mapper.Map(appointmentDtoForUpdate, appointment);
-                _repoManager.Appointment.Update(appointment);
-                await _repoManager.SaveAsync();
             }
-
+            appointment.Status = AppointmentStatus.Arrival;
+            _repoManager.Appointment.Update(appointment);
+            await _repoManager.SaveAsync();
             return Result.Ok();
         }
 
