@@ -6,9 +6,11 @@ using GarageManagementAPI.Shared.Enums;
 using GarageManagementAPI.Shared.Extension;
 using GarageManagementAPI.Shared.RequestFeatures;
 using GarageManagementAPI.Shared.ResultModel;
+
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+
 using System.Security.Claims;
 
 namespace GarageManagementAPI.Presentation.Controllers
@@ -51,9 +53,9 @@ namespace GarageManagementAPI.Presentation.Controllers
 
         [HttpGet("employees/{userId:guid}")]
         [Authorize(Roles = $"{nameof(SystemRole.Administrator)},{nameof(SystemRole.Cashier)}")]
-        public async Task<IActionResult> GetUsersIsEmployeeById([FromQuery] UserParameters userParameters)
+        public async Task<IActionResult> GetUsersIsEmployeeById(Guid userId, [FromQuery] UserParameters userParameters)
         {
-            var userResult = await _service.UserService.GetUsersAsync(userParameters, trackChanges: false, isEmployee: true, "EmployeeInfo,Roles");
+            var userResult = await _service.UserService.GetUserAsync(userId, userParameters, trackChanges: false, "EmployeeInfo,Roles");
 
             return userResult.Map(
                 onSuccess: Ok,
