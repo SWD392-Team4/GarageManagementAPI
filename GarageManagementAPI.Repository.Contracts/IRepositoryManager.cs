@@ -17,7 +17,7 @@ namespace GarageManagementAPI.Repository.Contracts
         IServiceImageRepository ServiceImage { get; }
         IProductImageRepository ProductImage { get; }
         IEmployeeInfoRepository EmployeeInfo { get; }
-        IInvoiceRepository InvoiceRepository { get; }
+        IInvoiceRepository Invoice{ get; }
         IGoodsReceivedRepository GoodsReceived { get; }
         IProductHistoryRepository ProductHistory { get; }
         IServiceHistoryRepository ServiceHistory { get; }
@@ -29,8 +29,8 @@ namespace GarageManagementAPI.Repository.Contracts
         IGoodsTransactionRepository GoodsTransaction { get; }
         IGoodsIssuedDetailRepository GoodsIssuedDetail { get; }
         IProductAtWarehouseRepository ProductAtWarehouse { get; }
+        IInvoiceSellProductRepository InvoiceSellProduct { get; }
         IGoodsReceivedDetailRepository GoodsReceivedDetail { get; }
-        IInvoiceSellProductRepository InvoiceSellProductRepository { get; }
         IInvoiceSellProduct_ProductAtGarageRepository InvoiceSellProduct_ProductAtGarage { get; }
         IGoodsIssuedDetailProductAtWarehouseRepository GoodsIssuedDetailProductAtWarehouse { get; }
         IAppointmentRepository Appointment { get; }

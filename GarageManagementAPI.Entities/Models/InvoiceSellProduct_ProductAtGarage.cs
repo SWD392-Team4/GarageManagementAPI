@@ -2,7 +2,7 @@
 {
     public class InvoiceSellProduct_ProductAtGarage : BaseEntity<InvoiceSellProduct_ProductAtGarage>
     {
-        public Guid ProductductAtGarageId { get; set; }
+        public Guid ProductAtGarageId { get; set; }
         public virtual ProductAtGarage ProductAtGarage { get; set; } = null!;
 
         public Guid InvoiceSellProductId { get; set; }

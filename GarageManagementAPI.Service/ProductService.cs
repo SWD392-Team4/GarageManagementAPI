@@ -169,13 +169,6 @@ namespace GarageManagementAPI.Service
             await _repoManager.SaveAsync();
 
             return Result.NoContent();
-
-
-            productEntity.UpdatedAt = DateTimeOffset.UtcNow.SEAsiaStandardTime();
-
-            await _repoManager.SaveAsync();
-
-            return Result.NoContent();
         }
 
         public async Task<Result<ExpandoObject>> GetProductByIdAsync(Guid productId, bool trackChanges, string? include = null)
@@ -325,6 +318,32 @@ namespace GarageManagementAPI.Service
 
             var productDtos = _mapper.Map<IEnumerable<ProductDto>>(commonProducts);
 
+            foreach (var productDto in productDtos)
+            {
+                var quantity = await _repoManager.ProductAtGarage.GetTotalStockForProduct(productDto.Id, garageId);
+                productDto.TotalQuantity = quantity;
+            }
+
+            return Result<IEnumerable<ProductDto>>.Success(productDtos, System.Net.HttpStatusCode.OK);
+        }
+
+
+        public async Task<Result<IEnumerable<ProductDto>>> GetProductsByCarModelAndPartGarage(Guid carModelId, Guid carPartId, Guid garageId, bool trackChanges, string? include = null)
+        {
+            var productsAtGarage = await _repoManager.ProductAtGarage.GetProductAtGarages(garageId, trackChanges, include);
+
+            var products = await _repoManager.Product.GetProductsByCarModelAndPart(carModelId, carPartId, trackChanges, include);
+
+            var commonProducts = products.IntersectBy(productsAtGarage.Select(p => p.ProductId), p => p.Id).ToList();
+
+            var productDtos = _mapper.Map<IEnumerable<ProductDto>>(commonProducts);
+
+            foreach (var productDto in productDtos)
+            {
+                var quantity = await _repoManager.ProductAtGarage.GetTotalStockForProduct(productDto.Id, garageId);
+                productDto.TotalQuantity = quantity;
+            }
+
             return Result<IEnumerable<ProductDto>>.Success(productDtos, System.Net.HttpStatusCode.OK);
         }
 
@@ -340,7 +359,6 @@ namespace GarageManagementAPI.Service
         {
             return $"BCPD-{DateTime.UtcNow:yyyyMMddHHmmss}-{Guid.NewGuid().ToString("N").Substring(6)}";
         }
-
 
     }
 }

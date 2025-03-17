@@ -40,6 +40,7 @@ namespace GarageManagementAPI.Entities.Models
 
         public virtual ICollection<CarPart> CarParts { get; set; } = new List<CarPart>();
         public virtual ICollection<ProductAtGarage> ProductAtGarage { get; set; } = new List<ProductAtGarage>();
+        public virtual ICollection<InvoiceSellProduct> InvoiceSellProducts { get; set; } = new List<InvoiceSellProduct>();
     }
 
 }

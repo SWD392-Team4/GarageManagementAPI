@@ -85,6 +85,19 @@ namespace GarageManagementAPI.Presentation.Controllers
                 );
         }
 
+        [HttpGet("car-model/car-part/noau/{garageId:guid}/{carModelId:guid}/{carPartId:guid}", Name = "GetProductCarModelAndCarPartNotAutho")]
+        //[Authorize(Roles = $"{nameof(SystemRole.Administrator)},{nameof(SystemRole.Cashier)}")]
+        public async Task<IActionResult> GetProductByCarModelAndCarPartByGarage(Guid garageId,Guid carModelId, Guid carPartId, [FromQuery] ProductParameters productParameters)
+        {
+            var isInclude = "Brand,ProductCategory,ProductHistories,ProductImages,CarModels,CarParts";
+            var productResult = await _service.ProductService.GetProductsByCarModelAndPartGarage(carModelId, carPartId, garageId, trackChanges: false, isInclude);
+
+            return productResult.Map(
+                onSuccess: Ok,
+                onFailure: ProcessError
+                );
+        }
+
         /// <summary>
         /// Get product with warehouse
         /// </summary>

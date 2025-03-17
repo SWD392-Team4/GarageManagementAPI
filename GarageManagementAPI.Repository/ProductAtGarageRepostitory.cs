@@ -21,7 +21,8 @@ namespace GarageManagementAPI.Repository
         {
             var productsAtgarages = await FindAll(trackChanges)
                                             .SearchByQuantityProduct(productAtGarageParameters.minQuantity, productAtGarageParameters.maxQuantity)
-                                            .Include("Product")
+                                            .Include(p => p.Product) 
+                                            .ThenInclude(p => p.ProductImages)
                                             .OrderBy(p => p.CreatedAt)
                                             .GroupBy(p => p.ProductId)
                                             .Select(group => group.First())
@@ -47,13 +48,15 @@ namespace GarageManagementAPI.Repository
 
         public async Task<ProductAtGarage?> GetProductAtGarage(Guid productAtGarageId, bool trackChanges, string? include = null)
         {
-            var productAtGarage = include == null ? await FindByCondition(pat => pat.Id.Equals(productAtGarageId), trackChanges).SingleOrDefaultAsync() : await FindByCondition(pat => pat.Id.Equals(productAtGarageId), false).IsInclude(include).SingleOrDefaultAsync();
+            var productAtGarage = include == null ? await FindByCondition(pat => pat.Id.Equals(productAtGarageId), trackChanges).SingleOrDefaultAsync() : await FindByCondition(pat => pat.Id.Equals(productAtGarageId), false).Include(p => p.Product)
+                                            .ThenInclude(p => p.ProductImages).SingleOrDefaultAsync();
             return productAtGarage;
         }
 
         public async Task<ProductAtGarage?> GetProductAtGarage(Guid productId, bool trackChanges)
         {
-            return await FindByCondition(p => p.ProductId.Equals(productId), trackChanges).FirstOrDefaultAsync();
+            return await FindByCondition(p => p.ProductId.Equals(productId), trackChanges).Include(p => p.Product)
+                                            .ThenInclude(p => p.ProductImages).FirstOrDefaultAsync();
         }
 
         public void UpdateProductGarage(ProductAtGarage productAtGarage)
@@ -65,6 +68,8 @@ namespace GarageManagementAPI.Repository
      Guid productId, Guid? garageId, int quantity)
         {
             var productEntries = await FindByCondition(pat => pat.ProductId.Equals(productId), true)
+                 .Include(p => p.Product)
+                                            .ThenInclude(p => p.ProductImages)
                 .OrderBy(pw => pw.CreatedAt)
                 .ToListAsync();
 
@@ -117,12 +122,12 @@ namespace GarageManagementAPI.Repository
         public async Task<IEnumerable<ProductAtGarage>> GetProductAtGarages(Guid garageId, bool trackChanges, string? include = null)
         {
             var productAtGagare = await FindByCondition(pg => pg.WorkplaceId.Equals(garageId), false)
-                                            .Include("Product")
+                                           .Include(p => p.Product)
+                                            .ThenInclude(p => p.ProductImages)
                                             .OrderBy(p => p.CreatedAt)
                                             .GroupBy(p => p.ProductId)
                                             .Select(group => group.First())
                                             .ToListAsync();
-
             return productAtGagare;
         }
     }

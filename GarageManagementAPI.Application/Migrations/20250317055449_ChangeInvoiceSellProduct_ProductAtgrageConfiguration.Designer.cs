@@ -4,6 +4,7 @@ using GarageManagementAPI.Repository;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GarageManagementAPI.Application.Migrations
 {
     [DbContext(typeof(RepositoryContext))]
-    partial class RepositoryContextModelSnapshot : ModelSnapshot
+    [Migration("20250317055449_ChangeInvoiceSellProduct_ProductAtgrageConfiguration")]
+    partial class ChangeInvoiceSellProduct_ProductAtgrageConfiguration
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -3150,9 +3153,6 @@ namespace GarageManagementAPI.Application.Migrations
                     b.Property<Guid?>("ProductHistoryId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("ProductId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<int>("Quantity")
                         .HasColumnType("int");
 
@@ -3162,8 +3162,6 @@ namespace GarageManagementAPI.Application.Migrations
                     b.HasIndex("ProductAtGarageId");
 
                     b.HasIndex("ProductHistoryId");
-
-                    b.HasIndex("ProductId");
 
                     b.HasIndex(new[] { "InvoiceId" }, "invoicesellproduct_invoiceid_index");
 
@@ -6687,15 +6685,7 @@ namespace GarageManagementAPI.Application.Migrations
                         .WithMany("InvoiceSellProducts")
                         .HasForeignKey("ProductHistoryId");
 
-                    b.HasOne("GarageManagementAPI.Entities.Models.Product", "Product")
-                        .WithMany("InvoiceSellProducts")
-                        .HasForeignKey("ProductId")
-                        .IsRequired()
-                        .HasConstraintName("invoicesellproduct_productid_foreign");
-
                     b.Navigation("Invoice");
-
-                    b.Navigation("Product");
                 });
 
             modelBuilder.Entity("GarageManagementAPI.Entities.Models.InvoiceSellProduct_ProductAtGarage", b =>
@@ -7266,8 +7256,6 @@ namespace GarageManagementAPI.Application.Migrations
             modelBuilder.Entity("GarageManagementAPI.Entities.Models.Product", b =>
                 {
                     b.Navigation("GoodsReceivedDetails");
-
-                    b.Navigation("InvoiceSellProducts");
 
                     b.Navigation("ProductAtGarage");
 

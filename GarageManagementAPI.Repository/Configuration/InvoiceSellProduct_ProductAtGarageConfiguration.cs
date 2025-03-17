@@ -9,11 +9,11 @@ namespace GarageManagementAPI.Repository.Configuration
         protected override void ModelCreating(EntityTypeBuilder<InvoiceSellProduct_ProductAtGarage> entity)
         {
 
-            entity.HasKey(gp => new { gp.ProductductAtGarageId, gp.InvoiceSellProductId });
+            entity.HasKey(gp => new { gp.ProductAtGarageId, gp.InvoiceSellProductId });
 
             entity.HasOne(gp => gp.ProductAtGarage)
                 .WithMany(gid => gid.InvoiceSellProduct_ProductAtGarage)
-                .HasForeignKey(gp => gp.ProductductAtGarageId)
+                .HasForeignKey(gp => gp.ProductAtGarageId)
                 .OnDelete(DeleteBehavior.Cascade);
 
             entity.HasOne(gp => gp.InvoiceSellProduct)
