@@ -1,5 +1,6 @@
 ﻿using GarageManagementAPI.Shared.DataTransferObjects.Package;
 using GarageManagementAPI.Shared.Enums.SystemStatuss;
+
 using System.ComponentModel.DataAnnotations;
 
 namespace GarageManagementAPI.Shared.DataTransferObjects.AppointmentDetailPackage
@@ -7,6 +8,9 @@ namespace GarageManagementAPI.Shared.DataTransferObjects.AppointmentDetailPackag
     public record AppointmentDetailPackageDto
     {
         public Guid Id { get; set; }
+
+        public Guid PackageId { get; set; }
+
         public Guid PackageHistoryId { get; set; }
 
         public Guid AppointmentId { get; set; }

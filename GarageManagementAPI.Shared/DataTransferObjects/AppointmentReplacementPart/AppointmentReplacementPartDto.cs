@@ -1,4 +1,5 @@
 ﻿using GarageManagementAPI.Shared.Enums.SystemStatuss;
+
 using System.ComponentModel.DataAnnotations;
 
 namespace GarageManagementAPI.Shared.DataTransferObjects.AppointmentReplacementPart
@@ -7,6 +8,8 @@ namespace GarageManagementAPI.Shared.DataTransferObjects.AppointmentReplacementP
     {
         public Guid Id { get; set; }
         public Guid AppointmentDetailId { get; set; }
+
+        public Guid ProductId { get; set; }
 
         public Guid ProductHistoryId { get; set; }
 
