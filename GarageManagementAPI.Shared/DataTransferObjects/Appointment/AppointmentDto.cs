@@ -11,14 +11,20 @@ namespace GarageManagementAPI.Shared.DataTransferObjects.Appointment
         public Guid Id { get; set; }
         public Guid? ApproveByEmployeeId { get; set; }
 
+        public string? ApproveByEmployee { get; set; }
+
         public Guid? RejectByEmployeeId { get; set; }
+
+        public string? RejectByEmployee { get; set; }
 
         public Guid CarModelId { get; set; }
 
         public Guid GarageId { get; set; }
 
         public int? Mileage { get; set; }
+
         public string? VerificationCode { get; set; }
+
         public string? CustomerName { get; set; }
 
         public string? CustomerPhoneNumber { get; set; }
