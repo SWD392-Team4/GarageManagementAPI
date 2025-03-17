@@ -41,6 +41,7 @@
         IGoodsReceivedDetailService GoodsReceivedDetailService { get; }
         IAppointmentDetailPackageService AppointmentDetailPackageService { get; }
         IAppointmentReplacementPartService AppointmentReplacementPartService { get; }
+        IEmployeeScheduleService EmployeeScheduleService { get; }
 
     }
 }

@@ -21,7 +21,7 @@ namespace GarageManagementAPI.Repository
 
             return user;
         }
-        public async Task<User?> GetUserByRoleAsync(Guid userId ,bool trackChanges, string? include = null)
+        public async Task<User?> GetUserByRoleAsync(Guid userId, bool trackChanges, string? include = null)
         {
             var user = include is null ?
                 await FindByCondition(u => u.Id.Equals(userId) && u.Roles.Any(r => r.Name!.Equals(nameof(SystemRole.Cashier))), trackChanges).SingleOrDefaultAsync() :

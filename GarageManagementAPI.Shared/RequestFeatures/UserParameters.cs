@@ -1,4 +1,5 @@
 ﻿using GarageManagementAPI.Shared.Enums;
+
 using System.ComponentModel.DataAnnotations;
 
 namespace GarageManagementAPI.Shared.RequestFeatures

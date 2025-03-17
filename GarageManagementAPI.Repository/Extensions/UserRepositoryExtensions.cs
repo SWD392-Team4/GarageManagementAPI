@@ -56,11 +56,10 @@ namespace GarageManagementAPI.Repository.Extensions
 
         public static IQueryable<User> FilterByPhoneNumber(this IQueryable<User> user, string? phoneNumber)
         {
-            if (string.IsNullOrEmpty(phoneNumber))
+            if (string.IsNullOrWhiteSpace(phoneNumber))
                 return user;
 
             return user.Where(u => u.PhoneNumber!.Equals(phoneNumber));
-
         }
 
         public static IQueryable<User> IsInclude(this IQueryable<User> user, string? fieldsString)

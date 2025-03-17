@@ -10,7 +10,6 @@ namespace GarageManagementAPI.Service
 {
     public sealed class ServiceManager : IServiceManager
     {
-
         private readonly Lazy<IMailService> _mailService;
         private readonly Lazy<IUserService> _userService;
         private readonly Lazy<IBrandService> _brandService;
@@ -50,6 +49,7 @@ namespace GarageManagementAPI.Service
         private readonly Lazy<IPackageUsageDetailService> _packageUsageDetailService;
         private readonly Lazy<IInvoiceService> _invoiceService;
         private readonly Lazy<IInvoiceSellProductService> _invoiceSellProductService;
+        private readonly Lazy<IEmployeeScheduleService> _employeeScheduleService;
 
         public ServiceManager(
             IRepositoryManager repositoryManager,
@@ -283,6 +283,8 @@ namespace GarageManagementAPI.Service
             _packageUsageDetailService = new Lazy<IPackageUsageDetailService>(() => new PackageUsageDetailService(repositoryManager, mapper, dataShaper));
 
             _packageImageService = new Lazy<IPackageImageService>(() => new PackageImageService(repositoryManager, mapper, dataShaper));
+
+            _employeeScheduleService = new Lazy<IEmployeeScheduleService>(() => new EmployeeScheduleService(repositoryManager, mapper, dataShaper));
         }
 
         public IUserService UserService => _userService.Value;
@@ -324,7 +326,8 @@ namespace GarageManagementAPI.Service
         public IAppointmentDetailService AppointmentDetailService => _appointmentDetailService.Value;
         public IAppointmentDetailPackageService AppointmentDetailPackageService => _appointmentDetailPackageService.Value;
         public IAppointmentReplacementPartService AppointmentReplacementPartService => _appointmentReplacementPartService.Value;
-
         public IInvoiceSellProductService InvoiceSellProductService => _invoiceSellProductService.Value;
+        public IEmployeeScheduleService EmployeeScheduleService => throw new NotImplementedException();
+
     }
 }

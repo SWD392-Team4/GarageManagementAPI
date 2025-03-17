@@ -1,6 +1,7 @@
 ﻿using GarageManagementAPI.Shared.DataTransferObjects.AppointmentReplacementPart;
 using GarageManagementAPI.Shared.DataTransferObjects.Service;
 using GarageManagementAPI.Shared.Enums.SystemStatuss;
+
 using System.ComponentModel.DataAnnotations;
 
 namespace GarageManagementAPI.Shared.DataTransferObjects.AppointmentDetail
@@ -11,6 +12,8 @@ namespace GarageManagementAPI.Shared.DataTransferObjects.AppointmentDetail
         public Guid ServiceHistoryId { get; set; }
 
         public Guid AppointmentId { get; set; }
+
+        public bool IsFromPackage { get; set; }
 
         public string ServiceNote { get; set; } = null!;
 

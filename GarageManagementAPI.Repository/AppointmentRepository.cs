@@ -27,6 +27,8 @@ namespace GarageManagementAPI.Repository
                         .ThenInclude(a => a.Product)
                         .Include(a => a.AppointmentDetailPackages)
                         .ThenInclude(a => a.PackageHistory)
+                        .Include(a => a.ApproveByEmployee)
+                        .Include(a => a.RejecteByEmployee)
                         .SingleOrDefaultAsync();
         }
 
@@ -50,6 +52,8 @@ namespace GarageManagementAPI.Repository
                 .ThenInclude(a => a.Product)
                 .Include(a => a.AppointmentDetailPackages)
                 .ThenInclude(a => a.PackageHistory)
+                .Include(a => a.ApproveByEmployee)
+                .Include(a => a.RejecteByEmployee)
                 .SingleOrDefaultAsync();
         }
 
@@ -92,6 +96,8 @@ namespace GarageManagementAPI.Repository
                 .ThenInclude(a => a.Product)
                 .Include(a => a.AppointmentDetailPackages)
                 .ThenInclude(a => a.PackageHistory)
+                .Include(a => a.ApproveByEmployee)
+                .Include(a => a.RejecteByEmployee)
                 .ToListAsync();
 
             var count = await FindByCondition(a => a.GarageId.Equals(garageId), trackChanges)
@@ -130,6 +136,8 @@ namespace GarageManagementAPI.Repository
                         .ThenInclude(a => a.Product)
                         .Include(a => a.AppointmentDetailPackages)
                         .ThenInclude(a => a.PackageHistory)
+                        .Include(a => a.ApproveByEmployee)
+                        .Include(a => a.RejecteByEmployee)
                         .FirstOrDefaultAsync();
         }
     }

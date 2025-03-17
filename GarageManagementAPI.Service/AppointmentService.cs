@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+
 using GarageManagementAPI.Entities.Models;
 using GarageManagementAPI.Repository.Contracts;
 using GarageManagementAPI.Service.Contracts;
@@ -19,6 +20,7 @@ using GarageManagementAPI.Shared.ErrorsConstant.Workplace;
 using GarageManagementAPI.Shared.Extension;
 using GarageManagementAPI.Shared.RequestFeatures;
 using GarageManagementAPI.Shared.ResultModel;
+
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Dynamic;
@@ -380,7 +382,6 @@ namespace GarageManagementAPI.Service
             if (!isEmployee && !role.Equals(nameof(SystemRole.Administrator)))
             {
                 user = await _repoManager.User.GetUserByIdAsync(userId, false);
-                appointmentParameters.CustomerPhoneNumber = user!.PhoneNumber;
                 appointmentParameters.CustomerEmail = user!.Email;
             }
 
