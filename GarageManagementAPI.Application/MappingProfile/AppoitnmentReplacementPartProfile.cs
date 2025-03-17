@@ -1,4 +1,5 @@
 using AutoMapper;
+
 using GarageManagementAPI.Entities.Models;
 using GarageManagementAPI.Shared.DataTransferObjects.AppointmentReplacementPart;
 
@@ -21,6 +22,10 @@ namespace GarageManagementAPI.Application.MappingProfile
                 {
                     opts.PreCondition(src => src.ProductHistory != null);
                     opts.MapFrom(src => src.ProductHistory.ProductPrice);
+                }).ForMember(dest => dest.ProductId, opts =>
+                {
+                    opts.PreCondition(src => src.ProductHistory != null);
+                    opts.MapFrom(src => src.ProductHistory.ProductId);
                 });
         }
     }

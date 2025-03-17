@@ -29,6 +29,10 @@ namespace GarageManagementAPI.Application.MappingProfile
                 {
                     opts.PreCondition(src => src.PackageHistoryId != null);
                     opts.MapFrom(src => true);
+                }).ForMember(dest => dest.ServiceId, opts =>
+                {
+                    opts.PreCondition(dest => dest.ServiceHistory != null);
+                    opts.MapFrom(src => src.ServiceHistory.ServiceId);
                 });
 
         }
