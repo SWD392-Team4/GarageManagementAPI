@@ -1,9 +1,16 @@
 ﻿using GarageManagementAPI.Entities.Models;
+using GarageManagementAPI.Shared.RequestFeatures;
 
 namespace GarageManagementAPI.Repository.Contracts
 {
     public interface IInvoiceRepository
     {
         Task CreateInvoiceAsync(Invoice invoice);
+
+        Task<Invoice?> GetInvoice(Guid invoiceId, bool trackChanges, string? include = default);
+
+        Task<PagedList<Invoice>> GetInvoices(Guid? garageId, InvoiceParameters invoiceParameters, bool trackChanges, string? include);
+
+        Task<PagedList<Invoice>> GetInvoices(string phone, InvoiceParameters invoiceParameters, bool trackChanges, string? include);
     }
 }

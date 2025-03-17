@@ -122,7 +122,6 @@ namespace GarageManagementAPI.Repository
                                             .GroupBy(p => p.ProductId)
                                             .Select(group => group.First())
                                             .ToListAsync();
-
             return productAtGagare;
         }
     }

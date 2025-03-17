@@ -6,13 +6,12 @@ using System.Threading.Tasks;
 
 namespace GarageManagementAPI.Shared.DataTransferObjects.InvoiceSellProduct
 {
-    public record class InvoiceSellProductDto
+    public record class InvoiceSellProductDto : BaseDto<InvoiceSellProductDto>
     {
-        public Guid InvoiceId { get; set; }
+        public Guid Id { get; set; }
 
-        public Guid ProductAtGarageId { get; set; }
-
-        public Guid ProductName { get; set; }
+        public Guid ProductId { get; set; }
+        public string ProductName { get; set; }
 
         public int Quantity { get; set; }
 

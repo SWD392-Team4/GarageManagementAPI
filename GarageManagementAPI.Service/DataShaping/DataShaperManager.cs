@@ -27,6 +27,8 @@ using GarageManagementAPI.Shared.DataTransferObjects.PackageHistory;
 using GarageManagementAPI.Shared.DataTransferObjects.ProductAtWarehouse;
 using GarageManagementAPI.Shared.DataTransferObjects.Appointment;
 using GarageManagementAPI.Shared.DataTransferObjects.ProductAtGarage;
+using GarageManagementAPI.Shared.DataTransferObjects.InvoiceSellProduct;
+using GarageManagementAPI.Shared.DataTransferObjects.Invoice;
 
 namespace GarageManagementAPI.Service.DataShaping
 {
@@ -60,6 +62,8 @@ namespace GarageManagementAPI.Service.DataShaping
         private readonly Lazy<IDataShaper<PackageConditionDto>> _packageConditionShaper;
         private readonly Lazy<IDataShaper<ProductAtWarehouseDto>> _productAtWarehouseShaper;
         private readonly Lazy<IDataShaper<AppointmentDto>> _appointmentShaper;
+        private readonly Lazy<IDataShaper<InvoiceDto>> _invoiceShaper;
+        private readonly Lazy<IDataShaper<InvoiceSellProductDto>> _invoiceSellProductShaper;
 
         public DataShaperManager()
         {
@@ -144,6 +148,12 @@ namespace GarageManagementAPI.Service.DataShaping
            () => new DataShaper<AppointmentDto>(AppointmentDto.PropertyInfos));
             _productAtGarageShaper = new Lazy<IDataShaper<ProductAtGarageDto>>(
          () => new DataShaper<ProductAtGarageDto>(ProductAtGarageDto.PropertyInfos));
+
+            _invoiceShaper = new Lazy<IDataShaper<InvoiceDto>>(
+          () => new DataShaper<InvoiceDto>(InvoiceDto.PropertyInfos));
+
+            _invoiceSellProductShaper = new Lazy<IDataShaper<InvoiceSellProductDto>>(
+         () => new DataShaper<InvoiceSellProductDto>(InvoiceSellProductDto.PropertyInfos));
         }
         //.Value là thuộc tính của Lazy<T>, nó sẽ kích hoạt việc khởi tạo đối tượng nếu đối tượng đó chưa được khởi tạo trước đó. Nếu đối tượng đã được khởi tạo, thuộc tính .Value sẽ trả về đối tượng đó.
         public IDataShaper<UserDto> User => _userShaper.Value;
@@ -174,5 +184,7 @@ namespace GarageManagementAPI.Service.DataShaping
         public IDataShaper<PackageConditionDto> PackageCondition => _packageConditionShaper.Value;
         public IDataShaper<CarCategoryDto> CarCategory => _carCategoryShaper.Value;
         public IDataShaper<AppointmentDto> Appointment => _appointmentShaper.Value;
+        public IDataShaper<InvoiceDto> Invoice => _invoiceShaper.Value;
+        public IDataShaper<InvoiceSellProductDto> InvoiceSellProduct => _invoiceSellProductShaper.Value;
     }
 }
