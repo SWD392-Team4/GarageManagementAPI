@@ -42,7 +42,6 @@ namespace GarageManagementAPI.Service
 
             var productAtHouseDto = _mapper.Map<IEnumerable<ProductAtGarageDto>>(productsWithMetadata);
 
-
             var productQuantities = await _repoManager.ProductAtGarage.GetTotalQuantityByProductIdAsync();
 
             foreach (var productDto in productAtHouseDto)
@@ -61,15 +60,15 @@ namespace GarageManagementAPI.Service
             return productAtGarage.OkResukt();
         }
 
-        public async Task<Result<IEnumerable<ProductAtGarageDto>>> GetProductsAtGarage(Guid userId, bool trackChanges, string? include = null)
+        public async Task<Result<IEnumerable<ExpandoObject>>> GetProductsAtGarage(Guid userId, ProductAtGarageParameters productAtGarageParameters, bool trackChanges, string? include = null)
         {
             var user = await _repoManager.User.GetUserByIdAsync(userId, false, "EmployeeInfo");
 
             var garageId = user!.EmployeeInfo!.WorkplaceId ?? throw new Exception("GarageId cannot be null.");
 
-            var productQuantities = await _repoManager.ProductAtGarage.GetTotalQuantityByProductIdAsync();
+            var productQuantities = await _repoManager.ProductAtGarage.GetTotalQuantityByProductIdAsync(garageId);
 
-            var productAtGarages = await _repoManager.ProductAtGarage.GetProductAtGarages(garageId, trackChanges, include);
+            var productAtGarages = await _repoManager.ProductAtGarage.GetProductAtGarages(garageId, productAtGarageParameters, trackChanges, include);
 
             var productAtGaragesDto = _mapper.Map<IEnumerable<ProductAtGarageDto>>(productAtGarages);
 
@@ -78,8 +77,9 @@ namespace GarageManagementAPI.Service
                 productDto.Quantity = productQuantities.ContainsKey(productDto.ProductId) ? productQuantities[productDto.ProductId] : 0;
             }
 
+            var productAtHouseShapper = _dataShapper.ProductAtGarage.ShapeData(productAtGaragesDto, productAtGarageParameters.Fields);
 
-            return Result<IEnumerable<ProductAtGarageDto>>.Ok(productAtGaragesDto);
+            return Result<IEnumerable<ExpandoObject>>.Ok(productAtHouseShapper, productAtGarages.MetaData);
         }
     }
 }

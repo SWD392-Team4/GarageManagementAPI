@@ -17,6 +17,11 @@ namespace GarageManagementAPI.Repository
             await base.CreateAsync(productAtWarehouse);
         }
 
+        public void UpdateProductAtWarehouse(ProductAtWarehouse productAtWarehouse)
+        {
+            base.Update(productAtWarehouse);
+        }
+
         public async Task<ProductAtWarehouse?> GetProductAtWarehouse(Guid productId, bool trackChanges, string? include = null)
         {
             var productAtWareHourse = include == null
@@ -99,10 +104,6 @@ namespace GarageManagementAPI.Repository
                 .GroupBy(paw => paw.GoodsReceivedDetail.ProductId)
                 .Select(g => new { ProductId = g.Key, TotalQuantity = g.Sum(paw => paw.Quantity) })
                 .ToDictionaryAsync(x => x.ProductId, x => x.TotalQuantity);
-        }
-        public void UpdateProductAtWarehouse(ProductAtWarehouse productAtWarehouse)
-        {
-            base.Update(productAtWarehouse);
         }
     }
 }

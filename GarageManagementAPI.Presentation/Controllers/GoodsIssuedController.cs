@@ -21,7 +21,8 @@ namespace GarageManagementAPI.Presentation.Controllers
         //[Authorize(Roles = $"{nameof(SystemRole.Administrator)}, {nameof(SystemRole.Cashier)}")]
         public async Task<IActionResult> GetGoodsIssueds([FromQuery] GoodsIssuedParameters goodsIssuedParameters)
         {
-            var goodsIssuedResult = await _service.GoodsIssuedService.GetGoodsIssuedsAsync(goodsIssuedParameters, trackChanges: false);
+            var include = "CreatedWareHouseManager, Warehouse, Garage";
+            var goodsIssuedResult = await _service.GoodsIssuedService.GetGoodsIssuedsAsync(goodsIssuedParameters, trackChanges: false, include);
 
             return goodsIssuedResult.Map(
                 onSuccess: Ok,
@@ -33,7 +34,8 @@ namespace GarageManagementAPI.Presentation.Controllers
         //[Authorize(Roles = $"{nameof(SystemRole.Administrator)},{nameof(SystemRole.Cashier)}")]
         public async Task<IActionResult> GetGoodsIssuedById(Guid goodsIssuedId, [FromQuery] GoodsIssuedParameters goodsIssuedParameters)
         {
-            var goodsIssuedResult = await _service.GoodsIssuedService.GetGoodsIssuedAsync(goodsIssuedId, goodsIssuedParameters, trackChanges: false);
+            var include = "CreatedWareHouseManager, Warehouse, Garage";
+            var goodsIssuedResult = await _service.GoodsIssuedService.GetGoodsIssuedAsync(goodsIssuedId, goodsIssuedParameters, trackChanges: false, include);
 
             return goodsIssuedResult.Map(
                 onSuccess: Ok,
@@ -41,7 +43,7 @@ namespace GarageManagementAPI.Presentation.Controllers
                 );
         }
 
-        [Authorize(Roles = $"{nameof(SystemRole.Cashier)}, {nameof(SystemRole.Administrator)}")]
+        [Authorize(Roles = $"{nameof(SystemRole.Cashier)}, {nameof(SystemRole.Administrator)}, {nameof(SystemRole.WarehouseManager)}")]
         [HttpPost(Name = "CreateGoodsIssued")]
         public async Task<IActionResult> CreateGoodsIssued([FromBody] GoodsIssuedDtoForCreation goodsIssuedDtoForCreation)
         {

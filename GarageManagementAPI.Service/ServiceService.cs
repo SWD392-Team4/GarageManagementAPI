@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using System.Dynamic;
+using GarageManagementAPI.Shared.Enums;
 using GarageManagementAPI.Entities.Models;
 using GarageManagementAPI.Shared.Extension;
 using GarageManagementAPI.Service.Extension;
@@ -11,8 +12,6 @@ using GarageManagementAPI.Shared.Enums.SystemStatuss;
 using GarageManagementAPI.Shared.ErrorsConstant.Service;
 using GarageManagementAPI.Shared.DataTransferObjects.Service;
 using GarageManagementAPI.Shared.DataTransferObjects.Package;
-using GarageManagementAPI.Shared.Enums;
-using GarageManagementAPI.Shared.DataTransferObjects.Product;
 
 namespace GarageManagementAPI.Service
 {
@@ -239,6 +238,15 @@ namespace GarageManagementAPI.Service
             var servicesDto = _mapper.Map<IEnumerable<ServiceDto>>(services);
             var serviceDtoShapped = _dataShaper.Service.ShapeData(servicesDto, null);
             return Result<IEnumerable<ExpandoObject>>.Ok(serviceDtoShapped, services.MetaData);
+        }
+
+        public async Task<IEnumerable<ServiceDto>> GetTopService(int numberString, bool trackChanges, string? include = null)
+        {
+            var services = await _repoManager.Service.GetTopService(numberString, trackChanges, include);
+
+            var servicesDto = _mapper.Map<IEnumerable<ServiceDto>>(services);
+
+            return servicesDto;
         }
     }
 }

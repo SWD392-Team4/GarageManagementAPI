@@ -7,6 +7,11 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="System.Drawing.Common" Version="9.0.3" />
+    <PackageReference Include="ZXing.Net" Version="0.16.10" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\GarageManagementAPI.Entities\GarageManagementAPI.Entities.csproj" />
     <ProjectReference Include="..\GarageManagementAPI.Shared\GarageManagementAPI.Shared.csproj" />
   </ItemGroup>

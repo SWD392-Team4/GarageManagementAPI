@@ -187,6 +187,26 @@ namespace GarageManagementAPI.Service
             return Result<ExpandoObject>.Ok(productShaped);
         }
 
+        public async Task<Result<ExpandoObject>> GetProductByIdAsync(Guid productId, Guid garageId,bool trackChanges, string? include = null)
+        {
+            var productResult = await GetAndCheckIfProductExist(productId, trackChanges, include);
+
+            if (!productResult.IsSuccess)
+                return Result<ExpandoObject>.NotFound(productResult.Errors!);
+
+            var productsEntity = productResult.GetValue<Product>();
+
+            var quantity = await _repoManager.ProductAtGarage.GetTotalStockForProduct(productId, garageId);
+
+            var productDto = _mapper.Map<ProductDto>(productsEntity);
+
+            productDto.TotalQuantity = quantity;
+
+            var productShaped = _dataShaper.Product.ShapeData(productDto, null);
+
+            return Result<ExpandoObject>.Ok(productShaped);
+        }
+
         public async Task<Result<ExpandoObject>> GetProductAsync(bool trackChanges, string? include = null)
         {
             var productResult = await _repoManager.Product.GetProductWitMaxPrice(trackChanges, include);
@@ -357,7 +377,7 @@ namespace GarageManagementAPI.Service
 
         private string GenerateBarcode()
         {
-            return $"BCPD-{DateTime.UtcNow:yyyyMMddHHmmss}-{Guid.NewGuid().ToString("N").Substring(6)}";
+            return $"BCP-{DateTime.UtcNow:yyyyMMddHHmmss}";
         }
 
     }

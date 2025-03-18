@@ -16,5 +16,7 @@ namespace GarageManagementAPI.Service.Contracts
         public Task<Result<IEnumerable<ExpandoObject>>> GetServiceByCarCategory(Guid carCategoryId, ServiceParameters serviceParameters, bool trackChanges, string? include = null);
         public Task<Result<IEnumerable<ExpandoObject>>> GetServiceByCarModel(Guid carModelId, ServiceParameters serviceParameters, bool trackChanges, string? include = null);
 
+        public Task<IEnumerable<ServiceDto>> GetTopService(int numberString, bool trackChanges, string? include = null);
+
     }
 }
