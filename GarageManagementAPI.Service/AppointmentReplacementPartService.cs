@@ -47,7 +47,7 @@ namespace GarageManagementAPI.Service
             var productHistory = await _repoManager.ProductHistory.GetProductHistory(appointmentReplacementPartDtoForCreation.ProductId.Value, false);
 
             if (productHistory is null)
-                return Result<AppointmentReplacementPartDto>.NotFound(ProductHistoryErrors.GetProductHistoryNotFoundError());
+                return Result<AppointmentReplacementPartDto>.NotFound(ProductHistoryErrors.GetProductHistoryNotFoundError(appointmentReplacementPartDtoForCreation.ProductId.Value));
 
             var appointmentReplacementPart = new AppointmentReplacementPart()
             {

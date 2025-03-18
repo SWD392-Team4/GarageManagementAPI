@@ -1,11 +1,12 @@
 ﻿using GarageManagementAPI.Service.Contracts;
 using GarageManagementAPI.Shared.DataTransferObjects.Appointment;
-using GarageManagementAPI.Shared.DataTransferObjects.Workplace;
 using GarageManagementAPI.Shared.Enums;
 using GarageManagementAPI.Shared.Extension;
 using GarageManagementAPI.Shared.RequestFeatures;
+
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+
 using System.Security.Claims;
 
 namespace GarageManagementAPI.Presentation.Controllers
@@ -71,6 +72,16 @@ namespace GarageManagementAPI.Presentation.Controllers
             await _service.MailService.SendInformationAppointmentEmail(appointment.Id);
 
             return CreatedAtRoute("GetAppointment", new { garageId, appointmentId = appointment.Id }, result);
+        }
+
+        [HttpPost("checkPirce")]
+        public async Task<IActionResult> CheckPrice([FromBody] AppointmentDtoForCheckPriceRequest appointmentDtoCreation)
+        {
+            var result = await _service.AppointmentService.CheckPriceAppointment(appointmentDtoCreation);
+            return result.Map(
+                onSuccess: Ok,
+                onFailure: ProcessError
+                );
         }
 
 

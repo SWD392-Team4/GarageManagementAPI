@@ -21,8 +21,6 @@ using GarageManagementAPI.Shared.Extension;
 using GarageManagementAPI.Shared.RequestFeatures;
 using GarageManagementAPI.Shared.ResultModel;
 
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Dynamic;
 
 namespace GarageManagementAPI.Service
@@ -40,86 +38,109 @@ namespace GarageManagementAPI.Service
             _dataShaper = dataShaper;
         }
 
-
-
-        public async Task<Result<AppointmentDto>> CreateAppointment(Guid garageId, Guid? userId, AppointmentDtoForCreation appointmentDtoCreation)
+        private async Task<Result> ValidateCreateAppointment(Guid garageId, Guid? userId, AppointmentDtoForCreation appointmentDtoCreation)
         {
             var garage = await _repoManager.Workplace.GetWorkplaceByIdAsync(garageId, false);
             if (garage is null || !garage.WorkplaceType.Equals(WorkplaceType.Garage))
-                return Result<AppointmentDto>.NotFound(WorkplaceErrors.GetGarageNotFound(garageId));
+                return Result.NotFound(WorkplaceErrors.GetGarageNotFound(garageId));
 
             var appointmentPerDay = await _repoManager.AppointmentPerDay.GetAppointmentPerDayAsync(garageId, false);
             if (appointmentPerDay is null)
                 throw new Exception("System did not have restrict appointment per day.");
 
             if (!ValidEstimatedTime(appointmentDtoCreation.EstimatedAppointmentTime!.Value))
-                return Result<AppointmentDto>.BadRequest(AppointmentErrors.GetAppointmentEstimatedTimeInvalidError());
+                return Result.BadRequest(AppointmentErrors.GetAppointmentEstimatedTimeInvalidError());
 
             var checkEstimatedTimeValid = await _repoManager.Appointment.GetAppointmentAsync(appointmentDtoCreation.EstimatedAppointmentTime!.Value, false);
             if (checkEstimatedTimeValid.Count() >= appointmentPerDay!.CountPerDay)
-                return Result<AppointmentDto>.Conflict(AppointmentErrors.GetAppointmentExceedLimitError(garageId, appointmentPerDay!.CountPerDay));
+                return Result.Conflict(AppointmentErrors.GetAppointmentExceedLimitError(garageId, appointmentPerDay!.CountPerDay));
 
             if (userId.HasValue)
             {
                 var user = await _repoManager.User.GetUserByIdAsync(userId.Value, false, "Roles");
                 if (user is null)
-                    return Result<AppointmentDto>.NotFound(UserErrors.GetUserNotFoundWithIdError(userId.Value));
+                    return Result.NotFound(UserErrors.GetUserNotFoundWithIdError(userId.Value));
 
                 if (!user.Roles.Any(r => r.Name!.Equals(nameof(SystemRole.Cashier)) || r.Name!.Equals(nameof(SystemRole.Customer))))
-                    return Result<AppointmentDto>.Forbidden(UserErrors.GetUnAuthorizeUserError());
+                    return Result.Forbidden(UserErrors.GetUnAuthorizeUserError());
             }
 
             if (appointmentDtoCreation.CarModelId.HasValue)
             {
                 var carModel = await _repoManager.CarModel.GetCarModelAsync(appointmentDtoCreation.CarModelId!.Value, false);
                 if (carModel is null)
-                    return Result<AppointmentDto>.NotFound(CarModelErrors.GetCarModelNotFoundError(appointmentDtoCreation.CarModelId!.Value));
+                    return Result.NotFound(CarModelErrors.GetCarModelNotFoundError(appointmentDtoCreation.CarModelId!.Value));
             }
 
             if ((appointmentDtoCreation.Services is null || !appointmentDtoCreation.Services.Any()) && (appointmentDtoCreation.Packages is null || !appointmentDtoCreation.Packages.Any()))
-                return Result<AppointmentDto>.BadRequest(AppointmentErrors.GetInvalidAppointmentError());
+                return Result.BadRequest(AppointmentErrors.GetInvalidAppointmentError());
+
+            return Result.Ok();
+        }
+        public async Task<Result<AppointmentDto>> CreateAppointment(Guid garageId, Guid? userId, AppointmentDtoForCreation appointmentDtoCreation)
+        {
+            var result = await ValidateCreateAppointment(garageId, userId, appointmentDtoCreation);
+            if (!result.IsSuccess)
+                return Result<AppointmentDto>.Failure(result);
 
             var appointment = _mapper.Map<Appointment>(appointmentDtoCreation);
             if (userId.HasValue) appointment.ApproveByEmployeeId = userId.Value;
-
             await _repoManager.Appointment.CreateAsync(garageId, appointment);
+            var now = DateTimeOffset.UtcNow.SEAsiaStandardTime();
 
-            if (appointmentDtoCreation.Packages is null || !appointmentDtoCreation.Packages.Any())
+            List<AppointmentDetail> appointmentDetails;
+            List<AppointmentDetailPackage> appointmentDetailPackages;
+
+            if (appointmentDtoCreation.Packages is not null && appointmentDtoCreation.Packages.Any())
             {
-                var createAppointmentDetailResult = await CreateAppointmentDetails(appointment.Id, appointmentDtoCreation.Services!);
-                if (!createAppointmentDetailResult.IsSuccess)
-                    return Result<AppointmentDto>.Failure(createAppointmentDetailResult);
-                appointment.Price = createAppointmentDetailResult.Value.totalPrice;
-                appointment.EstimatedEndTime = appointment.EstimatedAppointmentTime.AddHours(createAppointmentDetailResult.Value.totalHours);
-                appointment.AppointmentType = AppointmentType.ServicePackageBooking;
+                var packageResult = await CreateAppointmentDetailPackages(
+                    appointment.Id, appointmentDtoCreation.Packages, appointmentDtoCreation.Services);
 
+                if (!packageResult.IsSuccess)
+                    return Result<AppointmentDto>.Failure(packageResult);
+
+                appointmentDetails = packageResult.Value.appointmentDetails;
+                appointmentDetailPackages = packageResult.Value.appointmentPackages;
+                appointment.Price = packageResult.Value.totalPrice;
+                appointment.EstimatedEndTime = appointment.EstimatedAppointmentTime.AddHours(packageResult.Value.totalHours);
+                appointment.AppointmentType = AppointmentType.ServicePackageBooking;
             }
             else
             {
-                var createAppointmentDetailResult = await CreateAppointmentDetailPackages(appointment.Id, appointmentDtoCreation.Packages, appointmentDtoCreation.Services);
-                if (!createAppointmentDetailResult.IsSuccess)
-                    return Result<AppointmentDto>.Failure(createAppointmentDetailResult);
-                appointment.Price = createAppointmentDetailResult.Value.totalPrice;
-                appointment.EstimatedEndTime = appointment.EstimatedAppointmentTime.AddHours(createAppointmentDetailResult.Value.totalHours);
+                var serviceResult = await CreateAppointmentDetails(appointment.Id, appointmentDtoCreation.Services!);
+                if (!serviceResult.IsSuccess)
+                    return Result<AppointmentDto>.Failure(serviceResult);
+
+                appointmentDetails = serviceResult.Value.appointmentDetails;
+                appointmentDetailPackages = new List<AppointmentDetailPackage>();
+                appointment.Price = serviceResult.Value.totalPrice;
+                appointment.EstimatedEndTime = appointment.EstimatedAppointmentTime.AddHours(serviceResult.Value.totalHours);
                 appointment.AppointmentType = AppointmentType.ServiceBooking;
             }
 
+            // Save the details to the database
+            if (appointmentDetails.Any())
+                await _repoManager.AppointmentDetail.CreatesAsync([.. appointmentDetails]);
+
+            if (appointmentDetailPackages.Any())
+                await _repoManager.AppointmentDetailPackage.CreatesAsync([.. appointmentDetailPackages]);
+
 
             await _repoManager.SaveAsync();
-
+            appointment.AppointmentDetailPackages = appointmentDetailPackages;
+            appointment.AppointmentDetails = appointmentDetails;
             var appointmentDto = _mapper.Map<AppointmentDto>(appointment);
             return Result<AppointmentDto>.Ok(appointmentDto);
         }
 
-
-        private async Task<Result<(decimal totalPrice, int totalHours)>> CreateAppointmentDetails(
+        private async Task<Result<(List<AppointmentDetail> appointmentDetails, decimal totalPrice, int totalHours)>> CreateAppointmentDetails(
             Guid appointmentId,
             IEnumerable<AppointmentDetailDtoForCreation>? serviceInAppointmentDtos,
             Guid packageHistoryId = default)
         {
             // Early return if no services
             if (serviceInAppointmentDtos == null || !serviceInAppointmentDtos.Any())
-                return Result<(decimal totalPrice, int totalHours)>.Ok((0, 0));
+                return Result<(List<AppointmentDetail>, decimal, int)>.Ok((new List<AppointmentDetail>(), 0, 0));
 
             // Check for duplicated services if not from a package
             if (packageHistoryId == default)
@@ -128,7 +149,7 @@ namespace GarageManagementAPI.Service
                 var duplicateService = serviceGroups.FirstOrDefault(g => g.Count() > 1);
 
                 if (duplicateService != null)
-                    return Result<(decimal totalPrice, int totalHours)>.BadRequest(AppointmentErrors.GetAppointmentServiceDuplicateError(duplicateService.Key));
+                    return Result<(List<AppointmentDetail>, decimal, int)>.BadRequest(AppointmentErrors.GetAppointmentServiceDuplicateError(duplicateService.Key));
             }
 
             // Extract all needed IDs upfront
@@ -145,7 +166,7 @@ namespace GarageManagementAPI.Service
                 var duplicateProductIds = servicesWithDuplicateProducts.First().ReplacementParts!
                     .GroupBy(rp => rp.ProductId)
                     .First(g => g.Count() > 1);
-                return Result<(decimal totalPrice, int totalHours)>.BadRequest(AppointmentErrors.GetAppointmentHasDuplicateProductInServiceError(servicesWithDuplicateProducts.First().ServiceId, duplicateProductIds.Key.Value));
+                return Result<(List<AppointmentDetail>, decimal, int)>.BadRequest(AppointmentErrors.GetAppointmentHasDuplicateProductInServiceError(servicesWithDuplicateProducts.First().ServiceId, duplicateProductIds.Key.Value));
             }
 
             var productDtos = serviceList.Where(s => s.ReplacementParts != null && s.ReplacementParts.Any())
@@ -158,14 +179,14 @@ namespace GarageManagementAPI.Service
             if (services.Count() != serviceIdList.Count)
             {
                 var missingIds = serviceIdList.Except(services.Select(s => s.Id));
-                return Result<(decimal totalPrice, int totalHours)>.NotFound(ServiceErrors.GetServicesFoundNotMatchWithIdsError(missingIds));
+                return Result<(List<AppointmentDetail>, decimal, int)>.NotFound(ServiceErrors.GetServicesFoundNotMatchWithIdsError(missingIds));
             }
 
             var serviceHistoryList = await _repoManager.ServiceHistory.GetServiceHistoriesAsync(serviceIdList, false);
             if (serviceHistoryList.Count() != serviceIdList.Count)
             {
                 var notFoundServiceIds = serviceIdList.Except(serviceHistoryList.Select(s => s.ServiceId));
-                return Result<(decimal totalPrice, int totalHours)>.NotFound(ServiceHistoryErrors.GetServiceHistoryFoundNotMatchWithIdsError(notFoundServiceIds));
+                return Result<(List<AppointmentDetail>, decimal, int)>.NotFound(ServiceHistoryErrors.GetServiceHistoryFoundNotMatchWithIdsError(notFoundServiceIds));
             }
 
             // Only query products if there are any
@@ -178,14 +199,14 @@ namespace GarageManagementAPI.Service
                 if (productList.Count() != productIdList.Count)
                 {
                     var missingIds = productIdList.Except(productList.Select(p => p.Id));
-                    return Result<(decimal totalPrice, int totalHours)>.NotFound(ProductErrors.GetProductsFoundNotMatchWithIdsError(missingIds));
+                    return Result<(List<AppointmentDetail>, decimal, int)>.NotFound(ProductErrors.GetProductsFoundNotMatchWithIdsError(missingIds));
                 }
 
                 productHistoryList = await _repoManager.ProductHistory.GetProductHistoriesAsync(productIdList, false);
                 if (productHistoryList.Count() != productIdList.Count)
                 {
                     var notFoundProductIds = productIdList.Except(productHistoryList.Select(p => p.ProductId));
-                    return Result<(decimal totalPrice, int totalHours)>.NotFound(ProductHistoryErrors.GetProductHistoryNotMatchWithProductId(notFoundProductIds));
+                    return Result<(List<AppointmentDetail>, decimal, int)>.NotFound(ProductHistoryErrors.GetProductHistoryNotMatchWithProductId(notFoundProductIds));
                 }
             }
 
@@ -211,7 +232,7 @@ namespace GarageManagementAPI.Service
                     CreateAt = now,
                     UpdatedAt = now,
                     Status = AppointmentDetailStatus.Pending,
-                    PackageHistoryId = packageHistoryId != default ? packageHistoryId : null
+                    PackageHistoryId = packageHistoryId != default ? packageHistoryId : null,
                 };
 
                 // Add replacement parts if any
@@ -243,21 +264,43 @@ namespace GarageManagementAPI.Service
                 // Only add service price if not from a package
                 if (newAppointmentDetail.PackageHistoryId == null)
                     totalPrice += serviceHistory.Price;
+
                 appointmentDetails.Add(newAppointmentDetail);
             }
+
             totalHours = services.Sum(s => s.EstimatedHours);
 
-            // Bulk insert appointment details
-            await _repoManager.AppointmentDetail.CreatesAsync([.. appointmentDetails]);
-
-            return Result<(decimal totalPrice, int totalHours)>.Ok((totalPrice, totalHours));
+            return Result<(List<AppointmentDetail>, decimal, int)>.Ok((appointmentDetails, totalPrice, totalHours));
         }
 
-        private async Task<Result<(decimal totalPrice, int totalHours)>> CreateAppointmentDetailPackages(Guid appointmentId, IEnumerable<AppointmentDetailPackageDtoForCreation>? packages, IEnumerable<AppointmentDetailDtoForCreation>? serviceInAppointmentDtos, bool isPackageImmediate = true)
+        private async Task<Result<(List<AppointmentDetail> appointmentDetails, List<AppointmentDetailPackage> appointmentPackages, decimal totalPrice, int totalHours)>> CreateAppointmentDetailPackages(
+            Guid appointmentId,
+            IEnumerable<AppointmentDetailPackageDtoForCreation>? packages,
+            IEnumerable<AppointmentDetailDtoForCreation>? serviceInAppointmentDtos,
+            bool isPackageImmediate = true)
         {
-            if (packages is null || !packages.Any())
-                return Result<(decimal totalPrice, int totalHours)>.Ok((0, 0));
+            var allAppointmentDetails = new List<AppointmentDetail>();
+            var appointmentPackages = new List<AppointmentDetailPackage>();
+            decimal totalPrice = 0;
+            int totalHours = 0;
 
+            if (packages is null || !packages.Any())
+            {
+                // Handle standalone services if any
+                if (serviceInAppointmentDtos is not null && serviceInAppointmentDtos.Any())
+                {
+                    var serviceResult = await CreateAppointmentDetails(appointmentId, serviceInAppointmentDtos);
+                    if (!serviceResult.IsSuccess)
+                        return Result<(List<AppointmentDetail>, List<AppointmentDetailPackage>, decimal, int)>.Failure(serviceResult);
+
+                    allAppointmentDetails.AddRange(serviceResult.Value.appointmentDetails);
+                    totalPrice = serviceResult.Value.totalPrice;
+                    totalHours = serviceResult.Value.totalHours;
+                }
+
+                return Result<(List<AppointmentDetail>, List<AppointmentDetailPackage>, decimal, int)>.Ok(
+                    (allAppointmentDetails, appointmentPackages, totalPrice, totalHours));
+            }
 
             var checkDuplicatePackageId = packages
                 .GroupBy(p => p.PackageId)
@@ -266,37 +309,40 @@ namespace GarageManagementAPI.Service
                 .FirstOrDefault();
 
             if (checkDuplicatePackageId != default)
-                return Result<(decimal totalPrice, int totalHours)>.BadRequest(AppointmentErrors.GetAppointmentPackageDuplicateError(checkDuplicatePackageId));
+                return Result<(List<AppointmentDetail>, List<AppointmentDetailPackage>, decimal, int)>.BadRequest(
+                    AppointmentErrors.GetAppointmentPackageDuplicateError(checkDuplicatePackageId));
 
             var packageIds = packages.Select(p => p.PackageId).ToList();
 
-            decimal totalPrice = 0;
-            int totalHours = 0;
             var packageList = await _repoManager.Package.GetPackagesAsync(packageIds, false);
             if (packageList.Count() != packageIds.Count())
             {
                 var notFoundPackageIds = packageIds.Except(packageList.Select(p => p.Id));
-                return Result<(decimal totalPrice, int totalHours)>.NotFound(PackageErrors.GetPackageFoundNotMatchWithIdError(notFoundPackageIds));
+                return Result<(List<AppointmentDetail>, List<AppointmentDetailPackage>, decimal, int)>.NotFound(
+                    PackageErrors.GetPackageFoundNotMatchWithIdError(notFoundPackageIds));
             }
+
             if (packageList.Any(p => !p.Type.Equals(PackageType.Immediate)) && !isPackageImmediate)
             {
-                return Result<(decimal totalPrice, int totalHours)>.BadRequest(AppointmentErrors.GetAppointmentWrongPackageTypeError());
+                return Result<(List<AppointmentDetail>, List<AppointmentDetailPackage>, decimal, int)>.BadRequest(
+                    AppointmentErrors.GetAppointmentWrongPackageTypeError());
             }
 
             var packageHistoryList = await _repoManager.PackageHistory.GetPackageHistoriesAsync(packageIds, false);
             if (packageHistoryList.Count() != packageIds.Count())
             {
                 var notFoundPackageIds = packageIds.Except(packageHistoryList.Select(p => p.PackageId));
-                return Result<(decimal totalPrice, int totalHours)>.NotFound(PackageErrors.GetPackageHistoryFoundNotMatchWithIdsError(notFoundPackageIds));
+                return Result<(List<AppointmentDetail>, List<AppointmentDetailPackage>, decimal, int)>.NotFound(
+                    PackageErrors.GetPackageHistoryFoundNotMatchWithIdsError(notFoundPackageIds));
             }
 
-            var pacakgeDetail = new List<AppointmentDetailPackage>();
             var packageHistoryDict = packageHistoryList.ToDictionary(p => p.PackageId);
             var now = DateTimeOffset.UtcNow.SEAsiaStandardTime();
+
             foreach (var package in packages)
             {
                 var packageHistory = packageHistoryDict[package.PackageId];
-                var newAppointmentDetail = new AppointmentDetailPackage()
+                var newAppointmentDetailPackage = new AppointmentDetailPackage()
                 {
                     AppointmentId = appointmentId,
                     PackageHistoryId = packageHistory.Id,
@@ -304,33 +350,75 @@ namespace GarageManagementAPI.Service
                     UpdatedAt = now,
                     Status = AppointmentDetailPackageStatus.Pending
                 };
-                pacakgeDetail.Add(newAppointmentDetail);
+
+                appointmentPackages.Add(newAppointmentDetailPackage);
                 totalPrice += packageHistory.PackagePrice;
+
                 var serviceOfPackageHistory = await _repoManager.Service.GetServiceByPackageHistoryIdAsync(packageHistory.Id, false);
                 var newServiceInAppointmentDtos = serviceOfPackageHistory.Select(x => new AppointmentDetailDtoForCreation()
                 {
                     ServiceId = x.Id,
                 });
 
-                var result = await CreateAppointmentDetails(appointmentId, newServiceInAppointmentDtos, packageHistory.Id);
-                if (!result.IsSuccess)
-                    return Result<(decimal totalPrice, int totalHours)>.Failure(result);
+                var serviceResult = await CreateAppointmentDetails(appointmentId, newServiceInAppointmentDtos, packageHistory.Id);
+                if (!serviceResult.IsSuccess)
+                    return Result<(List<AppointmentDetail>, List<AppointmentDetailPackage>, decimal, int)>.Failure(serviceResult);
 
-                totalHours += result.Value.totalHours;
+                allAppointmentDetails.AddRange(serviceResult.Value.appointmentDetails);
+                totalHours += serviceResult.Value.totalHours;
             }
 
+            // Add standalone services if any
             if (serviceInAppointmentDtos is not null && serviceInAppointmentDtos.Any())
             {
-                var result2 = await CreateAppointmentDetails(appointmentId, serviceInAppointmentDtos);
-                if (!result2.IsSuccess)
-                    return Result<(decimal totalPrice, int totalHours)>.Failure(result2);
-                totalPrice += result2.Value.totalPrice;
-                totalHours += result2.Value.totalHours;
+                var serviceResult = await CreateAppointmentDetails(appointmentId, serviceInAppointmentDtos);
+                if (!serviceResult.IsSuccess)
+                    return Result<(List<AppointmentDetail>, List<AppointmentDetailPackage>, decimal, int)>.Failure(serviceResult);
+
+                allAppointmentDetails.AddRange(serviceResult.Value.appointmentDetails);
+                totalPrice += serviceResult.Value.totalPrice;
+                totalHours += serviceResult.Value.totalHours;
             }
 
-            await _repoManager.AppointmentDetailPackage.CreatesAsync([.. pacakgeDetail]);
+            return Result<(List<AppointmentDetail>, List<AppointmentDetailPackage>, decimal, int)>.Ok(
+                (allAppointmentDetails, appointmentPackages, totalPrice, totalHours));
+        }
 
-            return Result<(decimal totalPrice, int totalHours)>.Ok((totalPrice, totalHours));
+        public async Task<Result<AppointmentDtoForCheckPriceResponse>> CheckPriceAppointment(AppointmentDtoForCheckPriceRequest forCheckPriceRequest)
+        {
+            var newAppointment = new AppointmentDtoForCheckPriceResponse();
+            List<AppointmentDetail> appointmentDetails;
+            List<AppointmentDetailPackage> appointmentDetailPackages;
+
+            if (forCheckPriceRequest.Packages is not null && forCheckPriceRequest.Packages.Any())
+            {
+                var packageResult = await CreateAppointmentDetailPackages(
+                    default, forCheckPriceRequest.Packages, forCheckPriceRequest.Services);
+
+                if (!packageResult.IsSuccess)
+                    return Result<AppointmentDtoForCheckPriceResponse>.Failure(packageResult);
+
+                appointmentDetails = packageResult.Value.appointmentDetails;
+                appointmentDetailPackages = packageResult.Value.appointmentPackages;
+                newAppointment.Price = packageResult.Value.totalPrice;
+
+            }
+            else
+            {
+                var serviceResult = await CreateAppointmentDetails(default, forCheckPriceRequest.Services!);
+                if (!serviceResult.IsSuccess)
+                    return Result<AppointmentDtoForCheckPriceResponse>.Failure(serviceResult);
+
+                appointmentDetails = serviceResult.Value.appointmentDetails;
+                appointmentDetailPackages = new List<AppointmentDetailPackage>();
+                newAppointment.Price = serviceResult.Value.totalPrice;
+            }
+
+            newAppointment.AppointmentDetailPackages = _mapper.Map<IEnumerable<AppointmentDetailPackageDto>>(appointmentDetailPackages);
+            newAppointment.AppointmentDetails = _mapper.Map<IEnumerable<AppointmentDetailDto>>(appointmentDetails);
+
+            return Result<AppointmentDtoForCheckPriceResponse>.Ok(newAppointment);
+
         }
 
         private async Task<Result<Appointment>> GetAppointment(Guid appointmentId, bool trackChanges)
