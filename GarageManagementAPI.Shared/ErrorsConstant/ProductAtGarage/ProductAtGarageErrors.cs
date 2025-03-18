@@ -7,11 +7,15 @@ namespace GarageManagementAPI.Shared.ErrorsConstant.ProductAtGarage
     {
         #region Product at garage const
         public const string ProductAtGarageNotFound = "Product at garage not found with id {0}";
+        public const string ProductAtGarageBarcodeNotFound = "Product at garage not found with barcode {0}";
         #endregion
 
         #region Prodct at garage errors
         public static ErrorsResult GetProductAtGarageNotFound(Guid productAtGarageId)
             => new() { Code = ProductAtGarageNotFound, Description = string.Format(ProductAtGarageNotFound, productAtGarageId) };
+
+        public static ErrorsResult GetProductAtGarageBarcodeNotFound(string barcode)
+    => new() { Code = ProductAtGarageBarcodeNotFound, Description = string.Format(ProductAtGarageBarcodeNotFound, barcode) };
         #endregion
     }
 }

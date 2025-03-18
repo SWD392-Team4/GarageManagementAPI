@@ -9,7 +9,7 @@ namespace GarageManagementAPI.Service.Contracts
     {
         public Task<Result<ExpandoObject>> GetProductByIdAsync(Guid productId, bool trackChanges, string? include = null);
         public Task<Result<ExpandoObject>> GetProductByIdAsync(Guid productId, Guid garageId,bool trackChanges, string? include = null);
-        public Task<Result<ExpandoObject>> GetProductByBarcodeAsync(string productId, ProductParameters productParameters, bool trackChanges, string? include = null);
+        public Task<Result<ExpandoObject>> GetProductByBarcodeAsync(string barcode, ProductParameters productParameters, bool trackChanges, string? include = null);
         public Task<Result<IEnumerable<ExpandoObject>>> GetProductsAsync(ProductParameters productParameters, bool trackChanges, string? include = null);
         public Task<Result<IEnumerable<ExpandoObject>>> GetProductsByWarehouseIdWithQuantityAsync(Guid warehouseId, ProductParameters productParameters, bool trackChanges, string? include = null);
         public Task<Result<ProductDtoForUpdate>> GetProductForPartiallyUpdate(Guid productId, bool trackChanges, string? include = null);
@@ -19,5 +19,7 @@ namespace GarageManagementAPI.Service.Contracts
         public Task<Result<IEnumerable<ProductDto>>> GetProductsByCarModelAndPart(Guid carModelId, Guid carPartId, Guid userIduserId, bool trackChanges, string? include = null);
 
         public Task<Result<IEnumerable<ProductDto>>> GetProductsByCarModelAndPartGarage(Guid carModelId, Guid carPartId, Guid garageId, bool trackChanges, string? include = null);
+
+        public Task<Result<ExpandoObject>> GetProductByBarcodeByProductAtGarageAsync(string barcode, Guid userId, ProductParameters productParameters, bool trackChanges, string? include = null);
     }
 }

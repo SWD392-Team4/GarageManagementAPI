@@ -156,5 +156,19 @@ namespace GarageManagementAPI.Repository
                                            .ToListAsync();
             return productAtGagare;
         }
+
+        public async Task<Product?> GetProductAtGarage(string barcode, Guid garageId, bool trackChanges, string? include = null)
+        {
+            var productAtGarage = await FindByCondition(p => p.ProductBarcodeAtGarage!.Equals(barcode)
+                                                    && p.WorkplaceId.Equals(garageId), trackChanges)
+                                                   .Include(p => p.Product)
+                                                   .ThenInclude(p => p.ProductImages)
+                                                   .GroupBy(p => p.Product)
+                                                   .Select(g => g.Key) 
+                                                   .FirstOrDefaultAsync();
+
+            return productAtGarage;
+        }
+
     }
 }
