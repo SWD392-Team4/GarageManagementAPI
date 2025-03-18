@@ -13,7 +13,7 @@ using System.Security.Claims;
 
 namespace GarageManagementAPI.Presentation.Controllers
 {
-    [Route("barcode")]
+    [Route("api/barcode")]
     [ApiController]
     public class BarcodeController : ApiControllerBase
     {
