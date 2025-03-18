@@ -200,7 +200,7 @@
             </summary>
             <returns></returns>
         </member>
-        <member name="M:GarageManagementAPI.Presentation.Controllers.ProductController.GetProductByBarcode(System.String,GarageManagementAPI.Shared.RequestFeatures.ProductParameters)">
+        <member name="M:GarageManagementAPI.Presentation.Controllers.ProductController.GetProductByCarModelAndCarPart(System.Guid,System.Guid,GarageManagementAPI.Shared.RequestFeatures.ProductParameters)">
             <summary>
             Get product by barcode
             </summary>

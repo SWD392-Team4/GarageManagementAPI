@@ -72,18 +72,6 @@ namespace GarageManagementAPI.Presentation.Controllers
         /// <param name="barcode"></param>
         /// <param name="productParameters"></param>
         /// <returns></returns>
-        [HttpGet("barcode/{barcode}", Name = "GetProductBarcode")]
-        //[Authorize(Roles = $"{nameof(SystemRole.Administrator)},{nameof(SystemRole.Cashier)}")]
-        public async Task<IActionResult> GetProductByBarcode(string barcode, [FromQuery] ProductParameters productParameters)
-        {
-            var isInclude = "Brand,ProductCategory,ProductHistories,ProductImages";
-            var productResult = await _service.ProductService.GetProductByBarcodeAsync(barcode, productParameters, trackChanges: false, isInclude);
-
-            return productResult.Map(
-                onSuccess: Ok,
-                onFailure: ProcessError
-                );
-        }
 
         [Authorize(Roles = $"{nameof(SystemRole.Cashier)}")]
         [HttpGet("car-model/car-part/{carModelId:guid}/{carPartId:guid}", Name = "GetProductCarModelAndCarPart")]

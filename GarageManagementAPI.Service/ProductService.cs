@@ -234,6 +234,31 @@ namespace GarageManagementAPI.Service
             return Result<ExpandoObject>.Ok(productShaped);
         }
 
+        public async Task<Result<ExpandoObject>> GetProductByBarcodeByProductAtGarageAsync(string barcode, Guid userId, ProductParameters productParameters, bool trackChanges, string? include = null)
+        {
+            var user = await _repoManager.User.GetUserByIdAsync(userId, false, "EmployeeInfo");
+
+            var garageId = user!.EmployeeInfo!.WorkplaceId ?? throw new Exception("GarageId cannot be null.");
+
+            var productResult = await this.GetAndCheckIfProductByBarCodeGarageExist(barcode, garageId, trackChanges, include);
+
+            if (!productResult.IsSuccess)
+                return Result<ExpandoObject>.NotFound(productResult.Errors!);
+
+            var productEntity = productResult.GetValue<Product>();
+
+            var quantity = await _repoManager.ProductAtGarage.GetTotalStockForProduct(productEntity.Id, garageId);
+
+            var productsDto = _mapper.Map<ProductDto>(productEntity);
+
+            productsDto.TotalQuantity = quantity;
+
+            var productShaped = _dataShaper.Product.ShapeData(productsDto, productParameters.Fields);
+
+            return Result<ExpandoObject>.Ok(productShaped);
+        }
+
+
         public async Task<Result<ProductDtoForUpdate>> GetProductForPartiallyUpdate(Guid productId, bool trackChanges, string? include = null)
         {
             var productResult = await GetAndCheckIfProductExist(productId, trackChanges, include);
@@ -322,9 +347,18 @@ namespace GarageManagementAPI.Service
                 return product.NotFoundBarcode(barcode);
 
             return product.OkResult();
-        }
 
-        public async Task<Result<IEnumerable<ProductDto>>> GetProductsByCarModelAndPart(Guid carModelId, Guid carPartId, Guid userId, bool trackChanges, string? include = null)
+        }
+            private async Task<Result<Product>> GetAndCheckIfProductByBarCodeGarageExist(string barcode, Guid garageId, bool trackChanges, string? include)
+            {
+                var product = await _repoManager.ProductAtGarage.GetProductAtGarage(barcode, garageId, false); 
+                if (product == null)
+                    return product.NotFoundBarcode(barcode);
+
+                return product.OkResult();
+            }
+
+            public async Task<Result<IEnumerable<ProductDto>>> GetProductsByCarModelAndPart(Guid carModelId, Guid carPartId, Guid userId, bool trackChanges, string? include = null)
         {
             var user = await _repoManager.User.GetUserByIdAsync(userId, false, "EmployeeInfo");
 
