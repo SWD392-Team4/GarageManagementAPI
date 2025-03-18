@@ -1,9 +1,10 @@
 ﻿using GarageManagementAPI.Shared.Enums;
+
 using System.ComponentModel.DataAnnotations;
 
 namespace GarageManagementAPI.Shared.DataTransferObjects.CarConditionImage
 {
-    public class CarConditionImageDto
+    public record CarConditionImageDto : BaseDto<CarConditionImageDto>
     {
         public Guid Id { get; set; }
 

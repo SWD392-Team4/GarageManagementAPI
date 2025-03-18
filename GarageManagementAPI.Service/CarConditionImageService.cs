@@ -1,18 +1,21 @@
 ﻿using AutoMapper;
+
 using GarageManagementAPI.Entities.Models;
 using GarageManagementAPI.Repository.Contracts;
 using GarageManagementAPI.Service.Contracts;
 using GarageManagementAPI.Shared.DataTransferObjects.CarConditionImage;
-using GarageManagementAPI.Shared.DataTransferObjects.PackageImage;
 using GarageManagementAPI.Shared.Enums;
-using GarageManagementAPI.Shared.ErrorsConstant.Package;
+using GarageManagementAPI.Shared.ErrorsConstant.Appointment;
 using GarageManagementAPI.Shared.RequestFeatures;
 using GarageManagementAPI.Shared.ResultModel;
+
+using Microsoft.EntityFrameworkCore;
+
 using System.Dynamic;
 
 namespace GarageManagementAPI.Service
 {
-    public class CarConditionImageService : ICarConditionImage
+    public class CarConditionImageService : ICarConditionImageService
     {
         private readonly IRepositoryManager _repoManager;
         private readonly IMapper _mapper;
@@ -24,64 +27,74 @@ namespace GarageManagementAPI.Service
             _dataShaper = dataShaper;
         }
 
-        public Task<Result<IEnumerable<CarConditionImageDto>>> CreatePackageImageAsync(Guid garageId, Guid appointmentId, Guid appointmentDetailId, IEnumerable<(string? ImageId, string? ImageLink)> imageTuples, ConditionStage conditionStage)
+        public async Task<Result<IEnumerable<CarConditionImageDto>>> CreateCarConditionImageAsync(Guid appointmentId, Guid appointmentDetailId, IEnumerable<(string? ImageId, string? ImageLink)> imageTuples, ConditionStage conditionStage)
         {
-            var package = await _repoManager.Package.GetPackageByIdAsync(packageId, trackChanges: false);
-            if (package is null)
-                return Result<IEnumerable<PackageImageDto>>.NotFound(PackageErrors.GetPackageNotFoundError(packageId));
+            var appointment = await _repoManager.Appointment.FindByCondition(a => a.Id.Equals(appointmentId), false).SingleOrDefaultAsync();
+            if (appointment is null)
+                return Result<IEnumerable<CarConditionImageDto>>.NotFound(AppointmentErrors.GetAppointmentNotFoundError(appointmentId));
 
-            var packageImages = new List<PackageImage>();
+            var appointmentDetail = await _repoManager.AppointmentDetail.FindByCondition(ad => ad.Id.Equals(appointmentDetailId) && ad.AppointmentId.Equals(appointmentId), false).SingleOrDefaultAsync();
+            if (appointmentDetail is null)
+                return Result<IEnumerable<CarConditionImageDto>>.NotFound(AppointmentErrors.GetAppointmentDetailNotFound(appointmentDetailId));
+
+            var carConditionImages = new List<CarConditionImage>();
             foreach (var imageItem in imageTuples)
             {
-                var packageImage = new PackageImage
+                var carConditionImage = new CarConditionImage
                 {
-                    PackageId = packageId,
+                    AppointmentDetailId = appointmentDetailId,
                     ImageLink = imageItem.ImageLink,
-                    ImageId = imageItem.ImageId
+                    ImageId = imageItem.ImageId,
+                    ConditionStage = conditionStage
                 };
-                packageImages.Add(packageImage);
+                carConditionImages.Add(carConditionImage);
             }
-            await _repoManager.PackageImage.CreatesAsync(packageImages.ToArray());
+            await _repoManager.CarConditionImage.CreatesAsync([.. carConditionImages]);
             await _repoManager.SaveAsync();
 
-            var packageImagesDto = _mapper.Map<IEnumerable<PackageImageDto>>(packageImages);
+            var carConditionImageDtos = _mapper.Map<IEnumerable<CarConditionImageDto>>(carConditionImages);
 
-            return Result<IEnumerable<PackageImageDto>>.Ok(packageImagesDto);
+            return Result<IEnumerable<CarConditionImageDto>>.Ok(carConditionImageDtos);
         }
 
-        public Task<Result<IEnumerable<ExpandoObject>>> GetCarConditionImageByAppointmentDetailIdAsync(Guid garageId, Guid appointmentId, Guid appointmentDetailId, CarConditionImageParameters carConditionImageParameters)
+        public async Task<Result<IEnumerable<ExpandoObject>>> GetCarConditionImageByAppointmentDetailIdAsync(Guid appointmentId, Guid appointmentDetailId, CarConditionImageParameters carConditionImageParameters)
         {
-            throw new NotImplementedException();
+            var appointment = await _repoManager.Appointment.FindByCondition(a => a.Id.Equals(appointmentId), false).SingleOrDefaultAsync();
+            if (appointment is null)
+                return Result<IEnumerable<ExpandoObject>>.NotFound(AppointmentErrors.GetAppointmentNotFoundError(appointmentId));
+
+            var appointmentDetail = await _repoManager.AppointmentDetail.FindByCondition(ad => ad.Id.Equals(appointmentDetailId) && ad.AppointmentId.Equals(appointmentId), false).SingleOrDefaultAsync();
+            if (appointmentDetail is null)
+                return Result<IEnumerable<ExpandoObject>>.NotFound(AppointmentErrors.GetAppointmentDetailNotFound(appointmentDetailId));
+
+            var carConditionImages = await _repoManager.CarConditionImage.GetCarConditionImagesAsync(appointmentId, appointmentDetailId, carConditionImageParameters, trackChanges: false);
+
+            var carConditionImageDtos = _mapper.Map<IEnumerable<CarConditionImageDto>>(carConditionImages);
+
+            var carConditionImageDtoShapers = _dataShaper.CarConditionImage.ShapeData(carConditionImageDtos, carConditionImageParameters.Fields);
+
+            return Result<IEnumerable<ExpandoObject>>.Ok(carConditionImageDtoShapers);
         }
 
-        public Task<Result<IEnumerable<ExpandoObject>>> GetCarConditionImageByAppointmentIdAsync(Guid garageId, Guid appointmentId, CarConditionImageParameters carConditionImageParameters)
+        public async Task<Result<CarConditionImageDto>> GetCarConditionImageByIdAsync(Guid appointmentId, Guid appointmentDetailId, Guid carConditionImageId)
         {
-            throw new NotImplementedException();
-        }
+            var appointment = await _repoManager.Appointment.FindByCondition(a => a.Id.Equals(appointmentId), false).SingleOrDefaultAsync();
+            if (appointment is null)
+                return Result<CarConditionImageDto>.NotFound(AppointmentErrors.GetAppointmentNotFoundError(appointmentId));
 
-        public Task<Result<IEnumerable<CarConditionImageDto>>> GetCarConditionImageByAppointmentIdAsync(Guid garageId, Guid appointmentId)
-        {
-            throw new NotImplementedException();
-        }
+            var appointmentDetail = await _repoManager.AppointmentDetail.FindByCondition(ad => ad.Id.Equals(appointmentDetailId), false).SingleOrDefaultAsync();
+            if (appointmentDetail is null)
+                return Result<CarConditionImageDto>.NotFound(AppointmentErrors.GetAppointmentDetailNotFound(appointmentDetailId));
 
-        public Task<Result<IEnumerable<CarConditionImageDto>>> GetCarConditionImageByAppointmentIdAsync(Guid garageId, Guid appointmentId, Guid appointmentDetailId)
-        {
-            throw new NotImplementedException();
-        }
+            var carConditionImage = await _repoManager.CarConditionImage.GetCarConditionImageAsync(appointmentDetailId, carConditionImageId, trackChanges: false);
+            if (carConditionImage is null)
+                return Result<CarConditionImageDto>.NotFound(AppointmentErrors.GetCarConditionImageNotFoundError(carConditionImageId));
 
-        public Task<Result<CarConditionImageDto>> GetPCarConditionImageByIdAsync(Guid garageId, Guid appointmentId, Guid appointmentDetailId, Guid carConditionImageId)
-        {
-            throw new NotImplementedException();
-        }
+            var carConditionImageDto = _mapper.Map<CarConditionImageDto>(carConditionImage);
 
-        public Task<Result> RemoveCarConditionImageAsync(Guid garageId, Guid appointmentId, Guid appointmentDetailId, Guid carConditionImageId)
-        {
-            throw new NotImplementedException();
-        }
+            return Result<CarConditionImageDto>.Ok(carConditionImageDto);
 
-        public Task<Result> RemoveCarConditionImageAsync(Guid garageId, Guid appointmentId, Guid appointmentDetailId)
-        {
-            throw new NotImplementedException();
+
         }
     }
 }

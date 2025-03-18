@@ -1,9 +1,6 @@
 ﻿using GarageManagementAPI.Service.Contracts;
-using GarageManagementAPI.Shared.Constant.Request;
 using GarageManagementAPI.Shared.DataTransferObjects.AppointmentDetail;
-using GarageManagementAPI.Shared.Extension;
-using GarageManagementAPI.Shared.ResultModel;
-using Microsoft.AspNetCore.Http;
+
 using Microsoft.AspNetCore.Mvc;
 
 namespace GarageManagementAPI.Presentation.Controllers
@@ -56,39 +53,6 @@ namespace GarageManagementAPI.Presentation.Controllers
                 );
         }
 
-        [HttpGet("{detailId:guid}/car-conditions")]
-
-        [HttpPost("{detailId:guid}/car-conditions/before")]
-        public async Task<IActionResult> CreateCarConditionImages(Guid garageId, Guid appointmentId, Guid detailId,[FromForm] IList<IFormFile> formFileDtos)
-        {
-            if (formFileDtos is not null && formFileDtos.Count > 5)
-                return BadRequest(Result.BadRequest(RequestErrors.GetTooManyImageUploadErrors()));
-
-            var imagePublicIds = new List<(string? ImageId, string? ImageLink)>();
-
-            if (formFileDtos is not null)
-            {
-                foreach (var image in formFileDtos)
-                {
-                    var uploadImageResult = await _service.MediaService.UploadCarConditionImageAsync(image);
-                    if (!uploadImageResult.IsSuccess)
-                        return ProcessError(uploadImageResult);
-
-                    var imgTuple = uploadImageResult.GetValue<(string? ImageId, string? ImageLink)>();
-                    imagePublicIds.Add(imgTuple);
-                }
-            }
-
-            var result = await _service.CarConditionImage.CreatePackageImageAsync(garageId, appointmentId, detailId, imagePublicIds!, Shared.Enums.ConditionStage.Before);
-
-            return result.Map(
-                onSuccess: result =>
-                {
-                    return CreatedAtAction(nameof(GetPackageImages), new { packageId }, result);
-                },
-                onFailure: ProcessError
-                );
-        }
 
     }
 }

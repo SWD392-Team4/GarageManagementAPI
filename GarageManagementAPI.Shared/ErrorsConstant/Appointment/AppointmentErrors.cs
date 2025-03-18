@@ -22,6 +22,7 @@ namespace GarageManagementAPI.Shared.ErrorsConstant.Appointment
         public const string AppointmentDetailAlreadyCancelled = "Appointment detail {0} is already cancelled";
         public const string AppointmentDetailAlreadyRejected = "Appointment detail {0} is already rejected";
         public const string AppointmentReplacementPartNotFound = "Appointment replacement part not found";
+        public const string CarConditionImageNotFound = "Car condition image not found with id {0}";
 
         public static ErrorsResult GetAppointmentNotFoundError(Guid id)
             => new ErrorsResult
@@ -154,6 +155,15 @@ namespace GarageManagementAPI.Shared.ErrorsConstant.Appointment
             };
         }
 
+        public static ErrorsResult GetAppointmentDetailNotFound(Guid id)
+        {
+            return new ErrorsResult
+            {
+                Code = nameof(AppointmentDetailNotFound),
+                Description = string.Format(AppointmentDetailNotFound, id)
+            };
+        }
+
         public static ErrorsResult GetAppointmentDetailAlreadyCancelled(IEnumerable<Guid> ids)
         {
             return new ErrorsResult
@@ -178,6 +188,15 @@ namespace GarageManagementAPI.Shared.ErrorsConstant.Appointment
             {
                 Code = nameof(AppointmentReplacementPartNotFound),
                 Description = AppointmentReplacementPartNotFound
+            };
+        }
+
+        public static ErrorsResult GetCarConditionImageNotFoundError(Guid id)
+        {
+            return new ErrorsResult
+            {
+                Code = nameof(CarConditionImageNotFound),
+                Description = string.Format(CarConditionImageNotFound, id)
             };
         }
     }
