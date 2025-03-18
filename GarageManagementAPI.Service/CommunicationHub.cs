@@ -122,19 +122,21 @@ namespace api.Services
             var senderId = GetUserId();
 
             var sender = await this.GetUserAsync(Guid.Parse(senderId!));
+
             var senderEntity = sender.GetValue<User>();
+
             var senderDto = _mapper.Map<UserDto>(senderEntity);
 
             Result<User>? receiver = null;
+
             if (receiverId != null)
             {
                 receiver = await this.GetUserAsync(Guid.Parse(receiverId));
             }
+
             var userEntity = receiver != null ? receiver.GetValue<User>() : null;
 
             var receiverDto = userEntity != null ? _mapper.Map<UserDto>(userEntity) : null;
-
-            var senderManager = await this.GetUserByRoleCashier(Guid.Parse(senderId));
 
             string managerChatRoomKey = receiverId == null ? $"chat:managers:{senderId}" : $"chat:managers:{receiverId}";
 
@@ -151,7 +153,9 @@ namespace api.Services
             // Lưu tin nhắn vào Redis với key chung
 
             string jsonMessage = JsonConvert.SerializeObject(chatMessage, new StringEnumConverter());
+
             await db.ListRightPushAsync(managerChatRoomKey, jsonMessage);
+            await db.KeyExpireAsync(managerChatRoomKey, TimeSpan.FromDays(30));
 
             // Gửi tin nhắn đến tất cả manager đang online
             foreach (var managerId in _userConnections.Keys)
@@ -169,6 +173,11 @@ namespace api.Services
                 var senderIdConnectionId = _userConnections[senderId];
                 await Clients.Client(senderIdConnectionId).SendAsync("receiveMessage", chatMessage);
             }
+            else if(_userConnections.ContainsKey(receiverId))
+            {
+                var receiverConnectionId = _userConnections[receiverId];
+                await Clients.Client(receiverConnectionId).SendAsync("receiveMessage", chatMessage);
+            }
         }
 
         public async Task<List<SignalRDto>> GetManagerChatHistory(string? receiverId = null)
@@ -176,7 +185,7 @@ namespace api.Services
             var senderId = GetUserId();
             var db = _redis.GetDatabase();
             string managerChatRoomKey = receiverId == null ? $"chat:managers:{senderId}" : $"chat:managers:{receiverId}";
-            Console.WriteLine("managerChatRoomKey: " + managerChatRoomKey);
+
             bool chatExists = await db.KeyExistsAsync(managerChatRoomKey);
             if (!chatExists)
             {
@@ -426,9 +435,9 @@ namespace api.Services
         }
 
 
-        private Task<User> GetUserByRoleCashier(Guid userId)
+        private async Task<User> GetUserByRoleCashier(Guid userId)
         {
-            var user = _repoManager.User.GetUserByRoleAsync(userId, trackChanges: false);
+            var user = await _repoManager.User.GetUserByRoleAsync(userId, trackChanges: false);
             if (user == null) Console.WriteLine("hello bagia");
             return user!;
         }

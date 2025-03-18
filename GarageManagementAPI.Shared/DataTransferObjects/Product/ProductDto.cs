@@ -22,7 +22,7 @@ namespace GarageManagementAPI.Shared.DataTransferObjects.Product
         public ProductStatus Status { get; set; }
         public DateTimeOffset CreatedAt { get; set; }
         public DateTimeOffset UpdatedAt { get; set; }
-        public int TotalQuantity { get; set; } = 1;
+        public int TotalQuantity { get; set; } = 0;
 
         public virtual ICollection<CarModelDto> CarModels { get; set; } = new List<CarModelDto>();
 

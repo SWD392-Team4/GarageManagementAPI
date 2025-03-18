@@ -10,6 +10,7 @@ namespace GarageManagementAPI.Repository.Contracts
         public Task<List<(Guid ProductAtWarehouseId, int DeductedQuantity)>> DeductProductQuantityFromWarehouseAsync(
         Guid productId, Guid warehouseId, int quantity);
         public Task<Dictionary<Guid, int>> GetTotalStockByProductIdsAsync(List<Guid> productIds, Guid warehouseId);
+
         Task<int> GetTotalStockForProduct(Guid productId, Guid warehouseId);
         Task CreateProductAtWarehouse(ProductAtWarehouse productAtWarehouse);
         void UpdateProductAtWarehouse(ProductAtWarehouse productAtWarehouse);

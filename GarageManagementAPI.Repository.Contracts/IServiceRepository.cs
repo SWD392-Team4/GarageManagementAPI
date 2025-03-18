@@ -16,5 +16,6 @@ namespace GarageManagementAPI.Repository.Contracts
         public Task<Service?> GetServiceByCarCategoryAnCarPartId(Guid? serviceId, Guid carPartId, Guid carparCategoryId, WorkNature workNature, ServiceAction action, bool trackChanges, string? include = default);
         Task<PagedList<Service>> GetServicesAsync(ServiceParameters serviceParameters, bool trackChanges, string? include = default);
         public Task<PagedList<Service>> GetServiceByCarModel(Guid carModelId, ServiceParameters serviceParameters, bool trackChanges);
+        public Task<IEnumerable<Service>> GetTopService(int numberService, bool trackChanges, string? include = default);
     }
 }

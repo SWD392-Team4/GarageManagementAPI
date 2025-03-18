@@ -147,5 +147,15 @@ namespace GarageManagementAPI.Repository
                 serviceParameters.PageSize
                 );
         }
+
+        public async Task<IEnumerable<Service>> GetTopService(int numberService, bool trackChanges, string? include = default)
+        {
+            var allIds = await FindAll(trackChanges).Select(s => s.Id).ToListAsync();
+            var randomIds = allIds.OrderBy(_ => Guid.NewGuid()).Take(numberService).ToList();
+            var services = await FindByCondition(s => randomIds.Contains(s.Id), trackChanges)
+                       .IsInclude(include)
+                       .ToListAsync();
+            return services;
+        }
     }
 }

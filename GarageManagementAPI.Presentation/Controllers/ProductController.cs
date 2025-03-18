@@ -37,6 +37,21 @@ namespace GarageManagementAPI.Presentation.Controllers
                 onFailure: ProcessError
                 );
         }
+
+        [HttpGet("product/{productId:guid}/{garageId}", Name = "GetProductAtGarage")]
+        //[Authorize(Roles = $"{nameof(SystemRole.Administrator)},{nameof(SystemRole.Cashier)}")]
+        public async Task<IActionResult> GetProductAtgrage(Guid productId, Guid garageId)
+        {
+            var isInclude = "Brand,ProductCategory,ProductHistories,ProductImages,CarModels,CarParts";
+            var productResult = await _service.ProductService.GetProductByIdAsync(productId, garageId, trackChanges: false, isInclude);
+
+            return productResult.Map(
+                onSuccess: Ok,
+                onFailure: ProcessError
+                );
+        }
+
+
         /// <summary>
         /// Get product max price
         /// </summary>
