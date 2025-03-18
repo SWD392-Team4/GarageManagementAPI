@@ -25,6 +25,7 @@ namespace GarageManagementAPI.Service
         private const string _brandFolder = "Brand";
         private const string _serviceFolder = "Service";
         private const string _packageFolder = "Package";
+        private const string _carConditionFolder = "CarCondition";
         private const string _errorCode = "CloudinaryError";
 
         public MediaService(IOptionsSnapshot<CloudinaryConfigurations> configuration)
@@ -40,7 +41,7 @@ namespace GarageManagementAPI.Service
 
         private async Task<Result<(string? publicId, string? absoluteUrl)>> UploadImageAsync(IFormFile file, string folderName)
         {
-            if (file == null || file.Length == 0)
+            if (file == null || file.Length == 0 )
             {
                 return Result<(string? publicId, string? absoluteUrl)>.BadRequest([RequestErrors.GetFileNotFoundErrors()]);
             }
@@ -93,9 +94,11 @@ namespace GarageManagementAPI.Service
             => await UploadImageAsync(file, _serviceFolder);
         public async Task<Result<(string? publicId, string? absoluteUrl)>> UploadBrandImageAsync(IFormFile file)
             => await UploadImageAsync(file, _brandFolder);
-
         public async Task<Result<(string? publicId, string? absoluteUrl)>> UploadPackageImageAsync(IFormFile file)
             => await UploadImageAsync(file, _packageFolder);
+        public async Task<Result<(string? publicId, string? absoluteUrl)>> UploadCarConditionImageAsync(IFormFile file)
+           => await UploadImageAsync(file, _carConditionFolder);
+
         public async Task<Result<string>> RemoveImage(string publicId)
         {
 
@@ -119,5 +122,6 @@ namespace GarageManagementAPI.Service
             return Result<string>.Ok(result.Result);
         }
 
+        
     }
 }
