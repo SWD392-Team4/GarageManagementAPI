@@ -1,10 +1,13 @@
 ﻿using GarageManagementAPI.Shared.Enums;
+
 using System.ComponentModel.DataAnnotations;
 
-namespace GarageManagementAPI.Entities.Models
+namespace GarageManagementAPI.Shared.DataTransferObjects.CarConditionImage
 {
-    public partial class CarConditionImage : BaseEntity<CarConditionImage>
+    public record CarConditionImageDto : BaseDto<CarConditionImageDto>
     {
+        public Guid Id { get; set; }
+
         public Guid AppointmentDetailId { get; set; }
 
         public string? ImageLink { get; set; }
@@ -13,9 +16,5 @@ namespace GarageManagementAPI.Entities.Models
 
         [EnumDataType(typeof(ConditionStage))]
         public ConditionStage ConditionStage { get; set; }
-
-        public virtual AppointmentDetail AppointmentDetail { get; set; } = null!;
     }
 }
-
-

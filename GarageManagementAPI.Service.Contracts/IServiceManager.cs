@@ -42,6 +42,7 @@
         IAppointmentDetailPackageService AppointmentDetailPackageService { get; }
         IAppointmentReplacementPartService AppointmentReplacementPartService { get; }
         IEmployeeScheduleService EmployeeScheduleService { get; }
+        ICarConditionImageService CarConditionImage { get; }
 
     }
 }

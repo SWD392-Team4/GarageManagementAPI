@@ -49,6 +49,7 @@ namespace GarageManagementAPI.Repository
         private readonly Lazy<IAppointmentReplacementPartRepository> _appointmentReplacementPartRepository;
         private readonly Lazy<IInvoiceSellProduct_ProductAtGarageRepository> _invoiceSellProduct_ProductAtGarageRepository;
         private readonly Lazy<IGoodsIssuedDetailProductAtWarehouseRepository> _goodsIssuedDetailProductAtWarehouseRepository;
+        private readonly Lazy<ICarConditionImageRepository> _carConditionImageRepository;
 
         public RepositoryManager(RepositoryContext repositoryContext)
         {
@@ -96,6 +97,7 @@ namespace GarageManagementAPI.Repository
             _packageDetailRepository = new Lazy<IPackageDetailRepository>(() => new PackageDetailRepository(repositoryContext));
             _productAtWarehouseRepository = new Lazy<IProductAtWarehouseRepository>(() => new ProductAtWarehouseRepository(repositoryContext));
             _goodsIssuedDetailProductAtWarehouseRepository = new Lazy<IGoodsIssuedDetailProductAtWarehouseRepository>(() => new GoodsIssuedDetailProductAtWarehouseRepostitory(repositoryContext));
+            _carConditionImageRepository =  new Lazy<ICarConditionImageRepository>(() => new CarConditionImageRepository(repositoryContext));
         }
 
         public IUserRepository User => _userRepository.Value;
@@ -139,12 +141,11 @@ namespace GarageManagementAPI.Repository
         public IPackageDetailRepository PackageDetail => _packageDetailRepository.Value;
         public IGoodsIssuedDetailProductAtWarehouseRepository GoodsIssuedDetailProductAtWarehouse => _goodsIssuedDetailProductAtWarehouseRepository.Value;
         public IProductAtGarageRepository ProductAtGarage => _productAtGarageRepository.Value;
-
         public IInvoiceRepository InvoiceRepository => _invoiceRepository.Value;
-
         public IInvoiceSellProductRepository InvoiceSellProductRepository => _invoiceSellProductRepository.Value;
         public IInvoiceSellProduct_ProductAtGarageRepository InvoiceSellProduct_ProductAtGarage => _invoiceSellProduct_ProductAtGarageRepository.Value;
-
+        public ICarConditionImageRepository CarConditionImage => _carConditionImageRepository.Value;
+        
         public async Task<IDbContextTransaction> BeginTransactionAsync()
         {
             return await _repositoryContext.Database.BeginTransactionAsync();

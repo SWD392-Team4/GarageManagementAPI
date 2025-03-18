@@ -25,6 +25,8 @@ namespace GarageManagementAPI.Repository
                         .ThenInclude(a => a.AppointmentReplacementParts)
                         .ThenInclude(a => a.ProductHistory)
                         .ThenInclude(a => a.Product)
+                             .Include(a => a.AppointmentDetails)
+                             .ThenInclude(ad => ad.CarConditionImages)
                         .Include(a => a.AppointmentDetailPackages)
                         .ThenInclude(a => a.PackageHistory)
                         .Include(a => a.ApproveByEmployee)
@@ -54,6 +56,8 @@ namespace GarageManagementAPI.Repository
                 .ThenInclude(a => a.PackageHistory)
                 .Include(a => a.ApproveByEmployee)
                 .Include(a => a.RejecteByEmployee)
+                .Include(a => a.AppointmentDetails)
+                .ThenInclude(ad => ad.CarConditionImages)
                 .SingleOrDefaultAsync();
         }
 
@@ -98,6 +102,8 @@ namespace GarageManagementAPI.Repository
                 .ThenInclude(a => a.PackageHistory)
                 .Include(a => a.ApproveByEmployee)
                 .Include(a => a.RejecteByEmployee)
+                .Include(a => a.AppointmentDetails)
+                .ThenInclude(ad => ad.CarConditionImages)
                 .ToListAsync();
 
             var count = await FindByCondition(a => a.GarageId.Equals(garageId), trackChanges)
@@ -138,6 +144,8 @@ namespace GarageManagementAPI.Repository
                         .ThenInclude(a => a.PackageHistory)
                         .Include(a => a.ApproveByEmployee)
                         .Include(a => a.RejecteByEmployee)
+                        .Include(a => a.AppointmentDetails)
+                        .ThenInclude(ad => ad.CarConditionImages)
                         .FirstOrDefaultAsync();
         }
     }
