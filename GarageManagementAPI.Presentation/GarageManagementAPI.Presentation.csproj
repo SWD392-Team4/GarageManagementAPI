@@ -16,6 +16,8 @@
 		<PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.11.0" />
 		<PackageReference Include="Microsoft.AspNetCore.JsonPatch" Version="9.0.1" />
 		<PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="8.0.12" />
+		<PackageReference Include="ZXing.Net" Version="0.16.10" />
+		<PackageReference Include="ZXing.Net.Bindings.CoreCompat.System.Drawing" Version="0.16.5-beta" />
 	</ItemGroup>
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
 		<DocumentationFile>GarageManagementAPI.Presentation.xml</DocumentationFile>

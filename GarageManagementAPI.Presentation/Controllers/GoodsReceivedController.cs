@@ -57,7 +57,7 @@ namespace GarageManagementAPI.Presentation.Controllers
                 );
         }
 
-        [Authorize(Roles = $"{nameof(SystemRole.Cashier)}, {nameof(SystemRole.Administrator)}")]
+        [Authorize(Roles = $"{nameof(SystemRole.Cashier)}, {nameof(SystemRole.Administrator)}, {nameof(SystemRole.WarehouseManager)}")]
         [HttpPost(Name = "CreateGoodsReceived")]
         public async Task<IActionResult> CreateGoodsReceived([FromBody] GoodsReceivedDtoForCreation goodsReceivedDtoForCreation)
         {

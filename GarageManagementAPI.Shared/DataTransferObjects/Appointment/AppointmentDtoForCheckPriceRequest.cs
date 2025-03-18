@@ -3,7 +3,7 @@ using GarageManagementAPI.Shared.DataTransferObjects.AppointmentDetailPackage;
 
 namespace GarageManagementAPI.Shared.DataTransferObjects.Appointment
 {
-    public record AppointmentDtoForCreation : AppointmentDtoForManipulation
+    public record AppointmentDtoForCheckPriceRequest
     {
         public IEnumerable<AppointmentDetailDtoForCreation>? Services { get; set; }
 

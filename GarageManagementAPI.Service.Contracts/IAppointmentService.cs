@@ -1,6 +1,7 @@
 ﻿using GarageManagementAPI.Shared.DataTransferObjects.Appointment;
 using GarageManagementAPI.Shared.RequestFeatures;
 using GarageManagementAPI.Shared.ResultModel;
+
 using System.Dynamic;
 
 namespace GarageManagementAPI.Service.Contracts
@@ -24,6 +25,8 @@ namespace GarageManagementAPI.Service.Contracts
         Task<Result> UpdateAppointmentInformation(Guid garageId, Guid appointmentId, Guid userId, AppointmentDtoForUpdate appointmentDtoForUpdate);
 
         Task<Result> UpdateAppointmentArrival(Guid garageId, Guid appointmentId, Guid userId, AppointmentDtoForUpdate appointmentDtoForUpdate);
+
+        Task<Result<AppointmentDtoForCheckPriceResponse>> CheckPriceAppointment(AppointmentDtoForCheckPriceRequest forCheckPriceRequest);
 
     }
 }

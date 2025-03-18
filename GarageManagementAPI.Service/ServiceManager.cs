@@ -50,6 +50,7 @@ namespace GarageManagementAPI.Service
         private readonly Lazy<IInvoiceService> _invoiceService;
         private readonly Lazy<IInvoiceSellProductService> _invoiceSellProductService;
         private readonly Lazy<IEmployeeScheduleService> _employeeScheduleService;
+        private readonly Lazy<ICarConditionImageService> _carConditionImageService;
 
         public ServiceManager(
             IRepositoryManager repositoryManager,
@@ -285,6 +286,8 @@ namespace GarageManagementAPI.Service
             _packageImageService = new Lazy<IPackageImageService>(() => new PackageImageService(repositoryManager, mapper, dataShaper));
 
             _employeeScheduleService = new Lazy<IEmployeeScheduleService>(() => new EmployeeScheduleService(repositoryManager, mapper, dataShaper));
+
+            _carConditionImageService = new Lazy<ICarConditionImageService>(() => new CarConditionImageService(repositoryManager, mapper, dataShaper));
         }
 
         public IUserService UserService => _userService.Value;
@@ -327,7 +330,8 @@ namespace GarageManagementAPI.Service
         public IAppointmentDetailPackageService AppointmentDetailPackageService => _appointmentDetailPackageService.Value;
         public IAppointmentReplacementPartService AppointmentReplacementPartService => _appointmentReplacementPartService.Value;
         public IInvoiceSellProductService InvoiceSellProductService => _invoiceSellProductService.Value;
-        public IEmployeeScheduleService EmployeeScheduleService => throw new NotImplementedException();
+        public IEmployeeScheduleService EmployeeScheduleService => _employeeScheduleService.Value;
+        public ICarConditionImageService CarConditionImage => _carConditionImageService.Value;
 
     }
 }

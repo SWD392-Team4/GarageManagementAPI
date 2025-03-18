@@ -59,6 +59,17 @@ namespace GarageManagementAPI.Presentation.Controllers
                 );
         }
 
+        [HttpGet("random")]
+        //[Authorize(Roles = $"{nameof(SystemRole.Administrator)},{nameof(SystemRole.Cashier)}")]
+        public async Task<IActionResult> GetRamdomServices([FromQuery] int number = 5)
+        {
+            var include = "CarCategory, CarPart, ServiceImage, ServiceHistories";
+
+            var serviceResult = await _service.ServiceService.GetTopService(number, trackChanges: false, include);
+
+            return Ok(serviceResult);
+        }
+
         /// <summary>
         /// Get service by id
         /// </summary>

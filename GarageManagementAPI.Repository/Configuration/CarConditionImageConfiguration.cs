@@ -16,17 +16,11 @@ namespace GarageManagementAPI.Repository.Configuration
 
             entity.Property(e => e.Id).ValueGeneratedOnAdd().HasDefaultValueSql("NEWID()");
             entity.Property(e => e.ConditionStage).HasMaxLength(255);
-            entity.Property(e => e.Link).HasMaxLength(255);
-            entity.Property(e => e.Status).HasMaxLength(255);
 
             entity.HasOne(d => d.AppointmentDetail).WithMany(p => p.CarConditionImages)
                 .HasForeignKey(d => d.AppointmentDetailId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("carconditionimage_appointmentdetailid_foreign");
-
-
-            entity.Property(e => e.Status)
-                .HasConversion<string>();
 
             entity.Property(e => e.ConditionStage)
                 .HasConversion<string>();

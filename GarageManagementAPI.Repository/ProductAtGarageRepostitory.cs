@@ -32,9 +32,19 @@ namespace GarageManagementAPI.Repository
                 productAtGarageParameters.PageSize);
         }
 
-        public async Task<Dictionary<Guid, int>> GetTotalQuantityByProductIdAsync()
+        public async Task<Dictionary<Guid, int>> GetTotalQuantityByProductIdAsync(Guid? garageId = null)
         {
-            var totalQuantities = await FindAll(false)
+            var totalQuantities = garageId == null ? 
+                await FindAll(false)
+                .GroupBy(p => p.ProductId)
+                .Select(group => new
+                {
+                    ProductId = group.Key,
+                    TotalQuantity = group.Sum(p => p.Quantity)
+                })
+                .ToDictionaryAsync(x => x.ProductId, x => x.TotalQuantity)
+                :
+                await FindByCondition(pag => pag.WorkplaceId.Equals(garageId),false)
                 .GroupBy(p => p.ProductId)
                 .Select(group => new
                 {
@@ -119,7 +129,7 @@ namespace GarageManagementAPI.Repository
                 .SumAsync(pw => pw.Quantity);
         }
 
-        public async Task<IEnumerable<ProductAtGarage>> GetProductAtGarages(Guid garageId, bool trackChanges, string? include = null)
+        public async Task<PagedList<ProductAtGarage>> GetProductAtGarages(Guid garageId, ProductAtGarageParameters productAtGarageParameters, bool trackChanges, string? include = null)
         {
             var productAtGagare = await FindByCondition(pg => pg.WorkplaceId.Equals(garageId), false)
                                            .Include(p => p.Product)
@@ -128,7 +138,37 @@ namespace GarageManagementAPI.Repository
                                             .GroupBy(p => p.ProductId)
                                             .Select(group => group.First())
                                             .ToListAsync();
+            return PagedList<ProductAtGarage>.ToPagedList(
+                productAtGagare,
+                productAtGarageParameters.PageNumber,
+                productAtGarageParameters.PageSize
+                );
+        }
+
+        public async Task<IEnumerable<ProductAtGarage>> GetProductAtGarages(Guid garageId, bool trackChanges, string? include = null)
+        {
+            var productAtGagare = await FindByCondition(pg => pg.WorkplaceId.Equals(garageId), false)
+                                          .Include(p => p.Product)
+                                           .ThenInclude(p => p.ProductImages)
+                                           .OrderBy(p => p.CreatedAt)
+                                           .GroupBy(p => p.ProductId)
+                                           .Select(group => group.First())
+                                           .ToListAsync();
             return productAtGagare;
         }
+
+        public async Task<Product?> GetProductAtGarage(string barcode, Guid garageId, bool trackChanges, string? include = null)
+        {
+            var productAtGarage = await FindByCondition(p => p.ProductBarcodeAtGarage!.Equals(barcode)
+                                                    && p.WorkplaceId.Equals(garageId), trackChanges)
+                                                   .Include(p => p.Product)
+                                                   .ThenInclude(p => p.ProductImages)
+                                                   .GroupBy(p => p.Product)
+                                                   .Select(g => g.Key) 
+                                                   .FirstOrDefaultAsync();
+
+            return productAtGarage;
+        }
+
     }
 }

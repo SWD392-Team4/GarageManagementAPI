@@ -44,10 +44,10 @@ namespace GarageManagementAPI.Service
             if (appointmentDetail.AppointmentReplacementParts != null && appointmentDetail.AppointmentReplacementParts.Any(arp => arp.ProductHistory.ProductId.Equals(appointmentReplacementPartDtoForCreation.ProductId)))
                 return Result<AppointmentReplacementPartDto>.Conflict(AppointmentErrors.GetAppointmentHasDuplicateProductInServiceError(appointmentDetail.ServiceHistory.ServiceId, appointmentReplacementPartDtoForCreation.ProductId.Value));
 
-            var productHistory = await _repoManager.ProductHistory.GetProductHistory(appointmentReplacementPartDtoForCreation.ProductId, false);
+            var productHistory = await _repoManager.ProductHistory.GetProductHistory(appointmentReplacementPartDtoForCreation.ProductId.Value, false);
 
             if (productHistory is null)
-                return Result<AppointmentReplacementPartDto>.NotFound(ProductHistoryErrors.GetProductHistoryNotFoundError(appointmentReplacementPartDtoForCreation.ProductId));
+                return Result<AppointmentReplacementPartDto>.NotFound(ProductHistoryErrors.GetProductHistoryNotFoundError(appointmentReplacementPartDtoForCreation.ProductId.Value));
 
             var appointmentReplacementPart = new AppointmentReplacementPart()
             {
