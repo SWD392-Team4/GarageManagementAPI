@@ -9,4 +9,11 @@ namespace GarageManagementAPI.Shared.DataTransferObjects.Appointment
 
         public IEnumerable<AppointmentDetailPackageDtoForCreation>? Packages { get; set; }
     }
+
+    public record AppointmentDtoForCheckPrice
+    {
+        public IEnumerable<AppointmentDetailDtoForCreation>? Services { get; set; }
+
+        public IEnumerable<AppointmentDetailPackageDtoForCreation>? Packages { get; set; }
+    }
 }

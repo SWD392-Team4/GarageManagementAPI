@@ -6,7 +6,7 @@ namespace GarageManagementAPI.Shared.ErrorsConstant.ProductHistory
     public class ProductHistoryErrors
     {
         #region Product const errors
-        public const string ProductHistoryNotFoundError = "Product history with doesn't exist.";
+        public const string ProductHistoryNotFoundError = "Product history of product {0} doesn't exist.";
         public const string ProductHistoryNotFoundWithId = "Product history with id {0} doesn't exist.";
         public const string ProductHistoryPrice = "Product history with price already existed.";
         public const string ProductHistoryPriceRequired = "The product history price is required.";
@@ -16,11 +16,11 @@ namespace GarageManagementAPI.Shared.ErrorsConstant.ProductHistory
         #endregion
         #region static method
 
-        public static ErrorsResult GetProductHistoryNotFoundError() =>
+        public static ErrorsResult GetProductHistoryNotFoundError(Guid productId) =>
              new()
              {
                  Code = nameof(ProductHistoryNotFoundError),
-                 Description = ProductHistoryNotFoundError
+                 Description = string.Format(ProductHistoryNotFoundError, productId)
              };
         public static ErrorsResult GetProductHistoryNotFoundWithIdError(Guid productId) =>
              new()
