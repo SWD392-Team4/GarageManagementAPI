@@ -43,6 +43,16 @@ namespace GarageManagementAPI.Shared.ErrorsConstant.Appointment
 
         public const string EmployeeAlreadyAssigned = "Employee {0} is already assigned to appointment {1} in detail {2}";
         public const string AppointmentDetailIsNotAssigned = "Appointment detail {0} is not assigned to any employee";
+        public const string AppointmentDetailPackageNotFound = "Appointment detail package {0} not found";
+
+        public static ErrorsResult GetAppointmentDetailPackageNotFoundError(Guid id)
+        {
+            return new ErrorsResult
+            {
+                Code = nameof(AppointmentDetailPackageNotFound),
+                Description = string.Format(AppointmentDetailPackageNotFound, id)
+            };
+        }
 
         public static ErrorsResult GetEmployeeAlreadyAssignedError(Guid employeeId, Guid appointmentId, Guid detailId)
         {

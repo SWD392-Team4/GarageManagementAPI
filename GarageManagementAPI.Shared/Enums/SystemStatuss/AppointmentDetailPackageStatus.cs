@@ -6,9 +6,6 @@
         Approved = 2,
         Declined = 3,
         Cancelled = 4,
-        Unsigned = 5,
-        Assigned = 6,
-        InProgress = 7,
-        Completed = 8
+        Unsigned = 5
     }
 }
