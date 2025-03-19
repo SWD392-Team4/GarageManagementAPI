@@ -29,6 +29,7 @@ namespace GarageManagementAPI.Presentation.Controllers
                 return ProcessError(createProductResult);
 
             var createdProduct = createProductResult.GetValue<InvoiceDto>();
+            var getInvoiceResult = await GetInvoice(createdProduct.Id);
             return Ok(createdProduct);
             //return CreatedAtRoute("GetProductById", new { productId = createdProduct.Id }, createProductResult);
         }
@@ -74,7 +75,8 @@ namespace GarageManagementAPI.Presentation.Controllers
         [HttpGet("invoice/{invoiceId:guid}")]
         public async Task<IActionResult> GetInvoice(Guid invoiceId)
         {
-            var invoiceResult = await _service.InvoiceService.GetInvoice(invoiceId, trackChanges: false);
+            var include = "InvoiceSellProducts";
+            var invoiceResult = await _service.InvoiceService.GetInvoice(invoiceId, trackChanges: false, include);
             return invoiceResult.Map(
                onSuccess: Ok,
                onFailure: ProcessError

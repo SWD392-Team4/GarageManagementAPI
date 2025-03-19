@@ -14,6 +14,8 @@ namespace GarageManagementAPI.Shared.ErrorsConstant.Service
         public const string ServiceCarCategory = "Service with car category id {0} and car part id {1} and work nature and action already existed.";
         public const string CarCategoryExist = "Car category with id {0} not found.";
         public const string CarPartExist = "Car part with id {0} not found.";
+        public const string ServiceByPackageHistoryIdNotFound = "Service with package history id {0} doesn't exist.";
+
         #endregion
 
         #region static method
@@ -72,6 +74,13 @@ namespace GarageManagementAPI.Shared.ErrorsConstant.Service
             Code = nameof(CarPartExist),
             Description = string.Format(CarPartExist, carCategory)
         };
+
+        public static ErrorsResult GetServiceByPackageHistoryIdNotFoundError(Guid packageHistoryId) =>
+            new()
+            {
+                Code = nameof(ServiceByPackageHistoryIdNotFound),
+                Description = string.Format(ServiceByPackageHistoryIdNotFound, packageHistoryId)
+            };
 
         #endregion
     }

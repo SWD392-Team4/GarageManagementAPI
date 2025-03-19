@@ -10,8 +10,9 @@ namespace GarageManagementAPI.Shared.ErrorsConstant.Appointment
         public const string NotAllowedToConfirmAppointment = "You are not allowed to confirm this appointment";
         public const string AppointmentExceedLimit = "Garage {0} can only have {1} appoinment per day.";
         public const string AppointmentServiceDuplicate = "Service {0} already added to appointment";
+        public const string AppointmentServiceDuplicateWithServiceInPackage = "Service {0} being duplicate with the service in package {1} appointment";
         public const string AppointmentPackageDuplicate = "Package {0} already added to appointment";
-        public const string AppointmentHasDuplicateProductInService = "Service {0} has duplicate product {0}";
+        public const string AppointmentHasDuplicateProductInService = "Service {0} has duplicate product {1}";
         public const string AppointmentWrongPackageType = "Package type is not correct";
         public const string AppointmentStatusNotPending = "Appointment {0} is not in pending status so cannot be confirm.";
         public const string AppointmentEstimatedAppointmentTimeInvalid = " Estimated appointment time must be greater than current time";
@@ -23,6 +24,14 @@ namespace GarageManagementAPI.Shared.ErrorsConstant.Appointment
         public const string AppointmentDetailAlreadyRejected = "Appointment detail {0} is already rejected";
         public const string AppointmentReplacementPartNotFound = "Appointment replacement part not found";
         public const string CarConditionImageNotFound = "Car condition image not found with id {0}";
+
+        public const string CustomerEmailRequired = "Customer email is required";
+        public const string CustomerEmailInvalid = "Customer email is invalid";
+        public const string CustomerPhoneRequired = "Customer phone is required";
+        public const string CustomerPhoneInvalid = "Customer phone is invalid";
+        public const string CustomerNameRequired = "Customer name is required";
+        public const string EstimatedAppointmentTimeRequired = "Estimated appointment time is required";
+        public const string CarModelIdRequired = "Car model id is required";
 
         public static ErrorsResult GetAppointmentNotFoundError(Guid id)
             => new ErrorsResult
@@ -188,6 +197,15 @@ namespace GarageManagementAPI.Shared.ErrorsConstant.Appointment
             {
                 Code = nameof(AppointmentReplacementPartNotFound),
                 Description = AppointmentReplacementPartNotFound
+            };
+        }
+
+        public static ErrorsResult GetAppointmentServiceDuplicateWithServiceInPackageError(IEnumerable<Guid> serviceIds, Guid packageId)
+        {
+            return new ErrorsResult
+            {
+                Code = nameof(AppointmentServiceDuplicateWithServiceInPackage),
+                Description = string.Format(AppointmentServiceDuplicateWithServiceInPackage, string.Join(", ", serviceIds), packageId)
             };
         }
 

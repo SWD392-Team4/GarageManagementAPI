@@ -1,4 +1,5 @@
-﻿using GarageManagementAPI.Shared.Enums;
+﻿using GarageManagementAPI.Shared.DataTransferObjects.InvoiceSellProduct;
+using GarageManagementAPI.Shared.Enums;
 using System.ComponentModel.DataAnnotations;
 
 namespace GarageManagementAPI.Shared.DataTransferObjects.Invoice
@@ -21,5 +22,7 @@ namespace GarageManagementAPI.Shared.DataTransferObjects.Invoice
         public SystemStatus Status { get; set; }
 
         public DateTimeOffset CreatedAt { get; set; }
+
+        public virtual ICollection<InvoiceSellProductDto> InvoiceSellProducts { get; set; } = new List<InvoiceSellProductDto>();
     }
 }

@@ -21,8 +21,12 @@ namespace GarageManagementAPI.Repository
         {
             var productsAtgarages = await FindAll(trackChanges)
                                             .SearchByQuantityProduct(productAtGarageParameters.minQuantity, productAtGarageParameters.maxQuantity)
-                                            .Include(p => p.Product) 
-                                            .ThenInclude(p => p.ProductImages)
+                                             .Include(p => p.Product)
+ .ThenInclude(p => p.ProductImages)
+ .Include(p => p.Product)
+ .ThenInclude(p => p.Brand)
+ .Include(p => p.Product)
+ .ThenInclude(p => p.ProductCategory)
                                             .OrderBy(p => p.CreatedAt)
                                             .GroupBy(p => p.ProductId)
                                             .Select(group => group.First())
@@ -58,15 +62,32 @@ namespace GarageManagementAPI.Repository
 
         public async Task<ProductAtGarage?> GetProductAtGarage(Guid productAtGarageId, bool trackChanges, string? include = null)
         {
-            var productAtGarage = include == null ? await FindByCondition(pat => pat.Id.Equals(productAtGarageId), trackChanges).SingleOrDefaultAsync() : await FindByCondition(pat => pat.Id.Equals(productAtGarageId), false).Include(p => p.Product)
-                                            .ThenInclude(p => p.ProductImages).SingleOrDefaultAsync();
+            var productAtGarage = include == null ? 
+                await FindByCondition(pat => pat.Id.Equals(productAtGarageId), trackChanges).SingleOrDefaultAsync() : 
+                await FindByCondition(pat => pat.Id.Equals(productAtGarageId), false)
+                                            .Include(p => p.Product)
+                                            .ThenInclude(p => p.ProductImages)
+                                            .Include(p => p.Product)
+                                            .ThenInclude(p => p.Brand)
+                                            .Include(p => p.Product)
+                                            .ThenInclude(p => p.ProductCategory)
+                                            .Include(p => p.Product)
+                                            .ThenInclude(p => p.Brand)
+                                            .SingleOrDefaultAsync();
             return productAtGarage;
         }
 
         public async Task<ProductAtGarage?> GetProductAtGarage(Guid productId, bool trackChanges)
         {
-            return await FindByCondition(p => p.ProductId.Equals(productId), trackChanges).Include(p => p.Product)
-                                            .ThenInclude(p => p.ProductImages).FirstOrDefaultAsync();
+            return await FindByCondition(p => p.ProductId.Equals(productId), trackChanges)
+                 .Include(p => p.Product)
+ .ThenInclude(p => p.ProductImages)
+ .Include(p => p.Product)
+ .ThenInclude(p => p.Brand)
+ .Include(p => p.Product)
+ .ThenInclude(p => p.ProductCategory)
+                                            .Include(p => p.Product)
+                                            .ThenInclude(p => p.ProductCategory).FirstOrDefaultAsync();
         }
 
         public void UpdateProductGarage(ProductAtGarage productAtGarage)
@@ -132,8 +153,12 @@ namespace GarageManagementAPI.Repository
         public async Task<PagedList<ProductAtGarage>> GetProductAtGarages(Guid garageId, ProductAtGarageParameters productAtGarageParameters, bool trackChanges, string? include = null)
         {
             var productAtGagare = await FindByCondition(pg => pg.WorkplaceId.Equals(garageId), false)
-                                           .Include(p => p.Product)
+                                            .Include(p => p.Product)
                                             .ThenInclude(p => p.ProductImages)
+                                            .Include(p => p.Product)
+                                            .ThenInclude(p => p.Brand)
+                                            .Include(p => p.Product)
+                                            .ThenInclude(p => p.ProductCategory)
                                             .OrderBy(p => p.CreatedAt)
                                             .GroupBy(p => p.ProductId)
                                             .Select(group => group.First())
@@ -148,8 +173,12 @@ namespace GarageManagementAPI.Repository
         public async Task<IEnumerable<ProductAtGarage>> GetProductAtGarages(Guid garageId, bool trackChanges, string? include = null)
         {
             var productAtGagare = await FindByCondition(pg => pg.WorkplaceId.Equals(garageId), false)
-                                          .Include(p => p.Product)
-                                           .ThenInclude(p => p.ProductImages)
+                                            .Include(p => p.Product)
+                                            .ThenInclude(p => p.ProductImages)
+                                            .Include(p => p.Product)
+                                            .ThenInclude(p => p.Brand)
+                                            .Include(p => p.Product)
+                                            .ThenInclude(p => p.ProductCategory)
                                            .OrderBy(p => p.CreatedAt)
                                            .GroupBy(p => p.ProductId)
                                            .Select(group => group.First())
@@ -162,7 +191,11 @@ namespace GarageManagementAPI.Repository
             var productAtGarage = await FindByCondition(p => p.ProductBarcodeAtGarage!.Equals(barcode)
                                                     && p.WorkplaceId.Equals(garageId), trackChanges)
                                                    .Include(p => p.Product)
-                                                   .ThenInclude(p => p.ProductImages)
+                                                    .ThenInclude(p => p.ProductImages)
+                                                    .Include(p => p.Product)
+                                                    .ThenInclude(p => p.Brand)
+                                                    .Include(p => p.Product)
+                                                    .ThenInclude(p => p.ProductCategory)
                                                    .GroupBy(p => p.Product)
                                                    .Select(g => g.Key) 
                                                    .FirstOrDefaultAsync();

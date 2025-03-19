@@ -35,29 +35,29 @@ namespace GarageManagementAPI.Service
  
             var invoiceEntity = _mapper.Map<Entities.Models.Invoice>(invoiceDtoForCreation);
 
-            foreach(var productAtGarage in invoiceDtoForCreation.InvoiceSellProducts)
+            foreach(var productAtGarage in invoiceDtoForCreation.InvoiceSellProducts!)
             {
                 var product = await _repoManager.ProductAtGarage.GetProductAtGarage(productAtGarage.ProductId, false);
                 if (product == null) return Result<InvoiceDto>.BadRequest(ProductAtGarageErrors.GetProductAtGarageNotFound(productAtGarage.ProductId));
             }
 
+           
+            invoiceEntity.EmployeeId = userId;
+            invoiceEntity.InvoiceType = InvoiceType.InvocieSell;
+            invoiceEntity.GarageId = user!.EmployeeInfo!.WorkplaceId ?? throw new Exception("WorkplaceId cannot be null.");
+
             foreach (var invoiceDetail in invoiceDtoForCreation.InvoiceSellProducts)
             {
-                var product = await _repoManager.Product.GetProductByIdAsync(invoiceDetail.ProductId, false);
-
-                var productEntity = product!.OkResult().GetValue<Product>();
-                invoiceEntity.EmployeeId = userId;
-                invoiceEntity.InvoiceType = InvoiceType.InvocieSell;
-                invoiceEntity.GarageId = user!.EmployeeInfo!.WorkplaceId ?? throw new Exception("WorkplaceId cannot be null.");
-                invoiceEntity.TotalPrice = invoiceDetail.Quantity * product!.ProductPrice;
+                var product = await _repoManager.Product.GetProductByIdAsync(invoiceDetail.ProductId, false);     
+                invoiceEntity.TotalPrice += invoiceDetail.Quantity * product!.ProductPrice;
             }
-            await _repoManager.Invoice.CreateInvoiceAsync(invoiceEntity);
 
+            await _repoManager.Invoice.CreateInvoiceAsync(invoiceEntity);
+            await _repoManager.SaveAsync();
 
             foreach (var invoiceDetail in invoiceDtoForCreation.InvoiceSellProducts) {
                 await this.CreateInvoiceSellProduct(invoiceDetail, user!.EmployeeInfo!.WorkplaceId, invoiceEntity.Id);
             }
-            await _repoManager.SaveAsync();
 
             var invoiceDto = _mapper.Map<InvoiceDto>(invoiceEntity);
             return invoiceDto.CreatedResult();
@@ -81,29 +81,27 @@ namespace GarageManagementAPI.Service
             var invoiceSellProductEntity = _mapper.Map<InvoiceSellProduct>(sellProductDtoForCreation);
 
             invoiceSellProductEntity.InvoiceId = InvoiceId;
-
             invoiceSellProductEntity.Price = productEntity.ProductPrice;
             invoiceSellProductEntity.CreatedAt = DateTime.UtcNow.SEAsiaStandardTime();
 
-            await _repoManager.InvoiceSellProduct.CreateInvoiceSellProductAsync(invoiceSellProductEntity);
-            await _repoManager.SaveAsync();
-
-            var invoiceSellProductDto = _mapper.Map<InvoiceSellProductDto>(invoiceSellProductEntity);
-
             var deductedList = await _repoManager.ProductAtGarage.DeductProductQuantityFromGarageAsync(sellProductDtoForCreation.ProductId, garageId, sellProductDtoForCreation.Quantity);
 
+            await _repoManager.InvoiceSellProduct.CreateInvoiceSellProductAsync(invoiceSellProductEntity);
+            await _repoManager.SaveAsync();
 
             foreach (var (productAtGarageId, deductedQuantity) in deductedList)
             {
                 var invoiceSellProduct_ProductAtGarage = new InvoiceSellProduct_ProductAtGarage()
                 {
                     ProductAtGarageId = productAtGarageId,
-                    InvoiceSellProductId = invoiceSellProductDto.Id,
+                    InvoiceSellProductId = invoiceSellProductEntity.Id,
                     QuantityUsed = deductedQuantity
                 };
                 await _repoManager.InvoiceSellProduct_ProductAtGarage.CreatInvoiceSellProduct_ProductAtGarageAsync(invoiceSellProduct_ProductAtGarage);
                 await _repoManager.SaveAsync();
             }
+
+        
             return Result.NoContent();
         }
 
