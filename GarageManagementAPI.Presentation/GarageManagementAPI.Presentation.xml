@@ -141,7 +141,7 @@
             <param name="productAtWarehouseParameters"></param>
             <returns></returns>
         </member>
-        <member name="M:GarageManagementAPI.Presentation.Controllers.ProductAtGarageController.GetProductAtGarageSpecefics(GarageManagementAPI.Shared.RequestFeatures.ProductAtGarageParameters)">
+        <member name="M:GarageManagementAPI.Presentation.Controllers.ProductAtGarageController.GetProductAtGarageSpecefics(System.Guid,GarageManagementAPI.Shared.RequestFeatures.ProductAtGarageParameters)">
             <summary>
             Get product at garage specific
             </summary>

@@ -1,14 +1,16 @@
 ﻿using AutoMapper;
-using GarageManagementAPI.Service.Contracts;
-using GarageManagementAPI.Repository.Contracts;
-using GarageManagementAPI.Shared.ResultModel;
+
 using GarageManagementAPI.Entities.Models;
-using GarageManagementAPI.Shared.ErrorsConstant.CarModel;
+using GarageManagementAPI.Repository.Contracts;
+using GarageManagementAPI.Service.Contracts;
 using GarageManagementAPI.Shared.DataTransferObjects.CarModel;
-using GarageManagementAPI.Shared.RequestFeatures;
-using GarageManagementAPI.Shared.Extension;
 using GarageManagementAPI.Shared.ErrorsConstant.Brand;
 using GarageManagementAPI.Shared.ErrorsConstant.CarCategory;
+using GarageManagementAPI.Shared.ErrorsConstant.CarModel;
+using GarageManagementAPI.Shared.Extension;
+using GarageManagementAPI.Shared.RequestFeatures;
+using GarageManagementAPI.Shared.ResultModel;
+
 using System.Dynamic;
 
 namespace GarageManagementAPI.Service
@@ -58,7 +60,7 @@ namespace GarageManagementAPI.Service
 
             var carModelEntity = _mapper.Map<CarModel>(carModelDtoForCreate);
 
-            await _repoManager.CarModel.CreateAsync(carModelEntity);
+            await _repoManager.CarModel.CreateCarModelsAsync(carModelEntity);
             await _repoManager.SaveAsync();
 
             var carModelDto = _mapper.Map<CarModelDto>(carModelEntity);

@@ -1,9 +1,7 @@
-﻿using System.Security.Claims;
-using Microsoft.AspNetCore.Mvc;
-using GarageManagementAPI.Shared.Enums;
-using Microsoft.AspNetCore.Authorization;
-using GarageManagementAPI.Service.Contracts;
+﻿using GarageManagementAPI.Service.Contracts;
 using GarageManagementAPI.Shared.RequestFeatures;
+
+using Microsoft.AspNetCore.Mvc;
 
 namespace GarageManagementAPI.Presentation.Controllers
 {
@@ -53,13 +51,11 @@ namespace GarageManagementAPI.Presentation.Controllers
         /// </summary>
         /// <param name="productAtWarehouseParameters"></param>
         /// <returns></returns>
-        [Authorize(Roles = $"{nameof(SystemRole.Mechanic)}, {nameof(SystemRole.Cashier)}")]
-        [HttpGet("garage", Name = "GetProductsAtGarageSpecific")]
-        public async Task<IActionResult> GetProductAtGarageSpecefics([FromQuery] ProductAtGarageParameters productAtWarehouseParameters)
+        [HttpGet("{garageId:guid}", Name = "GetProductsAtGarageSpecific")]
+        public async Task<IActionResult> GetProductAtGarageSpecefics(Guid garageId, [FromQuery] ProductAtGarageParameters productAtWarehouseParameters)
         {
             var include = "Product";
-            var userId = HttpContext.User.FindFirstValue("UserId");
-            var productAtWarehouse = await _service.ProductAtGarageService.GetProductsAtGarage(Guid.Parse(userId!), productAtWarehouseParameters, trackChanges: false, include);
+            var productAtWarehouse = await _service.ProductAtGarageService.GetProductsAtGarage(garageId, productAtWarehouseParameters, trackChanges: false, include);
             return productAtWarehouse.Map(
                  onSuccess: Ok,
                onFailure: ProcessError

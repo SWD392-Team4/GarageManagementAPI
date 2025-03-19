@@ -3,7 +3,7 @@ using GarageManagementAPI.Shared.RequestFeatures;
 
 namespace GarageManagementAPI.Repository.Contracts
 {
-    public interface IProductAtGarageRepository
+    public interface IProductAtGarageRepository : IRepositoryBase<ProductAtGarage>
     {
         public Task CreateProductAtGarageAsync(ProductAtGarage productAtGarage);
         Task<ProductAtGarage?> GetProductAtGarage(Guid productAtWarehouseId, bool trackChanges, string? include = default);

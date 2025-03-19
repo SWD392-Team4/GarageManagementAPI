@@ -4,6 +4,7 @@ using GarageManagementAPI.Repository;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GarageManagementAPI.Application.Migrations
 {
     [DbContext(typeof(RepositoryContext))]
-    partial class RepositoryContextModelSnapshot : ModelSnapshot
+    [Migration("20250319172947_CraeteAppointmentReplacementPartProductAtGarage")]
+    partial class CraeteAppointmentReplacementPartProductAtGarage
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -272,6 +275,9 @@ namespace GarageManagementAPI.Application.Migrations
                     b.Property<DateTimeOffset>("CreatedAt")
                         .HasColumnType("datetimeoffset");
 
+                    b.Property<Guid?>("ProductAtGarageId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<Guid>("ProductHistoryId")
                         .HasColumnType("uniqueidentifier");
 
@@ -289,6 +295,8 @@ namespace GarageManagementAPI.Application.Migrations
 
                     b.HasKey("Id")
                         .HasName("appointmentreplacementpart_id_primary");
+
+                    b.HasIndex("ProductAtGarageId");
 
                     b.HasIndex("ProductHistoryId");
 
@@ -6390,6 +6398,10 @@ namespace GarageManagementAPI.Application.Migrations
                         .IsRequired()
                         .HasConstraintName("appointmentreplacementpart_appointmentdetailid_foreign");
 
+                    b.HasOne("GarageManagementAPI.Entities.Models.ProductAtGarage", null)
+                        .WithMany("AppointmentReplacementParts")
+                        .HasForeignKey("ProductAtGarageId");
+
                     b.HasOne("GarageManagementAPI.Entities.Models.ProductHistory", "ProductHistory")
                         .WithMany("AppointmentReplacementParts")
                         .HasForeignKey("ProductHistoryId")
@@ -7305,6 +7317,8 @@ namespace GarageManagementAPI.Application.Migrations
             modelBuilder.Entity("GarageManagementAPI.Entities.Models.ProductAtGarage", b =>
                 {
                     b.Navigation("AppointmentReplacementPart_ProductAtGarages");
+
+                    b.Navigation("AppointmentReplacementParts");
 
                     b.Navigation("InvoiceSellProduct_ProductAtGarage");
 

@@ -1,8 +1,8 @@
-﻿using Microsoft.EntityFrameworkCore;
-using GarageManagementAPI.Entities.Models;
+﻿using GarageManagementAPI.Entities.Models;
 using GarageManagementAPI.Repository.Contracts;
 using GarageManagementAPI.Repository.Extensions;
 using GarageManagementAPI.Shared.RequestFeatures;
+using Microsoft.EntityFrameworkCore;
 
 namespace GarageManagementAPI.Repository
 {
@@ -21,7 +21,7 @@ namespace GarageManagementAPI.Repository
         {
             var productsAtgarages = await FindAll(trackChanges)
                                             .SearchByQuantityProduct(productAtGarageParameters.minQuantity, productAtGarageParameters.maxQuantity)
-                                            .Include(p => p.Product) 
+                                            .Include(p => p.Product)
                                             .ThenInclude(p => p.ProductImages)
                                             .OrderBy(p => p.CreatedAt)
                                             .GroupBy(p => p.ProductId)
@@ -34,7 +34,7 @@ namespace GarageManagementAPI.Repository
 
         public async Task<Dictionary<Guid, int>> GetTotalQuantityByProductIdAsync(Guid? garageId = null)
         {
-            var totalQuantities = garageId == null ? 
+            var totalQuantities = garageId == null ?
                 await FindAll(false)
                 .GroupBy(p => p.ProductId)
                 .Select(group => new
@@ -44,7 +44,7 @@ namespace GarageManagementAPI.Repository
                 })
                 .ToDictionaryAsync(x => x.ProductId, x => x.TotalQuantity)
                 :
-                await FindByCondition(pag => pag.WorkplaceId.Equals(garageId),false)
+                await FindByCondition(pag => pag.WorkplaceId.Equals(garageId), false)
                 .GroupBy(p => p.ProductId)
                 .Select(group => new
                 {
@@ -77,10 +77,10 @@ namespace GarageManagementAPI.Repository
         public async Task<List<(Guid ProductAtGarageId, int DeductedQuantity)>> DeductProductQuantityFromGarageAsync(
      Guid productId, Guid? garageId, int quantity)
         {
-            var productEntries = await FindByCondition(pat => pat.ProductId.Equals(productId), true)
+            var productEntries = await FindByCondition(pat => pat.ProductId.Equals(productId) && pat.WorkplaceId.Equals(garageId), true)
                  .Include(p => p.Product)
-                                            .ThenInclude(p => p.ProductImages)
-                .OrderBy(pw => pw.CreatedAt)
+                  .ThenInclude(p => p.ProductImages)
+                .OrderByDescending(pw => pw.CreatedAt)
                 .ToListAsync();
 
             int totalStock = productEntries.Sum(pw => pw.Quantity);
@@ -164,7 +164,7 @@ namespace GarageManagementAPI.Repository
                                                    .Include(p => p.Product)
                                                    .ThenInclude(p => p.ProductImages)
                                                    .GroupBy(p => p.Product)
-                                                   .Select(g => g.Key) 
+                                                   .Select(g => g.Key)
                                                    .FirstOrDefaultAsync();
 
             return productAtGarage;

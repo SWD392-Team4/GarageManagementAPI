@@ -74,7 +74,7 @@ namespace GarageManagementAPI.Presentation.Controllers
             return CreatedAtRoute("GetAppointment", new { garageId, appointmentId = appointment.Id }, result);
         }
 
-        [HttpPost("checkPirce")]
+        [HttpPost("checkPrice")]
         public async Task<IActionResult> CheckPrice([FromBody] AppointmentDtoForCheckPriceRequest appointmentDtoCreation)
         {
             var result = await _service.AppointmentService.CheckPriceAppointment(appointmentDtoCreation);

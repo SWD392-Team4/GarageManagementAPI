@@ -1,5 +1,5 @@
-﻿using GarageManagementAPI.Shared.Enums;
-using GarageManagementAPI.Shared.Enums.SystemStatuss;
+﻿using GarageManagementAPI.Shared.Enums.SystemStatuss;
+
 using System.ComponentModel.DataAnnotations;
 
 namespace GarageManagementAPI.Shared.RequestFeatures

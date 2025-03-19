@@ -1,18 +1,21 @@
 ﻿using AutoMapper;
-using GarageManagementAPI.Service.Contracts;
-using GarageManagementAPI.Repository.Contracts;
-using GarageManagementAPI.Shared.DataTransferObjects.AppointmentDetail;
-using GarageManagementAPI.Shared.Enums;
-using GarageManagementAPI.Shared.ErrorsConstant.Workplace;
-using GarageManagementAPI.Shared.ResultModel;
-using GarageManagementAPI.Shared.ErrorsConstant.Appointment;
-using GarageManagementAPI.Shared.Enums.SystemStatuss;
-using GarageManagementAPI.Shared.Extension;
-using GarageManagementAPI.Shared.ErrorsConstant.Service;
-using GarageManagementAPI.Shared.ErrorsConstant.ServiceHisory;
+
 using GarageManagementAPI.Entities.Models;
+using GarageManagementAPI.Repository.Contracts;
+using GarageManagementAPI.Service.Contracts;
+using GarageManagementAPI.Shared.Constant.Authentication;
+using GarageManagementAPI.Shared.DataTransferObjects.AppointmentDetail;
+using GarageManagementAPI.Shared.DataTransferObjects.EmployeeSchedule;
+using GarageManagementAPI.Shared.Enums;
+using GarageManagementAPI.Shared.Enums.SystemStatuss;
+using GarageManagementAPI.Shared.ErrorsConstant.Appointment;
 using GarageManagementAPI.Shared.ErrorsConstant.Product;
 using GarageManagementAPI.Shared.ErrorsConstant.ProductHistory;
+using GarageManagementAPI.Shared.ErrorsConstant.Service;
+using GarageManagementAPI.Shared.ErrorsConstant.ServiceHisory;
+using GarageManagementAPI.Shared.ErrorsConstant.Workplace;
+using GarageManagementAPI.Shared.Extension;
+using GarageManagementAPI.Shared.ResultModel;
 
 namespace GarageManagementAPI.Service
 {
@@ -27,6 +30,101 @@ namespace GarageManagementAPI.Service
             _repoManager = repoManager;
             _mapper = mapper;
             _dataShaper = dataShaper;
+        }
+
+        public async Task<Result> AssignEmployee(Guid garageId, Guid appointmentId, Guid detailId, EmployeeScheduleDtoForAssign employeeScheduleDtoForAssign)
+        {
+            var garage = await _repoManager.Workplace.GetWorkplaceByIdAsync(garageId, false);
+            if (garage is null || !garage.WorkplaceType.Equals(WorkplaceType.Garage))
+                return Result.NotFound(WorkplaceErrors.GetGarageNotFound(garageId));
+
+            var appointment = await _repoManager.Appointment.GetAppointmentAsync(garageId, appointmentId, true);
+            if (appointment is null)
+                return Result.NotFound(AppointmentErrors.GetAppointmentNotFoundError(appointmentId));
+
+            if (appointment.Status == AppointmentStatus.Cancelled || appointment.Status == AppointmentStatus.Rejected || appointment.Status == AppointmentStatus.Completed)
+            {
+                return Result.BadRequest(AppointmentErrors.GetAppointmentCanNotUpdate(appointment.Status));
+            }
+
+            var appointmentDetail = appointment.AppointmentDetails.FirstOrDefault(ad => ad.Id.Equals(detailId));
+            if (appointmentDetail is null)
+                return Result.NotFound(AppointmentErrors.GetAppointmentDetailNotFound(detailId));
+
+            if (appointmentDetail.Status != AppointmentDetailStatus.Unsigned)
+                return Result.BadRequest(AppointmentErrors.GetAppointmentDetailCanNotUpdate(appointmentDetail.Status));
+
+            var employee = await _repoManager.User.GetUserByIdAsync(employeeScheduleDtoForAssign.EmployeeId, false, "EmployeeInfo, Roles");
+            if (employee is null || !employee.Roles.Any(r => r.Name.Equals(nameof(SystemRole.Mechanic))) || employee.EmployeeInfo == null || !employee.EmployeeInfo.WorkplaceId.Equals(garageId))
+                return Result.NotFound(UserErrors.GetUserNotFoundWithIdError(employeeScheduleDtoForAssign.EmployeeId));
+
+            var employeeSchedule = await _repoManager.EmployeeSchedule.GetEmployeeScheduleOfAppointmentDetailAsync(garageId, appointmentId, detailId, employeeScheduleDtoForAssign.EmployeeId, false);
+            if (employeeSchedule is not null)
+                return Result.Conflict(AppointmentErrors.GetEmployeeAlreadyAssignedError(employeeSchedule.Id, appointmentId, detailId));
+
+            var newEmployeeSchedule = new EmployeeSchedule
+            {
+                EmployeeId = employeeScheduleDtoForAssign.EmployeeId,
+                AppointmentDetailId = detailId
+            };
+
+            appointmentDetail.Status = AppointmentDetailStatus.Assigned;
+            appointmentDetail.UpdatedAt = DateTimeOffset.UtcNow.SEAsiaStandardTime();
+
+            await _repoManager.EmployeeSchedule.CreateAsync(newEmployeeSchedule);
+            await _repoManager.SaveAsync();
+
+            return Result.Ok();
+
+        }
+
+        public async Task<Result> UnAssignEmployee(Guid garageId, Guid appointmentId, Guid detailId, EmployeeScheduleDtoForUnassign employeeScheduleDtoForUnassign)
+        {
+            var garage = await _repoManager.Workplace.GetWorkplaceByIdAsync(garageId, false);
+            if (garage is null || !garage.WorkplaceType.Equals(WorkplaceType.Garage))
+                return Result.NotFound(WorkplaceErrors.GetGarageNotFound(garageId));
+
+            var appointment = await _repoManager.Appointment.GetAppointmentAsync(garageId, appointmentId, false);
+            if (appointment is null)
+                return Result.NotFound(AppointmentErrors.GetAppointmentNotFoundError(appointmentId));
+
+            if (appointment.Status == AppointmentStatus.Cancelled || appointment.Status == AppointmentStatus.Rejected || appointment.Status == AppointmentStatus.Completed)
+            {
+                return Result.BadRequest(AppointmentErrors.GetAppointmentCanNotUpdate(appointment.Status));
+            }
+
+            var appointmentDetail = appointment.AppointmentDetails.FirstOrDefault(ad => ad.Id.Equals(detailId));
+            if (appointmentDetail is null)
+                return Result.NotFound(AppointmentErrors.GetAppointmentDetailNotFound(detailId));
+
+            if (appointmentDetail.Status != AppointmentDetailStatus.Assigned && appointmentDetail.Status != AppointmentDetailStatus.InProgress)
+                return Result.BadRequest(AppointmentErrors.GetAppointmentDetailCanNotUpdate(appointmentDetail.Status));
+
+            var employee = await _repoManager.User.GetUserByIdAsync(employeeScheduleDtoForUnassign.EmployeeId, false, "EmployeeInfo, Roles");
+            if (employee is null || !employee.Roles.Any(r => r.Name.Equals(nameof(SystemRole.Mechanic))) || employee.EmployeeInfo == null || !employee.EmployeeInfo.WorkplaceId.Equals(garageId))
+                return Result.NotFound(UserErrors.GetUserNotFoundWithIdError(employeeScheduleDtoForUnassign.EmployeeId));
+
+            var employeeSchedule = await _repoManager.EmployeeSchedule.GetEmployeeScheduleOfAppointmentDetailAsync(garageId, appointmentId, detailId, employeeScheduleDtoForUnassign.EmployeeId, true);
+            if (employeeSchedule is null)
+                return Result.Conflict(AppointmentErrors.GetAppointmentDetailIsNotAssignedError(detailId));
+
+            if (employeeScheduleDtoForUnassign.IsCancel)
+            {
+                employeeSchedule.Status = EmployeeScheduleStatus.Cancelled;
+            }
+            else if (employeeScheduleDtoForUnassign.IsDecline)
+            {
+                employeeSchedule.Status = EmployeeScheduleStatus.Declined;
+            }
+
+            employeeSchedule.AppointmentDetail.Status = AppointmentDetailStatus.Unsigned;
+            employeeSchedule.AppointmentDetail.UpdatedAt = DateTimeOffset.UtcNow.SEAsiaStandardTime();
+
+            _repoManager.EmployeeSchedule.Update(employeeSchedule);
+            await _repoManager.SaveAsync();
+
+            return Result.Ok();
+
         }
 
         public async Task<Result> CancelAppointmentDetailsAsync(Guid garageId, Guid appointmentId, AppointmentDetailDtoForCancellation appointmentDetailDtoForCancellation)
@@ -221,9 +319,20 @@ namespace GarageManagementAPI.Service
             return Result<IEnumerable<AppointmentDetailDto>>.Ok(appointmentDetailDto);
         }
 
-        public Task<Result<IEnumerable<AppointmentDetailDto>>> GetAppointmentDetailsAsync(Guid garageId, Guid appointmentId)
+        public async Task<Result<IEnumerable<AppointmentDetailDto>>> GetAppointmentDetailsAsync(Guid garageId, Guid appointmentId)
         {
-            throw new NotImplementedException();
+            var garage = await _repoManager.Workplace.GetWorkplaceByIdAsync(garageId, false);
+            if (garage is null || !garage.WorkplaceType.Equals(WorkplaceType.Garage))
+                return Result<IEnumerable<AppointmentDetailDto>>.NotFound(WorkplaceErrors.GetGarageNotFound(garageId));
+
+            var appointment = await _repoManager.Appointment.GetAppointmentAsync(garageId, appointmentId, true);
+            if (appointment is null)
+                return Result<IEnumerable<AppointmentDetailDto>>.NotFound(AppointmentErrors.GetAppointmentNotFoundError(appointmentId));
+
+            var appointmentDetails = appointment.AppointmentDetails;
+            var appointmentDetailDtos = _mapper.Map<IEnumerable<AppointmentDetailDto>>(appointmentDetails);
+
+            return Result<IEnumerable<AppointmentDetailDto>>.Ok(appointmentDetailDtos);
         }
 
         public async Task<Result> RejectAppointmentDetailsAsync(Guid garageId, Guid appointmentId, AppointmentDetailDtoForCancellation appointmentDetailDtoForCancellation)

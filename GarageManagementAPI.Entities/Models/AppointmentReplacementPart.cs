@@ -1,4 +1,5 @@
 ﻿using GarageManagementAPI.Shared.Enums.SystemStatuss;
+
 using System.ComponentModel.DataAnnotations;
 
 namespace GarageManagementAPI.Entities.Models
@@ -8,8 +9,6 @@ namespace GarageManagementAPI.Entities.Models
         public Guid AppointmentDetailId { get; set; }
 
         public Guid ProductHistoryId { get; set; }
-
-        public Guid? ProductAtGarageId { get; set; }
 
         public int Quantity { get; set; }
 
@@ -22,9 +21,10 @@ namespace GarageManagementAPI.Entities.Models
 
         public virtual AppointmentDetail AppointmentDetail { get; set; } = null!;
 
-        public virtual ProductAtGarage ProductAtGarage { get; set; } = null!;
-
         public virtual ProductHistory ProductHistory { get; set; } = null!;
+
+        public virtual ICollection<AppointmentReplacementPart_ProductAtGarage> AppointmentReplacementPart_ProductAtGarages { get; set; } = new List<AppointmentReplacementPart_ProductAtGarage>();
+
     }
 
 }

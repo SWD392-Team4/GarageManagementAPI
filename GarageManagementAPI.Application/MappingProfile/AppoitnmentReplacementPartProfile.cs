@@ -27,6 +27,7 @@ namespace GarageManagementAPI.Application.MappingProfile
                     opts.PreCondition(src => src.ProductHistory != null);
                     opts.MapFrom(src => src.ProductHistory.ProductId);
                 });
+
         }
     }
 }

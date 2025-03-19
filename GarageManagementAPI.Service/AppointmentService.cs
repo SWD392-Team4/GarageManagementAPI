@@ -84,7 +84,11 @@ namespace GarageManagementAPI.Service
                 return Result<AppointmentDto>.Failure(result);
 
             var appointment = _mapper.Map<Appointment>(appointmentDtoCreation);
-            if (userId.HasValue) appointment.ApproveByEmployeeId = userId.Value;
+            if (userId.HasValue)
+            {
+                appointment.ApproveByEmployeeId = userId.Value;
+                appointment.Status = AppointmentStatus.Approved;
+            }
             await _repoManager.Appointment.CreateAsync(garageId, appointment);
             var now = DateTimeOffset.UtcNow.SEAsiaStandardTime();
 
@@ -182,7 +186,7 @@ namespace GarageManagementAPI.Service
                 return Result<(List<AppointmentDetail>, decimal, int)>.NotFound(ServiceErrors.GetServicesFoundNotMatchWithIdsError(missingIds));
             }
 
-            var serviceHistoryList = await _repoManager.ServiceHistory.GetServiceHistoriesAsync(serviceIdList, false);
+            var serviceHistoryList = await _repoManager.ServiceHistory.GetServiceHistoriesAsync(serviceIdList, true);
             if (serviceHistoryList.Count() != serviceIdList.Count)
             {
                 var notFoundServiceIds = serviceIdList.Except(serviceHistoryList.Select(s => s.ServiceId));
@@ -202,7 +206,7 @@ namespace GarageManagementAPI.Service
                     return Result<(List<AppointmentDetail>, decimal, int)>.NotFound(ProductErrors.GetProductsFoundNotMatchWithIdsError(missingIds));
                 }
 
-                productHistoryList = await _repoManager.ProductHistory.GetProductHistoriesAsync(productIdList, false);
+                productHistoryList = await _repoManager.ProductHistory.GetProductHistoriesAsync(productIdList, true);
                 if (productHistoryList.Count() != productIdList.Count)
                 {
                     var notFoundProductIds = productIdList.Except(productHistoryList.Select(p => p.ProductId));
@@ -233,6 +237,7 @@ namespace GarageManagementAPI.Service
                     UpdatedAt = now,
                     Status = AppointmentDetailStatus.Pending,
                     PackageHistoryId = packageHistoryId != default ? packageHistoryId : null,
+                    ServiceHistory = serviceHistory
                 };
 
                 // Add replacement parts if any
@@ -251,7 +256,8 @@ namespace GarageManagementAPI.Service
                             Quantity = part.Quantity,
                             Status = AppointmentReplacementPartStatus.Pending,
                             CreatedAt = now,
-                            UpdatedAt = now
+                            UpdatedAt = now,
+                            ProductHistory = productHistory
                         };
 
                         replacementParts.Add(replacementPart);
@@ -328,7 +334,7 @@ namespace GarageManagementAPI.Service
                     AppointmentErrors.GetAppointmentWrongPackageTypeError());
             }
 
-            var packageHistoryList = await _repoManager.PackageHistory.GetPackageHistoriesAsync(packageIds, false);
+            var packageHistoryList = await _repoManager.PackageHistory.GetPackageHistoriesAsync(packageIds, true);
             if (packageHistoryList.Count() != packageIds.Count())
             {
                 var notFoundPackageIds = packageIds.Except(packageHistoryList.Select(p => p.PackageId));
@@ -348,7 +354,8 @@ namespace GarageManagementAPI.Service
                     PackageHistoryId = packageHistory.Id,
                     CreatedAt = now,
                     UpdatedAt = now,
-                    Status = AppointmentDetailPackageStatus.Pending
+                    Status = AppointmentDetailPackageStatus.Pending,
+                    PackageHistory = packageHistory
                 };
 
                 appointmentPackages.Add(newAppointmentDetailPackage);

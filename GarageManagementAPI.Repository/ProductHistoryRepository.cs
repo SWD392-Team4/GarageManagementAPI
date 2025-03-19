@@ -1,10 +1,9 @@
-﻿using Microsoft.EntityFrameworkCore;
-using GarageManagementAPI.Entities.Models;
+﻿using GarageManagementAPI.Entities.Models;
 using GarageManagementAPI.Repository.Contracts;
 using GarageManagementAPI.Repository.Extensions;
-using GarageManagementAPI.Shared.RequestFeatures;
-using GarageManagementAPI.Shared.Enums.SystemStatuss;
 using GarageManagementAPI.Shared.Extension;
+using GarageManagementAPI.Shared.RequestFeatures;
+using Microsoft.EntityFrameworkCore;
 
 namespace GarageManagementAPI.Repository
 {
@@ -64,6 +63,7 @@ namespace GarageManagementAPI.Repository
         public async Task<IEnumerable<ProductHistory>> GetProductHistoriesAsync(IEnumerable<Guid> productIds, bool trackChanges)
         {
             var productHistories = await FindByCondition(ph => productIds.Contains(ph.ProductId), trackChanges)
+                    .Include(ph => ph.Product)
                     .GroupBy(ph => ph.ProductId)
                     .Select(g => g.OrderByDescending(s => s.CreatedAt).First())
                     .ToListAsync();

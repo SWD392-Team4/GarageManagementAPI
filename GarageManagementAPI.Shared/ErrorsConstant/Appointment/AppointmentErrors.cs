@@ -22,6 +22,14 @@ namespace GarageManagementAPI.Shared.ErrorsConstant.Appointment
         public const string AppointmentDetailNotFound = "Appointment detail {0} not found";
         public const string AppointmentDetailAlreadyCancelled = "Appointment detail {0} is already cancelled";
         public const string AppointmentDetailAlreadyRejected = "Appointment detail {0} is already rejected";
+        public const string AppointmentReplacementPartAlreadyApporoved = "Appointment replacement part {0} is already approved";
+        public const string AppointmentReplacementPartAlreadyDeclined = "Appointment replacement part {0} is already declined";
+        public const string AppointmentReplacementPartAlreadyCancelled = "Appointment replacement part {0} is already cancelled";
+        public const string ProductInAppointmentReplacementPartNotMatch = "Product in appointment replacement part not match";
+        public const string AppointmentReplacementPartQuantityNotMatch = "Quantity in appointment replacement part not match";
+
+        public const string AppointmentDetailCanNotUpdate = "Appointment detail status is {0} can not update";
+
         public const string AppointmentReplacementPartNotFound = "Appointment replacement part not found";
         public const string CarConditionImageNotFound = "Car condition image not found with id {0}";
 
@@ -32,6 +40,27 @@ namespace GarageManagementAPI.Shared.ErrorsConstant.Appointment
         public const string CustomerNameRequired = "Customer name is required";
         public const string EstimatedAppointmentTimeRequired = "Estimated appointment time is required";
         public const string CarModelIdRequired = "Car model id is required";
+
+        public const string EmployeeAlreadyAssigned = "Employee {0} is already assigned to appointment {1} in detail {2}";
+        public const string AppointmentDetailIsNotAssigned = "Appointment detail {0} is not assigned to any employee";
+
+        public static ErrorsResult GetEmployeeAlreadyAssignedError(Guid employeeId, Guid appointmentId, Guid detailId)
+        {
+            return new ErrorsResult
+            {
+                Code = nameof(EmployeeAlreadyAssigned),
+                Description = string.Format(EmployeeAlreadyAssigned, employeeId, appointmentId, detailId)
+            };
+        }
+
+        public static ErrorsResult GetAppointmentDetailIsNotAssignedError(Guid id)
+        {
+            return new ErrorsResult
+            {
+                Code = nameof(AppointmentDetailIsNotAssigned),
+                Description = string.Format(AppointmentDetailIsNotAssigned, id)
+            };
+        }
 
         public static ErrorsResult GetAppointmentNotFoundError(Guid id)
             => new ErrorsResult
@@ -215,6 +244,60 @@ namespace GarageManagementAPI.Shared.ErrorsConstant.Appointment
             {
                 Code = nameof(CarConditionImageNotFound),
                 Description = string.Format(CarConditionImageNotFound, id)
+            };
+        }
+
+        public static ErrorsResult GetAppointmentReplacementPartAlreadyApporoved(Guid id)
+        {
+            return new ErrorsResult
+            {
+                Code = nameof(AppointmentReplacementPartAlreadyApporoved),
+                Description = string.Format(AppointmentReplacementPartAlreadyApporoved, id)
+            };
+        }
+
+        public static ErrorsResult GetAppointmentReplacementPartAlreadyDeclined(Guid id)
+        {
+            return new ErrorsResult
+            {
+                Code = nameof(AppointmentReplacementPartAlreadyDeclined),
+                Description = string.Format(AppointmentReplacementPartAlreadyDeclined, id)
+            };
+        }
+
+        public static ErrorsResult GetAppointmentReplacementPartAlreadyCancelled(Guid id)
+        {
+            return new ErrorsResult
+            {
+                Code = nameof(AppointmentReplacementPartAlreadyCancelled),
+                Description = string.Format(AppointmentReplacementPartAlreadyCancelled, id)
+            };
+        }
+
+        public static ErrorsResult GetProductInAppointmentReplacementPartNotMatch()
+        {
+            return new ErrorsResult
+            {
+                Code = nameof(ProductInAppointmentReplacementPartNotMatch),
+                Description = ProductInAppointmentReplacementPartNotMatch
+            };
+        }
+
+        public static ErrorsResult GetAppointmentReplacementPartQuantityNotMatch()
+        {
+            return new ErrorsResult
+            {
+                Code = nameof(AppointmentReplacementPartQuantityNotMatch),
+                Description = AppointmentReplacementPartQuantityNotMatch
+            };
+        }
+
+        public static ErrorsResult GetAppointmentDetailCanNotUpdate(AppointmentDetailStatus appointmentDetailStatus)
+        {
+            return new ErrorsResult
+            {
+                Code = nameof(AppointmentDetailCanNotUpdate),
+                Description = string.Format(AppointmentDetailCanNotUpdate, appointmentDetailStatus)
             };
         }
     }

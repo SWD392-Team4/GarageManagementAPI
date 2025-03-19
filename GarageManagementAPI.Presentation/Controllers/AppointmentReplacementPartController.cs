@@ -1,5 +1,7 @@
 ﻿using GarageManagementAPI.Service.Contracts;
 using GarageManagementAPI.Shared.DataTransferObjects.AppointmentReplacementPart;
+using GarageManagementAPI.Shared.RequestFeatures;
+
 using Microsoft.AspNetCore.Mvc;
 
 namespace GarageManagementAPI.Presentation.Controllers
@@ -13,9 +15,9 @@ namespace GarageManagementAPI.Presentation.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAppointmentReplacementParts(Guid garageId, Guid appointmentId, Guid appointmentDetailId)
+        public async Task<IActionResult> GetAppointmentReplacementParts(Guid garageId, Guid appointmentId, Guid appointmentDetailId, [FromQuery] AppoitnmentReplacementPartParameters appoitnmentReplacementPartParameters)
         {
-            var result = await _service.AppointmentReplacementPartService.GetAppointmentReplacementPartsAsync(garageId, appointmentId, appointmentDetailId);
+            var result = await _service.AppointmentReplacementPartService.GetAppointmentReplacementPartsAsync(garageId, appointmentId, appointmentDetailId, appoitnmentReplacementPartParameters);
             return result.Map(
                 onSuccess: Ok,
                 onFailure: ProcessError
@@ -42,14 +44,14 @@ namespace GarageManagementAPI.Presentation.Controllers
                 );
         }
 
-        //[HttpPut("{replacementPartId:guid}")]
-        //public async Task<IActionResult> UpdateAppointmentReplacementPart(Guid garageId, Guid appointmentId, Guid appointmentDetailId, Guid replacementPartId, [FromBody] AppointmentReplacementPartDtoForUpdate appointmentReplacementPartDtoForUpdate)
-        //{
-        //    var result = await _service.AppointmentReplacementPartService.UpdateAppointmentReplacementPartAsync(garageId, appointmentId, appointmentDetailId, replacementPartId, appointmentReplacementPartDtoForUpdate);
-        //    return result.Map(
-        //        onSuccess: Ok,
-        //        onFailure: ProcessError
-        //        );
-        //}
+        [HttpPut("{replacementPartId:guid}")]
+        public async Task<IActionResult> UpdateAppointmentReplacementPart(Guid garageId, Guid appointmentId, Guid appointmentDetailId, Guid replacementPartId, [FromBody] AppointmentReplacementPartDtoForUpdate appointmentReplacementPartDtoForUpdate)
+        {
+            var result = await _service.AppointmentReplacementPartService.UpdateAppointmentReplacementPartAsync(garageId, appointmentId, appointmentDetailId, replacementPartId, appointmentReplacementPartDtoForUpdate);
+            return result.Map(
+                onSuccess: Ok,
+                onFailure: ProcessError
+                );
+        }
     }
 }

@@ -12,20 +12,28 @@ namespace GarageManagementAPI.Repository
         {
         }
 
-        public async Task<AppointmentReplacementPart?> GetAppointmentReplacementPartAsync(Guid id, bool trackChanges)
+        public async Task<AppointmentReplacementPart?> GetAppointmentReplacementPartAsync(Guid appointmentDetailId, Guid appointmentReplacementPartId, bool trackChanges)
         {
-            return await FindByCondition(ad => ad.Id.Equals(id), trackChanges).SingleOrDefaultAsync();
+            return await FindByCondition(ad => ad.Id.Equals(appointmentReplacementPartId) && ad.AppointmentDetailId.Equals(appointmentDetailId), trackChanges)
+                 .Include(ad => ad.ProductHistory)
+                   .ThenInclude(ph => ph.Product)
+                   .ThenInclude(p => p.ProductImages)
+                   .Include(rp => rp.AppointmentReplacementPart_ProductAtGarages)
+                   .SingleOrDefaultAsync();
         }
 
-        public async Task<PagedList<AppointmentReplacementPart>> GetAppointmentReplacementPartsAsync(AppoitnmentReplacementPartParameters appoitnmentReplacementPartParameters, bool trackChanges)
+        public async Task<PagedList<AppointmentReplacementPart>> GetAppointmentReplacementPartsAsync(Guid appointmentDetailId, AppoitnmentReplacementPartParameters appoitnmentReplacementPartParameters, bool trackChanges)
         {
-            var appointmentReplacementParts = await FindAll(trackChanges)
+            var appointmentReplacementParts = await FindByCondition(ad => ad.AppointmentDetailId.Equals(appointmentDetailId), trackChanges)
                    .FilterByAppointmentId(appoitnmentReplacementPartParameters.AppointmentId)
                    .FilterByAppointmentDetailId(appoitnmentReplacementPartParameters.AppointmentDetailId)
                    .FilterByStatus(appoitnmentReplacementPartParameters.AppointmentReplacementPartStatus)
                    .Sort(appoitnmentReplacementPartParameters.OrderBy)
                    .Skip((appoitnmentReplacementPartParameters.PageNumber - 1) * appoitnmentReplacementPartParameters.PageSize)
                    .Take(appoitnmentReplacementPartParameters.PageSize)
+                   .Include(ad => ad.ProductHistory)
+                   .ThenInclude(ph => ph.Product)
+                   .ThenInclude(p => p.ProductImages)
                    .ToListAsync();
 
             var count = await FindAll(trackChanges)

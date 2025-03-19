@@ -17,7 +17,7 @@ namespace GarageManagementAPI.Repository.Contracts
         IServiceImageRepository ServiceImage { get; }
         IProductImageRepository ProductImage { get; }
         IEmployeeInfoRepository EmployeeInfo { get; }
-        IInvoiceRepository Invoice{ get; }
+        IInvoiceRepository Invoice { get; }
         IGoodsReceivedRepository GoodsReceived { get; }
         IProductHistoryRepository ProductHistory { get; }
         IServiceHistoryRepository ServiceHistory { get; }
@@ -47,6 +47,8 @@ namespace GarageManagementAPI.Repository.Contracts
         IPackageUsageDetailRepository PackageUsageDetail { get; }
         IPackageDetailRepository PackageDetail { get; }
         ICarConditionImageRepository CarConditionImage { get; }
+        IAppointmentReplacementPart_ProductAtGarageRepository AppointmentReplacementPart_ProductAtGarage { get; }
+        IEmployeeScheduleRepository EmployeeSchedule { get; }
         Task<IDbContextTransaction> BeginTransactionAsync();
         IExecutionStrategy CreateExecutionStrategy();
         Task SaveAsync();

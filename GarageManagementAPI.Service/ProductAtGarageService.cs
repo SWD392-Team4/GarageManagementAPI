@@ -1,13 +1,17 @@
 ﻿using AutoMapper;
-using System.Dynamic;
+
 using GarageManagementAPI.Entities.Models;
-using GarageManagementAPI.Service.Extension;
-using GarageManagementAPI.Service.Contracts;
-using GarageManagementAPI.Shared.Extension;
-using GarageManagementAPI.Shared.ResultModel;
 using GarageManagementAPI.Repository.Contracts;
-using GarageManagementAPI.Shared.RequestFeatures;
+using GarageManagementAPI.Service.Contracts;
+using GarageManagementAPI.Service.Extension;
 using GarageManagementAPI.Shared.DataTransferObjects.ProductAtGarage;
+using GarageManagementAPI.Shared.Enums;
+using GarageManagementAPI.Shared.ErrorsConstant.Workplace;
+using GarageManagementAPI.Shared.Extension;
+using GarageManagementAPI.Shared.RequestFeatures;
+using GarageManagementAPI.Shared.ResultModel;
+
+using System.Dynamic;
 
 namespace GarageManagementAPI.Service
 {
@@ -27,7 +31,7 @@ namespace GarageManagementAPI.Service
         public async Task<Result<ExpandoObject>> GetProductAtGarage(Guid productAtGarageid, bool trackChanges, string? include = null)
         {
             var productAtWarehouse = await this.GetAndCheckProductAtGarage(productAtGarageid, trackChanges, include);
-            if(!productAtWarehouse.IsSuccess) return Result<ExpandoObject>.Failure(productAtWarehouse);
+            if (!productAtWarehouse.IsSuccess) return Result<ExpandoObject>.Failure(productAtWarehouse);
             var productEntity = productAtWarehouse.GetValue<ProductAtGarage>();
             var productAtHouseDto = _mapper.Map<ProductAtGarageDto>(productEntity);
             var productAtHouseShapper = _dataShapper.ProductAtGarage.ShapeData(productAtHouseDto, null);
@@ -60,11 +64,12 @@ namespace GarageManagementAPI.Service
             return productAtGarage.OkResukt();
         }
 
-        public async Task<Result<IEnumerable<ExpandoObject>>> GetProductsAtGarage(Guid userId, ProductAtGarageParameters productAtGarageParameters, bool trackChanges, string? include = null)
+        public async Task<Result<IEnumerable<ExpandoObject>>> GetProductsAtGarage(Guid garageId, ProductAtGarageParameters productAtGarageParameters, bool trackChanges, string? include = null)
         {
-            var user = await _repoManager.User.GetUserByIdAsync(userId, false, "EmployeeInfo");
 
-            var garageId = user!.EmployeeInfo!.WorkplaceId ?? throw new Exception("GarageId cannot be null.");
+            var garage = await _repoManager.Workplace.GetWorkplaceByIdAsync(garageId, trackChanges);
+            if (garage is null || !garage.WorkplaceType.Equals(WorkplaceType.Garage))
+                return Result<IEnumerable<ExpandoObject>>.NotFound(WorkplaceErrors.GetGarageNotFound(garageId));
 
             var productQuantities = await _repoManager.ProductAtGarage.GetTotalQuantityByProductIdAsync(garageId);
 

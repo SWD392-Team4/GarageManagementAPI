@@ -11,11 +11,10 @@
         public virtual GoodsIssuedDetail GoodsIssuedDetail { get; set; } = null!;
         public virtual Product Product { get; set; } = null!;
         public virtual Workplace Workplace { get; set; } = null!;
-        public virtual ICollection<AppointmentReplacementPart> AppointmentReplacementParts { get; set; } = new List<AppointmentReplacementPart>();
         public virtual ICollection<InvoiceSellProduct> InvoiceSellProducts { get; set; } = new List<InvoiceSellProduct>();
-
         public virtual ICollection<ReplacementPart> ReplacementParts { get; set; } = new List<ReplacementPart>();
         public virtual ICollection<InvoiceSellProduct_ProductAtGarage> InvoiceSellProduct_ProductAtGarage { get; set; } = new List<InvoiceSellProduct_ProductAtGarage>();
+        public virtual ICollection<AppointmentReplacementPart_ProductAtGarage> AppointmentReplacementPart_ProductAtGarages { get; set; } = new List<AppointmentReplacementPart_ProductAtGarage>();
     }
 
 }
