@@ -8,7 +8,11 @@ namespace GarageManagementAPI.Application.MappingProfile
         public InvoiceMappingProfile()
         {
             CreateMap<Entities.Models.Invoice, InvoiceDto>();
-            CreateMap<InvoiceDtoForCreation, Entities.Models.Invoice>();
+            CreateMap<InvoiceDtoForCreation, Entities.Models.Invoice>()
+                .ForMember(dest => dest.InvoiceSellProducts, opts =>
+                {
+                    opts.Ignore();
+                });
         }
     }
 }

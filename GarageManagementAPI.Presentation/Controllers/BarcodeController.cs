@@ -1,15 +1,13 @@
-﻿using GarageManagementAPI.Service.Contracts;
-using Microsoft.AspNetCore.Mvc;
-using ZXing;
-using ZXing.QrCode;
-using System.Drawing.Imaging;
-using ZXing.CoreCompat.System.Drawing;
+﻿using ZXing;
 using ZXing.Common;
-using System.Drawing;
-using GarageManagementAPI.Shared.RequestFeatures;
-using GarageManagementAPI.Shared.Enums;
-using Microsoft.AspNetCore.Authorization;
+using System.Drawing.Imaging;
 using System.Security.Claims;
+using Microsoft.AspNetCore.Mvc;
+using ZXing.CoreCompat.System.Drawing;
+using GarageManagementAPI.Shared.Enums;
+using GarageManagementAPI.Service.Contracts;
+using GarageManagementAPI.Shared.RequestFeatures;
+using Microsoft.AspNetCore.Authorization;
 
 namespace GarageManagementAPI.Presentation.Controllers
 {
