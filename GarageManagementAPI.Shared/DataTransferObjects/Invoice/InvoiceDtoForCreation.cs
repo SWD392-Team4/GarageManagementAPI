@@ -10,7 +10,6 @@ namespace GarageManagementAPI.Shared.DataTransferObjects.Invoice
 
         public string? CustomerEmail { get; set; }
 
-
-        public virtual ICollection<InvoiceSellProductDtoForCreation> InvoiceSellProducts { get; set; } = new List<InvoiceSellProductDtoForCreation>();
+        public virtual List<InvoiceSellProductDtoForCreation>? InvoiceSellProducts { get; set; }
     }
 }

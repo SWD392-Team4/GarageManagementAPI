@@ -5,6 +5,5 @@ namespace GarageManagementAPI.Service.Contracts
 {
     public interface IInvoiceSellProductService
     {
-        Task<Result> CreateInvoiceSellProduct(InvoiceSellProductDtoForCreation sellProductDtoForCreation, Guid garageId);
     }
 }
