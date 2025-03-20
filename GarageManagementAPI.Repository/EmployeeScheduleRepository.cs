@@ -32,6 +32,7 @@ namespace GarageManagementAPI.Repository
                         es.AppointmentDetailId.Equals(appointmentDetailId) &&
                         es.EmployeeId.Equals(employeeId), trackChanges)
                 .Include(e => e.Employee)
+                .ThenInclude(e => e.Roles)
                 .Include(e => e.AppointmentDetail)
                 .ThenInclude(ad => ad.AppointmentReplacementParts)
                 .ThenInclude(arp => arp.ProductHistory)
@@ -51,6 +52,7 @@ namespace GarageManagementAPI.Repository
                      es.AppointmentDetail.AppointmentId.Equals(appointmentId) &&
                      es.AppointmentDetailId.Equals(appointmentDetailId), trackChanges)
                 .Include(e => e.Employee)
+                .ThenInclude(e => e.Roles)
                 .Include(e => e.AppointmentDetail)
                 .ThenInclude(ad => ad.AppointmentReplacementParts)
                 .ThenInclude(arp => arp.ProductHistory)
@@ -69,6 +71,7 @@ namespace GarageManagementAPI.Repository
                          es.Employee.EmployeeInfo.WorkplaceId.Equals(garageId) &&
                          es.AppointmentDetail.AppointmentId.Equals(appointmentId), trackChanges)
                 .Include(e => e.Employee)
+                .ThenInclude(e => e.Roles)
                 .Include(e => e.AppointmentDetail)
                 .ThenInclude(ad => ad.AppointmentReplacementParts)
                 .ThenInclude(arp => arp.ProductHistory)
@@ -94,6 +97,7 @@ namespace GarageManagementAPI.Repository
                 .FilterByUpdatedAt(employeeScheduleParameters.UpdatedAt)
                 .FilterByEmployeeId(employeeScheduleParameters.EmployeeId)
                 .Include(e => e.Employee)
+                .ThenInclude(e => e.Roles)
                 .Include(e => e.AppointmentDetail)
                 .ThenInclude(ad => ad.AppointmentReplacementParts)
                 .ThenInclude(arp => arp.ProductHistory)
@@ -127,6 +131,7 @@ namespace GarageManagementAPI.Repository
                         es.Employee.EmployeeInfo.WorkplaceId.Equals(garageId) &&
                         es.EmployeeId.Equals(employeeId), trackChanges)
                 .Include(e => e.Employee)
+                .ThenInclude(e => e.Roles)
                 .Include(e => e.AppointmentDetail)
                 .ThenInclude(ad => ad.AppointmentReplacementParts)
                 .ThenInclude(arp => arp.ProductHistory)
@@ -152,6 +157,7 @@ namespace GarageManagementAPI.Repository
                 .FilterByUpdatedAt(employeeScheduleParameters.UpdatedAt)
                 .FilterByAppointmentId(employeeScheduleParameters.AppointmentId)
                 .Include(e => e.Employee)
+                .ThenInclude(e => e.Roles)
                 .Include(e => e.AppointmentDetail)
                 .ThenInclude(ad => ad.AppointmentReplacementParts)
                 .ThenInclude(arp => arp.ProductHistory)

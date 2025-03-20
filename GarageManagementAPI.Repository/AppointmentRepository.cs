@@ -32,6 +32,10 @@ namespace GarageManagementAPI.Repository
                         .ThenInclude(a => a.PackageHistory)
                         .Include(a => a.ApproveByEmployee)
                         .Include(a => a.RejecteByEmployee)
+                        .Include(a => a.AppointmentDetails)
+                        .ThenInclude(a => a.EmployeeSchedules)
+                        .ThenInclude(a => a.Employee)
+                        .ThenInclude(e => e.Roles)
                         .SingleOrDefaultAsync();
         }
 
@@ -59,6 +63,10 @@ namespace GarageManagementAPI.Repository
                 .Include(a => a.RejecteByEmployee)
                 .Include(a => a.AppointmentDetails)
                 .ThenInclude(ad => ad.CarConditionImages)
+                .Include(a => a.AppointmentDetails)
+                .ThenInclude(a => a.EmployeeSchedules)
+                .ThenInclude(a => a.Employee)
+                .ThenInclude(e => e.Roles)
                 .SingleOrDefaultAsync();
         }
 
@@ -105,6 +113,10 @@ namespace GarageManagementAPI.Repository
                 .Include(a => a.RejecteByEmployee)
                 .Include(a => a.AppointmentDetails)
                 .ThenInclude(ad => ad.CarConditionImages)
+                .Include(a => a.AppointmentDetails)
+                .ThenInclude(a => a.EmployeeSchedules)
+                .ThenInclude(a => a.Employee)
+                .ThenInclude(e => e.Roles)
                 .ToListAsync();
 
             var count = await FindByCondition(a => a.GarageId.Equals(garageId), trackChanges)
@@ -147,6 +159,10 @@ namespace GarageManagementAPI.Repository
                         .Include(a => a.RejecteByEmployee)
                         .Include(a => a.AppointmentDetails)
                         .ThenInclude(ad => ad.CarConditionImages)
+                        .Include(a => a.AppointmentDetails)
+                        .ThenInclude(a => a.EmployeeSchedules)
+                        .ThenInclude(a => a.Employee)
+                        .ThenInclude(e => e.Roles)
                         .FirstOrDefaultAsync();
         }
 
@@ -157,7 +173,7 @@ namespace GarageManagementAPI.Repository
             var result = garageId == null
                ?
                 await FindAll(trackChanges)
-                .Where(a =>  a.CreatedAt.Year == year)
+                .Where(a => a.CreatedAt.Year == year)
                 .GroupBy(a => a.CreatedAt.Month)
                 .Select(g => new AppointmentStatisticsDto
                 {
@@ -180,5 +196,55 @@ namespace GarageManagementAPI.Repository
             return result;
         }
 
+        public async Task<PagedList<Appointment>> GetAppointmentsOfEmployeeAsync(Guid garageId, Guid employeeId, AppointmentParameters appointmentParameters, bool trackChanges)
+        {
+            var appointments = await FindByCondition(a => a.GarageId.Equals(garageId) && a.AppointmentDetails.Any(ad => ad.EmployeeSchedules.Any(es => es.EmployeeId.Equals(employeeId))), trackChanges)
+                .FilterByTime(appointmentParameters.FromTime, appointmentParameters.ToTime)
+                .FilterByEmployeeApprovedId(appointmentParameters.Employee)
+                .FilterByCustomerName(appointmentParameters.CustomerName)
+                .FilterByCustomerEmail(appointmentParameters.CustomerEmail)
+                .FilterByCustomerPhoneNumber(appointmentParameters.CustomerPhoneNumber)
+                .FilterByCarLicensePlateNumber(appointmentParameters.CarLicensePlateNumber)
+                .FilterByType(appointmentParameters.AppointmentType)
+                .FilterByStatus(appointmentParameters.AppointmentStatus)
+                .Sort(appointmentParameters.OrderBy)
+                .Skip((appointmentParameters.PageNumber - 1) * appointmentParameters.PageSize)
+                .Take(appointmentParameters.PageSize)
+                .Include(a => a.AppointmentDetails)
+                .ThenInclude(ad => ad.ServiceHistory)
+                .ThenInclude(ad => ad.Service)
+                .Include(a => a.AppointmentDetails)
+                .ThenInclude(a => a.AppointmentReplacementParts)
+                .ThenInclude(a => a.ProductHistory)
+                .ThenInclude(a => a.Product)
+                .Include(a => a.AppointmentDetailPackages)
+                .ThenInclude(a => a.PackageHistory)
+                .Include(a => a.ApproveByEmployee)
+                .Include(a => a.RejecteByEmployee)
+                .Include(a => a.AppointmentDetails)
+                .ThenInclude(ad => ad.CarConditionImages)
+                .Include(a => a.AppointmentDetails)
+                .ThenInclude(a => a.EmployeeSchedules)
+                .ThenInclude(a => a.Employee)
+                .ThenInclude(e => e.Roles)
+                .ToListAsync();
+
+            var count = await FindByCondition(a => a.GarageId.Equals(garageId) && a.AppointmentDetails.Any(ad => ad.EmployeeSchedules.Any(es => es.EmployeeId.Equals(employeeId))), trackChanges)
+                 .FilterByEmployeeApprovedId(appointmentParameters.Employee)
+                .FilterByCustomerName(appointmentParameters.CustomerName)
+                .FilterByCustomerEmail(appointmentParameters.CustomerEmail)
+                .FilterByCustomerPhoneNumber(appointmentParameters.CustomerPhoneNumber)
+                .FilterByCarLicensePlateNumber(appointmentParameters.CarLicensePlateNumber)
+                .FilterByType(appointmentParameters.AppointmentType)
+                .FilterByStatus(appointmentParameters.AppointmentStatus)
+                .CountAsync();
+
+
+            return new PagedList<Appointment>(
+                appointments,
+                count,
+                appointmentParameters.PageNumber,
+                appointmentParameters.PageSize);
+        }
     }
 }

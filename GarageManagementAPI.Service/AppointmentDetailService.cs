@@ -62,14 +62,16 @@ namespace GarageManagementAPI.Service
             if (employeeSchedule is not null)
                 return Result.Conflict(AppointmentErrors.GetEmployeeAlreadyAssignedError(employeeSchedule.Id, appointmentId, detailId));
 
+            var now = DateTimeOffset.UtcNow.SEAsiaStandardTime();
             var newEmployeeSchedule = new EmployeeSchedule
             {
                 EmployeeId = employeeScheduleDtoForAssign.EmployeeId,
-                AppointmentDetailId = detailId
+                AppointmentDetailId = detailId,
+                EstimatedEndTime = now.AddHours(appointmentDetail.ServiceHistory.Service.EstimatedHours)
             };
 
             appointmentDetail.Status = AppointmentDetailStatus.Assigned;
-            appointmentDetail.UpdatedAt = DateTimeOffset.UtcNow.SEAsiaStandardTime();
+            appointmentDetail.UpdatedAt = now;
 
             await _repoManager.EmployeeSchedule.CreateAsync(newEmployeeSchedule);
             await _repoManager.SaveAsync();
