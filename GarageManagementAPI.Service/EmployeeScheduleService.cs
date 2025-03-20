@@ -3,6 +3,7 @@
 using GarageManagementAPI.Repository.Contracts;
 using GarageManagementAPI.Service.Contracts;
 using GarageManagementAPI.Shared.Constant.Authentication;
+using GarageManagementAPI.Shared.DataTransferObjects.Appointment;
 using GarageManagementAPI.Shared.DataTransferObjects.EmployeeSchedule;
 using GarageManagementAPI.Shared.Enums.SystemStatuss;
 using GarageManagementAPI.Shared.Extension;
@@ -53,12 +54,29 @@ namespace GarageManagementAPI.Service
 
             var employeeSchedule = await _repoManager.EmployeeSchedule.GetEmployeeSchedulesOfEmployeeAsync(user.EmployeeInfo.WorkplaceId.Value, userId, employeeScheduleParameters, trackChanges);
 
+
             var employeeScheduleDto = _mapper.Map<IEnumerable<EmployeeScheduleDtoWithRelation>>(employeeSchedule);
 
             return Result<IEnumerable<EmployeeScheduleDtoWithRelation>>.Ok(employeeScheduleDto, employeeSchedule.MetaData);
         }
 
-        public async Task<Result> StartEmployeeScheduleAsync(Guid scheduleId, EmployeeScheduleDtoForStart employeeScheduleDtoForStart)
+        public async Task<Result<IEnumerable<AppointmentDto>>> GetEmployeeScheduleAsync(Guid userId, AppointmentParameters appointmentParameters, bool trackChanges)
+        {
+            var user = await _repoManager.User.GetUserByIdAsync(userId, trackChanges, "EmployeeInfo");
+            if (user == null || user.EmployeeInfo == null)
+            {
+                return Result<IEnumerable<AppointmentDto>>.NotFound(UserErrors.GetUserNotFoundWithIdError(userId));
+            }
+            var employeeSchedule = await _repoManager.Appointment.GetAppointmentsOfEmployeeAsync(user.EmployeeInfo.WorkplaceId.Value, userId, appointmentParameters, trackChanges);
+
+            var appointmentDto = _mapper.Map<IEnumerable<AppointmentDto>>(employeeSchedule);
+
+            return Result<IEnumerable<AppointmentDto>>.Ok(appointmentDto, employeeSchedule.MetaData);
+
+        }
+
+
+        public async Task<Result> StartEmployeeScheduleAsync(Guid scheduleId)
         {
             var schedule = await _repoManager.EmployeeSchedule.FindByCondition(s => s.Id.Equals(scheduleId), true).FirstOrDefaultAsync();
             if (schedule == null)
@@ -67,7 +85,6 @@ namespace GarageManagementAPI.Service
             }
 
             schedule.Status = EmployeeScheduleStatus.InProgress;
-            schedule.EstimatedEndTime = employeeScheduleDtoForStart.EstimatedEndTime;
             schedule.StartTime = DateTimeOffset.UtcNow.SEAsiaStandardTime();
 
             _repoManager.EmployeeSchedule.Update(schedule);

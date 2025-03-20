@@ -1,6 +1,6 @@
 ﻿using GarageManagementAPI.Shared.DataTransferObjects.AppointmentReplacementPart;
 using GarageManagementAPI.Shared.DataTransferObjects.CarConditionImage;
-using GarageManagementAPI.Shared.DataTransferObjects.Service;
+using GarageManagementAPI.Shared.DataTransferObjects.EmployeeSchedule;
 using GarageManagementAPI.Shared.Enums.SystemStatuss;
 
 using System.ComponentModel.DataAnnotations;
@@ -31,6 +31,8 @@ namespace GarageManagementAPI.Shared.DataTransferObjects.AppointmentDetail
         public virtual IEnumerable<AppointmentReplacementPartDto>? AppointmentReplacementParts { get; set; }
 
         public IEnumerable<CarConditionImageDto>? CarConditionImages { get; set; }
+
+        public IEnumerable<EmployeeScheduleDtoWithRelation>? EmployeeSchedules { get; set; }
 
         public int? EstimatedHours { get; set; }
 

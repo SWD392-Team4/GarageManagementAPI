@@ -1,7 +1,6 @@
 ﻿
 using GarageManagementAPI.Service.Contracts;
 using GarageManagementAPI.Shared.Constant.Authentication;
-using GarageManagementAPI.Shared.DataTransferObjects.EmployeeSchedule;
 using GarageManagementAPI.Shared.DataTransferObjects.User;
 using GarageManagementAPI.Shared.Enums;
 using GarageManagementAPI.Shared.Extension;
@@ -155,7 +154,7 @@ namespace GarageManagementAPI.Presentation.Controllers
                 );
         }
 
-        [HttpGet("{userId:guid}/schedule")]
+        [HttpGet("{userId:guid}/schedule-detail")]
         public async Task<IActionResult> GetEmployeeSchedule(Guid userId, [FromQuery] EmployeeScheduleParameters employeeScheduleParameters)
         {
             var employeeScheduleResult = await _service.EmployeeScheduleService.GetEmployeeSchedulesAsync(userId, employeeScheduleParameters, false);
@@ -165,7 +164,7 @@ namespace GarageManagementAPI.Presentation.Controllers
                 );
         }
 
-        [HttpGet("my-schedule")]
+        [HttpGet("my-schedule-details")]
         [Authorize]
         public async Task<IActionResult> GetMyEmployeeSchedule([FromQuery] EmployeeScheduleParameters employeeScheduleParameters)
         {
@@ -177,17 +176,39 @@ namespace GarageManagementAPI.Presentation.Controllers
                 );
         }
 
-        [HttpPost("schedule/{scheduleId:guid}/start")]
-        public async Task<IActionResult> StartEmployeeSchedule(Guid scheduleId, EmployeeScheduleDtoForStart employeeScheduleDtoForStart)
+        [HttpGet("{userId:guid}/schedules")]
+        public async Task<IActionResult> GetEmployeeSchedule(Guid userId, [FromQuery] AppointmentParameters appointmentParameters)
         {
-            var startResult = await _service.EmployeeScheduleService.StartEmployeeScheduleAsync(scheduleId, employeeScheduleDtoForStart);
+            var appointmentResult = await _service.EmployeeScheduleService.GetEmployeeScheduleAsync(userId, appointmentParameters, false);
+            return appointmentResult.Map(
+                onSuccess: Ok,
+                onFailure: ProcessError
+                );
+        }
+
+        [HttpGet("my-schedules")]
+        [Authorize]
+        public async Task<IActionResult> GetMyEmployeeSchedule([FromQuery] AppointmentParameters appointmentParameters)
+        {
+            var userId = new Guid(HttpContext.User.FindFirstValue("UserId")!);
+            var appointmentResult = await _service.EmployeeScheduleService.GetEmployeeScheduleAsync(userId, appointmentParameters, false);
+            return appointmentResult.Map(
+                onSuccess: Ok,
+                onFailure: ProcessError
+                );
+        }
+
+        [HttpPost("schedules/{scheduleId:guid}/start")]
+        public async Task<IActionResult> StartEmployeeSchedule(Guid scheduleId)
+        {
+            var startResult = await _service.EmployeeScheduleService.StartEmployeeScheduleAsync(scheduleId);
             return startResult.Map(
                 onSuccess: _ => NoContent(),
                 onFailure: ProcessError
                 );
         }
 
-        [HttpPost("schedule/{scheduleId:guid}/end")]
+        [HttpPost("schedules/{scheduleId:guid}/end")]
         public async Task<IActionResult> EndEmployeeSchedule(Guid scheduleId)
         {
             var endResult = await _service.EmployeeScheduleService.EndEmployeeScheduleAsync(scheduleId);
