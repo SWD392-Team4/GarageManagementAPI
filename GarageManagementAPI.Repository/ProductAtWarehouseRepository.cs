@@ -3,6 +3,7 @@ using GarageManagementAPI.Repository.Contracts;
 using GarageManagementAPI.Shared.RequestFeatures;
 using Microsoft.EntityFrameworkCore;
 using GarageManagementAPI.Repository.Extensions;
+using System.Linq.Dynamic.Core;
 
 namespace GarageManagementAPI.Repository
 {
@@ -10,7 +11,7 @@ namespace GarageManagementAPI.Repository
     {
         public ProductAtWarehouseRepository(RepositoryContext repositoryContext) : base(repositoryContext)
         {
-            
+
         }
         public async Task CreateProductAtWarehouse(ProductAtWarehouse productAtWarehouse)
         {
@@ -32,8 +33,15 @@ namespace GarageManagementAPI.Repository
 
         public async Task<PagedList<ProductAtWarehouse>> GetProductAtWarehouses(Guid warehourseId, ProductAtWarehouseParameters productAtWarehouseParameters, bool trackChanges, string? include = null)
         {
-            var productAtWareHouses = await FindByCondition(p => p.Id.Equals(warehourseId), trackChanges)
-                .ToListAsync();
+            var productAtWareHouses = await FindAll(trackChanges)
+                                        .Include(p => p.GoodsReceivedDetail)
+                                        .ThenInclude(gd => gd.GoodsReceived)
+                                        .Where(p => p.GoodsReceivedDetail != null
+                                         && p.GoodsReceivedDetail.GoodsReceived != null
+                                         && p.GoodsReceivedDetail.GoodsReceived.WarehouseId.Equals(warehourseId))
+                                        .GroupBy(p => p.GoodsReceivedDetail.ProductId)
+                                        .Select(g => g.First())
+                                        .ToListAsync();
 
             return PagedList<ProductAtWarehouse>.ToPagedList(
                 productAtWareHouses,

@@ -143,8 +143,9 @@
         </member>
         <member name="M:GarageManagementAPI.Presentation.Controllers.ProductAtGarageController.GetProductAtGarageSpecefics(System.Guid,GarageManagementAPI.Shared.RequestFeatures.ProductAtGarageParameters)">
             <summary>
-            Get product at garage specific
+            Get product specific
             </summary>
+            <param name="garageId"></param>
             <param name="productAtWarehouseParameters"></param>
             <returns></returns>
         </member>

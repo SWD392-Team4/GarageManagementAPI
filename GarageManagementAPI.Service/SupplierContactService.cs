@@ -29,7 +29,7 @@ namespace GarageManagementAPI.Service
         public async Task<Result<SupplierContactDto>> CreateSupplierContactAsync(SupplierContactDtoForCreation supplierContactDtoForCreation)
         {
             var supplierEntity = _mapper.Map<SupplierContact>(supplierContactDtoForCreation);
-            var supplierPropertiyResult = await GetAndCheckIfSupplierContactSame(supplierEntity);
+            var supplierPropertiyResult = await GetAndCheckIfSupplierContactSame(null, supplierEntity);
 
             if (supplierPropertiyResult)
                 return Result<SupplierContactDto>.BadRequest([SupplierContactErrors.GetSupplierAlreadyExistError(supplierContactDtoForCreation)]);
@@ -92,7 +92,7 @@ namespace GarageManagementAPI.Service
 
             var supplierUpdate = _mapper.Map<SupplierContact>(supplierContactDtoForUpdate);
 
-            var supplierResult = await GetAndCheckIfSupplierContactSame(supplierUpdate);
+            var supplierResult = await GetAndCheckIfSupplierContactSame(supplierContactId, supplierUpdate);
             if (supplierResult)
                 return Result<SupplierContactDto>.BadRequest([SupplierContactErrors.GetSupplierAlreadyExistError(supplierContactDtoForUpdate)]);
 
@@ -107,9 +107,9 @@ namespace GarageManagementAPI.Service
             return Result.NoContent();
         }
 
-        private async Task<bool> GetAndCheckIfSupplierContactSame(SupplierContact supplierContact)
+        private async Task<bool> GetAndCheckIfSupplierContactSame(Guid? supplierContactId, SupplierContact supplierContact)
         {
-            var supplierContactEntity = await _repoManager.SupplierContact.GetSupplierContactAllPropertyAsync(supplierContact, false);
+            var supplierContactEntity = await _repoManager.SupplierContact.GetSupplierContactAllPropertyAsync(supplierContactId, supplierContact, false);
             if (supplierContactEntity == null)
                 return false;
             return true;
