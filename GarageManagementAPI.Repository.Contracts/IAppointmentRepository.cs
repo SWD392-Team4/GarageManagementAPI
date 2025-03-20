@@ -19,5 +19,7 @@ namespace GarageManagementAPI.Repository.Contracts
         Task CreateAsync(Guid garageId, Appointment appointment);
 
         Task<IEnumerable<AppointmentStatisticsDto>> GetAppointmentCountByMonth(int year, Guid? garageId, bool trackChanges);
+
+        Task<PagedList<Appointment>> GetAppointmentsOfEmployeeAsync(Guid garageId, Guid employeeId, AppointmentParameters appointmentParameters, bool trackChanges);
     }
 }

@@ -1,6 +1,4 @@
-﻿using GarageManagementAPI.Shared.DataTransferObjects.AppointmentDetail;
-using GarageManagementAPI.Shared.DataTransferObjects.User;
-using GarageManagementAPI.Shared.Enums.SystemStatuss;
+﻿using GarageManagementAPI.Shared.Enums.SystemStatuss;
 
 using System.ComponentModel.DataAnnotations;
 
@@ -27,32 +25,4 @@ namespace GarageManagementAPI.Shared.DataTransferObjects.EmployeeSchedule
         public DateTimeOffset UpdatedAt { get; set; }
 
     }
-
-    public record EmployeeScheduleDtoWithRelation : EmployeeScheduleDto
-    {
-
-        public virtual AppointmentDetailDto AppointmentDetail { get; set; } = null!;
-
-        public virtual UserDto Employee { get; set; } = null!;
-    }
-
-    public record EmployeeScheduleDtoForAssign
-    {
-        public Guid EmployeeId { get; set; }
-    }
-
-    public record EmployeeScheduleDtoForUnassign
-    {
-        public Guid EmployeeId { get; set; }
-
-        public bool IsCancel { get; set; }
-
-        public bool IsDecline { get; set; }
-    }
-
-    public record EmployeeScheduleDtoForStart
-    {
-        public DateTimeOffset EstimatedEndTime { get; set; }
-    }
-
 }
