@@ -31,5 +31,7 @@ namespace GarageManagementAPI.Service.Contracts
 
         Task<IEnumerable<AppointmentStatisticsDto>> GetAppointmentCountByMonth(int year, Guid? garageId, bool trackChanges);
 
+        Task<IEnumerable<CustomerDto>> GetCustomers(int year, Guid? garageId, bool trackChanges);
+
     }
 }

@@ -45,6 +45,7 @@ namespace GarageManagementAPI.Service
 
             invoiceEntity.EmployeeId = userId;
             invoiceEntity.InvoiceType = InvoiceType.InvocieSell;
+            invoiceEntity.CreatedAt = DateTimeOffset.UtcNow.SEAsiaStandardTime();
             invoiceEntity.GarageId = user!.EmployeeInfo!.WorkplaceId ?? throw new Exception("WorkplaceId cannot be null.");
 
             foreach (var invoiceDetail in invoiceDtoForCreation.InvoiceSellProducts)

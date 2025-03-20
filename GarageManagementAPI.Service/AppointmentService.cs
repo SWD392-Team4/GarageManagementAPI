@@ -1,26 +1,25 @@
 ﻿using AutoMapper;
-
+using GarageManagementAPI.Shared.Enums;
 using GarageManagementAPI.Entities.Models;
-using GarageManagementAPI.Repository.Contracts;
+using GarageManagementAPI.Shared.Extension;
 using GarageManagementAPI.Service.Contracts;
+using GarageManagementAPI.Shared.ResultModel;
+using GarageManagementAPI.Repository.Contracts;
+using GarageManagementAPI.Shared.RequestFeatures;
+using GarageManagementAPI.Shared.Enums.SystemStatuss;
+using GarageManagementAPI.Shared.ErrorsConstant.Product;
+using GarageManagementAPI.Shared.ErrorsConstant.Service;
+using GarageManagementAPI.Shared.ErrorsConstant.Package;
+using GarageManagementAPI.Shared.ErrorsConstant.CarModel;
 using GarageManagementAPI.Shared.Constant.Authentication;
+using GarageManagementAPI.Shared.ErrorsConstant.Workplace;
+using GarageManagementAPI.Shared.ErrorsConstant.Appointment;
+using GarageManagementAPI.Shared.DataTransferObjects.Dashboard;
+using GarageManagementAPI.Shared.ErrorsConstant.ServiceHisory;
+using GarageManagementAPI.Shared.ErrorsConstant.ProductHistory;
 using GarageManagementAPI.Shared.DataTransferObjects.Appointment;
 using GarageManagementAPI.Shared.DataTransferObjects.AppointmentDetail;
 using GarageManagementAPI.Shared.DataTransferObjects.AppointmentDetailPackage;
-using GarageManagementAPI.Shared.DataTransferObjects.Dashboard;
-using GarageManagementAPI.Shared.Enums;
-using GarageManagementAPI.Shared.Enums.SystemStatuss;
-using GarageManagementAPI.Shared.ErrorsConstant.Appointment;
-using GarageManagementAPI.Shared.ErrorsConstant.CarModel;
-using GarageManagementAPI.Shared.ErrorsConstant.Package;
-using GarageManagementAPI.Shared.ErrorsConstant.Product;
-using GarageManagementAPI.Shared.ErrorsConstant.ProductHistory;
-using GarageManagementAPI.Shared.ErrorsConstant.Service;
-using GarageManagementAPI.Shared.ErrorsConstant.ServiceHisory;
-using GarageManagementAPI.Shared.ErrorsConstant.Workplace;
-using GarageManagementAPI.Shared.Extension;
-using GarageManagementAPI.Shared.RequestFeatures;
-using GarageManagementAPI.Shared.ResultModel;
 
 using System.Dynamic;
 
@@ -904,6 +903,12 @@ namespace GarageManagementAPI.Service
         {
             var revenue = await _repoManager.Appointment.GetAppointmentCountByMonth(year, garageId, trackChanges);
             return revenue;
+        }
+
+        public async Task<IEnumerable<CustomerDto>> GetCustomers(int year, Guid? garageId, bool trackChanges)
+        {
+            var customer = await _repoManager.Appointment.GetCustomers(year, garageId, trackChanges);
+            return customer;
         }
     }
 
