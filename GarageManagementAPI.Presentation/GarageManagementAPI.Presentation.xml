@@ -127,7 +127,23 @@
             <param name="validator"></param>
             <returns></returns>
         </member>
-        <member name="M:GarageManagementAPI.Presentation.Controllers.DashboardController.GetLowStockProduct(System.Int32,System.Guid)">
+        <member name="M:GarageManagementAPI.Presentation.Controllers.DashboardController.GetAppointmentDashBoard(System.Nullable{System.Guid},System.Int32)">
+            <summary>
+            Get appoiment theo năm 
+            </summary>
+            <param name="garageId"></param>
+            <param name="year"></param>
+            <returns></returns>
+        </member>
+        <member name="M:GarageManagementAPI.Presentation.Controllers.DashboardController.GetRevenue(System.Nullable{System.Guid},System.Int32)">
+            <summary>
+            Get doanh số 
+            </summary>
+            <param name="garageId"></param>
+            <param name="year"></param>
+            <returns></returns>
+        </member>
+        <member name="M:GarageManagementAPI.Presentation.Controllers.DashboardController.GetLowStockProduct(System.Int32,System.Nullable{System.Guid})">
             <summary>
             Lấy sản phẩm sắp hết hàng tại tất cả warehouse
             </summary>

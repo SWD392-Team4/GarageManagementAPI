@@ -31,24 +31,40 @@ namespace GarageManagementAPI.Repository
             return productAtWareHourse;
         }
 
-        public async Task<PagedList<ProductAtWarehouse>> GetProductAtWarehouses(Guid warehourseId, ProductAtWarehouseParameters productAtWarehouseParameters, bool trackChanges, string? include = null)
+        public async Task<PagedList<ProductAtWarehouse>> GetProductAtWarehouses(
+    Guid warehouseId,
+    ProductAtWarehouseParameters productAtWarehouseParameters,
+    bool trackChanges,
+    string? include = null)
         {
-            var productAtWareHouses = await FindAll(trackChanges)
-                                        .Include(p => p.GoodsReceivedDetail)
-                                        .ThenInclude(gd => gd.GoodsReceived)
-                                        .Where(p => p.GoodsReceivedDetail != null
-                                         && p.GoodsReceivedDetail.GoodsReceived != null
-                                         && p.GoodsReceivedDetail.GoodsReceived.WarehouseId.Equals(warehourseId))
-                                        .GroupBy(p => p.GoodsReceivedDetail.ProductId)
-                                        .Select(g => g.First())
-                                        .ToListAsync();
+            var query = FindAll(trackChanges)
+                         .Where(p => p.GoodsReceivedDetail != null
+                         && p.GoodsReceivedDetail.GoodsReceived != null
+                         && p.GoodsReceivedDetail.GoodsReceived.WarehouseId == warehouseId)
+                        .Include(p => p.GoodsReceivedDetail)
+                        .ThenInclude(gd => gd.GoodsReceived)
+                        .Include(p => p.GoodsReceivedDetail)
+                        .ThenInclude(gd => gd.Product)
+                        .ThenInclude(p => p.Brand)  
+                        .Include(p => p.GoodsReceivedDetail)
+                        .ThenInclude(gd => gd.Product)
+                        .ThenInclude(p => p.ProductCategory) 
+                        .Include(p => p.GoodsReceivedDetail)
+                        .ThenInclude(gd => gd.Product)
+                        .ThenInclude(p => p.ProductImages); 
+
+            var productAtWarehouses = await query
+                .GroupBy(p => p.GoodsReceivedDetail.ProductId)
+                .Select(g => g.OrderByDescending(p => p.GoodsReceivedDetail.CreatedAt).FirstOrDefault())
+                .ToListAsync();
 
             return PagedList<ProductAtWarehouse>.ToPagedList(
-                productAtWareHouses,
+                productAtWarehouses,
                 productAtWarehouseParameters.PageNumber,
                 productAtWarehouseParameters.PageSize
-                );
+            );
         }
+
         public async Task<List<(Guid ProductAtWarehouseId, int DeductedQuantity)>> DeductProductQuantityFromWarehouseAsync(
       Guid productId, Guid warehouseId, int quantity)
         {
@@ -128,6 +144,6 @@ namespace GarageManagementAPI.Repository
             return productAtWarehouse;
         }
 
-       
+
     }
 }
