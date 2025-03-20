@@ -85,6 +85,11 @@ namespace GarageManagementAPI.Service
             return goodsIssuedDetail.OkResult();
         }
 
-        
+        public async Task<int> GetSumGoodsIssuedByDate(Guid? warehouseId, DateTimeOffset? startDate = null, DateTimeOffset? endDate = null)
+        {
+
+            var total = await _repoManager.GoodsIssuedDetail.GetSumGoodsIssuedByDate(warehouseId, startDate, endDate);
+            return total;
+        }
     }
 }

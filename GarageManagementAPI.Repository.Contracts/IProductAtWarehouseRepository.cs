@@ -11,6 +11,7 @@ namespace GarageManagementAPI.Repository.Contracts
         Guid productId, Guid warehouseId, int quantity);
         public Task<Dictionary<Guid, int>> GetTotalStockByProductIdsAsync(List<Guid> productIds, Guid warehouseId);
 
+        Task<IEnumerable<ProductAtWarehouse>> GetProductAtWarehouses(Guid warehouseId, bool trackChanges, string? include = null);
         Task<int> GetTotalStockForProduct(Guid productId, Guid warehouseId);
         Task CreateProductAtWarehouse(ProductAtWarehouse productAtWarehouse);
         void UpdateProductAtWarehouse(ProductAtWarehouse productAtWarehouse);

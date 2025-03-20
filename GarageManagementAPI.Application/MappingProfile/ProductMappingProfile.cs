@@ -20,12 +20,12 @@ namespace GarageManagementAPI.Application.MappingProfile
                      opts.PreCondition(src => src.Brand != null);
                      opts.MapFrom(src => src.Brand!.ImageLink);
                  })
-                   .ForMember(dest => dest.Category, opts =>
+                   .ForMember(dest => dest.ProductCategoryName, opts =>
                    {
                        opts.PreCondition(src => src.ProductCategory != null);
                        opts.MapFrom(src => src.ProductCategory!.Category);
                    })
-                 .ForMember(dest => dest.ImageLink, otp =>
+                 .ForMember(dest => dest.ProductImage, otp =>
                  {
                      otp.PreCondition(src => src.ProductImages != null && src.ProductImages.Any());
                      otp.MapFrom(src => src.ProductImages.Select(e => e.ImageLink).ToList());

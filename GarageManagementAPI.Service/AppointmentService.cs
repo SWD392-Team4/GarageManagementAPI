@@ -7,6 +7,7 @@ using GarageManagementAPI.Shared.Constant.Authentication;
 using GarageManagementAPI.Shared.DataTransferObjects.Appointment;
 using GarageManagementAPI.Shared.DataTransferObjects.AppointmentDetail;
 using GarageManagementAPI.Shared.DataTransferObjects.AppointmentDetailPackage;
+using GarageManagementAPI.Shared.DataTransferObjects.Dashboard;
 using GarageManagementAPI.Shared.Enums;
 using GarageManagementAPI.Shared.Enums.SystemStatuss;
 using GarageManagementAPI.Shared.ErrorsConstant.Appointment;
@@ -896,6 +897,13 @@ namespace GarageManagementAPI.Service
             return currentStatus != AppointmentStatus.Rejected &&
                    currentStatus != AppointmentStatus.Cancelled &&
                    currentStatus != AppointmentStatus.Completed;
+        }
+
+        //Dashboard 
+        public async Task<IEnumerable<AppointmentStatisticsDto>> GetAppointmentCountByMonth(int year, Guid? garageId, bool trackChanges)
+        {
+            var revenue = await _repoManager.Appointment.GetAppointmentCountByMonth(year, garageId, trackChanges);
+            return revenue;
         }
     }
 

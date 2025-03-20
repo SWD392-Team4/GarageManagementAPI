@@ -1,4 +1,5 @@
 ﻿using GarageManagementAPI.Entities.Models;
+using GarageManagementAPI.Shared.DataTransferObjects.Dashboard;
 using GarageManagementAPI.Shared.RequestFeatures;
 
 namespace GarageManagementAPI.Repository.Contracts
@@ -16,5 +17,7 @@ namespace GarageManagementAPI.Repository.Contracts
         Task<IEnumerable<Appointment>> GetAppointmentAsync(DateTimeOffset estimatedAppointmentTime, bool trackChanges);
 
         Task CreateAsync(Guid garageId, Appointment appointment);
+
+        Task<IEnumerable<AppointmentStatisticsDto>> GetAppointmentCountByMonth(int year, Guid? garageId, bool trackChanges);
     }
 }

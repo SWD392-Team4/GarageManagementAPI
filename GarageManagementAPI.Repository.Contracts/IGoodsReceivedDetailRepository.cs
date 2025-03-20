@@ -10,5 +10,9 @@ namespace GarageManagementAPI.Repository.Contracts
         Task<PagedList<GoodsReceivedDetail>> GetGoodsReceivedDetailsAsync(GoodsReceivedDetailParameters goodsReceivedDetailParameters, bool trackChanges, string? include = default);
         Task<PagedList<GoodsReceivedDetail>> GetGoodsReceivedDetailsAsync(Guid goodsReceivedId, GoodsReceivedDetailParameters goodsReceivedDetailParameters, bool trackChanges, string? include = default);
         public Task CreateGoodsReceivedDetailAsync(GoodsReceivedDetail goodsReceivedDetail);
+
+        public Task<int> GetSumGoodsReceivedByDate(Guid? warehouseId, DateTimeOffset? startDate, DateTimeOffset? endDate);
+
+        Task<IEnumerable<Product>> GetLowStockProducts(int threshold, Guid? warehouseId, bool trackChanges);
     }
 }

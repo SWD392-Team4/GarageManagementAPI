@@ -1,6 +1,7 @@
 ﻿using GarageManagementAPI.Entities.Models;
 using GarageManagementAPI.Repository.Contracts;
 using GarageManagementAPI.Repository.Extensions;
+using GarageManagementAPI.Shared.DataTransferObjects.Dashboard;
 using GarageManagementAPI.Shared.Enums.SystemStatuss;
 using GarageManagementAPI.Shared.Extension;
 using GarageManagementAPI.Shared.RequestFeatures;
@@ -148,5 +149,36 @@ namespace GarageManagementAPI.Repository
                         .ThenInclude(ad => ad.CarConditionImages)
                         .FirstOrDefaultAsync();
         }
+
+
+        //Dashboard
+        public async Task<IEnumerable<AppointmentStatisticsDto>> GetAppointmentCountByMonth(int year, Guid? garageId, bool trackChanges)
+        {
+            var result = garageId == null
+               ?
+                await FindAll(trackChanges)
+                .Where(a =>  a.CreatedAt.Year == year)
+                .GroupBy(a => a.CreatedAt.Month)
+                .Select(g => new AppointmentStatisticsDto
+                {
+                    Month = g.Key,
+                    TotalAppointments = g.Count()
+                })
+                .OrderBy(g => g.Month)
+                .ToListAsync()
+                :
+                await FindByCondition(a => a.GarageId.Equals(garageId), trackChanges)
+                .Where(a => a.CreatedAt.Year == year)
+                 .GroupBy(a => a.CreatedAt.Month)
+                .Select(g => new AppointmentStatisticsDto
+                {
+                    Month = g.Key,
+                    TotalAppointments = g.Count()
+                })
+                .OrderBy(g => g.Month)
+                .ToListAsync();
+            return result;
+        }
+
     }
 }

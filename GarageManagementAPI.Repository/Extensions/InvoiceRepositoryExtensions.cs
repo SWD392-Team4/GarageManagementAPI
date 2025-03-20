@@ -7,6 +7,23 @@ namespace GarageManagementAPI.Repository.Extensions
 {
     public static class InvoiceRepositoryExtensions
     {
+
+        public static IQueryable<Invoice> SearchByDate(this IQueryable<Invoice> invoices, DateTimeOffset? startDate, DateTimeOffset? endDate)
+        {
+            if (!startDate.HasValue || startDate == DateTimeOffset.MinValue)
+                return invoices;
+
+            if (startDate != DateTimeOffset.MinValue && !endDate.HasValue || endDate == DateTimeOffset.MinValue)
+                return invoices.Where(b =>
+                b.CreatedAt >= startDate.Value.Date &&
+                b.CreatedAt <= startDate.Value.Date.AddDays(1).AddTicks(-1)
+            );
+
+            return invoices.Where(b =>
+                b.CreatedAt >= startDate.Value.Date &&
+                b.CreatedAt <= endDate.Value.Date
+            );
+        }
         public static IQueryable<Invoice> IsInclude(this IQueryable<Invoice> invoices, string? fieldsString)
         {
             if (string.IsNullOrWhiteSpace(fieldsString)) return invoices;

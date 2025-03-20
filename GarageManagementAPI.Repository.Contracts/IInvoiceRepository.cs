@@ -1,4 +1,5 @@
 ﻿using GarageManagementAPI.Entities.Models;
+using GarageManagementAPI.Shared.DataTransferObjects.Dashboard;
 using GarageManagementAPI.Shared.RequestFeatures;
 
 namespace GarageManagementAPI.Repository.Contracts
@@ -12,5 +13,7 @@ namespace GarageManagementAPI.Repository.Contracts
         Task<PagedList<Invoice>> GetInvoices(Guid? garageId, InvoiceParameters invoiceParameters, bool trackChanges, string? include);
 
         Task<PagedList<Invoice>> GetInvoices(string phone, InvoiceParameters invoiceParameters, bool trackChanges, string? include);
+
+        Task<IEnumerable<RevenueByMonthDto>> GetMonthlyRevenueByYear(Guid? garageId, int year, bool trackChanges);
     }
 }

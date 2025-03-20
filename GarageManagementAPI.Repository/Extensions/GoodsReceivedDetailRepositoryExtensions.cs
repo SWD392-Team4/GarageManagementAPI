@@ -55,11 +55,11 @@ namespace GarageManagementAPI.Repository.Extensions
             return goodsReceivedDetails.Where(p => p.Status.ToString().Equals(status.ToString()));
         }
 
-        public static IQueryable<GoodsReceivedDetail> SearchByDate(this IQueryable<GoodsReceivedDetail> goodsReceivedDetails, DateTimeOffset? createdAt)
+        public static IQueryable<GoodsReceivedDetail> SearchByCreate(this IQueryable<GoodsReceivedDetail> goodsReceivedDetails, DateTimeOffset? createdAt)
         {
             if (!createdAt.HasValue || createdAt.Value == DateTimeOffset.MinValue)
             {
-                return goodsReceivedDetails;  
+                return goodsReceivedDetails;
             }
 
             DateTimeOffset startDate = createdAt.Value.Date;
@@ -74,6 +74,23 @@ namespace GarageManagementAPI.Repository.Extensions
             return goodsReceivedDetails.Where(b =>
                 b.CreatedAt >= startDate &&
                 b.CreatedAt <= endDate
+            );
+        }
+
+        public static IQueryable<GoodsReceivedDetail> SearchByDate(this IQueryable<GoodsReceivedDetail> goodsReceivedDetails, DateTimeOffset? startDate, DateTimeOffset? endDate)
+        {
+            if (!startDate.HasValue || startDate == DateTimeOffset.MinValue)
+                return goodsReceivedDetails;
+
+            if (startDate != DateTimeOffset.MinValue && !endDate.HasValue || endDate == DateTimeOffset.MinValue)
+                return goodsReceivedDetails.Where(b =>
+                b.CreatedAt >= startDate.Value.Date &&
+                b.CreatedAt <= startDate.Value.Date.AddDays(1).AddTicks(-1)
+            );
+
+            return goodsReceivedDetails.Where(b =>
+                b.CreatedAt >= startDate.Value.Date &&
+                b.CreatedAt <= endDate.Value.Date
             );
         }
 

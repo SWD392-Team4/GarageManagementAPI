@@ -21,7 +21,8 @@ namespace GarageManagementAPI.Presentation.Controllers
                 onFailure: ProcessError
                 );
         }
-        [HttpGet("/warehouse/{warehourseId}")]
+
+        [HttpGet("product/{warehourseId}")]
         public async Task<IActionResult> GetProductWarehouses(Guid warehourseId, [FromQuery] ProductAtWarehouseParameters productAtWarehouseParameters)
         {
             var productAtWarehouses = await _service.ProductAtWarehouseService.GetProductAtWarehouses(warehourseId , productAtWarehouseParameters, false);

@@ -410,5 +410,17 @@ namespace GarageManagementAPI.Service
             return $"{DateTime.UtcNow:yyyyMMddHHmmss}";
         }
 
+
+
+
+        //Dashboard 
+
+        public async Task<IEnumerable<ProductDto>> GetLowStockProducts(int threshold, Guid? warehouseId, bool trackChanges)
+        {
+            var productResult = await _repoManager.GoodsReceivedDetail.GetLowStockProducts(threshold, warehouseId, trackChanges);
+            var productDto = _mapper.Map<IEnumerable<ProductDto>>(productResult);
+            return productDto;
+        }
+
     }
 }
