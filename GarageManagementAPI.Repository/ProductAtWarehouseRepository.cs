@@ -30,10 +30,11 @@ namespace GarageManagementAPI.Repository
             return productAtWareHourse;
         }
 
-        public async Task<PagedList<ProductAtWarehouse>> GetProductAtWarehouses(ProductAtWarehouseParameters productAtWarehouseParameters, bool trackChanges, string? include = null)
+        public async Task<PagedList<ProductAtWarehouse>> GetProductAtWarehouses(Guid warehourseId, ProductAtWarehouseParameters productAtWarehouseParameters, bool trackChanges, string? include = null)
         {
-            var productAtWareHouses = await FindAll(trackChanges)
+            var productAtWareHouses = await FindByCondition(p => p.Id.Equals(warehourseId), trackChanges)
                 .ToListAsync();
+
             return PagedList<ProductAtWarehouse>.ToPagedList(
                 productAtWareHouses,
                 productAtWarehouseParameters.PageNumber,

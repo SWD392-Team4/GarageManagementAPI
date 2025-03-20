@@ -208,7 +208,7 @@ namespace GarageManagementAPI.Service
 
         public static string GenerateBarcode()
         {
-            return $"BCPAG-{DateTime.UtcNow:yyyyMMddHHmmss}-{Guid.NewGuid().ToString("N").Substring(6)}";
+            return $"BCPAG-{DateTime.UtcNow:yyyyMMddHHmmss}";
         }
     }
 }

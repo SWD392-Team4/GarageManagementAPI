@@ -87,7 +87,6 @@ namespace GarageManagementAPI.Service
         public async Task<Result> UpdateSupplierContact(Guid supplierContactId, SupplierContactDtoForUpdate supplierContactDtoForUpdate, bool trackChanges)
         {
             var supplierIsExistResult = await GetAndCheckIfSupplierContactSupplierExist(supplierContactId, trackChanges);
-
             if (!supplierIsExistResult.IsSuccess)
                 return Result<SupplierContactDto>.Failure(supplierIsExistResult.StatusCode, supplierIsExistResult.Errors!);
 

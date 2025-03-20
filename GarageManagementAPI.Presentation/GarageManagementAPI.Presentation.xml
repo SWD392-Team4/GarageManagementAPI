@@ -194,7 +194,14 @@
             <param name="productId"></param>
             <returns></returns>
         </member>
-        <member name="M:GarageManagementAPI.Presentation.Controllers.ProductController.GetProduct">
+        <member name="M:GarageManagementAPI.Presentation.Controllers.ProductController.GetProducts(GarageManagementAPI.Shared.RequestFeatures.ProductParameters)">
+            <summary>
+            Get all products
+            </summary>
+            <param name="productParameters"></param>
+            <returns></returns>
+        </member>
+        <member name="M:GarageManagementAPI.Presentation.Controllers.ProductController.GetProductMaxPrice">
             <summary>
             Get product max price
             </summary>
@@ -213,13 +220,6 @@
             Get product with warehouse
             </summary>
             <param name="warehouseId"></param>
-            <param name="productParameters"></param>
-            <returns></returns>
-        </member>
-        <member name="M:GarageManagementAPI.Presentation.Controllers.ProductController.GetProducts(GarageManagementAPI.Shared.RequestFeatures.ProductParameters)">
-            <summary>
-            Get all products
-            </summary>
             <param name="productParameters"></param>
             <returns></returns>
         </member>

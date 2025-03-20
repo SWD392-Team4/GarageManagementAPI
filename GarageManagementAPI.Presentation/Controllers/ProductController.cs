@@ -38,6 +38,24 @@ namespace GarageManagementAPI.Presentation.Controllers
                 );
         }
 
+        /// <summary>
+        /// Get all products
+        /// </summary>
+        /// <param name="productParameters"></param>
+        /// <returns></returns>
+        [HttpGet]
+        //[Authorize(Roles = $"{nameof(SystemRole.Administrator)},{nameof(SystemRole.Cashier)}")]
+        public async Task<IActionResult> GetProducts([FromQuery] ProductParameters productParameters)
+        {
+            var isInclude = "Brand,ProductCategory,ProductHistories,ProductImages,CarModels,CarParts";
+            var productResult = await _service.ProductService.GetProductsAsync(productParameters, trackChanges: false, isInclude);
+
+            return productResult.Map(
+                onSuccess: Ok,
+                onFailure: ProcessError
+                );
+        }
+
         [HttpGet("product/{productId:guid}/{garageId}", Name = "GetProductAtGarage")]
         //[Authorize(Roles = $"{nameof(SystemRole.Administrator)},{nameof(SystemRole.Cashier)}")]
         public async Task<IActionResult> GetProductAtgrage(Guid productId, Guid garageId)
@@ -57,7 +75,7 @@ namespace GarageManagementAPI.Presentation.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpGet("product/maxprice", Name = "GetProductMaxPrice")]
-        public async Task<IActionResult> GetProduct()
+        public async Task<IActionResult> GetProductMaxPrice()
         {
             var productResult = await _service.ProductService.GetProductAsync(trackChanges: false);
 
@@ -115,23 +133,6 @@ namespace GarageManagementAPI.Presentation.Controllers
             var productResult = await _service.ProductService.GetProductsByWarehouseIdWithQuantityAsync(warehouseId, productParameters, trackChanges: false, isInclude);
 
             return Ok(productResult);
-        }
-        /// <summary>
-        /// Get all products
-        /// </summary>
-        /// <param name="productParameters"></param>
-        /// <returns></returns>
-        [HttpGet]
-        //[Authorize(Roles = $"{nameof(SystemRole.Administrator)},{nameof(SystemRole.Cashier)}")]
-        public async Task<IActionResult> GetProducts([FromQuery] ProductParameters productParameters)
-        {
-            var isInclude = "Brand,ProductCategory,ProductHistories,ProductImages,CarModels,CarParts";
-            var productResult = await _service.ProductService.GetProductsAsync(productParameters, trackChanges: false, isInclude);
-
-            return productResult.Map(
-                onSuccess: Ok,
-                onFailure: ProcessError
-                );
         }
 
 
