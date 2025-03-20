@@ -234,13 +234,9 @@ namespace GarageManagementAPI.Service
             return Result<ExpandoObject>.Ok(productShaped);
         }
 
-        public async Task<Result<ExpandoObject>> GetProductByBarcodeByProductAtGarageAsync(string barcode, Guid userId, ProductParameters productParameters, bool trackChanges, string? include = null)
+        public async Task<Result<ExpandoObject>> GetProductByBarcodeByProductAtGarageAsync(string barcode, Guid garageId, ProductParameters productParameters, bool trackChanges, string? include = null)
         {
-            var user = await _repoManager.User.GetUserByIdAsync(userId, false, "EmployeeInfo");
-
-            var garageId = user!.EmployeeInfo!.WorkplaceId ?? throw new Exception("GarageId cannot be null.");
-
-            var productResult = await this.GetAndCheckIfProductByBarCodeGarageExist(barcode, garageId, trackChanges, include);
+            var productResult = await this.GetAndCheckIfProductByBarCodeGarageExist(barcode, trackChanges, include);
 
             if (!productResult.IsSuccess)
                 return Result<ExpandoObject>.NotFound(productResult.Errors!);
@@ -349,9 +345,9 @@ namespace GarageManagementAPI.Service
             return product.OkResult();
 
         }
-            private async Task<Result<Product>> GetAndCheckIfProductByBarCodeGarageExist(string barcode, Guid garageId, bool trackChanges, string? include)
+            private async Task<Result<Product>> GetAndCheckIfProductByBarCodeGarageExist(string barcode, bool trackChanges, string? include)
             {
-                var product = await _repoManager.ProductAtGarage.GetProductAtGarage(barcode, garageId, false); 
+                var product = await _repoManager.ProductAtGarage.GetProductAtGarage(barcode, false); 
                 if (product == null)
                     return product.NotFoundBarcode(barcode);
 

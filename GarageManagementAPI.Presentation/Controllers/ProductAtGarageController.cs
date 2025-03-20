@@ -36,7 +36,7 @@ namespace GarageManagementAPI.Presentation.Controllers
         /// <param name="productAtWarehouseParameters"></param>
         /// <returns></returns>
         [HttpGet(Name = "GetProducts")]
-        public async Task<IActionResult> GetProductAtGarages([FromRoute] ProductAtGarageParameters productAtWarehouseParameters)
+        public async Task<IActionResult> GetProductAtGarages([FromQuery] ProductAtGarageParameters productAtWarehouseParameters)
         {
             var include = "Product";
             var productAtWarehouse = await _service.ProductAtGarageService.GetProductAtGarages(productAtWarehouseParameters, trackChanges: false, include);
