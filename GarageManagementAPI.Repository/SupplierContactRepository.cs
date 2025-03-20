@@ -16,11 +16,13 @@ namespace GarageManagementAPI.Repository
             await base.CreateAsync(supplierContact);
         }
 
-        public async Task<SupplierContact?> GetSupplierContactAllPropertyAsync(SupplierContact supplier, bool trackChanges)
+        public async Task<SupplierContact?> GetSupplierContactAllPropertyAsync(Guid? supplierContactId, SupplierContact supplier, bool trackChanges)
         {
-            var supplierEntity = supplier?.Id == null ?
-                 await FindByCondition(s => s.ContactEmail.ToLower().Equals(supplier!.ContactEmail.ToLower()) || s.ContactPhoneNumber.ToLower().Equals(supplier.ContactPhoneNumber.ToLower()), false).SingleOrDefaultAsync() :
-                 await FindByCondition(s => (s.ContactEmail.ToLower().Equals(supplier.ContactEmail) || s.ContactPhoneNumber.ToLower().Equals(supplier.ContactPhoneNumber.ToLower())) && s.Id != supplier.Id, false).SingleOrDefaultAsync();
+            var supplierEntity = supplierContactId == null 
+                ?
+                 await FindByCondition(s => s.ContactEmail.ToLower().Equals(supplier!.ContactEmail.ToLower()) || s.ContactPhoneNumber.ToLower().Equals(supplier.ContactPhoneNumber.ToLower()), false).SingleOrDefaultAsync() 
+                 :
+                 await FindByCondition(s => (s.ContactEmail.ToLower().Equals(supplier.ContactEmail) || s.ContactPhoneNumber.ToLower().Equals(supplier.ContactPhoneNumber.ToLower())) && !s.Id.Equals(supplierContactId), false).SingleOrDefaultAsync();
             return supplierEntity;
         }
 

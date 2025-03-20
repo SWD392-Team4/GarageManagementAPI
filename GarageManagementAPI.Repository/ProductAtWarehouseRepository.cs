@@ -3,6 +3,7 @@ using GarageManagementAPI.Repository.Contracts;
 using GarageManagementAPI.Shared.RequestFeatures;
 using Microsoft.EntityFrameworkCore;
 using GarageManagementAPI.Repository.Extensions;
+using System.Linq.Dynamic.Core;
 
 namespace GarageManagementAPI.Repository
 {
@@ -10,7 +11,7 @@ namespace GarageManagementAPI.Repository
     {
         public ProductAtWarehouseRepository(RepositoryContext repositoryContext) : base(repositoryContext)
         {
-            
+
         }
         public async Task CreateProductAtWarehouse(ProductAtWarehouse productAtWarehouse)
         {
@@ -30,10 +31,18 @@ namespace GarageManagementAPI.Repository
             return productAtWareHourse;
         }
 
-        public async Task<PagedList<ProductAtWarehouse>> GetProductAtWarehouses(ProductAtWarehouseParameters productAtWarehouseParameters, bool trackChanges, string? include = null)
+        public async Task<PagedList<ProductAtWarehouse>> GetProductAtWarehouses(Guid warehourseId, ProductAtWarehouseParameters productAtWarehouseParameters, bool trackChanges, string? include = null)
         {
             var productAtWareHouses = await FindAll(trackChanges)
-                .ToListAsync();
+                                        .Include(p => p.GoodsReceivedDetail)
+                                        .ThenInclude(gd => gd.GoodsReceived)
+                                        .Where(p => p.GoodsReceivedDetail != null
+                                         && p.GoodsReceivedDetail.GoodsReceived != null
+                                         && p.GoodsReceivedDetail.GoodsReceived.WarehouseId.Equals(warehourseId))
+                                        .GroupBy(p => p.GoodsReceivedDetail.ProductId)
+                                        .Select(g => g.First())
+                                        .ToListAsync();
+
             return PagedList<ProductAtWarehouse>.ToPagedList(
                 productAtWareHouses,
                 productAtWarehouseParameters.PageNumber,
@@ -105,5 +114,20 @@ namespace GarageManagementAPI.Repository
                 .Select(g => new { ProductId = g.Key, TotalQuantity = g.Sum(paw => paw.Quantity) })
                 .ToDictionaryAsync(x => x.ProductId, x => x.TotalQuantity);
         }
+
+        public async Task<IEnumerable<ProductAtWarehouse>> GetProductAtWarehouses(Guid warehouseId, bool trackChanges, string? include = null)
+        {
+            var productAtWarehouse = await FindAll(trackChanges)
+                                             .Include(p => p.GoodsReceivedDetail)
+                                             .ThenInclude(grd => grd.GoodsReceived)
+                                             .Where(p => p.GoodsReceivedDetail.GoodsReceived.WarehouseId == warehouseId)
+                                            .OrderBy(p => p.CreatedAt)
+                                            .GroupBy(p => p.GoodsReceivedDetail.ProductId)
+                                            .Select(group => group.First())
+                                            .ToListAsync();
+            return productAtWarehouse;
+        }
+
+       
     }
 }

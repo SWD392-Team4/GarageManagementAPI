@@ -59,8 +59,6 @@ namespace GarageManagementAPI.Service
 
             foreach (var goodsReceivedDetailDtoForCreation in goodsReceivedDtoForCreation.goodsReceivedDetailDtoForCreations)
             {
-                var product = await this.GetAndCheckIfProductExist(goodsReceivedDetailDtoForCreation.ProductId, false);
-                var productEntity = product.GetValue<Product>();
                 await this.CreateGoodsReceivedDetailAsync(goodsReceivedDtoToReturn.Id, goodsReceivedDetailDtoForCreation);
             }
 

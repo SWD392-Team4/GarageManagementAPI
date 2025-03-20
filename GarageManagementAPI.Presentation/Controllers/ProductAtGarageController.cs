@@ -36,7 +36,7 @@ namespace GarageManagementAPI.Presentation.Controllers
         /// <param name="productAtWarehouseParameters"></param>
         /// <returns></returns>
         [HttpGet(Name = "GetProducts")]
-        public async Task<IActionResult> GetProductAtGarages([FromRoute] ProductAtGarageParameters productAtWarehouseParameters)
+        public async Task<IActionResult> GetProductAtGarages([FromQuery] ProductAtGarageParameters productAtWarehouseParameters)
         {
             var include = "Product";
             var productAtWarehouse = await _service.ProductAtGarageService.GetProductAtGarages(productAtWarehouseParameters, trackChanges: false, include);
@@ -47,11 +47,12 @@ namespace GarageManagementAPI.Presentation.Controllers
 
         }
         /// <summary>
-        /// Get product at garage specific
+        /// Get product specific
         /// </summary>
+        /// <param name="garageId"></param>
         /// <param name="productAtWarehouseParameters"></param>
         /// <returns></returns>
-        [HttpGet("{garageId:guid}", Name = "GetProductsAtGarageSpecific")]
+        [HttpGet("product/{garageId:guid}", Name = "GetProductsAtGarageSpecific")]
         public async Task<IActionResult> GetProductAtGarageSpecefics(Guid garageId, [FromQuery] ProductAtGarageParameters productAtWarehouseParameters)
         {
             var include = "Product";

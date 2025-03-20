@@ -8,12 +8,17 @@ namespace GarageManagementAPI.Application.MappingProfile
     {
         public ProductAtGarageMappingProfile()
         {
-            CreateMap<ProductAtGarage, ProductAtGarageDto>().
-                ForMember(dest => dest.ProductName, otps =>
+            CreateMap<ProductAtGarage, ProductAtGarageDto>()              
+                .ForMember(dest => dest.ProductName, otps =>
                 {
                     otps.PreCondition(otp => otp.Product != null);
                     otps.MapFrom(src => src.Product.ProductName);
                 })
+                 .ForMember(dest => dest.ProductStatus, otps =>
+                 {
+                     otps.PreCondition(otp => otp.Product != null);
+                     otps.MapFrom(src => src.Product.Status);
+                 })
                 .ForMember(dest => dest.ProductPrice, otps =>
                 {
                     otps.PreCondition(otp => otp.Product != null);

@@ -30,11 +30,8 @@ namespace GarageManagementAPI.Service
         {
             var supplierEntity = _mapper.Map<Supplier>(supplierDtoForCreation);
             var supplierPropertiyResult = await GetAndCheckIfSupplierSame(supplierEntity);
-            var supplierTaxcodeResult = await GetAndCheckIfSupplierTaxcodeSame(supplierEntity.TaxCode!);
             if (supplierPropertiyResult)
                 return Result<SupplierDto>.BadRequest([SupplierErrors.GetSupplierAlreadyExistError(supplierDtoForCreation)]);
-            if (supplierTaxcodeResult)
-                return Result<SupplierDto>.BadRequest([SupplierErrors.GetSupplierTaxcodeUpdateAlreadyExistError(supplierDtoForCreation.TaxCode!)]);
             supplierEntity.CreatedAt = DateTimeOffset.UtcNow.SEAsiaStandardTime();
             supplierEntity.UpdatedAt = DateTimeOffset.UtcNow.SEAsiaStandardTime();
             supplierEntity.Status = SupplierStatus.Inactive;
@@ -77,11 +74,9 @@ namespace GarageManagementAPI.Service
         public async Task<Result> UpdateSupplier(Guid supplierId, SupplierDtoForUpdate supplierDtoForUpdate, bool trackChanges)
         {
             var supplierIsExistResult = await GetAndCheckIfSupplierExist(supplierId, trackChanges);
-            var supplierTaxcodeResult = await GetAndCheckIfSupplierTaxcodeSame(supplierDtoForUpdate.TaxCode!);
             if (!supplierIsExistResult.IsSuccess)
                 return Result<SupplierDto>.Failure(supplierIsExistResult.StatusCode, supplierIsExistResult.Errors!);
-            if (supplierTaxcodeResult)
-                return Result<SupplierDto>.BadRequest([SupplierErrors.GetSupplierTaxcodeUpdateAlreadyExistError(supplierDtoForUpdate.TaxCode!)]);
+
             var supplierUpdate = _mapper.Map<Supplier>(supplierDtoForUpdate);
 
             var supplierResult = await GetAndCheckIfSupplierSame(supplierUpdate, supplierId);

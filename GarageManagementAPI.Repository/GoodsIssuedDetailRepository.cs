@@ -62,5 +62,16 @@ namespace GarageManagementAPI.Repository
         {
             base.Update(goodsIssuedDetail);
         }
+
+        public async Task<int> GetSumGoodsIssuedByDate(Guid? warehouseId, DateTimeOffset? startDate, DateTimeOffset? endDate)
+        {
+            int total = 0;
+            total = await FindAll(false)
+                            .Include(g => g.GoodsIssued)
+                            .Where(g => g.GoodsIssued != null && g.GoodsIssued.WarehouseId.Equals(warehouseId))
+                            .SearchByDate(startDate, endDate)
+                            .SumAsync(p => p.Quantity);
+            return total;
+        }
     }
 }

@@ -10,5 +10,7 @@ namespace GarageManagementAPI.Service.Contracts
         public Task<Result<ExpandoObject>> GetGoodsIssuedDetailAsync(Guid goodsIssuedDetailId, GoodsIssuedDetailParameters goodsIssuedDetailParameters, string? include);
         public Task<Result<IEnumerable<ExpandoObject>>> GetGoodsIssuedDetailsAsync(GoodsIssuedDetailParameters goodsIssuedDetailParameters, string? include);
         public Task<Result<IEnumerable<ExpandoObject>>> GetGoodsIssuedDetailsAsync(Guid goodsIssuedDetail, GoodsIssuedDetailParameters goodsIssuedDetailParameters, bool trackChanges, string? include);
+
+        public Task<int> GetSumGoodsIssuedByDate(Guid? warehouseId, DateTimeOffset? startDate = null, DateTimeOffset? endDate = null);
     }
 }

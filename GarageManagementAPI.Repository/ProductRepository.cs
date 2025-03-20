@@ -4,6 +4,7 @@ using GarageManagementAPI.Repository.Contracts;
 using GarageManagementAPI.Repository.Extensions;
 using GarageManagementAPI.Shared.RequestFeatures;
 using GarageManagementAPI.Shared.Extension;
+using GarageManagementAPI.Shared.DataTransferObjects.Product;
 
 namespace GarageManagementAPI.Repository
 {
@@ -30,7 +31,12 @@ namespace GarageManagementAPI.Repository
 
         public async Task<Product?> GetProductByIdAsync(Guid productId, bool trackChanges, string? include = null)
         {
-            var product = await FindByCondition(p => p.Id.Equals(productId), trackChanges).Include(include).SingleOrDefaultAsync();
+            var product = 
+                include == null 
+                ? 
+                await FindByCondition(p => p.Id.Equals(productId), trackChanges).SingleOrDefaultAsync()
+                :
+                await FindByCondition(p => p.Id.Equals(productId), trackChanges).IsInclude(include).SingleOrDefaultAsync();
 
             return product;
         }

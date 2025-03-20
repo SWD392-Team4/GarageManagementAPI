@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using GarageManagementAPI.Entities.Models;
 using GarageManagementAPI.Repository.Extensions.Utility;
+using GarageManagementAPI.Shared.Enums.SystemStatuss;
 
 
 namespace GarageManagementAPI.Repository.Extensions
@@ -12,8 +13,11 @@ namespace GarageManagementAPI.Repository.Extensions
         {
             if(minQuantity == 0  && maxQuantity == null) return productAtGarages;
 
+            if(minQuantity > 0 && maxQuantity == null) return productAtGarages.Where(pag => pag.Quantity >= minQuantity);
+
             return productAtGarages.Where(pag => pag.Quantity >= minQuantity && pag.Quantity >= maxQuantity);
         }
+
 
         public static IQueryable<ProductAtGarage> SearchByCreated(this IQueryable<ProductAtGarage> productAtGarages, DateTimeOffset? createdAt)
         {
@@ -23,6 +27,16 @@ namespace GarageManagementAPI.Repository.Extensions
 
             return productAtGarages.Where(pat => pat.CreatedAt >= createdAtUtc && pat.CreatedAt <= endDate);
         }
+
+        public static IQueryable<ProductAtGarage> SearchByStatusProduct(this IQueryable<ProductAtGarage> productAtGarages, ProductStatus? status)
+        {
+            if (status is null)
+            {
+                return productAtGarages;
+            }
+               return productAtGarages.Where(p => p.Product.Status.ToString().Equals(status.ToString()));  
+        }
+
 
         public static IQueryable<ProductAtGarage> IsInclude(this IQueryable<ProductAtGarage> productAtGarages, string? fieldsString)
         {

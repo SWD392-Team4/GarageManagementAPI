@@ -127,6 +127,32 @@
             <param name="validator"></param>
             <returns></returns>
         </member>
+        <member name="M:GarageManagementAPI.Presentation.Controllers.DashboardController.GetLowStockProduct(System.Int32,System.Guid)">
+            <summary>
+            Lấy sản phẩm sắp hết hàng tại tất cả warehouse
+            </summary>
+            <param name="lowStockProduct"></param>
+             <param name="warehouseId"></param>
+            <returns></returns>
+        </member>
+        <member name="M:GarageManagementAPI.Presentation.Controllers.DashboardController.GetGoodsReceivedByDate(System.Nullable{System.Guid},System.DateTimeOffset,System.DateTimeOffset)">
+            <summary>
+            Get sum product has received
+            </summary>
+            <param name="startDate"></param>
+            <param name="endDate"></param>
+            <param name="warehouseId"></param>
+            <returns></returns>
+        </member>
+        <member name="M:GarageManagementAPI.Presentation.Controllers.DashboardController.GetGoodsIssuedByDate(System.Nullable{System.Guid},System.DateTimeOffset,System.DateTimeOffset)">
+            <summary>
+            Get sum product has issued
+            </summary>
+            <param name="startDate"></param>
+            <param name="endDate"></param>
+            <param name="warehouseId"></param>
+            <returns></returns>
+        </member>
         <member name="M:GarageManagementAPI.Presentation.Controllers.ProductAtGarageController.GetProductAtGarage(System.Guid)">
             <summary>
             Get product at garage by Id
@@ -143,8 +169,9 @@
         </member>
         <member name="M:GarageManagementAPI.Presentation.Controllers.ProductAtGarageController.GetProductAtGarageSpecefics(System.Guid,GarageManagementAPI.Shared.RequestFeatures.ProductAtGarageParameters)">
             <summary>
-            Get product at garage specific
+            Get product specific
             </summary>
+            <param name="garageId"></param>
             <param name="productAtWarehouseParameters"></param>
             <returns></returns>
         </member>
@@ -194,7 +221,14 @@
             <param name="productId"></param>
             <returns></returns>
         </member>
-        <member name="M:GarageManagementAPI.Presentation.Controllers.ProductController.GetProduct">
+        <member name="M:GarageManagementAPI.Presentation.Controllers.ProductController.GetProducts(GarageManagementAPI.Shared.RequestFeatures.ProductParameters)">
+            <summary>
+            Get all products
+            </summary>
+            <param name="productParameters"></param>
+            <returns></returns>
+        </member>
+        <member name="M:GarageManagementAPI.Presentation.Controllers.ProductController.GetProductMaxPrice">
             <summary>
             Get product max price
             </summary>
@@ -213,13 +247,6 @@
             Get product with warehouse
             </summary>
             <param name="warehouseId"></param>
-            <param name="productParameters"></param>
-            <returns></returns>
-        </member>
-        <member name="M:GarageManagementAPI.Presentation.Controllers.ProductController.GetProducts(GarageManagementAPI.Shared.RequestFeatures.ProductParameters)">
-            <summary>
-            Get all products
-            </summary>
             <param name="productParameters"></param>
             <returns></returns>
         </member>
