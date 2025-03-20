@@ -16,6 +16,12 @@ namespace GarageManagementAPI.Repository
             await base.CreateAsync(goodsIssued);
         }
 
+        public void UpdateGoodsIssuedAsync(GoodsIssued goodsIssued)
+        {
+            base.Update(goodsIssued);
+        }
+
+
         public async Task<GoodsIssued?> GetGoodsIssuedAsync(Guid goodsIssuedId, bool trackChanges, string? include = null)
         {
             var goodsIssued = include is null ?
@@ -50,10 +56,6 @@ namespace GarageManagementAPI.Repository
                 goodsIssuedParameters.PageSize
                 );
         }
-
-        public void UpdateGoodsIssuedAsync(GoodsIssued goodsIssued)
-        {
-            base.Update(goodsIssued);
-        }
+       
     }
 }

@@ -11,12 +11,12 @@ namespace GarageManagementAPI.Shared.DataTransferObjects.Product
         public required string ProductName { get; set; }
         public required string ProductBarcode { get; set; }
         public Guid ProductCategoryId { get; set; }
-        public string Category { get; set; } = null!;
+        public string? ProductCategoryName { get; set; }
         public Guid BrandId { get; set; }
         public string? BrandImage { get; set; }
         public string BrandName { get; set; } = null!;
         public decimal? ProductPrice { get; set; }
-        public List<string>? ImageLink { get; set; }
+        public List<string>? ProductImage { get; set; }
         public string? ProductDescription { get; set; }
         [EnumDataType(typeof(ProductStatus))]
         public ProductStatus Status { get; set; }

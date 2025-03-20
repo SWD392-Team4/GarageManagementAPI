@@ -114,5 +114,20 @@ namespace GarageManagementAPI.Repository
                 .Select(g => new { ProductId = g.Key, TotalQuantity = g.Sum(paw => paw.Quantity) })
                 .ToDictionaryAsync(x => x.ProductId, x => x.TotalQuantity);
         }
+
+        public async Task<IEnumerable<ProductAtWarehouse>> GetProductAtWarehouses(Guid warehouseId, bool trackChanges, string? include = null)
+        {
+            var productAtWarehouse = await FindAll(trackChanges)
+                                             .Include(p => p.GoodsReceivedDetail)
+                                             .ThenInclude(grd => grd.GoodsReceived)
+                                             .Where(p => p.GoodsReceivedDetail.GoodsReceived.WarehouseId == warehouseId)
+                                            .OrderBy(p => p.CreatedAt)
+                                            .GroupBy(p => p.GoodsReceivedDetail.ProductId)
+                                            .Select(group => group.First())
+                                            .ToListAsync();
+            return productAtWarehouse;
+        }
+
+       
     }
 }

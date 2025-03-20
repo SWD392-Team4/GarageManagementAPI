@@ -13,6 +13,7 @@ using GarageManagementAPI.Shared.ErrorsConstant.GoodsIssued;
 using GarageManagementAPI.Shared.DataTransferObjects.Invoice;
 using GarageManagementAPI.Shared.ErrorsConstant.ProductAtGarage;
 using GarageManagementAPI.Shared.DataTransferObjects.InvoiceSellProduct;
+using GarageManagementAPI.Shared.DataTransferObjects.Dashboard;
 
 namespace GarageManagementAPI.Service
 {
@@ -32,30 +33,31 @@ namespace GarageManagementAPI.Service
         public async Task<Result<InvoiceDto>> CreateInvoice(InvoiceDtoForCreation invoiceDtoForCreation, Guid userId)
         {
             var user = await _repoManager.User.GetUserByIdAsync(userId, false, "EmployeeInfo");
- 
+
             var invoiceEntity = _mapper.Map<Entities.Models.Invoice>(invoiceDtoForCreation);
 
-            foreach(var productAtGarage in invoiceDtoForCreation.InvoiceSellProducts!)
+            foreach (var productAtGarage in invoiceDtoForCreation.InvoiceSellProducts!)
             {
                 var product = await _repoManager.ProductAtGarage.GetProductAtGarage(productAtGarage.ProductId, false);
                 if (product == null) return Result<InvoiceDto>.BadRequest(ProductAtGarageErrors.GetProductAtGarageNotFound(productAtGarage.ProductId));
             }
 
-           
+
             invoiceEntity.EmployeeId = userId;
             invoiceEntity.InvoiceType = InvoiceType.InvocieSell;
             invoiceEntity.GarageId = user!.EmployeeInfo!.WorkplaceId ?? throw new Exception("WorkplaceId cannot be null.");
 
             foreach (var invoiceDetail in invoiceDtoForCreation.InvoiceSellProducts)
             {
-                var product = await _repoManager.Product.GetProductByIdAsync(invoiceDetail.ProductId, false);     
+                var product = await _repoManager.Product.GetProductByIdAsync(invoiceDetail.ProductId, false);
                 invoiceEntity.TotalPrice += invoiceDetail.Quantity * product!.ProductPrice;
             }
 
             await _repoManager.Invoice.CreateInvoiceAsync(invoiceEntity);
             await _repoManager.SaveAsync();
 
-            foreach (var invoiceDetail in invoiceDtoForCreation.InvoiceSellProducts) {
+            foreach (var invoiceDetail in invoiceDtoForCreation.InvoiceSellProducts)
+            {
                 await this.CreateInvoiceSellProduct(invoiceDetail, user!.EmployeeInfo!.WorkplaceId, invoiceEntity.Id);
             }
 
@@ -101,7 +103,7 @@ namespace GarageManagementAPI.Service
                 await _repoManager.SaveAsync();
             }
 
-        
+
             return Result.NoContent();
         }
 
@@ -118,7 +120,7 @@ namespace GarageManagementAPI.Service
 
         public async Task<Result<IEnumerable<ExpandoObject>>> GetInvoicesForAdmin(Guid? garageId, InvoiceParameters invoiceParameters, bool trackChanges, string? include = null)
         {
-            
+
             var invoices = await _repoManager.Invoice.GetInvoices(garageId, invoiceParameters, trackChanges, include);
 
             var invoicesDto = _mapper.Map<IEnumerable<InvoiceDto>>(invoices);
@@ -172,7 +174,7 @@ namespace GarageManagementAPI.Service
 
             var invoiceSellProductsShaped = _dataShaper.InvoiceSellProduct.ShapeData(invoiceSellProductsDto, invoiceSellProductParameters.Fields);
 
-            return Result<IEnumerable<ExpandoObject>>.Ok(invoiceSellProductsShaped); 
+            return Result<IEnumerable<ExpandoObject>>.Ok(invoiceSellProductsShaped);
         }
 
         private async Task<Result<Entities.Models.Invoice>> GetAndCheckInvoice(Guid invoiceId, bool trackChanges, string? include)
@@ -187,6 +189,15 @@ namespace GarageManagementAPI.Service
             var invoice = await _repoManager.InvoiceSellProduct.GetInvoiceSellProduct(invoiceId, trackChanges, include);
             if (invoice == null) return invoice.NotFound(invoiceId);
             return invoice.OkResult();
+        }
+
+
+
+        //Dashboard
+        public async Task<IEnumerable<RevenueByMonthDto>> GetMonthlyRevenueByYear(Guid? garageId, int year, bool trackChanges)
+        {
+            var totalPrice = await _repoManager.Invoice.GetMonthlyRevenueByYear(garageId, year, trackChanges);
+            return totalPrice;
         }
     }
 }

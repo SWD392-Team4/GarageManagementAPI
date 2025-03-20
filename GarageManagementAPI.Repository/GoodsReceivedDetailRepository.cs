@@ -36,8 +36,8 @@ namespace GarageManagementAPI.Repository
             var goodsReceivedDetails = await FindAll(trackChanges)
               .SearchByUnitPrice(goodsReceivedDetailParameters.MinUnitPrice, goodsReceivedDetailParameters.MaxUnitPrice)
               .SearchByTotalPrice(goodsReceivedDetailParameters.MiniTotalPrice,goodsReceivedDetailParameters.MaxTotalPrice)
-              .SearchByDate(goodsReceivedDetailParameters.CreatedAt)
-              .SearchByDate(goodsReceivedDetailParameters.UpdatedAt)
+              .SearchByCreate(goodsReceivedDetailParameters.CreatedAt)
+              .SearchByCreate(goodsReceivedDetailParameters.UpdatedAt)
               .SearchByStatus(goodsReceivedDetailParameters.Status)
               .Sort(goodsReceivedDetailParameters.OrderBy)
               .IsInclude(include)
@@ -56,8 +56,8 @@ namespace GarageManagementAPI.Repository
             var goodsReceivedDetails = await FindByCondition(g => g.GoodsReceivedId.Equals(goodsReceivedId), trackChanges)
               .SearchByUnitPrice(goodsReceivedDetailParameters.MinUnitPrice, goodsReceivedDetailParameters.MaxUnitPrice)
               .SearchByTotalPrice(goodsReceivedDetailParameters.MiniTotalPrice, goodsReceivedDetailParameters.MaxTotalPrice)
-              .SearchByDate(goodsReceivedDetailParameters.CreatedAt)
-              .SearchByDate(goodsReceivedDetailParameters.UpdatedAt)
+              .SearchByCreate(goodsReceivedDetailParameters.CreatedAt)
+              .SearchByCreate(goodsReceivedDetailParameters.UpdatedAt)
               .SearchByStatus(goodsReceivedDetailParameters.Status)
               .Sort(goodsReceivedDetailParameters.OrderBy)
               .IsInclude(include)
@@ -73,6 +73,37 @@ namespace GarageManagementAPI.Repository
         public void UpdateGoodsReceivedDetailAsync(GoodsReceivedDetail goodsReceivedDetail)
         {
             base.Update(goodsReceivedDetail);
+        }
+
+        public async Task<int> GetSumGoodsReceivedByDate(Guid? warehouseId, DateTimeOffset? startDate, DateTimeOffset? endDate)
+        {
+            int total = 0;
+            total = await FindAll(false)
+                          .Include(p => p.GoodsReceived)
+                          .Where(p => p.GoodsReceived != null && p.GoodsReceived.WarehouseId.Equals(warehouseId))
+                          .SearchByDate(startDate, endDate)
+                          .SumAsync(p => p.Quantity);
+            return total;
+        }
+
+        public async Task<IEnumerable<Product>> GetLowStockProducts(int threshold, Guid? warehouseId, bool trackChanges)
+        {
+            var lowStockProducts = await FindAll(trackChanges)
+                                        .Include(p => p.GoodsReceived)
+                                        .Where(p => p.GoodsReceived != null && p.GoodsReceived.WarehouseId.Equals(warehouseId))
+                                        .Include(p => p.Product)
+                                        .GroupBy(p => p.ProductId) 
+                                        .Select(g => new
+                                        {
+                                            Product = g.First().Product, 
+                                            TotalQuantity = g.Sum(p => p.Quantity) 
+                                        })
+                                        .Where(p => p.TotalQuantity <= threshold) 
+                                        .OrderBy(p => p.TotalQuantity) 
+                                        .Select(p => p.Product) 
+                                        .ToListAsync();
+
+            return lowStockProducts;
         }
     }
 }

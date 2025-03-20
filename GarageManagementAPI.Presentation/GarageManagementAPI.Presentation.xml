@@ -127,6 +127,32 @@
             <param name="validator"></param>
             <returns></returns>
         </member>
+        <member name="M:GarageManagementAPI.Presentation.Controllers.DashboardController.GetLowStockProduct(System.Int32,System.Guid)">
+            <summary>
+            Lấy sản phẩm sắp hết hàng tại tất cả warehouse
+            </summary>
+            <param name="lowStockProduct"></param>
+             <param name="warehouseId"></param>
+            <returns></returns>
+        </member>
+        <member name="M:GarageManagementAPI.Presentation.Controllers.DashboardController.GetGoodsReceivedByDate(System.Nullable{System.Guid},System.DateTimeOffset,System.DateTimeOffset)">
+            <summary>
+            Get sum product has received
+            </summary>
+            <param name="startDate"></param>
+            <param name="endDate"></param>
+            <param name="warehouseId"></param>
+            <returns></returns>
+        </member>
+        <member name="M:GarageManagementAPI.Presentation.Controllers.DashboardController.GetGoodsIssuedByDate(System.Nullable{System.Guid},System.DateTimeOffset,System.DateTimeOffset)">
+            <summary>
+            Get sum product has issued
+            </summary>
+            <param name="startDate"></param>
+            <param name="endDate"></param>
+            <param name="warehouseId"></param>
+            <returns></returns>
+        </member>
         <member name="M:GarageManagementAPI.Presentation.Controllers.ProductAtGarageController.GetProductAtGarage(System.Guid)">
             <summary>
             Get product at garage by Id

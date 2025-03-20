@@ -9,6 +9,7 @@ using GarageManagementAPI.Repository.Contracts;
 using GarageManagementAPI.Shared.RequestFeatures;
 using GarageManagementAPI.Shared.Enums.SystemStatuss;
 using GarageManagementAPI.Shared.DataTransferObjects.GoodsReceivedDetail;
+using GarageManagementAPI.Shared.DataTransferObjects.Product;
 
 namespace GarageManagementAPI.Service
 {
@@ -127,6 +128,10 @@ namespace GarageManagementAPI.Service
             return goodReceived.OkResult();
         }
 
-
+        public async Task<int> GetSumGoodsReceivedByDate(Guid? warehouseId, DateTimeOffset? startDate, DateTimeOffset? endDate)
+        {
+            var total = await _repoManager.GoodsReceivedDetail.GetSumGoodsReceivedByDate(warehouseId, startDate, endDate);
+            return total;
+        }
     }
 }

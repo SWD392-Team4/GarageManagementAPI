@@ -1,5 +1,6 @@
 ﻿using GarageManagementAPI.Entities.Models;
 using GarageManagementAPI.Shared.RequestFeatures;
+using GarageManagementAPI.Shared.DataTransferObjects.Product;
 
 namespace GarageManagementAPI.Repository.Contracts
 {
@@ -12,5 +13,7 @@ namespace GarageManagementAPI.Repository.Contracts
         Task<IEnumerable<Product>> GetProductsAsync(IEnumerable<Guid> productIds, bool trackChanges);
         public Task<PagedList<Product>> GetProductsByWarehouseIdAsync(Guid warehouseId, ProductParameters productParameters, bool trackChanges, string? include = default);
         public Task<IEnumerable<Product>> GetProductsByCarModelAndPart(Guid carModelId, Guid carPartId, bool trackChanges, string? include = default);
+
+        
     }
 }

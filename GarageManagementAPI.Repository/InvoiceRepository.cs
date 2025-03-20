@@ -1,6 +1,7 @@
 ﻿using GarageManagementAPI.Entities.Models;
 using GarageManagementAPI.Repository.Contracts;
 using GarageManagementAPI.Repository.Extensions;
+using GarageManagementAPI.Shared.DataTransferObjects.Dashboard;
 using GarageManagementAPI.Shared.RequestFeatures;
 using Microsoft.EntityFrameworkCore;
 
@@ -33,7 +34,7 @@ namespace GarageManagementAPI.Repository
                 await FindByCondition(i => i.GarageId.Equals(garageId), trackChanges)
                             .IsInclude(include)
                             .Sort(invoiceParameters.OrderBy)
-                            .ToListAsync()  
+                            .ToListAsync()
                 :
                 await FindAll(trackChanges)
                           .IsInclude(include)
@@ -60,6 +61,23 @@ namespace GarageManagementAPI.Repository
                 invoiceParameters.PageNumber,
                 invoiceParameters.PageSize
                 );
+        }
+
+        public async Task<IEnumerable<RevenueByMonthDto>> GetMonthlyRevenueByYear(Guid? garageId, int year, bool trackChanges)
+        {
+            var monthlyRevenue = await FindAll(trackChanges)
+                                    .Where(i => (garageId == null || i.GarageId == garageId)
+                                    && i.CreatedAt.Year == year)
+                                    .GroupBy(i => i.CreatedAt.Month)
+                                    .Select(g => new RevenueByMonthDto
+                                    {
+                                        Year = year,
+                                        Month = g.Key,
+                                        TotalRevenue = g.Sum(i => i.TotalPrice)
+                                    })
+                                   .OrderBy(r => r.Month)
+                                   .ToListAsync();
+            return monthlyRevenue;
         }
     }
 }
