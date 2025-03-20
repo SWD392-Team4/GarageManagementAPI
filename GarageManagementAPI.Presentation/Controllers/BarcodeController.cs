@@ -51,14 +51,12 @@ namespace GarageManagementAPI.Presentation.Controllers
             return File(byteArray, "image/png");
         }
 
-        [Authorize(Roles = $"{nameof(SystemRole.Mechanic)}, {nameof(SystemRole.Cashier)}")]
-        [HttpGet("scan/garage/{barcode}", Name = "GetProductBarcodeAtGarage")]
+        [HttpGet("scan/garage/{barcode}/{garageId:guid}", Name = "GetProductBarcodeAtGarage")]
         //[Authorize(Roles = $"{nameof(SystemRole.Administrator)},{nameof(SystemRole.Cashier)}")]
-        public async Task<IActionResult> GetProductByBarcodeGarage(string barcode, [FromQuery] ProductParameters productParameters)
+        public async Task<IActionResult> GetProductByBarcodeGarage(string barcode, Guid garageId,[FromQuery] ProductParameters productParameters)
         {
-            var userId = HttpContext.User.FindFirstValue("UserId");
             var isInclude = "Brand,ProductCategory,ProductHistories,ProductImages";
-            var productResult = await _service.ProductService.GetProductByBarcodeByProductAtGarageAsync(barcode, Guid.Parse(userId), productParameters, trackChanges: false, isInclude);
+            var productResult = await _service.ProductService.GetProductByBarcodeByProductAtGarageAsync(barcode, garageId, productParameters, trackChanges: false, isInclude);
 
             return productResult.Map(
                 onSuccess: Ok,
@@ -66,12 +64,11 @@ namespace GarageManagementAPI.Presentation.Controllers
                 );
         }
 
-        [Authorize(Roles = $"{nameof(SystemRole.Mechanic)}, {nameof(SystemRole.Cashier)}")]
         [HttpGet("scan/{barcode}", Name = "GetProductBarcode")]
         //[Authorize(Roles = $"{nameof(SystemRole.Administrator)},{nameof(SystemRole.Cashier)}")]
         public async Task<IActionResult> GetProductByBarcode(string barcode, [FromQuery] ProductParameters productParameters)
         {
-            var isInclude = "Brand,ProductCategory,ProductHistories,ProductImages";
+            var isInclude = "Brand,ProductCategory,ProductHistories,ProductImages,CarModels,CarParts";
             var productResult = await _service.ProductService.GetProductByBarcodeAsync(barcode, productParameters, trackChanges: false, isInclude);
 
             return productResult.Map(

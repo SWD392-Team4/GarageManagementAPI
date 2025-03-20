@@ -1,4 +1,7 @@
-﻿namespace GarageManagementAPI.Shared.DataTransferObjects.ProductAtGarage
+﻿using GarageManagementAPI.Shared.Enums.SystemStatuss;
+using System.ComponentModel.DataAnnotations;
+
+namespace GarageManagementAPI.Shared.DataTransferObjects.ProductAtGarage
 {
     public record class ProductAtGarageDto : BaseDto<ProductAtGarageDto>
     {
@@ -13,6 +16,9 @@
         public int Quantity { get; set; }
         public string ProductBarcodeAtGarage { get; set; } = null!;
         public DateTimeOffset CreatedAt { get; set; }
+
+        [EnumDataType(typeof(ProductStatus))]
+        public ProductStatus ProductStatus { get; set; }
 
     }
 }
