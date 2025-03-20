@@ -411,7 +411,7 @@ namespace GarageManagementAPI.Service
 
         private string GenerateBarcode()
         {
-            return $"BCP-{DateTime.UtcNow:yyyyMMddHHmmss}";
+            return $"{DateTime.UtcNow:yyyyMMddHHmmss}";
         }
 
     }

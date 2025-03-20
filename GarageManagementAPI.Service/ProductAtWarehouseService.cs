@@ -33,11 +33,14 @@ namespace GarageManagementAPI.Service
             return Result<ExpandoObject>.Ok(productAtWarehouseShaper);
         }
 
-        public async Task<Result<IEnumerable<ExpandoObject>>> GetProductAtWarehouses(Guid warehourseId,ProductAtWarehouseParameters productAtWarehouseParameters, bool trackChanges, string? include = null)
+        public async Task<Result<IEnumerable<ExpandoObject>>> GetProductAtWarehouses(Guid warehourseId, ProductAtWarehouseParameters productAtWarehouseParameters, bool trackChanges, string? include = null)
         {
             var productAtWarehousesWithMetadata = await _repository.ProductAtWarehouse.GetProductAtWarehouses(warehourseId , productAtWarehouseParameters, trackChanges, include);
+
             var productAtWarehouseDtos = _mapper.Map<IEnumerable<ProductAtWarehouseDto>>(productAtWarehousesWithMetadata);
+
             var productsShapper = _dataShaper.ProductAtWarehouse.ShapeData(productAtWarehouseDtos, productAtWarehouseParameters.Fields);
+
             return Result<IEnumerable<ExpandoObject>>.Ok(productsShapper, productAtWarehousesWithMetadata.MetaData);
         }
 

@@ -47,11 +47,12 @@ namespace GarageManagementAPI.Presentation.Controllers
 
         }
         /// <summary>
-        /// Get product at garage specific
+        /// Get product specific
         /// </summary>
+        /// <param name="garageId"></param>
         /// <param name="productAtWarehouseParameters"></param>
         /// <returns></returns>
-        [HttpGet("{garageId:guid}", Name = "GetProductsAtGarageSpecific")]
+        [HttpGet("product/{garageId:guid}", Name = "GetProductsAtGarageSpecific")]
         public async Task<IActionResult> GetProductAtGarageSpecefics(Guid garageId, [FromQuery] ProductAtGarageParameters productAtWarehouseParameters)
         {
             var include = "Product";
