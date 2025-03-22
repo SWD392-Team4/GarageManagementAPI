@@ -23,6 +23,23 @@ namespace GarageManagementAPI.Repository
             await base.CreateAsync(entity);
         }
 
+
+        public async Task<IEnumerable<EmployeeSchedule>> GetOverlappingSchedules(Guid garageId, Guid employeeId, DateTimeOffset now, bool trackChanges)
+        {
+            var employeeSchedules = await FindByCondition(es =>
+                    es.EstimatedEndTime.HasValue &&
+                    es.EstimatedEndTime > now && es.Status != EmployeeScheduleStatus.Completed && es.EmployeeId.Equals(employeeId) && es.Employee.EmployeeInfo.WorkplaceId.Equals(garageId), trackChanges).ToListAsync();
+
+            return employeeSchedules;
+        }
+
+        public async Task<IEnumerable<EmployeeSchedule>> GetEmployeeScheduleByAfterTime(Guid garageId, Guid employeeId, DateTimeOffset createdAt, bool trackChanges)
+        {
+            var employeeSchedules = await FindByCondition(es =>
+                    es.CreatedAt > createdAt && es.EmployeeId.Equals(employeeId) && es.Employee.EmployeeInfo.WorkplaceId.Equals(garageId), trackChanges).ToListAsync();
+            return employeeSchedules;
+        }
+
         public async Task<EmployeeSchedule?> GetEmployeeScheduleOfAppointmentDetailAsync(Guid garageId, Guid appointmentId, Guid appointmentDetailId, Guid employeeId, bool trackChanges)
         {
             var employeeSchedule = await FindByCondition(es =>

@@ -42,7 +42,9 @@ namespace GarageManagementAPI.Service
             if (appointment is null)
                 return Result.NotFound(AppointmentErrors.GetAppointmentNotFoundError(appointmentId));
 
-            if (appointment.Status == AppointmentStatus.Cancelled || appointment.Status == AppointmentStatus.Rejected || appointment.Status == AppointmentStatus.Completed)
+            if (appointment.Status == AppointmentStatus.Cancelled ||
+                appointment.Status == AppointmentStatus.Rejected ||
+                appointment.Status == AppointmentStatus.Completed)
             {
                 return Result.BadRequest(AppointmentErrors.GetAppointmentCanNotUpdate(appointment.Status));
             }
@@ -55,19 +57,59 @@ namespace GarageManagementAPI.Service
                 return Result.BadRequest(AppointmentErrors.GetAppointmentDetailCanNotUpdate(appointmentDetail.Status));
 
             var employee = await _repoManager.User.GetUserByIdAsync(employeeScheduleDtoForAssign.EmployeeId, false, "EmployeeInfo, Roles");
-            if (employee is null || !employee.Roles.Any(r => r.Name.Equals(nameof(SystemRole.Mechanic))) || employee.EmployeeInfo == null || !employee.EmployeeInfo.WorkplaceId.Equals(garageId))
+            if (employee is null ||
+                !employee.Roles.Any(r => r.Name.Equals(nameof(SystemRole.Mechanic))) ||
+                employee.EmployeeInfo == null ||
+                !employee.EmployeeInfo.WorkplaceId.Equals(garageId))
                 return Result.NotFound(UserErrors.GetUserNotFoundWithIdError(employeeScheduleDtoForAssign.EmployeeId));
 
-            var employeeSchedule = await _repoManager.EmployeeSchedule.GetEmployeeScheduleOfAppointmentDetailAsync(garageId, appointmentId, detailId, employeeScheduleDtoForAssign.EmployeeId, false);
+            var employeeSchedule = await _repoManager.EmployeeSchedule.GetEmployeeScheduleOfAppointmentDetailAsync(
+                                        garageId, appointmentId, detailId, employeeScheduleDtoForAssign.EmployeeId, false);
             if (employeeSchedule is not null)
                 return Result.Conflict(AppointmentErrors.GetEmployeeAlreadyAssignedError(employeeSchedule.Id, appointmentId, detailId));
 
+            // Lấy thời gian hiện tại theo múi giờ SEAsiaStandardTime
             var now = DateTimeOffset.UtcNow.SEAsiaStandardTime();
+
+            // Giả sử giờ hành chính từ 8:00 đến 18:00
+            TimeSpan businessStart = TimeSpan.FromHours(8);
+            TimeSpan businessEnd = TimeSpan.FromHours(18);
+
+            // Tính newStartTime: nếu nhân viên có booking chưa hoàn thành thì lấy EstimatedEndTime lớn nhất,
+            // nếu không thì newStartTime = now
+            var overlappingSchedules = await _repoManager.EmployeeSchedule.GetOverlappingSchedules(garageId,
+                                                employeeScheduleDtoForAssign.EmployeeId, now, false);
+
+            DateTimeOffset newStartTime = now;
+            if (overlappingSchedules.Any())
+            {
+                newStartTime = overlappingSchedules.Max(es => es.EstimatedEndTime.Value);
+            }
+
+            // Nếu newStartTime chưa trong giờ hành chính (ví dụ, nếu hệ thống cho phép gán booking ngoài giờ thì điều chỉnh)
+            if (newStartTime.TimeOfDay < businessStart)
+            {
+                newStartTime = newStartTime.Date.Add(businessStart);
+            }
+
+            double estimatedHours = appointmentDetail.ServiceHistory.Service.EstimatedHours;
+            // Tính thời gian kết thúc ước tính tạm thời
+            var tentativeEndTime = newStartTime.AddHours(estimatedHours);
+
+            // Kiểm tra nếu tentativeEndTime vượt quá giờ hành chính của ngày đó
+            if (tentativeEndTime.TimeOfDay > businessEnd)
+            {
+                // Chuyển sang ngày hôm sau, với newStartTime là ngày hôm sau, giờ bắt đầu của ngày (businessStart)
+                newStartTime = newStartTime.Date.AddDays(1).Add(businessStart);
+                tentativeEndTime = newStartTime.AddHours(estimatedHours);
+            }
+
+            // Tạo mới EmployeeSchedule với EstimatedEndTime tính theo newStartTime và estimatedHours
             var newEmployeeSchedule = new EmployeeSchedule
             {
                 EmployeeId = employeeScheduleDtoForAssign.EmployeeId,
                 AppointmentDetailId = detailId,
-                EstimatedEndTime = now.AddHours(appointmentDetail.ServiceHistory.Service.EstimatedHours)
+                EstimatedEndTime = tentativeEndTime
             };
 
             appointmentDetail.Status = AppointmentDetailStatus.Assigned;
@@ -77,7 +119,6 @@ namespace GarageManagementAPI.Service
             await _repoManager.SaveAsync();
 
             return Result.Ok();
-
         }
 
         public async Task<Result> UnAssignEmployee(Guid garageId, Guid appointmentId, Guid detailId, EmployeeScheduleDtoForUnassign employeeScheduleDtoForUnassign)

@@ -45,6 +45,17 @@ namespace GarageManagementAPI.Shared.ErrorsConstant.Appointment
         public const string AppointmentDetailIsNotAssigned = "Appointment detail {0} is not assigned to any employee";
         public const string AppointmentDetailPackageNotFound = "Appointment detail package {0} not found";
 
+        public const string EmployeeHasOverlappingSchedulesError = "Employee {0} has overlapping schedules {1}";
+
+        public static ErrorsResult GetEmployeeHasOverlappingSchedulesError(Guid employeeId, IEnumerable<Guid> ids)
+        {
+            return new ErrorsResult
+            {
+                Code = nameof(EmployeeHasOverlappingSchedulesError),
+                Description = string.Format(EmployeeHasOverlappingSchedulesError, employeeId, string.Join(", ", ids))
+            };
+        }
+
         public static ErrorsResult GetAppointmentDetailPackageNotFoundError(Guid id)
         {
             return new ErrorsResult
