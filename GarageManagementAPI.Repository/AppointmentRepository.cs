@@ -253,8 +253,8 @@ namespace GarageManagementAPI.Repository
                 .Include(a => a.RejecteByEmployee)
                 .Include(a => a.AppointmentDetails)
                 .ThenInclude(ad => ad.CarConditionImages)
-                .Include(a => a.AppointmentDetails.Where(ad => ad.EmployeeSchedules.Any(es => es.EmployeeId.Equals(employeeId))))
-                .ThenInclude(a => a.EmployeeSchedules)
+                .Include(a => a.AppointmentDetails.Where(ad => ad.EmployeeSchedules.Any(es => es.EmployeeId.Equals(employeeId) && es.Status != EmployeeScheduleStatus.Cancelled && es.Status != EmployeeScheduleStatus.Declined)))
+                .ThenInclude(a => a.EmployeeSchedules.Where(es => es.EmployeeId.Equals(employeeId) && es.Status != EmployeeScheduleStatus.Cancelled && es.Status != EmployeeScheduleStatus.Declined))
                 .ThenInclude(a => a.Employee)
                 .ThenInclude(e => e.Roles)
                 .ToListAsync();
