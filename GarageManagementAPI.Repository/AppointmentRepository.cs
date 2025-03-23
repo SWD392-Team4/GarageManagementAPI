@@ -1,12 +1,12 @@
-﻿using Microsoft.EntityFrameworkCore;
-using GarageManagementAPI.Entities.Models;
-using GarageManagementAPI.Shared.Extension;
-using GarageManagementAPI.Shared.Utilities;
+﻿using GarageManagementAPI.Entities.Models;
 using GarageManagementAPI.Repository.Contracts;
 using GarageManagementAPI.Repository.Extensions;
-using GarageManagementAPI.Shared.RequestFeatures;
-using GarageManagementAPI.Shared.Enums.SystemStatuss;
 using GarageManagementAPI.Shared.DataTransferObjects.Dashboard;
+using GarageManagementAPI.Shared.Enums.SystemStatuss;
+using GarageManagementAPI.Shared.Extension;
+using GarageManagementAPI.Shared.RequestFeatures;
+using GarageManagementAPI.Shared.Utilities;
+using Microsoft.EntityFrameworkCore;
 
 namespace GarageManagementAPI.Repository
 {
@@ -198,6 +198,32 @@ namespace GarageManagementAPI.Repository
                 .OrderBy(g => g.Month)
                 .ToListAsync();
             return result;
+        }
+
+        public async Task<IEnumerable<CustomerDto>> GetCustomers(int year, Guid? garageId, bool trackChanges)
+        {
+            var startOfYear = new DateTime(year, 1, 1);
+            var endOfYear = startOfYear.AddYears(1);
+
+            var query = garageId == null
+                ? FindAll(trackChanges)
+                : FindByCondition(a => a.GarageId.Equals(garageId), trackChanges);
+
+            var customers = query
+                .Where(a => a.CreatedAt >= startOfYear && a.CreatedAt < endOfYear)
+                .AsEnumerable()
+                .GroupBy(a => new { a.CreatedAt.Month, a.CustomerPhoneNumber })
+                .Select(g => g.First())
+                .GroupBy(a => a.CreatedAt.Month)
+                .Select(g => new CustomerDto
+                {
+                    Month = g.Key,
+                    Number = g.Count(),
+                })
+                .OrderBy(g => g.Month)
+                .ToList();
+
+            return customers;
         }
 
         public async Task<PagedList<Appointment>> GetAppointmentsOfEmployeeAsync(Guid garageId, Guid employeeId, AppointmentParameters appointmentParameters, bool trackChanges)
