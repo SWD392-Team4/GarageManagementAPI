@@ -3,6 +3,7 @@ using GarageManagementAPI.Entities.Models;
 using GarageManagementAPI.Repository.Contracts;
 using GarageManagementAPI.Repository.Extensions;
 using GarageManagementAPI.Shared.RequestFeatures;
+using GarageManagementAPI.Shared.DataTransferObjects.Dashboard;
 
 namespace GarageManagementAPI.Repository
 {
@@ -35,7 +36,7 @@ namespace GarageManagementAPI.Repository
         {
             var goodsReceivedDetails = await FindAll(trackChanges)
               .SearchByUnitPrice(goodsReceivedDetailParameters.MinUnitPrice, goodsReceivedDetailParameters.MaxUnitPrice)
-              .SearchByTotalPrice(goodsReceivedDetailParameters.MiniTotalPrice,goodsReceivedDetailParameters.MaxTotalPrice)
+              .SearchByTotalPrice(goodsReceivedDetailParameters.MiniTotalPrice, goodsReceivedDetailParameters.MaxTotalPrice)
               .SearchByCreate(goodsReceivedDetailParameters.CreatedAt)
               .SearchByCreate(goodsReceivedDetailParameters.UpdatedAt)
               .SearchByStatus(goodsReceivedDetailParameters.Status)
@@ -88,22 +89,33 @@ namespace GarageManagementAPI.Repository
 
         public async Task<IEnumerable<Product>> GetLowStockProducts(int threshold, Guid? warehouseId, bool trackChanges)
         {
-            var lowStockProducts = await FindAll(trackChanges)
-                                        .Include(p => p.GoodsReceived)
-                                        .Where(p => p.GoodsReceived != null && p.GoodsReceived.WarehouseId.Equals(warehouseId))
-                                        .Include(p => p.Product)
-                                        .GroupBy(p => p.ProductId) 
-                                        .Select(g => new
-                                        {
-                                            Product = g.First().Product, 
-                                            TotalQuantity = g.Sum(p => p.Quantity) 
-                                        })
-                                        .Where(p => p.TotalQuantity <= threshold) 
-                                        .OrderBy(p => p.TotalQuantity) 
-                                        .Select(p => p.Product) 
-                                        .ToListAsync();
+            var productList =
+                warehouseId == null ?
+                await FindAll(trackChanges)
+                .Include(p => p.GoodsReceived)
+                .Include(p => p.Product)
+                .ToListAsync()
+                :
+                 await FindAll(trackChanges)
+                .Include(p => p.GoodsReceived)
+                .Include(p => p.Product)
+                .Where(p => p.GoodsReceived.WarehouseId == warehouseId)
+                .ToListAsync();
+
+            var lowStockProducts = productList
+                .GroupBy(p => p.ProductId)
+                .Select(g => new
+                {
+                    Product = g.First().Product,
+                    TotalQuantity = g.Sum(p => p.Quantity)
+                })
+                .Where(p => p.TotalQuantity <= threshold)
+                .OrderBy(p => p.TotalQuantity)
+                .Select(p => p.Product);
 
             return lowStockProducts;
         }
+
+
     }
 }

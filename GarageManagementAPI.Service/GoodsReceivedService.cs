@@ -194,7 +194,7 @@ namespace GarageManagementAPI.Service
 
             var goodsReceivedDetailReturnDto = _mapper.Map<GoodsReceivedDetailDto>(goodsReceivedDetailEntity);
 
-            await this.CreateProductAtWareHouse(goodsReceivedDetailReturnDto.Quantity, goodsReceivedDetailReturnDto.Id);
+            await this.CreateProductAtWareHouse(goodsReceivedDetailReturnDto.Quantity, goodsReceivedDetailEntity.Id);
         }
 
         private async Task CreateProductAtWareHouse(int quantity, Guid goodsReceivedDetailId)

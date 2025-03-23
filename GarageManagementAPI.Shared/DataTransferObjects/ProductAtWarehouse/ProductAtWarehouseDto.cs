@@ -1,4 +1,5 @@
 ﻿using GarageManagementAPI.Shared.Enums;
+using GarageManagementAPI.Shared.Enums.SystemStatuss;
 using System.ComponentModel.DataAnnotations;
 
 namespace GarageManagementAPI.Shared.DataTransferObjects.ProductAtWarehouse
@@ -7,6 +8,12 @@ namespace GarageManagementAPI.Shared.DataTransferObjects.ProductAtWarehouse
     {
         public Guid Id { get; set; }
         public int Quantity { get; set; }
+        public string? ProductName { get; set; }
+        public List<string> ProductImage { get; set; } = new List<string>();
+        public string? BrandName { get; set; }
+        public string? ProductCategoryName { get; set; }
+        public Guid GoodsIssuedDetailId { get; set; }
+        public decimal ProductPrice { get; set; }
 
         [EnumDataType(typeof(SystemStatus))]
         public SystemStatus Status { get; set; }
@@ -16,5 +23,8 @@ namespace GarageManagementAPI.Shared.DataTransferObjects.ProductAtWarehouse
         public DateTimeOffset UpdatedAt { get; set; }
 
         public Guid GoodsReceivedDetailId { get; set; }
+
+        [EnumDataType(typeof(ProductStatus))]
+        public ProductStatus ProductStatus { get; set; }
     }
 }

@@ -11,6 +11,24 @@ namespace GarageManagementAPI.Presentation.Controllers
         {
         }
 
+        [HttpGet("package/{year}", Name = "GetPackageDashBoard")]
+        //[Authorize(Roles = $"{nameof(SystemRole.Administrator)},{nameof(SystemRole.Cashier)}")]
+        public async Task<IActionResult> GetPackageDashBoard(Guid? garageId, int year)
+        {
+            var productResult = await _service.AppointmentDetailService.GetTotalEachPackage(year, garageId, trackChanges: false);
+            return Ok(productResult);
+        }
+
+
+        [HttpGet("service/{year}", Name = "GetServiceDashBoard")]
+        //[Authorize(Roles = $"{nameof(SystemRole.Administrator)},{nameof(SystemRole.Cashier)}")]
+        public async Task<IActionResult> GetServiceDashBoard(Guid? garageId, int year)
+        {
+            var productResult = await _service.AppointmentDetailService.GetTotalEachService(year, garageId, trackChanges: false);
+            return Ok(productResult);
+        }
+
+
         /// <summary>
         /// Get appoiment theo năm 
         /// </summary>
@@ -22,6 +40,14 @@ namespace GarageManagementAPI.Presentation.Controllers
         public async Task<IActionResult> GetAppointmentDashBoard(Guid? garageId, int year)
         {
             var productResult = await _service.AppointmentService.GetAppointmentCountByMonth(year, garageId, trackChanges: false);
+            return Ok(productResult);
+        }
+
+        [HttpGet("customers/{year}", Name = "GetCustomers")]
+        //[Authorize(Roles = $"{nameof(SystemRole.Administrator)},{nameof(SystemRole.Cashier)}")]
+        public async Task<IActionResult> GetCustomers(Guid? garageId, int year)
+        {
+            var productResult = await _service.AppointmentService.GetCustomers(year, garageId, trackChanges: false);
             return Ok(productResult);
         }
 
@@ -47,7 +73,7 @@ namespace GarageManagementAPI.Presentation.Controllers
         /// <returns></returns>
         [HttpGet("LowStockProduct/{lowStockProduct:int}", Name = "GetLowStockProduct")]
         //[Authorize(Roles = $"{nameof(SystemRole.Administrator)},{nameof(SystemRole.Cashier)}")]
-        public async Task<IActionResult> GetLowStockProduct(int lowStockProduct, Guid warehouseId)
+        public async Task<IActionResult> GetLowStockProduct(int lowStockProduct, Guid? warehouseId)
         {
             var productResult = await _service.ProductService.GetLowStockProducts(lowStockProduct, warehouseId, trackChanges: false);
 

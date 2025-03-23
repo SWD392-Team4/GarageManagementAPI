@@ -34,5 +34,7 @@ namespace GarageManagementAPI.Service.Contracts
 
         Task<Result<InvoiceDto>> CreateAppointmentInvocie(Guid garageId, Guid appointmentId, Guid userId, InvoiceDtoForCreation invoiceDtoForCreation);
 
+        Task<IEnumerable<CustomerDto>> GetCustomers(int year, Guid? garageId, bool trackChanges);
+
     }
 }

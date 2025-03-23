@@ -5,6 +5,8 @@ using GarageManagementAPI.Shared.Extension;
 using GarageManagementAPI.Shared.RequestFeatures;
 using Microsoft.EntityFrameworkCore;
 using GarageManagementAPI.Shared.Enums.SystemStatuss;
+using GarageManagementAPI.Shared.DataTransferObjects.Service;
+using GarageManagementAPI.Shared.DataTransferObjects.Dashboard;
 
 namespace GarageManagementAPI.Repository
 {
@@ -61,6 +63,55 @@ namespace GarageManagementAPI.Repository
                 .AsSplitQuery()
                 .ToListAsync();
         }
+
+        //Dashboard
+        public async Task<IEnumerable<ServiceStatisticsDto>> GetTotalEachService(int year, Guid? garageId, bool trackChanges)
+        {
+            DateTime startOfYear = new DateTime(year, 1, 1);
+            DateTime endOfYear = new DateTime(year + 1, 1, 1);
+
+            var services = await FindAll(trackChanges)
+                .Where(a => a.ServiceHistory.CreatedAt >= startOfYear && a.ServiceHistory.CreatedAt < endOfYear)
+                .Where(a => garageId == null || (a.Appointment != null && a.Appointment.GarageId == garageId))
+                .GroupBy(a => a.ServiceHistory.ServiceId) 
+                .Select(g => new ServiceStatisticsDto
+                {
+                    Id = g.Key,
+                    Name = g.First().ServiceHistory.Service.ServiceName, 
+                    Description = g.First().ServiceHistory.Service.Description,
+                    EstimatedHours = g.First().ServiceHistory.Service.EstimatedHours,
+                    TotalRevenue = g.Sum(a => a.ServiceHistory.Price),
+                    TotalUsed = g.Count()
+                })
+                .OrderByDescending(s => s.TotalUsed)
+                .ToListAsync();
+
+            return services;
+        }
+
+        public async Task<IEnumerable<PackageStatisticsDto>> GetTotalEachPackage(int year, Guid? garageId, bool trackChanges)
+        {
+            DateTime startOfYear = new DateTime(year, 1, 1);
+            DateTime endOfYear = new DateTime(year + 1, 1, 1);
+
+            var packages = await FindAll(trackChanges)
+                .Where(a => a.PackageHistory != null && a.PackageHistory.CreatedAt >= startOfYear && a.PackageHistory.CreatedAt < endOfYear)
+                .Where(a => garageId == null || (a.Appointment != null && a.Appointment.GarageId == garageId))
+                .GroupBy(a => a.PackageHistory!.PackageId) 
+                .Select(g => new PackageStatisticsDto
+                {
+                    Id = g.Key,
+                    Name = g.First().PackageHistory!.Package.PackageName,
+                    Description = g.First().PackageHistory!.Package.Description, 
+                    TotalRevenue = g.Sum(a => a.PackageHistory!.PackagePrice),
+                    TotalUsed = g.Count() 
+                })
+                .OrderByDescending(s => s.TotalUsed)
+                .ToListAsync();
+
+            return packages;
+        }
+
     }
 
 }

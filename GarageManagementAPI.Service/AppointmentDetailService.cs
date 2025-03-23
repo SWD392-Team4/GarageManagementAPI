@@ -1,21 +1,21 @@
 ﻿using AutoMapper;
-
+using GarageManagementAPI.Shared.Enums;
 using GarageManagementAPI.Entities.Models;
-using GarageManagementAPI.Repository.Contracts;
+using GarageManagementAPI.Shared.Extension;
 using GarageManagementAPI.Service.Contracts;
+using GarageManagementAPI.Shared.ResultModel;
+using GarageManagementAPI.Repository.Contracts;
+using GarageManagementAPI.Shared.Enums.SystemStatuss;
+using GarageManagementAPI.Shared.ErrorsConstant.Service;
+using GarageManagementAPI.Shared.ErrorsConstant.Product;
 using GarageManagementAPI.Shared.Constant.Authentication;
+using GarageManagementAPI.Shared.ErrorsConstant.Workplace;
+using GarageManagementAPI.Shared.ErrorsConstant.Appointment;
+using GarageManagementAPI.Shared.ErrorsConstant.ServiceHisory;
+using GarageManagementAPI.Shared.ErrorsConstant.ProductHistory;
+using GarageManagementAPI.Shared.DataTransferObjects.Dashboard;
 using GarageManagementAPI.Shared.DataTransferObjects.AppointmentDetail;
 using GarageManagementAPI.Shared.DataTransferObjects.EmployeeSchedule;
-using GarageManagementAPI.Shared.Enums;
-using GarageManagementAPI.Shared.Enums.SystemStatuss;
-using GarageManagementAPI.Shared.ErrorsConstant.Appointment;
-using GarageManagementAPI.Shared.ErrorsConstant.Product;
-using GarageManagementAPI.Shared.ErrorsConstant.ProductHistory;
-using GarageManagementAPI.Shared.ErrorsConstant.Service;
-using GarageManagementAPI.Shared.ErrorsConstant.ServiceHisory;
-using GarageManagementAPI.Shared.ErrorsConstant.Workplace;
-using GarageManagementAPI.Shared.Extension;
-using GarageManagementAPI.Shared.ResultModel;
 
 namespace GarageManagementAPI.Service
 {
@@ -489,6 +489,19 @@ namespace GarageManagementAPI.Service
             await _repoManager.SaveAsync();
 
             return Result.Ok();
+        }
+
+        //Dashboard
+        public async Task<IEnumerable<ServiceStatisticsDto>> GetTotalEachService(int year, Guid? garageId, bool trackChanges)
+        {
+            var services = await _repoManager.AppointmentDetail.GetTotalEachService(year, garageId, trackChanges);
+            return services;
+        }
+
+        public async Task<IEnumerable<PackageStatisticsDto>> GetTotalEachPackage(int year, Guid? garageId, bool trackChanges)
+        {
+            var packages = await _repoManager.AppointmentDetail.GetTotalEachPackage(year, garageId, trackChanges);
+            return packages;
         }
     }
 }
