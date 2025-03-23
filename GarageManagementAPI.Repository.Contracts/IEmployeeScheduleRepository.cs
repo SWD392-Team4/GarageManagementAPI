@@ -18,5 +18,9 @@ namespace GarageManagementAPI.Repository.Contracts
         Task<IEnumerable<EmployeeSchedule>> GetEmployeeSchedulesOfEmployeeAsync(Guid garageId, Guid employeeId, bool trackChanges);
 
         Task<PagedList<EmployeeSchedule>> GetEmployeeSchedulesOfEmployeeAsync(Guid garageId, Guid employeeId, EmployeeScheduleParameters employeeScheduleParameters, bool trackChanges);
+
+        Task<IEnumerable<EmployeeSchedule>> GetSubsequentSchedules(Guid employeeId, Guid currentScheduleId, bool trackChanges);
+
+        Task<bool> HasOverlappingInProgressOrActiveSchedule(Guid employeeId, DateTimeOffset currentTime, bool trackChanges);
     }
 }

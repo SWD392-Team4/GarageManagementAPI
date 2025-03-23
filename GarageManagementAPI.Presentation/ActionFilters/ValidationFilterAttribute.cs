@@ -1,9 +1,11 @@
-﻿using GarageManagementAPI.Presentation.Extensions;
+﻿using FluentValidation;
+
+using GarageManagementAPI.Presentation.Extensions;
 using GarageManagementAPI.Shared.Constant.Request;
+using GarageManagementAPI.Shared.ResultModel;
+
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
-using GarageManagementAPI.Shared.ResultModel;
-using FluentValidation;
 
 namespace GarageManagementAPI.Presentation.ActionFilters
 {

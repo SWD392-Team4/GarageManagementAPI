@@ -67,6 +67,10 @@ namespace GarageManagementAPI.Repository
                 .ThenInclude(a => a.EmployeeSchedules)
                 .ThenInclude(a => a.Employee)
                 .ThenInclude(e => e.Roles)
+                .Include(a => a.AppointmentDetails)
+                .ThenInclude(a => a.AppointmentReplacementParts)
+                .ThenInclude(a => a.AppointmentReplacementPart_ProductAtGarages)
+                .ThenInclude(a => a.ProductAtGarage)
                 .SingleOrDefaultAsync();
         }
 

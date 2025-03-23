@@ -213,5 +213,56 @@ namespace GarageManagementAPI.Repository
             entity.UpdatedAt = DateTimeOffset.UtcNow.SEAsiaStandardTime();
             base.Update(entity);
         }
+
+        public async Task<IEnumerable<EmployeeSchedule>> GetSubsequentSchedules(Guid employeeId, Guid currentScheduleId, bool trackChanges)
+        {
+            // Lấy booking hiện tại để biết thời gian EstimatedEndTime của nó
+            var currentSchedule = await FindByCondition(es => es.Id.Equals(currentScheduleId), trackChanges)
+                                        .FirstOrDefaultAsync();
+
+            if (currentSchedule == null || !currentSchedule.EstimatedEndTime.HasValue)
+            {
+                // Nếu không tìm thấy hoặc không có EstimatedEndTime, trả về danh sách rỗng
+                return Enumerable.Empty<EmployeeSchedule>();
+            }
+
+            // Lấy các booking của nhân viên:
+            // - Không bao gồm booking hiện tại (currentScheduleId)
+            // - Có EstimatedEndTime đã được thiết lập và lớn hơn hoặc bằng EstimatedEndTime của booking hiện tại
+            // - Chưa bắt đầu (StartTime == null) => nghĩa là chưa được thực hiện
+            var subsequentSchedules = await FindByCondition(es =>
+                 es.EmployeeId.Equals(employeeId) &&
+                 !es.Id.Equals(currentScheduleId) &&
+                 es.EstimatedEndTime.HasValue &&
+                 es.EstimatedEndTime.Value >= currentSchedule.EstimatedEndTime.Value &&
+                 es.StartTime == null &&
+                 es.Status != EmployeeScheduleStatus.Completed &&
+                 es.Status != EmployeeScheduleStatus.InProgress
+            , trackChanges)
+                .Include(s => s.AppointmentDetail)
+                .ThenInclude(ad => ad.ServiceHistory)
+                .ThenInclude(sh => sh.Service)
+            .OrderBy(es => es.EstimatedEndTime)  // Sắp xếp theo EstimatedEndTime tăng dần
+            .ToListAsync();
+
+            return subsequentSchedules;
+        }
+
+        // Giả sử hàm này sẽ kiểm tra xem có booking nào của nhân viên đang có trạng thái InProgress
+        // hoặc thời gian hiện tại nằm trong khoảng [StartTime, EstimatedEndTime] của booking khác hay không.
+        public async Task<bool> HasOverlappingInProgressOrActiveSchedule(Guid employeeId, DateTimeOffset currentTime, bool trackChanges)
+        {
+            var overlappingSchedules = await FindByCondition(es =>
+                es.EmployeeId.Equals(employeeId) &&
+                (
+                    es.Status == EmployeeScheduleStatus.InProgress ||
+                    // Kiểm tra nếu currentTime nằm giữa StartTime và EstimatedEndTime
+                    (es.StartTime.HasValue && es.EstimatedEndTime.HasValue &&
+                     es.StartTime.Value <= currentTime && currentTime <= es.EstimatedEndTime.Value)
+                )
+            , trackChanges).ToListAsync();
+
+            return overlappingSchedules.Count != 0;
+        }
     }
 }

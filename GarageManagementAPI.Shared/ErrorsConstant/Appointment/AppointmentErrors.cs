@@ -47,6 +47,61 @@ namespace GarageManagementAPI.Shared.ErrorsConstant.Appointment
 
         public const string EmployeeHasOverlappingSchedulesError = "Employee {0} has overlapping schedules {1}";
 
+        public const string EmployeeScheduleAlreadyCompleted = "Employee schedule {0} is already completed";
+
+        public const string EmployeeScheduleAlreadyAssigned = "Employee schedule {0} is already assigned to appointment detail {1}";
+
+        public const string EmployeeScheduleAlreadyStart = "Employee schedule {0} is already started";
+
+        public const string EmployeeScheduleAlreadyEnded = "Employee schedule {0} is already ended";
+
+        public const string EmployeeHasOverlappingSchedules = "Employee {0} has overlapping schedules.";
+
+        public static ErrorsResult GetEmployeeHasOverlappingSchedules(Guid employeeId)
+        {
+            return new ErrorsResult
+            {
+                Code = nameof(EmployeeHasOverlappingSchedules),
+                Description = string.Format(EmployeeHasOverlappingSchedules, employeeId)
+            };
+        }
+
+        public static ErrorsResult GetEmployeeScheduleAlreadyEndedError(Guid id)
+        {
+            return new ErrorsResult
+            {
+                Code = nameof(EmployeeScheduleAlreadyEnded),
+                Description = string.Format(EmployeeScheduleAlreadyEnded, id)
+            };
+        }
+
+        public static ErrorsResult GetEmployeeScheduleAlreadyStartError(Guid id)
+        {
+            return new ErrorsResult
+            {
+                Code = nameof(EmployeeScheduleAlreadyStart),
+                Description = string.Format(EmployeeScheduleAlreadyStart, id)
+            };
+        }
+
+        public static ErrorsResult GetEmployeeScheduleAlreadyAssignedError(Guid id, Guid appointmentDetailId)
+        {
+            return new ErrorsResult
+            {
+                Code = nameof(EmployeeScheduleAlreadyAssigned),
+                Description = string.Format(EmployeeScheduleAlreadyAssigned, id, appointmentDetailId)
+            };
+        }
+
+        public static ErrorsResult GetEmployeeScheduleAlreadyCompletedError(Guid id)
+        {
+            return new ErrorsResult
+            {
+                Code = nameof(EmployeeScheduleAlreadyCompleted),
+                Description = string.Format(EmployeeScheduleAlreadyCompleted, id)
+            };
+        }
+
         public static ErrorsResult GetEmployeeHasOverlappingSchedulesError(Guid employeeId, IEnumerable<Guid> ids)
         {
             return new ErrorsResult

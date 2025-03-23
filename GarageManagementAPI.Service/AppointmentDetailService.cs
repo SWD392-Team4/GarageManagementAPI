@@ -115,6 +115,19 @@ namespace GarageManagementAPI.Service
             appointmentDetail.Status = AppointmentDetailStatus.Assigned;
             appointmentDetail.UpdatedAt = now;
 
+            if (appointmentDetail.PackageHistoryId != null)
+            {
+                foreach (var appointmentPackage in appointment.AppointmentDetailPackages)
+                {
+                    if (appointmentPackage.PackageHistoryId == appointmentDetail.PackageHistoryId && appointmentPackage.Status != AppointmentDetailPackageStatus.Assigned)
+                    {
+                        appointmentPackage.Status = AppointmentDetailPackageStatus.Assigned;
+                        _repoManager.AppointmentDetailPackage.Update(appointmentPackage);
+                        break;
+                    }
+                }
+            }
+
             await _repoManager.EmployeeSchedule.CreateAsync(newEmployeeSchedule);
             await _repoManager.SaveAsync();
 
@@ -205,7 +218,10 @@ namespace GarageManagementAPI.Service
                 ad.Status = AppointmentDetailStatus.Cancelled;
                 ad.UpdatedAt = now;
                 ad.ServiceNote = appointmentDetailDtoForCancellation.CancelReason;
-                appointment.Price -= ad.ServiceHistory.Price;
+                if (ad.PackageHistoryId == null)
+                {
+                    appointment.Price -= ad.ServiceHistory.Price;
+                }
                 appointment.EstimatedEndTime = appointment.EstimatedEndTime!.Value.Subtract(TimeSpan.FromHours(ad.ServiceHistory.Service.EstimatedHours));
                 if (ad.AppointmentReplacementParts != null && ad.AppointmentReplacementParts.Any())
                 {
@@ -215,6 +231,25 @@ namespace GarageManagementAPI.Service
                         part.UpdatedAt = now;
                         appointment.Price -= part.ProductHistory.ProductPrice;
                     }
+                }
+            }
+
+            foreach (var appointmentPackage in appointment.AppointmentDetailPackages)
+            {
+                var isPackgeCancelled = true;
+                foreach (var ad in appointment.AppointmentDetails)
+                {
+                    if (ad.PackageHistoryId == appointmentPackage.PackageHistoryId && ad.Status != AppointmentDetailStatus.Cancelled)
+                    {
+                        isPackgeCancelled = false;
+                    }
+                }
+                if (isPackgeCancelled)
+                {
+                    appointmentPackage.Status = AppointmentDetailPackageStatus.Cancelled;
+                    _repoManager.AppointmentDetailPackage.Update(appointmentPackage);
+                    appointment.Price -= appointmentPackage.PackageHistory.PackagePrice;
+
                 }
             }
 
@@ -414,7 +449,10 @@ namespace GarageManagementAPI.Service
                 ad.Status = AppointmentDetailStatus.Declined;
                 ad.UpdatedAt = now;
                 ad.ServiceNote = appointmentDetailDtoForCancellation.CancelReason;
-                appointment.Price -= ad.ServiceHistory.Price;
+                if (ad.PackageHistoryId == null)
+                {
+                    appointment.Price -= ad.ServiceHistory.Price;
+                }
                 appointment.EstimatedEndTime = appointment.EstimatedEndTime!.Value.Subtract(TimeSpan.FromHours(ad.ServiceHistory.Service.EstimatedHours));
                 if (ad.AppointmentReplacementParts != null && ad.AppointmentReplacementParts.Any())
                 {
@@ -426,6 +464,27 @@ namespace GarageManagementAPI.Service
                     }
                 }
             }
+
+            foreach (var appointmentPackage in appointment.AppointmentDetailPackages)
+            {
+                var isPackgeCancelled = true;
+                foreach (var ad in appointment.AppointmentDetails)
+                {
+                    if (ad.PackageHistoryId == appointmentPackage.PackageHistoryId && ad.Status != AppointmentDetailStatus.Declined)
+                    {
+                        isPackgeCancelled = false;
+                    }
+                }
+                if (isPackgeCancelled)
+                {
+                    appointmentPackage.Status = AppointmentDetailPackageStatus.Declined;
+                    _repoManager.AppointmentDetailPackage.Update(appointmentPackage);
+                    appointment.Price -= appointmentPackage.PackageHistory.PackagePrice;
+
+                }
+            }
+
+
 
             await _repoManager.SaveAsync();
 
