@@ -258,7 +258,7 @@ namespace GarageManagementAPI.Repository
                     es.Status == EmployeeScheduleStatus.InProgress ||
                     // Kiểm tra nếu currentTime nằm giữa StartTime và EstimatedEndTime
                     (es.StartTime.HasValue && es.EstimatedEndTime.HasValue &&
-                     es.StartTime.Value <= currentTime && currentTime <= es.EstimatedEndTime.Value)
+                     es.StartTime.Value <= currentTime && currentTime <= es.EstimatedEndTime.Value && es.Status != EmployeeScheduleStatus.Completed)
                 )
             , trackChanges).ToListAsync();
 
