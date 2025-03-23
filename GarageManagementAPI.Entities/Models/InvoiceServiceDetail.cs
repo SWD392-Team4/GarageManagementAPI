@@ -1,14 +1,10 @@
-﻿using System.Data;
-
-namespace GarageManagementAPI.Entities.Models
+﻿namespace GarageManagementAPI.Entities.Models
 {
     public partial class InvoiceServiceDetail : BaseEntity<InvoiceServiceDetail>
     {
         public Guid ServiceHistoryId { get; set; }
 
         public Guid InvoiceId { get; set; }
-
-        public int Quantity { get; set; }
 
         public DateTimeOffset CreatedAt { get; set; }
 
@@ -18,7 +14,6 @@ namespace GarageManagementAPI.Entities.Models
 
         public virtual ServiceHistory ServiceHistory { get; set; } = null!;
     }
-
 
 }
 

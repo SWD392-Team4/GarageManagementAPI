@@ -198,7 +198,7 @@ namespace GarageManagementAPI.Presentation.Controllers
                 );
         }
 
-        [HttpPost("schedules/{scheduleId:guid}/start")]
+        [HttpGet("schedules/{scheduleId:guid}/start")]
         public async Task<IActionResult> StartEmployeeSchedule(Guid scheduleId)
         {
             var startResult = await _service.EmployeeScheduleService.StartEmployeeScheduleAsync(scheduleId);
@@ -208,7 +208,7 @@ namespace GarageManagementAPI.Presentation.Controllers
                 );
         }
 
-        [HttpPost("schedules/{scheduleId:guid}/end")]
+        [HttpGet("schedules/{scheduleId:guid}/end")]
         public async Task<IActionResult> EndEmployeeSchedule(Guid scheduleId)
         {
             var endResult = await _service.EmployeeScheduleService.EndEmployeeScheduleAsync(scheduleId);

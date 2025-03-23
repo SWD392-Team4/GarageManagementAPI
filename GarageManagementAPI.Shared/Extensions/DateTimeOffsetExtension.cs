@@ -12,5 +12,11 @@
         {
             return dateTimeOffset.GetCurrentTimeInTimeZone("SE Asia Standard Time");
         }
+
+        public static bool IsWithinBusinessHours(this DateTimeOffset dateTime, TimeSpan businessStart, TimeSpan businessEnd)
+        {
+            TimeSpan timeOfDay = dateTime.TimeOfDay;
+            return timeOfDay >= businessStart && timeOfDay < businessEnd;
+        }
     }
 }

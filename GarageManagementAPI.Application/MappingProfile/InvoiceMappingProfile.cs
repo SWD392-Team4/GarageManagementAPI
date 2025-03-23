@@ -1,5 +1,7 @@
 ﻿using AutoMapper;
+
 using GarageManagementAPI.Shared.DataTransferObjects.Invoice;
+using GarageManagementAPI.Shared.DataTransferObjects.InvoicePackageDetail;
 
 namespace GarageManagementAPI.Application.MappingProfile
 {
@@ -12,6 +14,19 @@ namespace GarageManagementAPI.Application.MappingProfile
                 .ForMember(dest => dest.InvoiceSellProducts, opts =>
                 {
                     opts.Ignore();
+                });
+        }
+    }
+
+    public class InvoiceDetailPackageMappingProfile : Profile
+    {
+        public InvoiceDetailPackageMappingProfile()
+        {
+            CreateMap<Entities.Models.InvoicePackageDetail, InvoicePackageDetailDto>()
+                .ForMember(dest => dest.PackageHistory, opts =>
+                {
+                    opts.PreCondition(src => src.PackageHistory != null);
+                    opts.MapFrom(src => src.PackageHistory);
                 });
         }
     }
