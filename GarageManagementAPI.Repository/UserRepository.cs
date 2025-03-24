@@ -61,5 +61,11 @@ namespace GarageManagementAPI.Repository
             var users = await FindByCondition(u => u.Roles.Any(r => r.Name!.Equals(nameof(SystemRole.Cashier))), false).ToListAsync();
             return users!;
         }
+
+        public async Task<User?> GetUserByEmailAndPhone(string email, string phone, bool trackChanges, string? include = null)
+        {
+            var customer = await FindByCondition(u => u.PhoneNumber!.Equals(phone) && u.Email!.ToLower().Equals(email.ToLower()), trackChanges).SingleOrDefaultAsync();
+            return customer;
+        }
     }
 }

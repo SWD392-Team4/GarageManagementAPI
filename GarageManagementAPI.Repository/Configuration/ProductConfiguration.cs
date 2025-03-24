@@ -40,7 +40,7 @@ namespace GarageManagementAPI.Repository.Configuration
             entity.Property(e => e.Status)
                 .HasConversion<string>();
         }
-        protected override void SeedData(EntityTypeBuilder<Product> entity)
+    /*    protected override void SeedData(EntityTypeBuilder<Product> entity)
         {
             entity.HasData(
                     new Product()
@@ -97,7 +97,7 @@ namespace GarageManagementAPI.Repository.Configuration
                     }
                 );
 
-        }
+        }*/
     }
 }
 

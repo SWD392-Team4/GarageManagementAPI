@@ -25,7 +25,7 @@ namespace GarageManagementAPI.Repository.Configuration
                 .HasConversion<string>();
         }
 
-        protected override void SeedData(EntityTypeBuilder<ProductCategory> entity)
+       /* protected override void SeedData(EntityTypeBuilder<ProductCategory> entity)
         {
             entity.HasData(
                new ProductCategory()
@@ -53,7 +53,7 @@ namespace GarageManagementAPI.Repository.Configuration
                    UpdatedAt = DateTimeOffset.Parse("2025-02-25T00:36:40Z")
                }
          );
-        }
+        }*/
     }
 }
 

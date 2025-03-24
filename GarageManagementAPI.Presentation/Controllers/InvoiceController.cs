@@ -39,8 +39,9 @@ namespace GarageManagementAPI.Presentation.Controllers
         [HttpGet("cashier")]
         public async Task<IActionResult> GetInvoicesByCahier([FromQuery] InvoiceParameters invoiceParameters)
         {
+            var include = "InvoicePackageDetails, InvoiceServiceDetails, InvoiceSellProducts, Product";
             var userId = HttpContext.User.FindFirstValue("UserId");
-            var invocesResult = await _service.InvoiceService.GetInvoicesForCahier(Guid.Parse(userId!), invoiceParameters, trackChanges: false);
+            var invocesResult = await _service.InvoiceService.GetInvoicesForCahier(Guid.Parse(userId!), invoiceParameters, trackChanges: false, include);
             return invocesResult.Map(
                 onSuccess: Ok,
                 onFailure: ProcessError
@@ -65,7 +66,8 @@ namespace GarageManagementAPI.Presentation.Controllers
         [HttpGet("admin/{garageId:guid}")]
         public async Task<IActionResult> GetInvoicesByAdmin(Guid garageId, [FromQuery] InvoiceParameters invoiceParameters)
         {
-            var invocesResult = await _service.InvoiceService.GetInvoicesForAdmin(garageId, invoiceParameters, trackChanges: false);
+            var include = "InvoicePackageDetails, InvoiceServiceDetails, InvoiceSellProducts, Product";
+            var invocesResult = await _service.InvoiceService.GetInvoicesForAdmin(garageId, invoiceParameters, trackChanges: false, include);
             return invocesResult.Map(
                 onSuccess: Ok,
                 onFailure: ProcessError
@@ -76,7 +78,7 @@ namespace GarageManagementAPI.Presentation.Controllers
         [HttpGet("invoice/{invoiceId:guid}")]
         public async Task<IActionResult> GetInvoice(Guid invoiceId)
         {
-            var include = "InvoiceSellProducts";
+            var include = "InvoicePackageDetails, InvoiceServiceDetails, InvoiceSellProducts, Product";
             var invoiceResult = await _service.InvoiceService.GetInvoice(invoiceId, trackChanges: false, include);
             return invoiceResult.Map(
                onSuccess: Ok,
@@ -89,7 +91,8 @@ namespace GarageManagementAPI.Presentation.Controllers
         [HttpGet("detail-sell-products/{invoiceId:guid}")]
         public async Task<IActionResult> GetInvoiceSellProducts(Guid invoiceId, [FromQuery] InvoiceSellProductParameters invoiceSellProductParameters)
         {
-            var invocesResult = await _service.InvoiceService.GetInvoiceSellProducts(invoiceId, invoiceSellProductParameters, trackChanges: false, "Product");
+            var include = "InvoicePackageDetails, InvoiceServiceDetails, InvoiceSellProducts, Product";
+            var invocesResult = await _service.InvoiceService.GetInvoiceSellProducts(invoiceId, invoiceSellProductParameters, trackChanges: false, include);
             return invocesResult.Map(
                 onSuccess: Ok,
                 onFailure: ProcessError
@@ -100,7 +103,8 @@ namespace GarageManagementAPI.Presentation.Controllers
         [HttpGet("invoice/invoice-sell-product/{invoiceSellProductId:guid}")]
         public async Task<IActionResult> GetInvoiceSellProduct(Guid invoiceSellProductId)
         {
-            var invoiceResult = await _service.InvoiceService.GetInvoiceSellProduct(invoiceSellProductId, trackChanges: false);
+            var include = "InvoicePackageDetails, InvoiceServiceDetails, InvoiceSellProducts, Product";
+            var invoiceResult = await _service.InvoiceService.GetInvoiceSellProduct(invoiceSellProductId, trackChanges: false, include);
             return invoiceResult.Map(
                onSuccess: Ok,
                onFailure: ProcessError

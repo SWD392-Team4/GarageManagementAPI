@@ -27,7 +27,7 @@ namespace GarageManagementAPI.Repository
         {
             var productAtWareHourse = include == null
                 ? await FindByCondition(p => p.Id == productId, trackChanges).SingleOrDefaultAsync()
-                : await FindByCondition(p => p.Id == productId, trackChanges).IsInclude(include).SingleOrDefaultAsync();
+                : await FindByCondition(p => p.Id == productId, trackChanges).Include(g => g.GoodsReceivedDetail).SingleOrDefaultAsync();
             return productAtWareHourse;
         }
 

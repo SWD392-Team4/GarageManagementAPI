@@ -28,7 +28,7 @@ namespace GarageManagementAPI.Repository.Configuration
             entity.Property(e => e.Status)
                 .HasConversion<string>();
         }
-        protected override void SeedData(EntityTypeBuilder<ProductImage> entity)
+      /*  protected override void SeedData(EntityTypeBuilder<ProductImage> entity)
         {
             entity.HasData(
                 new ProductImage()
@@ -72,7 +72,7 @@ namespace GarageManagementAPI.Repository.Configuration
                     UpdatedAt = DateTimeOffset.Parse("2025-02-25T00:36:40Z")
                 }
             );
-        }
+        }*/
 
     }
 }
