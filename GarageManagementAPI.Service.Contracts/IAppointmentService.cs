@@ -32,7 +32,7 @@ namespace GarageManagementAPI.Service.Contracts
 
         Task<IEnumerable<AppointmentStatisticsDto>> GetAppointmentCountByMonth(int year, Guid? garageId, bool trackChanges);
 
-        Task<Result<InvoiceDto>> CreateAppointmentInvocie(Guid garageId, Guid appointmentId, Guid userId, InvoiceDtoForCreation invoiceDtoForCreation);
+        Task<Result<InvoiceDto>> CreateAppointmentInvocie(Guid garageId, Guid appointmentId);
 
         Task<IEnumerable<CustomerDto>> GetCustomers(int year, Guid? garageId, bool trackChanges);
 
