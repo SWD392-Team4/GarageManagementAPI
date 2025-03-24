@@ -8,7 +8,12 @@ namespace GarageManagementAPI.Application.MappingProfile
     {
         public GoodsIssuedDetailMappingProfile()
         {
-            CreateMap<GoodsIssuedDetail, GoodsIssuedDetailDto>();
+            CreateMap<GoodsIssuedDetail, GoodsIssuedDetailDto>()
+                .ForMember(dest => dest.ProductName, otps =>
+                {
+                    otps.PreCondition(otp => otp.ProductAtGarage!.Product != null);
+                    otps.MapFrom(otp => otp.ProductAtGarage!.Product.ProductName);
+                });
             CreateMap<GoodsIssuedDetailDtoForCreation, GoodsIssuedDetail>();
             CreateMap<GoodsIssuedDetailDtoForUpdate, GoodsIssuedDetail>().ReverseMap();
             CreateMap<GoodsIssuedDetailDtoForManipulation, GoodsIssuedDetail>();

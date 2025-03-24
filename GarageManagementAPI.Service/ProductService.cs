@@ -407,7 +407,7 @@ namespace GarageManagementAPI.Service
 
         private string GenerateBarcode()
         {
-            return $"{DateTime.UtcNow:yyyyMMddHHmmss}";
+            return $"{DateTime.UtcNow:yyyyMMddHHmmss}{Guid.NewGuid().ToString("N").Substring(2)}";
         }
 
 

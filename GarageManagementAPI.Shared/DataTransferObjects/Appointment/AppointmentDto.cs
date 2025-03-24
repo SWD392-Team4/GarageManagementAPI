@@ -11,6 +11,8 @@ namespace GarageManagementAPI.Shared.DataTransferObjects.Appointment
         public Guid Id { get; set; }
         public Guid? ApproveByEmployeeId { get; set; }
 
+        public Guid? CustomerId { get; set; }
+
         public string? ApproveByEmployee { get; set; }
 
         public Guid? RejectByEmployeeId { get; set; }
