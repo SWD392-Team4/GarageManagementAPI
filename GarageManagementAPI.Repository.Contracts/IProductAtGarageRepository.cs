@@ -9,7 +9,7 @@ namespace GarageManagementAPI.Repository.Contracts
         Task<ProductAtGarage?> GetProductAtGarage(Guid productAtWarehouseId, bool trackChanges, string? include = default);
         Task<ProductAtGarage?> GetProductAtGarage(Guid productId, bool trackChanges);
 
-        Task<Product?> GetProductAtGarage(string barcode, bool trackChanges, string? include = default);
+        Task<ProductAtGarage?> GetProductAtGarage(string barcode, bool trackChanges, string? include = default);
         Task<PagedList<ProductAtGarage>> GetProductAtGarages(ProductAtGarageParameters productAtGarageParameters, bool trackChanges, string? include = default);
 
         Task<PagedList<ProductAtGarage>> GetProductAtGarages(Guid garageId, ProductAtGarageParameters productAtGarageParameters, bool trackChanges, string? include = null);
