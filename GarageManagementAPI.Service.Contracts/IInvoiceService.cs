@@ -27,5 +27,7 @@ namespace GarageManagementAPI.Service.Contracts
 
         Task<IEnumerable<RevenueByMonthDto>> GetMonthlyRevenueByYear(Guid? garageId, int year, bool trackChanges);
 
+        Task<IEnumerable<RevenueByMonthDto>> GetMonthlySalesByYear(Guid? garageId, int year, bool trackChanges);
+
     }
 }

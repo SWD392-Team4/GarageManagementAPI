@@ -268,13 +268,60 @@ namespace GarageManagementAPI.Repository
                 .FilterByType(appointmentParameters.AppointmentType)
                 .FilterByStatus(appointmentParameters.AppointmentStatus)
                 .CountAsync();
-
-
             return new PagedList<Appointment>(
-                appointments,
-                count,
-                appointmentParameters.PageNumber,
-                appointmentParameters.PageSize);
+             appointments,
+             count,
+             appointmentParameters.PageNumber,
+             appointmentParameters.PageSize);
         }
+        public async Task<IEnumerable<PackageIsUsedDto>> GetPakages(int year, Guid? garageId, bool trackChanges)
+        {
+            var pakages = garageId == null
+                                    ? await FindByCondition(a => a.CreatedAt.Year == year, trackChanges)
+                                            .Include(a => a.AppointmentDetailPackages)
+                                            .GroupBy(a => a.CreatedAt.Month)
+                                            .Select(a => new PackageIsUsedDto
+                                            {
+                                                Month = a.Key,
+                                                TotalPackageQuantity = a.Sum(ap => ap.AppointmentDetailPackages.Count)
+                                            })
+                                            .ToListAsync()
+                                    : await FindByCondition(a => a.CreatedAt.Year == year && a.GarageId.Equals(garageId), trackChanges)
+                                            .Include(a => a.AppointmentDetailPackages)
+                                            .GroupBy(a => a.CreatedAt.Month)
+                                            .Select(a => new PackageIsUsedDto
+                                            {
+                                                Month = a.Key,
+                                                TotalPackageQuantity = a.Sum(ap => ap.AppointmentDetailPackages.Count)
+                                            })
+                                            .ToListAsync();
+            return pakages;
+        }
+
+        public async Task<IEnumerable<ServiceIsUsedDto>> GetServices(int year, Guid? garageId, bool trackChanges)
+        {
+            var services = garageId == null
+                                    ? await FindByCondition(a => a.CreatedAt.Year == year, trackChanges)
+                                            .Include(a => a.AppointmentDetails)
+                                            .GroupBy(a => a.CreatedAt.Month)
+                                            .Select(a => new ServiceIsUsedDto
+                                            {
+                                                Month = a.Key,
+                                                TotalServiceQuantity = a.Sum(ap => ap.AppointmentDetails.Count)
+                                            })
+                                            .ToListAsync()
+                                    : await FindByCondition(a => a.CreatedAt.Year == year && a.GarageId.Equals(garageId), trackChanges)
+                                             .Include(a => a.AppointmentDetails)
+                                            .GroupBy(a => a.CreatedAt.Month)
+                                            .Select(a => new ServiceIsUsedDto
+                                            {
+                                                Month = a.Key,
+                                                TotalServiceQuantity = a.Sum(ap => ap.AppointmentDetails.Count)
+                                            })
+                                            .ToListAsync();
+            return services;
+        }
+
+         
     }
 }

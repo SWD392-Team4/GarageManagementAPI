@@ -3,6 +3,7 @@ using GarageManagementAPI.Entities.Models;
 using GarageManagementAPI.Repository.Contracts;
 using GarageManagementAPI.Repository.Extensions;
 using GarageManagementAPI.Shared.RequestFeatures;
+using GarageManagementAPI.Shared.DataTransferObjects.Dashboard;
 
 namespace GarageManagementAPI.Repository
 {
@@ -36,6 +37,33 @@ namespace GarageManagementAPI.Repository
                 .ToListAsync();
 
             return invoiceSelllProducts;
+        }
+
+        public async Task<IEnumerable<ProductSellStatisticsDto>> GetSales(int year, Guid? garageId, bool trackChanges)
+        {
+            var sales = garageId == null
+                                  ? await FindByCondition(isp => isp.CreatedAt.Year == year, trackChanges)
+                                                   .GroupBy(i => i.CreatedAt.Month)
+                                                   .Select(p => new ProductSellStatisticsDto
+                                                   {
+                                                       Month = p.Key,
+                                                       TotalSellQuantity = p.Sum(isp => isp.Quantity)
+                                                   })
+                                                   .OrderBy(r => r.Month)
+                                                   .ToListAsync()
+                                 : await FindByCondition(isp => isp.CreatedAt.Year == year, trackChanges)
+                                                  .Include(isp => isp.InvoiceSellProduct_ProductAtGarage)
+                                                  .Where(isp => isp.InvoiceSellProduct_ProductAtGarage
+                                                  .Any(ipg => ipg.ProductAtGarage.WorkplaceId.Equals(garageId)))
+                                                  .GroupBy(i => i.CreatedAt.Month)
+                                                   .Select(p => new ProductSellStatisticsDto
+                                                   {
+                                                       Month = p.Key,
+                                                       TotalSellQuantity = p.Sum(isp => isp.Quantity)
+                                                   })
+                                                   .OrderBy(r => r.Month)
+                                                   .ToListAsync();
+                          return sales;
         }
     }
 }

@@ -11,6 +11,63 @@ namespace GarageManagementAPI.Presentation.Controllers
         {
         }
 
+        /// <summary>
+        /// Lấy doanh số nha anh Tân ơi
+        /// </summary>
+        /// <param name="garageId"></param>
+        /// <param name="year"></param>
+        /// <returns></returns>
+        [HttpGet("revenue/{year}", Name = "GetMonthlySalesByYearDashBoard")]
+        //[Authorize(Roles = $"{nameof(SystemRole.Administrator)},{nameof(SystemRole.Cashier)}")]
+        public async Task<IActionResult> GetMonthlySalesByYearDashBoard(Guid? garageId, int year)
+        {
+            var productResult = await _service.InvoiceService.GetMonthlySalesByYear(garageId, year, trackChanges: false);
+            return Ok(productResult);
+        }
+
+        /// <summary>
+        /// Get services in year
+        /// </summary>
+        /// <param name="garageId"></param>
+        /// <param name="year"></param>
+        /// <returns></returns>
+
+        [HttpGet("services/{year}", Name = "GetServicesDashBoard")]
+        //[Authorize(Roles = $"{nameof(SystemRole.Administrator)},{nameof(SystemRole.Cashier)}")]
+        public async Task<IActionResult> GetServicesDashBoard(Guid? garageId, int year)
+        {
+            var productResult = await _service.AppointmentService.GetServices(year, garageId, trackChanges: false);
+            return Ok(productResult);
+        }
+
+        /// <summary>
+        /// Total packages in year
+        /// </summary>
+        /// <param name="garageId"></param>
+        /// <param name="year"></param>
+        /// <returns></returns>
+        [HttpGet("pakages/{year}", Name = "GetPagekagesDashBoard")]
+        //[Authorize(Roles = $"{nameof(SystemRole.Administrator)},{nameof(SystemRole.Cashier)}")]
+        public async Task<IActionResult> GetPagekagesDashBoard(Guid? garageId, int year)
+        {
+            var productResult = await _service.AppointmentService.GetPakages(year, garageId, trackChanges: false);
+            return Ok(productResult);
+        }
+
+        /// <summary>
+        /// Total product sell in year
+        /// </summary>
+        /// <param name="garageId"></param>
+        /// <param name="year"></param>
+        /// <returns></returns>
+        [HttpGet("productsell/{year}", Name = "GetProductSellDashBoard")]
+        //[Authorize(Roles = $"{nameof(SystemRole.Administrator)},{nameof(SystemRole.Cashier)}")]
+        public async Task<IActionResult> GetProductSellDashBoard(Guid? garageId, int year)
+        {
+            var productResult = await _service.InvoiceSellProductService.GetSales(year, garageId, trackChanges: false);
+            return Ok(productResult);
+        }
+
         [HttpGet("package/{year}", Name = "GetPackageDashBoard")]
         //[Authorize(Roles = $"{nameof(SystemRole.Administrator)},{nameof(SystemRole.Cashier)}")]
         public async Task<IActionResult> GetPackageDashBoard(Guid? garageId, int year)
