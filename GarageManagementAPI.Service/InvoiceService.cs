@@ -1,19 +1,21 @@
 ﻿using AutoMapper;
-using System.Dynamic;
-using GarageManagementAPI.Shared.Enums;
+
 using GarageManagementAPI.Entities.Models;
-using GarageManagementAPI.Shared.Extension;
 using GarageManagementAPI.Invoice.Extension;
-using GarageManagementAPI.Service.Extension;
-using GarageManagementAPI.Service.Contracts;
-using GarageManagementAPI.Shared.ResultModel;
 using GarageManagementAPI.Repository.Contracts;
-using GarageManagementAPI.Shared.RequestFeatures;
-using GarageManagementAPI.Shared.ErrorsConstant.GoodsIssued;
-using GarageManagementAPI.Shared.DataTransferObjects.Invoice;
-using GarageManagementAPI.Shared.ErrorsConstant.ProductAtGarage;
-using GarageManagementAPI.Shared.DataTransferObjects.InvoiceSellProduct;
+using GarageManagementAPI.Service.Contracts;
+using GarageManagementAPI.Service.Extension;
 using GarageManagementAPI.Shared.DataTransferObjects.Dashboard;
+using GarageManagementAPI.Shared.DataTransferObjects.Invoice;
+using GarageManagementAPI.Shared.DataTransferObjects.InvoiceSellProduct;
+using GarageManagementAPI.Shared.Enums;
+using GarageManagementAPI.Shared.ErrorsConstant.GoodsIssued;
+using GarageManagementAPI.Shared.ErrorsConstant.ProductAtGarage;
+using GarageManagementAPI.Shared.Extension;
+using GarageManagementAPI.Shared.RequestFeatures;
+using GarageManagementAPI.Shared.ResultModel;
+
+using System.Dynamic;
 
 namespace GarageManagementAPI.Service
 {
@@ -137,28 +139,17 @@ namespace GarageManagementAPI.Service
         {
             var invoices = await _repoManager.Invoice.GetInvoices(garageId, invoiceParameters, trackChanges, include);
 
-            var customerTasks = invoices.Select(async invoice =>
+            var dto = _mapper.Map<IEnumerable<InvoiceDto>>(invoices);
+
+            foreach (var invoice in dto)
             {
-                var customer = await _repoManager.User.GetUserByEmailAndPhone(
-                    invoice.CustomerEmail, invoice.CustomerPhoneNumber, trackChanges: false, null);
+                var customer = await _repoManager.User.GetUserByEmailAndPhone(invoice.CustomerEmail, invoice.CustomerPhoneNumber, trackChanges: false, null);
+                if (customer == null)
+                    continue;
+                invoice.CustomerId = customer?.Id;
+            }
 
-                return new
-                {
-                    Invoice = invoice,
-                    CustomerId = customer?.Id 
-                };
-            });
-
-            var invoicesWithCustomer = await Task.WhenAll(customerTasks);
-
-            var invoicesDto = invoicesWithCustomer.Select(item =>
-            {
-                var dto = _mapper.Map<InvoiceDto>(item.Invoice);
-                dto.CustomerId = item.CustomerId;
-                return dto;
-            });
-
-            var invoicesShaped = _dataShaper.Invoice.ShapeData(invoicesDto, invoiceParameters.Fields);
+            var invoicesShaped = _dataShaper.Invoice.ShapeData(dto, invoiceParameters.Fields);
 
             return Result<IEnumerable<ExpandoObject>>.Ok(invoicesShaped, invoices.MetaData);
         }
@@ -168,28 +159,17 @@ namespace GarageManagementAPI.Service
         {
             var invoices = await _repoManager.Invoice.GetInvoices(email, phoneNumber, invoiceParameters, trackChanges, include);
 
-            var customerTasks = invoices.Select(async invoice =>
+            var dto = _mapper.Map<IEnumerable<InvoiceDto>>(invoices);
+
+            foreach (var invoice in dto)
             {
-                var customer = await _repoManager.User.GetUserByEmailAndPhone(
-                    invoice.CustomerEmail, invoice.CustomerPhoneNumber, trackChanges: false, null);
+                var customer = await _repoManager.User.GetUserByEmailAndPhone(invoice.CustomerEmail, invoice.CustomerPhoneNumber, trackChanges: false, null);
+                if (customer == null)
+                    continue;
+                invoice.CustomerId = customer?.Id;
+            }
 
-                return new
-                {
-                    Invoice = invoice,
-                    CustomerId = customer?.Id
-                };
-            });
-
-            var invoicesWithCustomer = await Task.WhenAll(customerTasks);
-
-            var invoicesDto = invoicesWithCustomer.Select(item =>
-            {
-                var dto = _mapper.Map<InvoiceDto>(item.Invoice);
-                dto.CustomerId = item.CustomerId;
-                return dto;
-            });
-
-            var invoicesShaped = _dataShaper.Invoice.ShapeData(invoicesDto, invoiceParameters.Fields);
+            var invoicesShaped = _dataShaper.Invoice.ShapeData(dto, invoiceParameters.Fields);
 
             return Result<IEnumerable<ExpandoObject>>.Ok(invoicesShaped, invoices.MetaData);
         }
@@ -202,28 +182,17 @@ namespace GarageManagementAPI.Service
 
             var invoices = await _repoManager.Invoice.GetInvoices(garageId, invoiceParameters, trackChanges, include);
 
-            var customerTasks = invoices.Select(async invoice =>
+            var dto = _mapper.Map<IEnumerable<InvoiceDto>>(invoices);
+
+            foreach (var invoice in dto)
             {
-                var customer = await _repoManager.User.GetUserByEmailAndPhone(
-                    invoice.CustomerEmail, invoice.CustomerPhoneNumber, trackChanges: false, null);
+                var customer = await _repoManager.User.GetUserByEmailAndPhone(invoice.CustomerEmail, invoice.CustomerPhoneNumber, trackChanges: false, null);
+                if (customer == null)
+                    continue;
+                invoice.CustomerId = customer?.Id;
+            }
 
-                return new
-                {
-                    Invoice = invoice,
-                    CustomerId = customer?.Id
-                };
-            });
-
-            var invoicesWithCustomer = await Task.WhenAll(customerTasks);
-
-            var invoicesDto = invoicesWithCustomer.Select(item =>
-            {
-                var dto = _mapper.Map<InvoiceDto>(item.Invoice);
-                dto.CustomerId = item.CustomerId;
-                return dto;
-            });
-
-            var invoicesShaped = _dataShaper.Invoice.ShapeData(invoicesDto, invoiceParameters.Fields);
+            var invoicesShaped = _dataShaper.Invoice.ShapeData(dto, invoiceParameters.Fields);
 
             return Result<IEnumerable<ExpandoObject>>.Ok(invoicesShaped, invoices.MetaData);
         }
@@ -280,7 +249,7 @@ namespace GarageManagementAPI.Service
             // Gộp dữ liệu theo tháng
             var totalRevenueByMonth = import
                 .Join(export,
-                      im => im.Month, 
+                      im => im.Month,
                       ex => ex.Month,
                       (im, ex) => new RevenueByMonthDto
                       {

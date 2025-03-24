@@ -1,9 +1,9 @@
-﻿using Microsoft.EntityFrameworkCore;
-using GarageManagementAPI.Entities.Models;
+﻿using GarageManagementAPI.Entities.Models;
 using GarageManagementAPI.Repository.Contracts;
 using GarageManagementAPI.Repository.Extensions;
-using GarageManagementAPI.Shared.RequestFeatures;
 using GarageManagementAPI.Shared.DataTransferObjects.Dashboard;
+using GarageManagementAPI.Shared.RequestFeatures;
+using Microsoft.EntityFrameworkCore;
 
 
 namespace GarageManagementAPI.Repository
@@ -22,9 +22,17 @@ namespace GarageManagementAPI.Repository
         {
             var invoice = include == null
                           ?
-                          await FindByCondition(i => i.Id.Equals(invoiceId), trackChanges).SingleOrDefaultAsync()
+                          await FindByCondition(i => i.Id.Equals(invoiceId), trackChanges)
+
+                          .SingleOrDefaultAsync()
                           :
-                          await FindByCondition(i => i.Id.Equals(invoiceId), trackChanges).IsInclude(include).SingleOrDefaultAsync();
+                          await FindByCondition(i => i.Id.Equals(invoiceId), trackChanges).IsInclude(include)
+                             .Include(i => i.InvoicePackageDetails)
+                            .ThenInclude(i => i.PackageHistory)
+                            .Include(i => i.InvoiceServiceDetails)
+                            .ThenInclude(i => i.ServiceHistory)
+                            .ThenInclude(i => i.Service)
+                          .SingleOrDefaultAsync();
             return invoice;
         }
 
@@ -38,6 +46,11 @@ namespace GarageManagementAPI.Repository
                 :
                 await FindAll(trackChanges)
                           .IsInclude(include)
+                          .Include(i => i.InvoicePackageDetails)
+                          .ThenInclude(i => i.PackageHistory)
+                          .Include(i => i.InvoiceServiceDetails)
+                          .ThenInclude(i => i.ServiceHistory)
+                          .ThenInclude(i => i.Service)
                           .Sort(invoiceParameters.OrderBy)
                           .ToListAsync();
 
@@ -53,6 +66,11 @@ namespace GarageManagementAPI.Repository
             var invoices =
               await FindByCondition(i => i.CustomerPhoneNumber.Equals(phone), trackChanges)
                         .IsInclude(include)
+                        .Include(i => i.InvoicePackageDetails)
+                        .ThenInclude(i => i.PackageHistory)
+                        .Include(i => i.InvoiceServiceDetails)
+                        .ThenInclude(i => i.ServiceHistory)
+                        .ThenInclude(i => i.Service)
                         .Sort(invoiceParameters.OrderBy)
                         .ToListAsync();
 
@@ -65,7 +83,15 @@ namespace GarageManagementAPI.Repository
 
         public async Task<PagedList<Invoice>> GetInvoices(string email, string phone, InvoiceParameters invoiceParameters, bool trackChanges, string? include)
         {
-            var invoices = await FindByCondition(i => i.CustomerEmail.ToLower().Equals(email.ToLower()) && i.CustomerPhoneNumber.Equals(phone), trackChanges).ToListAsync();
+            var invoices = await FindByCondition(i => i.CustomerEmail.ToLower().Equals(email.ToLower()) && i.CustomerPhoneNumber.Equals(phone), trackChanges)
+                .Include(i => i.InvoicePackageDetails)
+                .ThenInclude(i => i.PackageHistory)
+                .Include(i => i.InvoiceServiceDetails)
+                .ThenInclude(i => i.ServiceHistory)
+                .ThenInclude(i => i.Service)
+                .Include(i => i.InvoiceSellProducts)
+                .ThenInclude(i => i.Product)
+                .ToListAsync();
 
             return PagedList<Invoice>.ToPagedList(
                 invoices,
