@@ -20,8 +20,6 @@ namespace GarageManagementAPI.Service.Contracts
 
         public Task<Result<IEnumerable<ProductDto>>> GetProductsByCarModelAndPartGarage(Guid carModelId, Guid carPartId, Guid garageId, bool trackChanges, string? include = null);
 
-        public Task<Result<ExpandoObject>> GetProductByBarcodeByProductAtGarageAsync(string barcode, Guid garageId, ProductParameters productParameters, bool trackChanges, string? include = null);
-
         Task<IEnumerable<ProductDto>> GetLowStockProducts(int threshold, Guid? warehouseId, bool trackChanges);
     }
 }

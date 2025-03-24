@@ -56,7 +56,7 @@ namespace GarageManagementAPI.Presentation.Controllers
         public async Task<IActionResult> GetProductByBarcodeGarage(string barcode, Guid garageId,[FromQuery] ProductParameters productParameters)
         {
             var isInclude = "Brand,ProductCategory,ProductHistories,ProductImages";
-            var productResult = await _service.ProductService.GetProductByBarcodeByProductAtGarageAsync(barcode, garageId, productParameters, trackChanges: false, isInclude);
+            var productResult = await _service.ProductAtGarageService.GetProductByBarcodeByProductAtGarageAsync(barcode, garageId, productParameters, trackChanges: false, isInclude);
 
             return productResult.Map(
                 onSuccess: Ok,
@@ -64,12 +64,12 @@ namespace GarageManagementAPI.Presentation.Controllers
                 );
         }
 
-        [HttpGet("scan/{barcode}", Name = "GetProductBarcode")]
+        [HttpGet("scan/warehouse/{id}/{barcode}", Name = "GetProductBarcode")]
         //[Authorize(Roles = $"{nameof(SystemRole.Administrator)},{nameof(SystemRole.Cashier)}")]
-        public async Task<IActionResult> GetProductByBarcode(string barcode, [FromQuery] ProductParameters productParameters)
+        public async Task<IActionResult> GetProductByBarcode(Guid id, string barcode, [FromQuery] ProductAtWarehouseParameters productParameters)
         {
             var isInclude = "Brand,ProductCategory,ProductHistories,ProductImages,CarModels,CarParts";
-            var productResult = await _service.ProductService.GetProductByBarcodeAsync(barcode, productParameters, trackChanges: false, isInclude);
+            var productResult = await _service.ProductAtWarehouseService.GetProductAtWarehouses(id, barcode, productParameters, trackChanges: false, isInclude);
 
             return productResult.Map(
                 onSuccess: Ok,

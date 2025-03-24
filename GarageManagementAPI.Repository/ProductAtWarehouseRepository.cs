@@ -32,10 +32,7 @@ namespace GarageManagementAPI.Repository
         }
 
         public async Task<PagedList<ProductAtWarehouse>> GetProductAtWarehouses(
-    Guid warehouseId,
-    ProductAtWarehouseParameters productAtWarehouseParameters,
-    bool trackChanges,
-    string? include = null)
+                                                                                Guid warehouseId, ProductAtWarehouseParameters productAtWarehouseParameters, bool trackChanges, string? include = null)
         {
             var query = FindAll(trackChanges)
                          .Where(p => p.GoodsReceivedDetail != null
@@ -63,6 +60,34 @@ namespace GarageManagementAPI.Repository
                 productAtWarehouseParameters.PageNumber,
                 productAtWarehouseParameters.PageSize
             );
+        }
+
+
+        public async Task<ProductAtWarehouse?> GetProductAtWarehouses(
+                                                                                 Guid warehouseId, string barcode, ProductAtWarehouseParameters productAtWarehouseParameters, bool trackChanges, string? include = null)
+        {
+            var productAtWarehouses = await FindAll(trackChanges)
+                         .Where(p => p.GoodsReceivedDetail != null
+                         && p.GoodsReceivedDetail.GoodsReceived != null
+                         && p.GoodsReceivedDetail.GoodsReceived.WarehouseId == warehouseId)
+                        .Include(p => p.GoodsReceivedDetail)
+                        .ThenInclude(gd => gd.GoodsReceived)
+                        .Include(p => p.GoodsReceivedDetail)
+                        .ThenInclude(gd => gd.Product)
+                        .ThenInclude(p => p.Brand)
+                        .Include(p => p.GoodsReceivedDetail)
+                        .ThenInclude(gd => gd.Product)
+                        .ThenInclude(p => p.ProductCategory)
+                        .Include(p => p.GoodsReceivedDetail)
+                        .ThenInclude(gd => gd.Product)
+                        .ThenInclude(p => p.ProductImages)
+                        .Where(p => p.GoodsReceivedDetail.Product.ProductBarcode.Equals(barcode))
+                        .GroupBy(p => p.GoodsReceivedDetail.ProductId)
+                        .Select(g => g.OrderByDescending(p => p.GoodsReceivedDetail.CreatedAt).FirstOrDefault())
+                        .SingleOrDefaultAsync();
+
+
+            return productAtWarehouses;
         }
 
         public async Task<List<(Guid ProductAtWarehouseId, int DeductedQuantity)>> DeductProductQuantityFromWarehouseAsync(
