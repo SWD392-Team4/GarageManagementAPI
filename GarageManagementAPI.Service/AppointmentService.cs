@@ -17,7 +17,6 @@ using GarageManagementAPI.Shared.ErrorsConstant.CarModel;
 using GarageManagementAPI.Shared.ErrorsConstant.GoodsIssued;
 using GarageManagementAPI.Shared.ErrorsConstant.Package;
 using GarageManagementAPI.Shared.ErrorsConstant.Product;
-using GarageManagementAPI.Shared.ErrorsConstant.ProductAtGarage;
 using GarageManagementAPI.Shared.ErrorsConstant.ProductHistory;
 using GarageManagementAPI.Shared.ErrorsConstant.Service;
 using GarageManagementAPI.Shared.ErrorsConstant.ServiceHisory;
@@ -910,7 +909,7 @@ namespace GarageManagementAPI.Service
             return revenue;
         }
 
-        public async Task<Result<InvoiceDto>> CreateAppointmentInvocie(Guid garageId, Guid appointmentId, Guid userId, InvoiceDtoForCreation invoiceDtoForCreation)
+        public async Task<Result<InvoiceDto>> CreateAppointmentInvocie(Guid garageId, Guid appointmentId)
         {
             var garage = await _repoManager.Workplace.GetWorkplaceByIdAsync(garageId, false);
             if (garage is null || !garage.WorkplaceType.Equals(WorkplaceType.Garage))
@@ -920,14 +919,6 @@ namespace GarageManagementAPI.Service
             if (appointment is null)
                 return Result<InvoiceDto>.NotFound(AppointmentErrors.GetAppointmentNotFoundError(appointmentId));
 
-            var user = await _repoManager.User.GetUserByIdAsync(userId, false, "EmployeeInfo");
-            if (user is null)
-                return Result<InvoiceDto>.NotFound(UserErrors.GetUserNotFoundWithIdError(userId));
-
-            if (user.EmployeeInfo is null || user.EmployeeInfo.WorkplaceId != garageId)
-            {
-                return Result<InvoiceDto>.Unauthorized(UserErrors.GetUnAuthorizeUserError());
-            }
 
             if (appointment.Status != AppointmentStatus.Completed)
             {
@@ -938,33 +929,18 @@ namespace GarageManagementAPI.Service
             var hasServiceceDetail = false;
             var hasPackageDetail = false;
 
-            var invoiceEntity = _mapper.Map<Entities.Models.Invoice>(invoiceDtoForCreation);
-            var now = DateTime.UtcNow.SEAsiaStandardTime();
-            invoiceEntity.EmployeeId = userId;
-            invoiceEntity.GarageId = user!.EmployeeInfo!.WorkplaceId ?? throw new Exception("WorkplaceId cannot be null.");
-            invoiceEntity.CreatedAt = now;
-            if (invoiceDtoForCreation.InvoiceSellProducts != null && invoiceDtoForCreation.InvoiceSellProducts.Any())
+            var invoiceEntity = new Entities.Models.Invoice()
             {
-                foreach (var productAtGarage in invoiceDtoForCreation.InvoiceSellProducts!)
-                {
-                    var product = await _repoManager.ProductAtGarage.GetProductAtGarage(productAtGarage.ProductId, false);
-                    if (product == null) return Result<InvoiceDto>.BadRequest(ProductAtGarageErrors.GetProductAtGarageNotFound(productAtGarage.ProductId));
-                }
+                CustomerEmail = appointment.CustomerEmail,
+                CustomerName = appointment.CustomerName,
+                CustomerPhoneNumber = appointment.CustomerPhoneNumber,
+                TotalPrice = appointment.Price,
+                GarageId = garageId,
+                EmployeeId = appointment.ApproveByEmployeeId.Value
+            };
+            var now = DateTime.UtcNow.SEAsiaStandardTime();
+            invoiceEntity.CreatedAt = now;
 
-                foreach (var invoiceDetail in invoiceDtoForCreation.InvoiceSellProducts)
-                {
-                    var product = await _repoManager.Product.GetProductByIdAsync(invoiceDetail.ProductId, false);
-                    invoiceEntity.TotalPrice += invoiceDetail.Quantity * product!.ProductPrice;
-                }
-
-
-
-                foreach (var invoiceDetail in invoiceDtoForCreation.InvoiceSellProducts)
-                {
-                    await this.CreateInvoiceSellProduct(invoiceDetail, user!.EmployeeInfo!.WorkplaceId, invoiceEntity.Id);
-                }
-                hasSellProduct = true;
-            }
 
             if (appointment.AppointmentDetailPackages.Count > 0)
             {

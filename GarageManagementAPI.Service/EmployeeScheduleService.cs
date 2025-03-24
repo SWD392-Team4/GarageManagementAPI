@@ -1,13 +1,16 @@
 ﻿using AutoMapper;
 
+using GarageManagementAPI.Entities.Models;
 using GarageManagementAPI.Repository.Contracts;
 using GarageManagementAPI.Service.Contracts;
 using GarageManagementAPI.Shared.Constant.Authentication;
 using GarageManagementAPI.Shared.DataTransferObjects.Appointment;
 using GarageManagementAPI.Shared.DataTransferObjects.EmployeeSchedule;
 using GarageManagementAPI.Shared.DataTransferObjects.Invoice;
+using GarageManagementAPI.Shared.Enums;
 using GarageManagementAPI.Shared.Enums.SystemStatuss;
 using GarageManagementAPI.Shared.ErrorsConstant.Appointment;
+using GarageManagementAPI.Shared.ErrorsConstant.Workplace;
 using GarageManagementAPI.Shared.Extension;
 using GarageManagementAPI.Shared.RequestFeatures;
 using GarageManagementAPI.Shared.ResultModel;
@@ -152,6 +155,7 @@ namespace GarageManagementAPI.Service
                 schedule.AppointmentDetail.Appointment.Status = AppointmentStatus.Completed;
                 _repoManager.Appointment.Update(schedule.AppointmentDetail.Appointment);
                 await _mailService.SendFinishAppointment(schedule.AppointmentDetail.Appointment.Id);
+                await CreateAppointmentInvocie(schedule.AppointmentDetail.Appointment.GarageId, schedule.AppointmentDetail.Appointment.Id);
             }
 
             await _repoManager.SaveAsync();
@@ -182,7 +186,7 @@ namespace GarageManagementAPI.Service
             {
                 return Result<IEnumerable<AppointmentDto>>.NotFound(UserErrors.GetUserNotFoundWithIdError(userId));
             }
-            
+
             var employeeSchedule = await _repoManager.Appointment.GetAppointmentsOfEmployeeAsync(user.EmployeeInfo.WorkplaceId.Value, userId, appointmentParameters, trackChanges);
 
             var appointmentDtoList = new List<AppointmentDto>();
@@ -327,6 +331,131 @@ namespace GarageManagementAPI.Service
             await _repoManager.SaveAsync();
 
             return Result.Ok();
+        }
+        public async Task<Result<InvoiceDto>> CreateAppointmentInvocie(Guid garageId, Guid appointmentId)
+        {
+            var garage = await _repoManager.Workplace.GetWorkplaceByIdAsync(garageId, false);
+            if (garage is null || !garage.WorkplaceType.Equals(WorkplaceType.Garage))
+                return Result<InvoiceDto>.NotFound(WorkplaceErrors.GetGarageNotFound(garageId));
+
+            var appointment = await _repoManager.Appointment.GetAppointmentAsync(garageId, appointmentId, true);
+            if (appointment is null)
+                return Result<InvoiceDto>.NotFound(AppointmentErrors.GetAppointmentNotFoundError(appointmentId));
+
+
+            if (appointment.Status != AppointmentStatus.Completed)
+            {
+                return Result<InvoiceDto>.Conflict(AppointmentErrors.GetAppointmentCanNotUpdate(appointment.Status));
+            }
+
+            var hasSellProduct = false;
+            var hasServiceceDetail = false;
+            var hasPackageDetail = false;
+
+            var invoiceEntity = new Entities.Models.Invoice()
+            {
+                CustomerEmail = appointment.CustomerEmail,
+                CustomerName = appointment.CustomerName,
+                CustomerPhoneNumber = appointment.CustomerPhoneNumber,
+                TotalPrice = appointment.Price,
+                GarageId = garageId,
+                EmployeeId = appointment.ApproveByEmployeeId.Value
+            };
+            var now = DateTime.UtcNow.SEAsiaStandardTime();
+            invoiceEntity.CreatedAt = now;
+
+
+            if (appointment.AppointmentDetailPackages.Count > 0)
+            {
+                var invoicePackages = new List<InvoicePackageDetail>();
+                foreach (var item in appointment.AppointmentDetailPackages)
+                {
+                    invoiceEntity.TotalPrice += item.PackageHistory.PackagePrice;
+                    var invoicePacakge = new InvoicePackageDetail()
+                    {
+                        PackageHistoryId = item.PackageHistoryId,
+                        CreatedAt = now
+                    };
+                    invoicePackages.Add(invoicePacakge);
+                }
+                invoiceEntity.InvoicePackageDetails = invoicePackages;
+                hasPackageDetail = true;
+            }
+
+            var invoiceServices = new List<InvoiceServiceDetail>();
+            foreach (var appointmentDetail in appointment.AppointmentDetails)
+            {
+                if (appointmentDetail.PackageHistoryId == null)
+                    invoiceEntity.TotalPrice += appointmentDetail.ServiceHistory.Price;
+
+                var invoiceService = new InvoiceServiceDetail()
+                {
+                    ServiceHistoryId = appointmentDetail.ServiceHistoryId,
+                    CreatedAt = now
+                };
+                if (appointmentDetail.AppointmentReplacementParts != null && appointmentDetail.AppointmentReplacementParts.Count > 0)
+                {
+                    var invoiceReplacementParts = new List<ReplacementPart>();
+                    foreach (var part in appointmentDetail.AppointmentReplacementParts)
+                    {
+                        invoiceEntity.TotalPrice += part.ProductHistory.ProductPrice * part.Quantity;
+                        var invoicePart = new ReplacementPart()
+                        {
+                            ProductHistoryId = part.ProductHistoryId,
+                            CreatedAt = now,
+                            Quantity = part.Quantity
+                        };
+                        if (part.AppointmentReplacementPart_ProductAtGarages != null && part.AppointmentReplacementPart_ProductAtGarages.Any())
+                        {
+                            var invoiceReplacementPart = new List<ReplacementPart_ProductAtGarage>();
+                            foreach (var productAtGarage in part.AppointmentReplacementPart_ProductAtGarages)
+                            {
+                                var invoicePartProductAtGarage = new ReplacementPart_ProductAtGarage()
+                                {
+                                    ProductAtGarageId = productAtGarage.ProductAtGarageId,
+                                    QuantityUsed = productAtGarage.QuantityUsed
+                                };
+                                invoiceReplacementPart.Add(invoicePartProductAtGarage);
+                            }
+                            invoicePart.ReplacementPart_ProductAtGarages = invoiceReplacementPart;
+                        }
+                        invoiceReplacementParts.Add(invoicePart);
+                    }
+                    invoiceService.ReplacementParts = invoiceReplacementParts;
+                }
+                invoiceServices.Add(invoiceService);
+                hasServiceceDetail = true;
+            }
+
+            invoiceEntity.InvoiceServiceDetails = invoiceServices;
+
+            if (hasServiceceDetail && hasSellProduct && hasPackageDetail)
+            {
+                invoiceEntity.InvoiceType = InvoiceType.InvoicePackageWithSellProduct;
+            }
+            else if (!hasSellProduct && hasServiceceDetail && !hasPackageDetail)
+            {
+                invoiceEntity.InvoiceType = InvoiceType.InvoiceService;
+            }
+            else if (hasSellProduct && !hasServiceceDetail && !hasPackageDetail)
+            {
+                invoiceEntity.InvoiceType = InvoiceType.InvocieSell;
+            }
+            else if (!hasSellProduct && !hasServiceceDetail && hasPackageDetail)
+            {
+                invoiceEntity.InvoiceType = InvoiceType.InvoicePackage;
+            }
+            else if (hasSellProduct && hasServiceceDetail && !hasPackageDetail)
+            {
+                invoiceEntity.InvoiceType = InvoiceType.InvoiceServiceWithSellProduct;
+            }
+
+
+            await _repoManager.Invoice.CreateInvoiceAsync(invoiceEntity);
+            await _repoManager.SaveAsync();
+
+            return Result<InvoiceDto>.Ok(_mapper.Map<InvoiceDto>(invoiceEntity));
+
         }
 
     }
