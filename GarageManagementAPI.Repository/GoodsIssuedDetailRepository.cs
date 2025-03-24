@@ -49,6 +49,8 @@ namespace GarageManagementAPI.Repository
                 .SearchByCreatedAt(goodsReceivedParameters.CreatedAt)
                 .SearchByUpdatedAt(goodsReceivedParameters.UpdatedAt)
                 .SearchByStatus(goodsReceivedParameters.Status)
+                .Include(g => g.ProductAtGarage)
+                .ThenInclude(g => g.Product)
                 .ToListAsync();
 
             return PagedList<GoodsIssuedDetail>.ToPagedList(

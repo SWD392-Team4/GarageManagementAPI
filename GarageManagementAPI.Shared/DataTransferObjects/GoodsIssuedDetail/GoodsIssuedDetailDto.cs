@@ -16,5 +16,7 @@ namespace GarageManagementAPI.Shared.DataTransferObjects.GoodsIssuedDetail
 
         public DateTimeOffset UpdatedAt { get; set; }
 
+        public string ProductName { get; set; } = null!;
+
     }
 }

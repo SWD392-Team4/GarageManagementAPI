@@ -5,6 +5,7 @@ using GarageManagementAPI.Service.Contracts;
 using GarageManagementAPI.Shared.Constant.Authentication;
 using GarageManagementAPI.Shared.DataTransferObjects.Appointment;
 using GarageManagementAPI.Shared.DataTransferObjects.EmployeeSchedule;
+using GarageManagementAPI.Shared.DataTransferObjects.Invoice;
 using GarageManagementAPI.Shared.Enums.SystemStatuss;
 using GarageManagementAPI.Shared.ErrorsConstant.Appointment;
 using GarageManagementAPI.Shared.Extension;
@@ -167,11 +168,38 @@ namespace GarageManagementAPI.Service
             {
                 return Result<IEnumerable<AppointmentDto>>.NotFound(UserErrors.GetUserNotFoundWithIdError(userId));
             }
+            
             var employeeSchedule = await _repoManager.Appointment.GetAppointmentsOfEmployeeAsync(user.EmployeeInfo.WorkplaceId.Value, userId, appointmentParameters, trackChanges);
 
-            var appointmentDto = _mapper.Map<IEnumerable<AppointmentDto>>(employeeSchedule);
+            var appointmentDtoList = new List<AppointmentDto>();
 
-            return Result<IEnumerable<AppointmentDto>>.Ok(appointmentDto, employeeSchedule.MetaData);
+            foreach (var schedule in employeeSchedule)
+            {
+                var customer = await _repoManager.User.GetUserByEmailAndPhone(
+                    schedule.CustomerEmail,
+                    schedule.CustomerPhoneNumber,
+                    trackChanges: false,
+                    null);
+
+                var dto = _mapper.Map<AppointmentDto>(schedule);
+                dto.CustomerId = customer?.Id;
+                appointmentDtoList.Add(dto);
+            }
+
+            foreach (var schedule in employeeSchedule)
+            {
+                var customer = await _repoManager.User.GetUserByEmailAndPhone(
+                    schedule.CustomerEmail,
+                    schedule.CustomerPhoneNumber,
+                    trackChanges: false,
+                    null);
+
+                var dto = _mapper.Map<AppointmentDto>(schedule);
+                dto.CustomerId = customer?.Id;
+                appointmentDtoList.Add(dto);
+            }
+
+            return Result<IEnumerable<AppointmentDto>>.Ok(appointmentDtoList, employeeSchedule.MetaData);
 
         }
 

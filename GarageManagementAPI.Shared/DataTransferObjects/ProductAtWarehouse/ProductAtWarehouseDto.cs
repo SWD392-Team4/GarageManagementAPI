@@ -10,6 +10,7 @@ namespace GarageManagementAPI.Shared.DataTransferObjects.ProductAtWarehouse
         public int Quantity { get; set; }
         public Guid ProductId { get; set; } 
         public string? ProductName { get; set; }
+        public string? ProductBarcode { get; set; }
         public List<string> ProductImage { get; set; } = new List<string>();
         public string? BrandName { get; set; }
         public string? ProductCategoryName { get; set; }
