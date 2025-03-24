@@ -56,7 +56,7 @@ namespace GarageManagementAPI.Presentation.Controllers
         public async Task<IActionResult> GetProductByBarcodeGarage(string barcode, Guid garageId,[FromQuery] ProductParameters productParameters)
         {
             var isInclude = "Brand,ProductCategory,ProductHistories,ProductImages";
-            var productResult = await _service.ProductService.GetProductByBarcodeByProductAtGarageAsync(barcode, garageId, productParameters, trackChanges: false, isInclude);
+            var productResult = await _service.ProductAtGarageService.GetProductByBarcodeByProductAtGarageAsync(barcode, garageId, productParameters, trackChanges: false, isInclude);
 
             return productResult.Map(
                 onSuccess: Ok,

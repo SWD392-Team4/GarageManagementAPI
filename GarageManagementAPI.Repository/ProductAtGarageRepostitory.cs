@@ -194,7 +194,7 @@ namespace GarageManagementAPI.Repository
             return productAtGagare;
         }
 
-        public async Task<Product?> GetProductAtGarage(string barcode, bool trackChanges, string? include = null)
+        public async Task<ProductAtGarage?> GetProductAtGarage(string barcode, bool trackChanges, string? include = null)
         {
             var productAtGarage = await FindByCondition(p => p.ProductBarcodeAtGarage!.Equals(barcode),
                                                      trackChanges)
@@ -206,7 +206,6 @@ namespace GarageManagementAPI.Repository
                                                     .ThenInclude(p => p.ProductCategory)
                                                     .Include(p => p.Product)
                                                     .ThenInclude(p => p.Brand)
-                                                    .Select(p => p.Product)
                                                     .FirstOrDefaultAsync();
 
             return productAtGarage;
