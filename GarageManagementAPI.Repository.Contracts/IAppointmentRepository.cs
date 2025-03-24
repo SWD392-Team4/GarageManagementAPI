@@ -24,5 +24,10 @@ namespace GarageManagementAPI.Repository.Contracts
 
         Task<IEnumerable<CustomerDto>> GetCustomers(int year, Guid? garageId, bool trackChanges);
         Task<PagedList<Appointment>> GetAppointmentsOfEmployeeAsync(Guid garageId, Guid employeeId, AppointmentParameters appointmentParameters, bool trackChanges);
+
+        Task<IEnumerable<PackageIsUsedDto>> GetPakages(int year, Guid? garageId, bool trackChanges);
+
+        Task<IEnumerable<ServiceIsUsedDto>> GetServices(int year, Guid? garageId, bool trackChanges);
+
     }
 }

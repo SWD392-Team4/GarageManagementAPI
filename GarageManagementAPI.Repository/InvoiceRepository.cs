@@ -63,6 +63,8 @@ namespace GarageManagementAPI.Repository
                 );
         }
 
+
+        //Dashboard
         public async Task<IEnumerable<RevenueByMonthDto>> GetMonthlyRevenueByYear(Guid? garageId, int year, bool trackChanges)
         {
             var monthlyRevenue = garageId == null ?

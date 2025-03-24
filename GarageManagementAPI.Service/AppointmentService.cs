@@ -20,25 +20,10 @@ using GarageManagementAPI.Shared.ErrorsConstant.ProductHistory;
 using GarageManagementAPI.Shared.DataTransferObjects.Appointment;
 using GarageManagementAPI.Shared.DataTransferObjects.AppointmentDetail;
 using GarageManagementAPI.Shared.DataTransferObjects.AppointmentDetailPackage;
-using GarageManagementAPI.Shared.DataTransferObjects.Dashboard;
 using GarageManagementAPI.Shared.DataTransferObjects.Invoice;
 using GarageManagementAPI.Shared.DataTransferObjects.InvoiceSellProduct;
-using GarageManagementAPI.Shared.Enums;
-using GarageManagementAPI.Shared.Enums.SystemStatuss;
-using GarageManagementAPI.Shared.ErrorsConstant.Appointment;
-using GarageManagementAPI.Shared.ErrorsConstant.CarModel;
 using GarageManagementAPI.Shared.ErrorsConstant.GoodsIssued;
-using GarageManagementAPI.Shared.ErrorsConstant.Package;
-using GarageManagementAPI.Shared.ErrorsConstant.Product;
 using GarageManagementAPI.Shared.ErrorsConstant.ProductAtGarage;
-using GarageManagementAPI.Shared.ErrorsConstant.ProductHistory;
-using GarageManagementAPI.Shared.ErrorsConstant.Service;
-using GarageManagementAPI.Shared.ErrorsConstant.ServiceHisory;
-using GarageManagementAPI.Shared.ErrorsConstant.Workplace;
-using GarageManagementAPI.Shared.Extension;
-using GarageManagementAPI.Shared.RequestFeatures;
-using GarageManagementAPI.Shared.ResultModel;
-
 using System.Dynamic;
 
 namespace GarageManagementAPI.Service
@@ -1113,6 +1098,18 @@ namespace GarageManagementAPI.Service
         {
             var customer = await _repoManager.Appointment.GetCustomers(year, garageId, trackChanges);
             return customer;
+        }
+
+        public async Task<IEnumerable<PackageIsUsedDto>> GetPakages(int year, Guid? garageId, bool trackChanges)
+        {
+            var pakages = await _repoManager.Appointment.GetPakages(year, garageId, trackChanges);
+            return pakages;
+        }
+
+        public async Task<IEnumerable<ServiceIsUsedDto>> GetServices(int year, Guid? garageId, bool trackChanges)
+        {
+            var services = await _repoManager.Appointment.GetServices(year, garageId, trackChanges);
+            return services;
         }
     }
 

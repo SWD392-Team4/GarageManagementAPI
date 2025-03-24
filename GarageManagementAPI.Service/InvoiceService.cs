@@ -200,5 +200,26 @@ namespace GarageManagementAPI.Service
             var totalPrice = await _repoManager.Invoice.GetMonthlyRevenueByYear(garageId, year, trackChanges);
             return totalPrice;
         }
+
+        public async Task<IEnumerable<RevenueByMonthDto>> GetMonthlySalesByYear(Guid? garageId, int year, bool trackChanges)
+        {
+            var export = await _repoManager.Invoice.GetMonthlyRevenueByYear(garageId, year, trackChanges);
+            var import = await _repoManager.GoodsIssued.GetPrices(year, garageId, trackChanges);
+
+            // Gộp dữ liệu theo tháng
+            var totalRevenueByMonth = import
+                .Join(export,
+                      im => im.Month, 
+                      ex => ex.Month,
+                      (im, ex) => new RevenueByMonthDto
+                      {
+                          Year = year,
+                          Month = im.Month,
+                          TotalRevenue = im.Prices - ex.TotalRevenue
+                      })
+                .ToList();
+
+            return totalRevenueByMonth;
+        }
     }
 }

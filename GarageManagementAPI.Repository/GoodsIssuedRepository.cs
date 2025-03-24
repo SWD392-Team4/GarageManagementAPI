@@ -3,6 +3,7 @@ using GarageManagementAPI.Entities.Models;
 using GarageManagementAPI.Repository.Contracts;
 using GarageManagementAPI.Repository.Extensions;
 using GarageManagementAPI.Shared.RequestFeatures;
+using GarageManagementAPI.Shared.DataTransferObjects.Dashboard;
 
 namespace GarageManagementAPI.Repository
 {
@@ -56,6 +57,31 @@ namespace GarageManagementAPI.Repository
                 goodsIssuedParameters.PageSize
                 );
         }
-       
+
+        public async Task<IEnumerable<ProductAtGarageRevenueDto>> GetPrices(int year, Guid? garageId, bool trackChanges)
+        {
+            var products = garageId == null
+                             ? await FindByCondition(g => g.CreatedAt.Year == year, trackChanges)
+                                                    .GroupBy(g => g.CreatedAt.Month)
+                                                    .Select(p => new ProductAtGarageRevenueDto
+                                                    {
+                                                        Month = p.Key,
+                                                        Prices = p.Sum(g => g.TotalCost)
+                                                    })
+                                                    .ToListAsync()
+                             : await FindByCondition(p => p.CreatedAt.Year == year, trackChanges)
+                                                       .Include(p => p.GoodsIssuedDetails)
+                                                       .ThenInclude(g => g.ProductAtGarage)
+                                                       .Where(p => p.GoodsIssuedDetails.Any(g => g.ProductAtGarage!.WorkplaceId == garageId))
+                                                       .GroupBy(g => g.CreatedAt.Month)
+                                                       .Select(p => new ProductAtGarageRevenueDto
+                                                       {
+                                                        Month = p.Key,
+                                                        Prices = p.Sum(g => g.TotalCost)
+                                                       })
+                                                       .ToListAsync();
+            return products;
+        }
+
     }
 }

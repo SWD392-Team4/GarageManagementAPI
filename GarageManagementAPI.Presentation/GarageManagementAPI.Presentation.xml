@@ -127,6 +127,30 @@
             <param name="validator"></param>
             <returns></returns>
         </member>
+        <member name="M:GarageManagementAPI.Presentation.Controllers.DashboardController.GetServicesDashBoard(System.Nullable{System.Guid},System.Int32)">
+            <summary>
+            Get services in year
+            </summary>
+            <param name="garageId"></param>
+            <param name="year"></param>
+            <returns></returns>
+        </member>
+        <member name="M:GarageManagementAPI.Presentation.Controllers.DashboardController.GetPagekagesDashBoard(System.Nullable{System.Guid},System.Int32)">
+            <summary>
+            Total packages in year
+            </summary>
+            <param name="garageId"></param>
+            <param name="year"></param>
+            <returns></returns>
+        </member>
+        <member name="M:GarageManagementAPI.Presentation.Controllers.DashboardController.GetProductSellDashBoard(System.Nullable{System.Guid},System.Int32)">
+            <summary>
+            Total product sell in year
+            </summary>
+            <param name="garageId"></param>
+            <param name="year"></param>
+            <returns></returns>
+        </member>
         <member name="M:GarageManagementAPI.Presentation.Controllers.DashboardController.GetAppointmentDashBoard(System.Nullable{System.Guid},System.Int32)">
             <summary>
             Get appoiment theo năm 

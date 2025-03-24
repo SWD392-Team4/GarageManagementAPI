@@ -53,24 +53,12 @@ namespace GarageManagementAPI.Service
             goodsIssuedEntity.InvoiceCode = GenerateInvoiceCode();
             goodsIssuedEntity.Status = GoodsIssuedStatus.Active;
 
-            foreach (var goodsIssuedDetail in goodsIssuedDtoForCreation.gooodsIssuedDetails)
-            {
-                var productHistory = await _repoManager.ProductHistory.GetProductHistoryByGoodsIssuedDetails(goodsIssuedDetail!.ProductId);
-                if (productHistory == null)
-                {
-                    goodsIssuedEntity.TotalCost += 0;
-                }
-                else
-                {
-                    goodsIssuedEntity.TotalCost += goodsIssuedDetail.Quantity * productHistory!.ProductPrice;
-                }
-
-            }
-
             await _repoManager.GoodsIssued.CreateGoodsIssuedAsync(goodsIssuedEntity);
             await _repoManager.SaveAsync();
 
             var goodsIssuedDtoToReturn = _mapper.Map<GoodsIssuedDto>(goodsIssuedEntity);
+
+            var totalPrice = 0;
 
             foreach (var goodsIssuedDetail in goodsIssuedDtoForCreation.gooodsIssuedDetails)
             {
@@ -79,14 +67,14 @@ namespace GarageManagementAPI.Service
 
                 foreach (var (productAtWarehouseId, deductedQuantity) in deductedList)
                 {
-                    var productHistory = await _repoManager.ProductHistory
-                        .GetProductHistoryByGoodsIssuedDetails(goodsIssuedDetail.ProductId);
+                    var productAtWarehouse = await _repoManager.ProductAtWarehouse
+                        .GetProductAtWarehouse(productAtWarehouseId, trackChanges: false, "GoodsReceivedDetail");
 
                     var goodsIssuedDetailEntity = new GoodsIssuedDetail
                     {
                         GoodsIssuedId = goodsIssuedEntity.Id,
                         Quantity = deductedQuantity,
-                        UnitPrice = productHistory == null ? 0 : productHistory.ProductPrice,
+                        UnitPrice = productAtWarehouse!.GoodsReceivedDetail == null ? 0 : productAtWarehouse!.GoodsReceivedDetail.UnitPrice,
                         CreatedAt = DateTimeOffset.UtcNow.SEAsiaStandardTime(),
                         UpdatedAt = DateTimeOffset.UtcNow.SEAsiaStandardTime(),
                         Status = GoodsReceivedStatus.Active
@@ -94,7 +82,7 @@ namespace GarageManagementAPI.Service
 
                     await _repoManager.GoodsIssuedDetail.CreateGoodsIssuedDetailAsync(goodsIssuedDetailEntity);
 
-                    goodsIssuedEntity.TotalCost += deductedQuantity * (productHistory?.ProductPrice ?? 0);
+                    goodsIssuedEntity.TotalCost += deductedQuantity * (productAtWarehouse?.GoodsReceivedDetail!.UnitPrice ?? 0);
 
                     var goodsIssuedDetail_ProductAtWarehouse = new GoodsIssuedDetail_ProductAtWarehouse
                     {
@@ -119,6 +107,7 @@ namespace GarageManagementAPI.Service
 
                     await this.CreateProductAtGarage(productAtGarage);
                     await _repoManager.SaveAsync();
+
                     var productAtGarageMapper = _mapper.Map<ProductAtGarageDto>(productAtGarage);
                     var productAtGarageEntity = await _repoManager.ProductAtGarage.GetProductAtGarage(productAtGarageMapper.Id, true, null);
                     var productAtGarageValue = productAtGarageEntity!.OkResukt().GetValue<ProductAtGarage>();
@@ -194,6 +183,19 @@ namespace GarageManagementAPI.Service
             var createdWareHouseManager = await _repoManager.Workplace.GetWorkplaceByIdAsync(createdWareHouseManagerId, false);
             if (createdWareHouseManager == null) return true;
             return false;
+        }
+
+        private async Task<Result<GoodsIssued>> UpdatePricesGoodsIssued(Guid goodsIssuedId, bool trackChanges, decimal totalCost)
+        {
+            var goodsIssuedResult = await this.GetAndCheckIfGoodsIssuedIsExist(goodsIssuedId, trackChanges, null);
+            var goodsIssuedEnttity = goodsIssuedResult.GetValue<GoodsIssued>();
+
+            goodsIssuedEnttity.TotalCost = totalCost;
+
+            _repoManager.GoodsIssued.UpdateGoodsIssuedAsync(goodsIssuedEnttity);
+            await _repoManager.SaveAsync();
+
+            return goodsIssuedEnttity.OkResult();
         }
 
         public static string GenerateReferenceNumber()

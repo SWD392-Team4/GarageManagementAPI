@@ -3,6 +3,7 @@ using GarageManagementAPI.Entities.Models;
 using GarageManagementAPI.Repository.Contracts;
 using GarageManagementAPI.Repository.Extensions;
 using GarageManagementAPI.Shared.RequestFeatures;
+using GarageManagementAPI.Shared.DataTransferObjects.Dashboard;
 
 namespace GarageManagementAPI.Repository
 {
@@ -210,6 +211,5 @@ namespace GarageManagementAPI.Repository
 
             return productAtGarage;
         }
-
     }
 }

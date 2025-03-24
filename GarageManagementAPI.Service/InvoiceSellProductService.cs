@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using GarageManagementAPI.Service.Contracts;
 using GarageManagementAPI.Repository.Contracts;
+using GarageManagementAPI.Shared.DataTransferObjects.Dashboard;
 
 namespace GarageManagementAPI.Service
 {
@@ -15,6 +16,12 @@ namespace GarageManagementAPI.Service
             _repoManager = repoManager;
             _mapper = mapper;
             _dataShaper = dataShaper;
+        }
+
+        public async Task<IEnumerable<ProductSellStatisticsDto>> GetSales(int year, Guid? garageId, bool trackChanges)
+        {
+            var sales = await _repoManager.InvoiceSellProduct.GetSales(year, garageId, trackChanges);
+            return sales;
         }
     }
 }
