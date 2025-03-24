@@ -1,6 +1,5 @@
 ﻿using GarageManagementAPI.Service.Contracts;
 using GarageManagementAPI.Shared.DataTransferObjects.Appointment;
-using GarageManagementAPI.Shared.DataTransferObjects.Invoice;
 using GarageManagementAPI.Shared.Enums;
 using GarageManagementAPI.Shared.Extension;
 using GarageManagementAPI.Shared.RequestFeatures;
@@ -85,12 +84,11 @@ namespace GarageManagementAPI.Presentation.Controllers
                 );
         }
 
-        [HttpPost("{appointmentId:guid}/invoice")]
+        [HttpGet("{appointmentId:guid}/create-invoice")]
         [Authorize]
-        public async Task<IActionResult> CreateInvoiceAppointment(Guid garageId, Guid appointmentId, [FromBody] InvoiceDtoForCreation invoiceDtoForCreation)
+        public async Task<IActionResult> CreateInvoiceAppointment(Guid garageId, Guid appointmentId)
         {
-            var userId = User.FindFirstValue("UserId");
-            var result = await _service.AppointmentService.CreateAppointmentInvocie(garageId, appointmentId, new(userId!), invoiceDtoForCreation);
+            var result = await _service.AppointmentService.CreateAppointmentInvocie(garageId, appointmentId);
             return result.Map(
                 onSuccess: Ok,
                 onFailure: ProcessError
