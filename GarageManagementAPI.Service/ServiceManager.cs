@@ -1,10 +1,12 @@
 ﻿using AutoMapper;
-using Microsoft.Extensions.Options;
-using Microsoft.AspNetCore.Identity;
-using GarageManagementAPI.Entities.Models;
-using GarageManagementAPI.Service.Contracts;
-using GarageManagementAPI.Repository.Contracts;
+
 using GarageManagementAPI.Entities.ConfigurationModels;
+using GarageManagementAPI.Entities.Models;
+using GarageManagementAPI.Repository.Contracts;
+using GarageManagementAPI.Service.Contracts;
+
+using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Options;
 
 namespace GarageManagementAPI.Service
 {
@@ -285,7 +287,7 @@ namespace GarageManagementAPI.Service
 
             _packageImageService = new Lazy<IPackageImageService>(() => new PackageImageService(repositoryManager, mapper, dataShaper));
 
-            _employeeScheduleService = new Lazy<IEmployeeScheduleService>(() => new EmployeeScheduleService(repositoryManager, mapper, dataShaper));
+            _employeeScheduleService = new Lazy<IEmployeeScheduleService>(() => new EmployeeScheduleService(repositoryManager, mapper, dataShaper, _mailService.Value));
 
             _carConditionImageService = new Lazy<ICarConditionImageService>(() => new CarConditionImageService(repositoryManager, mapper, dataShaper));
         }

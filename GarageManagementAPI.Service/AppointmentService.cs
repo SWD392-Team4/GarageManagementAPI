@@ -1,29 +1,31 @@
 ﻿using AutoMapper;
-using GarageManagementAPI.Shared.Enums;
+
 using GarageManagementAPI.Entities.Models;
-using GarageManagementAPI.Shared.Extension;
-using GarageManagementAPI.Service.Contracts;
-using GarageManagementAPI.Shared.ResultModel;
 using GarageManagementAPI.Repository.Contracts;
-using GarageManagementAPI.Shared.RequestFeatures;
-using GarageManagementAPI.Shared.Enums.SystemStatuss;
-using GarageManagementAPI.Shared.ErrorsConstant.Product;
-using GarageManagementAPI.Shared.ErrorsConstant.Service;
-using GarageManagementAPI.Shared.ErrorsConstant.Package;
-using GarageManagementAPI.Shared.ErrorsConstant.CarModel;
+using GarageManagementAPI.Service.Contracts;
 using GarageManagementAPI.Shared.Constant.Authentication;
-using GarageManagementAPI.Shared.ErrorsConstant.Workplace;
-using GarageManagementAPI.Shared.ErrorsConstant.Appointment;
-using GarageManagementAPI.Shared.DataTransferObjects.Dashboard;
-using GarageManagementAPI.Shared.ErrorsConstant.ServiceHisory;
-using GarageManagementAPI.Shared.ErrorsConstant.ProductHistory;
 using GarageManagementAPI.Shared.DataTransferObjects.Appointment;
 using GarageManagementAPI.Shared.DataTransferObjects.AppointmentDetail;
 using GarageManagementAPI.Shared.DataTransferObjects.AppointmentDetailPackage;
+using GarageManagementAPI.Shared.DataTransferObjects.Dashboard;
 using GarageManagementAPI.Shared.DataTransferObjects.Invoice;
 using GarageManagementAPI.Shared.DataTransferObjects.InvoiceSellProduct;
+using GarageManagementAPI.Shared.Enums;
+using GarageManagementAPI.Shared.Enums.SystemStatuss;
+using GarageManagementAPI.Shared.ErrorsConstant.Appointment;
+using GarageManagementAPI.Shared.ErrorsConstant.CarModel;
 using GarageManagementAPI.Shared.ErrorsConstant.GoodsIssued;
+using GarageManagementAPI.Shared.ErrorsConstant.Package;
+using GarageManagementAPI.Shared.ErrorsConstant.Product;
 using GarageManagementAPI.Shared.ErrorsConstant.ProductAtGarage;
+using GarageManagementAPI.Shared.ErrorsConstant.ProductHistory;
+using GarageManagementAPI.Shared.ErrorsConstant.Service;
+using GarageManagementAPI.Shared.ErrorsConstant.ServiceHisory;
+using GarageManagementAPI.Shared.ErrorsConstant.Workplace;
+using GarageManagementAPI.Shared.Extension;
+using GarageManagementAPI.Shared.RequestFeatures;
+using GarageManagementAPI.Shared.ResultModel;
+
 using System.Dynamic;
 
 namespace GarageManagementAPI.Service
@@ -92,8 +94,8 @@ namespace GarageManagementAPI.Service
                 appointment.ApproveByEmployeeId = userId.Value;
                 appointment.Status = AppointmentStatus.Approved;
             }
-            await _repoManager.Appointment.CreateAsync(garageId, appointment);
             var now = DateTimeOffset.UtcNow.SEAsiaStandardTime();
+            await _repoManager.Appointment.CreateAsync(garageId, appointment, now);
 
             List<AppointmentDetail> appointmentDetails;
             List<AppointmentDetailPackage> appointmentDetailPackages;
@@ -101,7 +103,7 @@ namespace GarageManagementAPI.Service
             if (appointmentDtoCreation.Packages is not null && appointmentDtoCreation.Packages.Any())
             {
                 var packageResult = await CreateAppointmentDetailPackages(
-                    appointment.Id, appointmentDtoCreation.Packages, appointmentDtoCreation.Services);
+                    appointment.Id, appointmentDtoCreation.Packages, appointmentDtoCreation.Services, now);
 
                 if (!packageResult.IsSuccess)
                     return Result<AppointmentDto>.Failure(packageResult);
@@ -114,7 +116,7 @@ namespace GarageManagementAPI.Service
             }
             else
             {
-                var serviceResult = await CreateAppointmentDetails(appointment.Id, appointmentDtoCreation.Services!);
+                var serviceResult = await CreateAppointmentDetails(appointment.Id, appointmentDtoCreation.Services!, now);
                 if (!serviceResult.IsSuccess)
                     return Result<AppointmentDto>.Failure(serviceResult);
 
@@ -142,7 +144,7 @@ namespace GarageManagementAPI.Service
 
         private async Task<Result<(List<AppointmentDetail> appointmentDetails, decimal totalPrice, int totalHours)>> CreateAppointmentDetails(
             Guid appointmentId,
-            IEnumerable<AppointmentDetailDtoForCreation>? serviceInAppointmentDtos,
+            IEnumerable<AppointmentDetailDtoForCreation>? serviceInAppointmentDtos, DateTimeOffset now,
             Guid packageHistoryId = default)
         {
             // Early return if no services
@@ -225,7 +227,6 @@ namespace GarageManagementAPI.Service
             decimal totalPrice = 0;
             int totalHours = 0;
             var appointmentDetails = new List<AppointmentDetail>();
-            var now = DateTimeOffset.UtcNow.SEAsiaStandardTime();
 
             // Create appointment details
             foreach (var item in serviceList)
@@ -285,7 +286,7 @@ namespace GarageManagementAPI.Service
         private async Task<Result<(List<AppointmentDetail> appointmentDetails, List<AppointmentDetailPackage> appointmentPackages, decimal totalPrice, int totalHours)>> CreateAppointmentDetailPackages(
             Guid appointmentId,
             IEnumerable<AppointmentDetailPackageDtoForCreation>? packages,
-            IEnumerable<AppointmentDetailDtoForCreation>? serviceInAppointmentDtos,
+            IEnumerable<AppointmentDetailDtoForCreation>? serviceInAppointmentDtos, DateTimeOffset now,
             bool isPackageImmediate = true)
         {
             var allAppointmentDetails = new List<AppointmentDetail>();
@@ -298,7 +299,7 @@ namespace GarageManagementAPI.Service
                 // Handle standalone services if any
                 if (serviceInAppointmentDtos is not null && serviceInAppointmentDtos.Any())
                 {
-                    var serviceResult = await CreateAppointmentDetails(appointmentId, serviceInAppointmentDtos);
+                    var serviceResult = await CreateAppointmentDetails(appointmentId, serviceInAppointmentDtos, now);
                     if (!serviceResult.IsSuccess)
                         return Result<(List<AppointmentDetail>, List<AppointmentDetailPackage>, decimal, int)>.Failure(serviceResult);
 
@@ -346,7 +347,6 @@ namespace GarageManagementAPI.Service
             }
 
             var packageHistoryDict = packageHistoryList.ToDictionary(p => p.PackageId);
-            var now = DateTimeOffset.UtcNow.SEAsiaStandardTime();
 
             foreach (var package in packages)
             {
@@ -370,7 +370,7 @@ namespace GarageManagementAPI.Service
                     ServiceId = x.Id,
                 });
 
-                var serviceResult = await CreateAppointmentDetails(appointmentId, newServiceInAppointmentDtos, packageHistory.Id);
+                var serviceResult = await CreateAppointmentDetails(appointmentId, newServiceInAppointmentDtos, now, packageHistory.Id);
                 if (!serviceResult.IsSuccess)
                     return Result<(List<AppointmentDetail>, List<AppointmentDetailPackage>, decimal, int)>.Failure(serviceResult);
 
@@ -381,7 +381,7 @@ namespace GarageManagementAPI.Service
             // Add standalone services if any
             if (serviceInAppointmentDtos is not null && serviceInAppointmentDtos.Any())
             {
-                var serviceResult = await CreateAppointmentDetails(appointmentId, serviceInAppointmentDtos);
+                var serviceResult = await CreateAppointmentDetails(appointmentId, serviceInAppointmentDtos, now);
                 if (!serviceResult.IsSuccess)
                     return Result<(List<AppointmentDetail>, List<AppointmentDetailPackage>, decimal, int)>.Failure(serviceResult);
 
@@ -400,10 +400,12 @@ namespace GarageManagementAPI.Service
             List<AppointmentDetail> appointmentDetails;
             List<AppointmentDetailPackage> appointmentDetailPackages;
 
+            var now = DateTimeOffset.UtcNow.SEAsiaStandardTime();
+
             if (forCheckPriceRequest.Packages is not null && forCheckPriceRequest.Packages.Any())
             {
                 var packageResult = await CreateAppointmentDetailPackages(
-                    default, forCheckPriceRequest.Packages, forCheckPriceRequest.Services);
+                    default, forCheckPriceRequest.Packages, forCheckPriceRequest.Services, now);
 
                 if (!packageResult.IsSuccess)
                     return Result<AppointmentDtoForCheckPriceResponse>.Failure(packageResult);
@@ -415,7 +417,7 @@ namespace GarageManagementAPI.Service
             }
             else
             {
-                var serviceResult = await CreateAppointmentDetails(default, forCheckPriceRequest.Services!);
+                var serviceResult = await CreateAppointmentDetails(default, forCheckPriceRequest.Services!, now);
                 if (!serviceResult.IsSuccess)
                     return Result<AppointmentDtoForCheckPriceResponse>.Failure(serviceResult);
 

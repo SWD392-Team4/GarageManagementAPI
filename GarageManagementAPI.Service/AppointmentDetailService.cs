@@ -1,21 +1,22 @@
 ﻿using AutoMapper;
-using GarageManagementAPI.Shared.Enums;
+
 using GarageManagementAPI.Entities.Models;
-using GarageManagementAPI.Shared.Extension;
-using GarageManagementAPI.Service.Contracts;
-using GarageManagementAPI.Shared.ResultModel;
 using GarageManagementAPI.Repository.Contracts;
-using GarageManagementAPI.Shared.Enums.SystemStatuss;
-using GarageManagementAPI.Shared.ErrorsConstant.Service;
-using GarageManagementAPI.Shared.ErrorsConstant.Product;
+using GarageManagementAPI.Service.Contracts;
 using GarageManagementAPI.Shared.Constant.Authentication;
-using GarageManagementAPI.Shared.ErrorsConstant.Workplace;
-using GarageManagementAPI.Shared.ErrorsConstant.Appointment;
-using GarageManagementAPI.Shared.ErrorsConstant.ServiceHisory;
-using GarageManagementAPI.Shared.ErrorsConstant.ProductHistory;
-using GarageManagementAPI.Shared.DataTransferObjects.Dashboard;
 using GarageManagementAPI.Shared.DataTransferObjects.AppointmentDetail;
+using GarageManagementAPI.Shared.DataTransferObjects.Dashboard;
 using GarageManagementAPI.Shared.DataTransferObjects.EmployeeSchedule;
+using GarageManagementAPI.Shared.Enums;
+using GarageManagementAPI.Shared.Enums.SystemStatuss;
+using GarageManagementAPI.Shared.ErrorsConstant.Appointment;
+using GarageManagementAPI.Shared.ErrorsConstant.Product;
+using GarageManagementAPI.Shared.ErrorsConstant.ProductHistory;
+using GarageManagementAPI.Shared.ErrorsConstant.Service;
+using GarageManagementAPI.Shared.ErrorsConstant.ServiceHisory;
+using GarageManagementAPI.Shared.ErrorsConstant.Workplace;
+using GarageManagementAPI.Shared.Extension;
+using GarageManagementAPI.Shared.ResultModel;
 
 namespace GarageManagementAPI.Service
 {
@@ -502,6 +503,47 @@ namespace GarageManagementAPI.Service
         {
             var packages = await _repoManager.AppointmentDetail.GetTotalEachPackage(year, garageId, trackChanges);
             return packages;
+        }
+
+        public async Task<Result> ConfirmAppointmentDetail(Guid garageId, Guid appointmentId, AppointmentDetailDtoForConfirm detailDtoForConfirm)
+        {
+            var garage = await _repoManager.Workplace.GetWorkplaceByIdAsync(garageId, false);
+            if (garage is null || !garage.WorkplaceType.Equals(WorkplaceType.Garage))
+                return Result.NotFound(WorkplaceErrors.GetGarageNotFound(garageId));
+
+            var appointment = await _repoManager.Appointment.GetAppointmentAsync(garageId, appointmentId, true);
+            if (appointment is null)
+                return Result.NotFound(AppointmentErrors.GetAppointmentNotFoundError(appointmentId));
+
+            var appointmentDetails = appointment.AppointmentDetails.Where(ad => detailDtoForConfirm.AppointmentDetailId!.Contains(ad.Id));
+            var now = DateTimeOffset.UtcNow.SEAsiaStandardTime();
+
+            foreach (var item in appointmentDetails)
+            {
+                if (appointment.Status == AppointmentStatus.Approved)
+                {
+                    item.Status = AppointmentDetailStatus.Approved;
+
+                }
+                else if (appointment.Status == AppointmentStatus.Pending)
+                {
+                    item.Status = AppointmentDetailStatus.Approved;
+                }
+                else if (appointment.Status == AppointmentStatus.Arrival || appointment.Status == AppointmentStatus.InProgress)
+                {
+                    item.Status = AppointmentDetailStatus.Unsigned;
+                }
+                item.UpdatedAt = now;
+            }
+
+
+            if (appointmentDetails.Any())
+            {
+                _repoManager.AppointmentDetail.Updates([.. appointmentDetails]);
+            }
+            await _repoManager.SaveAsync();
+
+            return Result.Ok();
         }
     }
 }

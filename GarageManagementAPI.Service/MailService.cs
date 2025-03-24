@@ -6,9 +6,12 @@ using GarageManagementAPI.Service.Utilities;
 using GarageManagementAPI.Shared.DataTransferObjects;
 using GarageManagementAPI.Shared.DataTransferObjects.User;
 using GarageManagementAPI.Shared.Enums.SystemStatuss;
+
 using MailKit.Net.Smtp;
 using MailKit.Security;
+
 using Microsoft.Extensions.Options;
+
 using MimeKit;
 
 namespace GarageManagementAPI.Service
@@ -127,6 +130,33 @@ namespace GarageManagementAPI.Service
             };
             return await SendMail(mailData);
 
+        }
+
+        public async Task<bool> SendFinishAppointment(Guid appointmentId)
+        {
+            var appointment = await _repoManager.Appointment.GetAppointmentAsync(appointmentId, false);
+            if (appointment == null)
+                throw new Exception($"Appointment with ID {appointmentId} not found.");
+
+            var workplace = await _repoManager.Workplace.GetWorkplaceByIdAsync(appointment.GarageId, false);
+            if (workplace == null)
+                throw new Exception($"Workplace with ID {appointment.GarageId} not found.");
+
+            MailData mailData = new MailData()
+            {
+                EmailSubject = $"Dịch vụ của bạn đã hoàn thành - {appointment.VerificationCode}",
+                EmailBody = MailHelper.AppointmentCompletedTemplate(
+                    appointment.VerificationCode!,
+                    workplace!,
+                    appointment.EstimatedAppointmentTime,
+                    appointment.AppointmentDetails,
+                    appointment.AppointmentDetailPackages,
+                    appointment.ActualEndTime
+                ),
+                EmailToId = appointment.CustomerEmail,
+            };
+
+            return await SendMail(mailData);
         }
     }
 }

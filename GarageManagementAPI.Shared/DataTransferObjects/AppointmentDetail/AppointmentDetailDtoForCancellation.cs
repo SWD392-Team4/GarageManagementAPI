@@ -6,4 +6,9 @@
 
         public string? CancelReason { get; init; }
     }
+
+    public record AppointmentDetailDtoForConfirm
+    {
+        public Guid[]? AppointmentDetailId { get; init; }
+    }
 }

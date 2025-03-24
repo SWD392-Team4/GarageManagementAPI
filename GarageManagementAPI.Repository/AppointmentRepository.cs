@@ -74,11 +74,11 @@ namespace GarageManagementAPI.Repository
                 .SingleOrDefaultAsync();
         }
 
-        public async Task CreateAsync(Guid garageId, Appointment entity)
+        public async Task CreateAsync(Guid garageId, Appointment entity, DateTimeOffset now)
         {
             entity.GarageId = garageId;
-            entity.CreatedAt = DateTimeOffset.UtcNow.SEAsiaStandardTime();
-            entity.UpdatedAt = DateTimeOffset.UtcNow.SEAsiaStandardTime();
+            entity.CreatedAt = now;
+            entity.UpdatedAt = now;
             entity.Status = AppointmentStatus.Pending;
             entity.VerificationCode = CodeGenerator.GenerateRandomCode(6);
             await base.CreateAsync(entity);
@@ -322,6 +322,6 @@ namespace GarageManagementAPI.Repository
             return services;
         }
 
-         
+
     }
 }
