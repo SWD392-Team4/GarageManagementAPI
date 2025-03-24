@@ -859,6 +859,7 @@ namespace GarageManagementAPI.Service
                 appointment.ActualAppointmentTime = DateTimeOffset.UtcNow.SEAsiaStandardTime();
                 appointment = _mapper.Map(appointmentDtoForUpdate, appointment);
             }
+            appointment.ApproveByEmployeeId = appointment.ApproveByEmployeeId ?? userId;
             appointment.Status = AppointmentStatus.Arrival;
             _repoManager.Appointment.Update(appointment);
             await _repoManager.SaveAsync();
