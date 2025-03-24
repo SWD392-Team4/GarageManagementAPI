@@ -35,13 +35,48 @@ namespace GarageManagementAPI.Service
 
         public async Task<Result<IEnumerable<ExpandoObject>>> GetProductAtWarehouses(Guid warehourseId, ProductAtWarehouseParameters productAtWarehouseParameters, bool trackChanges, string? include = null)
         {
-            var productAtWarehousesWithMetadata = await _repository.ProductAtWarehouse.GetProductAtWarehouses(warehourseId , productAtWarehouseParameters, trackChanges, include);
+            var productAtWarehousesWithMetadata = await _repository.ProductAtWarehouse.GetProductAtWarehouses(warehourseId, productAtWarehouseParameters, trackChanges, include);
+
+            var productIds = productAtWarehousesWithMetadata
+                 .Select(p => p.GoodsReceivedDetail.ProductId)
+                 .Distinct()
+                 .ToList();
+
+            var totalStockDict = await _repository.ProductAtWarehouse
+                        .GetTotalStockByProductIdsAsync(productIds, warehourseId);
 
             var productAtWarehouseDtos = _mapper.Map<IEnumerable<ProductAtWarehouseDto>>(productAtWarehousesWithMetadata);
+
+            foreach (var dto in productAtWarehouseDtos)
+            {
+                if (totalStockDict.TryGetValue(dto.ProductId, out var totalStock))
+                {
+                    dto.Quantity = totalStock;
+                }
+                else
+                {
+                    dto.Quantity = 0; 
+                }
+            }
 
             var productsShapper = _dataShaper.ProductAtWarehouse.ShapeData(productAtWarehouseDtos, productAtWarehouseParameters.Fields);
 
             return Result<IEnumerable<ExpandoObject>>.Ok(productsShapper, productAtWarehousesWithMetadata.MetaData);
+        }
+
+        public async Task<Result<ExpandoObject>> GetProductAtWarehouses(Guid warehourseId, string barcode, ProductAtWarehouseParameters productAtWarehouseParameters, bool trackChanges, string? include = null)
+        {
+            var totalQuantity = 0;
+            var productAtWarehouseResult = await _repository.ProductAtWarehouse.GetProductAtWarehouses(warehourseId, barcode, productAtWarehouseParameters, trackChanges, include);
+
+            var productEntity = productAtWarehouseResult!.OkResult().GetValue<ProductAtWarehouse>();
+            totalQuantity = await _repository.ProductAtWarehouse.GetTotalStockForProduct(productEntity.GoodsReceivedDetail.ProductId, warehourseId);
+            var productAtWarehouseDto = _mapper.Map<ProductAtWarehouseDto>(productEntity);
+            productAtWarehouseDto.Quantity = totalQuantity;
+
+            var productsShapper = _dataShaper.ProductAtWarehouse.ShapeData(productAtWarehouseDto, productAtWarehouseParameters.Fields);
+
+            return Result<ExpandoObject>.Ok(productsShapper);
         }
 
         public async Task<Result> UpdateProductAtWareHouse(Guid productAtWarehouseId, ProductAtWarehouseDtoForUpdate productAtWarehouseDtoForUpdate, bool trackChanges)

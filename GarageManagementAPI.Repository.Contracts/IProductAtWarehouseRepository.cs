@@ -9,6 +9,10 @@ namespace GarageManagementAPI.Repository.Contracts
         Task<PagedList<ProductAtWarehouse>> GetProductAtWarehouses(Guid warehourseId, ProductAtWarehouseParameters productAtWarehouseParameters, bool trackChanges, string? include = null);
         public Task<List<(Guid ProductAtWarehouseId, int DeductedQuantity)>> DeductProductQuantityFromWarehouseAsync(
         Guid productId, Guid warehouseId, int quantity);
+
+        Task<ProductAtWarehouse?> GetProductAtWarehouses(
+            Guid warehouseId, string barcode, ProductAtWarehouseParameters productAtWarehouseParameters, bool trackChanges,
+            string? include = null);
         public Task<Dictionary<Guid, int>> GetTotalStockByProductIdsAsync(List<Guid> productIds, Guid warehouseId);
 
         Task<IEnumerable<ProductAtWarehouse>> GetProductAtWarehouses(Guid warehouseId, bool trackChanges, string? include = null);
