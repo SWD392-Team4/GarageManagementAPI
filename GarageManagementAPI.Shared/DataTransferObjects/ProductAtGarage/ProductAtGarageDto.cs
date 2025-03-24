@@ -11,6 +11,8 @@ namespace GarageManagementAPI.Shared.DataTransferObjects.ProductAtGarage
         public List<string> ProductImage { get; set; } = new List<string>();
         public string? BrandName { get; set; }
         public string? ProductCategoryName { get; set; }
+
+        public string? ProductDescription { get; set; }
         public Guid GoodsIssuedDetailId { get; set; }
         public decimal ProductPrice { get; set; }
         public int Quantity { get; set; }
