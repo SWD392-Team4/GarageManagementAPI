@@ -22,7 +22,7 @@ namespace GarageManagementAPI.Repository.Configuration
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("producthistory_productid_foreign");
         }
-        protected override void SeedData(EntityTypeBuilder<ProductHistory> entity)
+      /*  protected override void SeedData(EntityTypeBuilder<ProductHistory> entity)
         {
             entity.HasData(
                 new ProductHistory()
@@ -109,7 +109,7 @@ namespace GarageManagementAPI.Repository.Configuration
                     CreatedAt = DateTimeOffset.Parse("2/25/2025 12:36:40 AM +07:00")
                 }
             );
-        }
+        }*/
     }
 }
 

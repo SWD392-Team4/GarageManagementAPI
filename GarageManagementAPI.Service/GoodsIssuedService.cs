@@ -58,7 +58,6 @@ namespace GarageManagementAPI.Service
 
             var goodsIssuedDtoToReturn = _mapper.Map<GoodsIssuedDto>(goodsIssuedEntity);
 
-            var totalPrice = 0;
 
             foreach (var goodsIssuedDetail in goodsIssuedDtoForCreation.gooodsIssuedDetails)
             {

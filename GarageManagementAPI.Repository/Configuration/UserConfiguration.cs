@@ -265,7 +265,7 @@ namespace GarageManagementAPI.Repository.Configuration
                     TwoFactorEnabled = false,
                     LockoutEnabled = true
                 },
-                new User()
+              /*  new User()
                 {
                     Id = new Guid("b3c5d6e7-f8a9-4b0c-8d1e-2f3a4b5c6d7e"),
                     FirstName = "Customer_6_first_name",
@@ -370,7 +370,7 @@ namespace GarageManagementAPI.Repository.Configuration
                     TwoFactorEnabled = false,
                     LockoutEnabled = true
                 },
-
+              */
                 // Mechanics (10)
                 new User()
                 {
@@ -477,7 +477,7 @@ namespace GarageManagementAPI.Repository.Configuration
                     TwoFactorEnabled = false,
                     LockoutEnabled = true
                 },
-                new User()
+                /*new User()
                 {
                     Id = new Guid("5f6789ab-cdef-0123-4567-89abcdef0123"),
                     FirstName = "Mechanic_6_first_name",
@@ -582,6 +582,7 @@ namespace GarageManagementAPI.Repository.Configuration
                     TwoFactorEnabled = false,
                     LockoutEnabled = true
                 },
+                */
 
                 // Cashiers (2)
                 new User()

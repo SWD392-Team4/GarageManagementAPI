@@ -24,17 +24,26 @@ namespace GarageManagementAPI.Repository.Extensions
                 b.CreatedAt <= endDate.Value.Date
             );
         }
-        public static IQueryable<Invoice> IsInclude(this IQueryable<Invoice> invoices, string? fieldsString)
+        public static IQueryable<Invoice> IsInclude(this IQueryable<Invoice> invoice, string? fieldsString)
         {
-            if (string.IsNullOrWhiteSpace(fieldsString)) return invoices;
+            if (string.IsNullOrWhiteSpace(fieldsString))
+                return invoice;
+
             var fields = fieldsString.Split(',', StringSplitOptions.RemoveEmptyEntries);
+
+
             foreach (var field in fields)
             {
-                var property = InvoiceSellProduct.PropertyInfos.FirstOrDefault(i => i.Name.Equals(field));
-                if (field != null)
-                    invoices.Include(field);
+                var property = Invoice.PropertyInfos
+                    .FirstOrDefault(pi => pi.Name.Equals(field.Trim(), StringComparison.InvariantCultureIgnoreCase));
+
+                if (property != null)
+                {
+                    invoice = invoice.Include(field.Trim());
+                }
             }
-            return invoices;
+
+            return invoice;
         }
 
         public static IQueryable<Invoice> Sort(this IQueryable<Invoice> invoices, string? orderByQueryString)
