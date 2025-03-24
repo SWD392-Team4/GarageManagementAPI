@@ -1,9 +1,9 @@
-﻿using GarageManagementAPI.Entities.Models;
+﻿using Microsoft.EntityFrameworkCore;
+using GarageManagementAPI.Entities.Models;
 using GarageManagementAPI.Repository.Contracts;
 using GarageManagementAPI.Repository.Extensions;
-using GarageManagementAPI.Shared.DataTransferObjects.Dashboard;
 using GarageManagementAPI.Shared.RequestFeatures;
-using Microsoft.EntityFrameworkCore;
+using GarageManagementAPI.Shared.DataTransferObjects.Dashboard;
 
 
 namespace GarageManagementAPI.Repository
@@ -55,6 +55,17 @@ namespace GarageManagementAPI.Repository
                         .IsInclude(include)
                         .Sort(invoiceParameters.OrderBy)
                         .ToListAsync();
+
+            return PagedList<Invoice>.ToPagedList(
+                invoices,
+                invoiceParameters.PageNumber,
+                invoiceParameters.PageSize
+                );
+        }
+
+        public async Task<PagedList<Invoice>> GetInvoices(string email, string phone, InvoiceParameters invoiceParameters, bool trackChanges, string? include)
+        {
+            var invoices = await FindByCondition(i => i.CustomerEmail.ToLower().Equals(email.ToLower()) && i.CustomerPhoneNumber.Equals(phone), trackChanges).ToListAsync();
 
             return PagedList<Invoice>.ToPagedList(
                 invoices,

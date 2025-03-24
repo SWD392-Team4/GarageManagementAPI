@@ -12,7 +12,7 @@ namespace GarageManagementAPI.Presentation.Controllers
         }
 
         /// <summary>
-        /// Lấy doanh số nha anh Tân ơi
+        /// Lấy doanh thu nha anh Tân ơi
         /// </summary>
         /// <param name="garageId"></param>
         /// <param name="year"></param>
@@ -109,7 +109,7 @@ namespace GarageManagementAPI.Presentation.Controllers
         }
 
         /// <summary>
-        /// Get doanh số 
+        /// Get doanh số
         /// </summary>
         /// <param name="garageId"></param>
         /// <param name="year"></param>

@@ -131,9 +131,9 @@ namespace GarageManagementAPI.Service
             return Result<IEnumerable<ExpandoObject>>.Ok(invoicesShaped, invoices.MetaData);
         }
 
-        public async Task<Result<IEnumerable<ExpandoObject>>> GetInvoicesForCustomers(string phoneNumber, InvoiceParameters invoiceParameters, bool trackChanges, string? include = null)
+        public async Task<Result<IEnumerable<ExpandoObject>>> GetInvoicesForCustomers(string phoneNumber, string email, InvoiceParameters invoiceParameters, bool trackChanges, string? include = null)
         {
-            var invoices = await _repoManager.Invoice.GetInvoices(phoneNumber, invoiceParameters, trackChanges, include);
+            var invoices = await _repoManager.Invoice.GetInvoices(email, phoneNumber, invoiceParameters, trackChanges, include);
 
             var invoicesDto = _mapper.Map<IEnumerable<InvoiceDto>>(invoices);
 

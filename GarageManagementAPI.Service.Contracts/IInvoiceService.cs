@@ -17,9 +17,7 @@ namespace GarageManagementAPI.Service.Contracts
 
         Task<Result<IEnumerable<ExpandoObject>>> GetInvoicesForCahier(Guid userId, InvoiceParameters invoiceParameters, bool trackChanges, string? include = null);
 
-
-        Task<Result<IEnumerable<ExpandoObject>>> GetInvoicesForCustomers(string phoneNumber, InvoiceParameters invoiceParameters, bool trackChanges, string? include = null);
-
+        Task<Result<IEnumerable<ExpandoObject>>> GetInvoicesForCustomers(string phoneNumber, string email, InvoiceParameters invoiceParameters, bool trackChanges, string? include = null);
 
         Task<Result<InvoiceSellProductDto>> GetInvoiceSellProduct(Guid invoiceId, bool trackChanges, string? include = null);
 

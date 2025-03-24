@@ -48,13 +48,13 @@ namespace GarageManagementAPI.Presentation.Controllers
         }
 
         [HttpGet("customer")]
-        public async Task<IActionResult> GetInvoices(string phonenumber, [FromQuery] InvoiceParameters invoiceParameters)
+        public async Task<IActionResult> GetInvoices(string phonenumber, string gmail,[FromQuery] InvoiceParameters invoiceParameters)
         {
             if (string.IsNullOrWhiteSpace(phonenumber))
             {
                 return BadRequest(new { Message = "Phone number is required." });
             }
-            var invocesResult = await _service.InvoiceService.GetInvoicesForCustomers(phonenumber, invoiceParameters, trackChanges: false);
+            var invocesResult = await _service.InvoiceService.GetInvoicesForCustomers(phonenumber, gmail, invoiceParameters, trackChanges: false);
             return invocesResult.Map(
                 onSuccess: Ok,
                 onFailure: ProcessError
