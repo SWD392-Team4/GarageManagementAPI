@@ -127,6 +127,14 @@
             <param name="validator"></param>
             <returns></returns>
         </member>
+        <member name="M:GarageManagementAPI.Presentation.Controllers.DashboardController.GetMonthlySalesByYearDashBoard(System.Nullable{System.Guid},System.Int32)">
+            <summary>
+            Lấy doanh thu nha anh Tân ơi
+            </summary>
+            <param name="garageId"></param>
+            <param name="year"></param>
+            <returns></returns>
+        </member>
         <member name="M:GarageManagementAPI.Presentation.Controllers.DashboardController.GetServicesDashBoard(System.Nullable{System.Guid},System.Int32)">
             <summary>
             Get services in year
@@ -161,7 +169,7 @@
         </member>
         <member name="M:GarageManagementAPI.Presentation.Controllers.DashboardController.GetRevenue(System.Nullable{System.Guid},System.Int32)">
             <summary>
-            Get doanh số 
+            Get doanh số
             </summary>
             <param name="garageId"></param>
             <param name="year"></param>
