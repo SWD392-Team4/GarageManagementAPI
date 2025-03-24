@@ -38,7 +38,7 @@ namespace GarageManagementAPI.Shared.DataTransferObjects.AppointmentDetail
 
         public string? ServiceName { get; set; }
 
-        public decimal? Price { get; set; }
+        public decimal Price { get; set; }
     }
 
 }

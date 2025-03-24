@@ -21,11 +21,14 @@ namespace GarageManagementAPI.Service
         private readonly IRepositoryManager _repoManager;
         private readonly IMapper _mapper;
         private readonly IDataShaperManager _dataShaper;
-        public EmployeeScheduleService(IRepositoryManager repoManager, IMapper mapper, IDataShaperManager dataShaper)
+        private readonly IMailService _mailService;
+
+        public EmployeeScheduleService(IRepositoryManager repoManager, IMapper mapper, IDataShaperManager dataShaper, IMailService mailService)
         {
             _repoManager = repoManager;
             _mapper = mapper;
             _dataShaper = dataShaper;
+            _mailService = mailService;
         }
 
         public async Task<Result> EndEmployeeScheduleAsync(Guid scheduleId)
@@ -42,6 +45,8 @@ namespace GarageManagementAPI.Service
                                     .Include(s => s.AppointmentDetail)
                                   .ThenInclude(s => s.Appointment)
                                   .ThenInclude(a => a.AppointmentDetailPackages)
+                                   .Include(s => s.AppointmentDetail)
+                                   .ThenInclude(s => s.AppointmentReplacementParts)
                                   .FirstOrDefaultAsync();
             if (schedule == null)
             {
@@ -59,6 +64,14 @@ namespace GarageManagementAPI.Service
             schedule.ActualEndTime = now;
             schedule.Status = EmployeeScheduleStatus.Completed;
             schedule.AppointmentDetail.Status = AppointmentDetailStatus.Completed;
+            if (schedule.AppointmentDetail.AppointmentReplacementParts != null)
+            {
+                foreach (var appointmentReplacementPart in schedule.AppointmentDetail.AppointmentReplacementParts)
+                {
+                    appointmentReplacementPart.Status = AppointmentReplacementPartStatus.Completed;
+                    _repoManager.AppointmentReplacementPart.Update(appointmentReplacementPart);
+                }
+            }
             if (schedule.AppointmentDetail.PackageHistoryId != null)
             {
                 var appointmentDetailPackage = schedule.AppointmentDetail.Appointment.AppointmentDetailPackages.Where(adp => adp.PackageHistoryId.Equals(schedule.AppointmentDetail.PackageHistoryId)).FirstOrDefault();
@@ -138,6 +151,7 @@ namespace GarageManagementAPI.Service
             {
                 schedule.AppointmentDetail.Appointment.Status = AppointmentStatus.Completed;
                 _repoManager.Appointment.Update(schedule.AppointmentDetail.Appointment);
+                await _mailService.SendFinishAppointment(schedule.AppointmentDetail.Appointment.Id);
             }
 
             await _repoManager.SaveAsync();

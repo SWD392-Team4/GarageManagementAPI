@@ -1,7 +1,7 @@
-﻿using GarageManagementAPI.Shared.ResultModel;
+﻿using GarageManagementAPI.Shared.DataTransferObjects.AppointmentDetail;
 using GarageManagementAPI.Shared.DataTransferObjects.Dashboard;
 using GarageManagementAPI.Shared.DataTransferObjects.EmployeeSchedule;
-using GarageManagementAPI.Shared.DataTransferObjects.AppointmentDetail;
+using GarageManagementAPI.Shared.ResultModel;
 
 namespace GarageManagementAPI.Service.Contracts
 {
@@ -21,5 +21,7 @@ namespace GarageManagementAPI.Service.Contracts
 
         Task<IEnumerable<ServiceStatisticsDto>> GetTotalEachService(int year, Guid? garageId, bool trackChanges);
         Task<IEnumerable<PackageStatisticsDto>> GetTotalEachPackage(int year, Guid? garageId, bool trackChanges);
+
+        Task<Result> ConfirmAppointmentDetail(Guid garageId, Guid appointmentId, AppointmentDetailDtoForConfirm detailDtoForConfirm);
     }
 }

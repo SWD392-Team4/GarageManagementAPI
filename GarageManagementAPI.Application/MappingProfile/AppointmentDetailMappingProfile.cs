@@ -17,7 +17,7 @@ namespace GarageManagementAPI.Application.MappingProfile
                 })
                 .ForMember(dest => dest.Price, opts =>
                 {
-                    opts.PreCondition(dest => dest.ServiceHistory != null && dest.PackageHistoryId != null);
+                    opts.PreCondition(dest => dest.ServiceHistory != null && dest.PackageHistoryId == null);
                     opts.MapFrom(src => src.ServiceHistory.Price);
                 })
                 .ForMember(dest => dest.EstimatedHours, opts =>
