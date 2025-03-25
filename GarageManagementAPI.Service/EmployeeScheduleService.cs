@@ -204,19 +204,6 @@ namespace GarageManagementAPI.Service
                 appointmentDtoList.Add(dto);
             }
 
-            foreach (var schedule in employeeSchedule)
-            {
-                var customer = await _repoManager.User.GetUserByEmailAndPhone(
-                    schedule.CustomerEmail,
-                    schedule.CustomerPhoneNumber,
-                    trackChanges: false,
-                    null);
-
-                var dto = _mapper.Map<AppointmentDto>(schedule);
-                dto.CustomerId = customer?.Id;
-                appointmentDtoList.Add(dto);
-            }
-
             return Result<IEnumerable<AppointmentDto>>.Ok(appointmentDtoList, employeeSchedule.MetaData);
 
         }
