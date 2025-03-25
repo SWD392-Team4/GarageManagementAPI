@@ -549,17 +549,15 @@ namespace GarageManagementAPI.Service.Utilities
 
         public static string ToVietnameseDateTimeFormat(DateTimeOffset dateTime)
         {
-            // Convert to local time for displaying
-            var localDateTime = dateTime.ToLocalTime();
 
             // Format the date part
-            string datePart = localDateTime.ToString("dd/MM/yyyy");
+            string datePart = dateTime.ToString("dd/MM/yyyy");
 
             // Format the time part
-            string timePart = localDateTime.ToString("HH:mm");
+            string timePart = dateTime.ToString("HH:mm");
 
             // Determine if it's morning or afternoon/evening
-            string timeOfDay = localDateTime.Hour < 12 ? "sáng" : "chiều";
+            string timeOfDay = dateTime.Hour < 12 ? "sáng" : "chiều";
 
             // Combine the parts
             return $"{datePart} vào lúc {timePart} {timeOfDay}";
