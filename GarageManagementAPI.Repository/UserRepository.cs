@@ -36,6 +36,7 @@ namespace GarageManagementAPI.Repository
                 .SearchByLastName(userParameters.LastName)
                 .FilterByRole(userParameters.Role)
                 .FilterByPhoneNumber(userParameters.PhoneNumber)
+                .FilterByWorkplace(userParameters.WorkplaceId)
                 .Sort(userParameters.OrderBy)
                 .IsInclude(include)
                 .Skip((userParameters.PageNumber - 1) * userParameters.PageSize)

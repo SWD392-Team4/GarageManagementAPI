@@ -53,6 +53,15 @@ namespace GarageManagementAPI.Repository.Extensions
 
         }
 
+        public static IQueryable<User> FilterByWorkplace(this IQueryable<User> user, Guid? workplaceId)
+        {
+            if (workplaceId is null)
+                return user;
+
+            return user.Where(u => u.EmployeeInfo != null && u.EmployeeInfo.WorkplaceId.Equals(workplaceId));
+
+        }
+
         public static IQueryable<User> FilterByPhoneNumber(this IQueryable<User> user, string? phoneNumber)
         {
             if (string.IsNullOrWhiteSpace(phoneNumber))
