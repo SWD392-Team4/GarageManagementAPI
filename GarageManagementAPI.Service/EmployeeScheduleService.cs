@@ -153,6 +153,7 @@ namespace GarageManagementAPI.Service
             if (isAllDetailCompleted && isAllPackagesCompleted)
             {
                 schedule.AppointmentDetail.Appointment.Status = AppointmentStatus.Completed;
+                schedule.AppointmentDetail.Appointment.ActualEndTime = now;
                 _repoManager.Appointment.Update(schedule.AppointmentDetail.Appointment);
                 await _mailService.SendFinishAppointment(schedule.AppointmentDetail.Appointment.Id);
                 await CreateAppointmentInvocie(schedule.AppointmentDetail.Appointment.GarageId, schedule.AppointmentDetail.Appointment.Id);

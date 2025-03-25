@@ -856,9 +856,9 @@ namespace GarageManagementAPI.Service
                     if (carModel is null)
                         return Result<AppointmentDto>.NotFound(CarModelErrors.GetCarModelNotFoundError(appointmentDtoForUpdate.CarModelId!.Value));
                 }
-                appointment.ActualAppointmentTime = DateTimeOffset.UtcNow.SEAsiaStandardTime();
                 appointment = _mapper.Map(appointmentDtoForUpdate, appointment);
             }
+            appointment.ActualAppointmentTime = now;
             appointment.ApproveByEmployeeId = appointment.ApproveByEmployeeId ?? userId;
             appointment.Status = AppointmentStatus.Arrival;
             _repoManager.Appointment.Update(appointment);
