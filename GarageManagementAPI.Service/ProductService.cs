@@ -378,10 +378,11 @@ namespace GarageManagementAPI.Service
 
         private string GenerateBarcode()
         {
-            return $"{DateTime.UtcNow:yyyyMMddHHmmss}{Guid.NewGuid().ToString("N").Substring(2)}";
+            string timePart = DateTime.UtcNow.ToString("yyMMddHH"); 
+            string guidPart = Guid.NewGuid().ToString("N").Substring(0, 5);
+
+            return timePart + guidPart; 
         }
-
-
 
 
         //Dashboard 
